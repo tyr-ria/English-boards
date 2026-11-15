@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Night Shift: Future Simple Survival</title>
+    
+    <!-- Fonts: Share Tech Mono for the terminal look, Inter for readable text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Config for Thematic UI -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        fnaf: {
+                            bg: '#070714',
+                            panel: '#0f1026',
+                            border: '#4338ca',
+                            primary: '#7c3aed',    // Neon Violet
+                            secondary: '#1e1b4b',  // Deep Indigo
+                            accent: '#38bdf8',     // Cyber Blue
+                            battery: '#c084fc',    // Neon Purple
+                            text: '#eef2ff',
+                            muted: '#94a3b8'
+                        }
+                    },
+                    animation: {
+                        'static': 'staticNoise 2s steps(10) infinite',
+                        'flicker': 'flickerText 4s infinite'
+                    },
+                    keyframes: {
+                        staticNoise: {
+                            '0%, 100%': { opacity: 0.9 },
+                            '50%': { opacity: 0.7 }
+                        },
+                        flickerText: {
+                            '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { opacity: 1 },
+                            '20%, 22%, 24%, 55%': { opacity: 0.2 }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* Unified Future Tenses Palette: Future Shift / High-Tech Neon (Violet, Indigo & Cyber-Blue) */
+            --primary: #7c3aed;
+            --secondary: #1e1b4b;
+            --accent: #38bdf8;
+            --bg: #070714;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.16), transparent 42%),
+                radial-gradient(circle at 85% 80%, rgba(56, 189, 248, 0.12), transparent 44%);
+            color: #eef2ff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        body > header {
+            background: rgba(10, 11, 30, 0.94) !important;
+            border-bottom: 2px solid #4338ca !important;
+            box-shadow: 0 4px 24px rgba(124, 58, 237, 0.22);
+            backdrop-filter: blur(8px);
+        }
+
+        /* CRT Screen Effect Overlay */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(124, 58, 237, 0.04), rgba(0, 0, 0, 0.01), rgba(56, 189, 248, 0.05));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.35;
+        }
+
+        /* Interactive Element Styles */
+        .fnaf-btn {
+            background: #0f1026;
+            border: 2px solid #4338ca;
+            border-radius: 10px;
+            color: #eef2ff;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 0 #04040c, 0 0 12px rgba(99, 102, 241, 0.15);
+            z-index: 10;
+            position: relative;
+        }
+        .fnaf-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #04040c, 0 0 18px rgba(56, 189, 248, 0.35);
+        }
+        .fnaf-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #04040c;
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            border-color: #38bdf8;
+            color: white;
+            box-shadow: 0 0 16px rgba(124, 58, 237, 0.45);
+        }
+
+        .camera-box {
+            border: 2px solid rgba(99, 102, 241, 0.55);
+            background: #0b0c1d;
+            border-radius: 14px;
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.65), inset 0 0 28px rgba(124, 58, 237, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .camera-box::before {
+            content: "REC •";
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            color: #38bdf8;
+            font-family: "Share Tech Mono";
+            animation: flickerText 2s infinite;
+            z-index: 20;
+        }
+
+        /* Decorative Animatronics */
+        .decor-animatronic {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.25;
+            z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
+            transition: opacity 0.3s;
+        }
+        .camera-box:hover .decor-animatronic {
+            opacity: 0.35;
+        }
+
+        /* Print Styles for Certificate */
+        @media print {
+            body * { visibility: hidden; }
+            #certificate-section, #certificate-section * { visibility: visible; }
+            #certificate-section {
+                position: fixed;
+                left: 0; top: 0; width: 100%; height: 100%;
+                background: white; color: black;
+            }
+            .crt-overlay { display: none; }
+            .decor-animatronic { opacity: 0.8 !important; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+    <!-- Floating Back to Hub Navigation -->
+    <style>
+        .hub-back-btn {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            z-index: 10000;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(10, 11, 30, 0.92);
+            color: #38bdf8;
+            border: 1px solid rgba(139, 92, 246, 0.65);
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.65), 0 0 12px rgba(124, 58, 237, 0.25);
+            transition: all 0.2s ease;
+        }
+        .hub-back-btn:hover {
+            background: linear-gradient(135deg, #7c3aed, #38bdf8);
+            color: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.55);
+            transform: translateY(-1px);
+        }
+        body > header { padding-left: 148px !important; }
+        @media print {
+            .hub-back-btn { display: none !important; }
+        }
+    </style>
+    <a href="index.html" class="hub-back-btn no-print" title="Return to ESL Games Hub">⬅ Back to Hub</a>
+
+    <!-- CRT Visual Effect -->
+    <div class="crt-overlay"></div>
+
+    <!-- AUDIO ENGINE & DATA -->
+    <script>
+        // --- 1. GAME DATA ARCHITECTURE ---
+        const GAME_DATA = {
+            metadata: {
+                level: "Beginner+", 
+                topic: "Future Simple (Predictions & Decisions)"
+            },
+            story: {
+                title: "Welcome to the Night Shift",
+                text: "You are the new security guard at the toy factory. The animatronics act strange at night. To survive until 6 AM, you must predict their movements using the Future Simple tense. Keep your flashlight ready, check the cameras, and do not let the music box stop!",
+                explanation: "We use the Future Simple tense to make predictions about the future, spontaneous decisions, or promises."
+            },
+            vocabulary: [
+                { word: "Animatronic", trans: "A robotic character", emoji: "🤖" },
+                { word: "Security Camera", trans: "A device to watch the building", emoji: "📹" },
+                { word: "Flashlight", trans: "A tool that makes light", emoji: "🔦" },
+                { word: "Vent", trans: "A pipe for air (or hiding)", emoji: "🕳️" },
+                { word: "Battery", trans: "Power source", emoji: "🔋" },
+                { word: "Mask", trans: "A cover for your face", emoji: "🎭" },
+                { word: "Music Box", trans: "A box that plays tunes", emoji: "🎶" },
+                { word: "Hallway", trans: "A long corridor", emoji: "🚪" },
+                { word: "Survive", trans: "To stay alive", emoji: "🛡️" },
+                { word: "Jump", trans: "To leap suddenly", emoji: "⚡" }
+            ],
+            // Game 1: Camera Logs - Clarified with (+) and (-)
+            game1Pool: [
+                { q: "If the music stops, the Puppet ___ (wake) up. (+)", base: "wake", ans: "will wake", hint: "Use 'will' + the base verb." },
+                { q: "I ___ (check) the cameras now. (+)", base: "check", ans: "will check", hint: "It's a quick decision! Use 'will' + base verb." },
+                { q: "Toy Bonnie ___ (move) to the right vent soon. (+)", base: "move", ans: "will move", hint: "Prediction! Use 'will' + base verb." },
+                { q: "The battery is low. The flashlight ___ (die) soon. (+)", base: "die", ans: "will die", hint: "Prediction! Use 'will' + base verb." },
+                { q: "I promise I ___ (survive) until 6 AM. (+)", base: "survive", ans: "will survive", hint: "For promises, we use 'will'." },
+                { q: "Foxy ___ (jump) if you flash the light. (+)", base: "jump", ans: "will jump", hint: "Use 'will' + base verb." },
+                { q: "The security guard ___ (stay) in the office. (+)", base: "stay", ans: "will stay", hint: "Use 'will' + base verb." },
+                { q: "Balloon Boy ___ (steal) your batteries! (+)", base: "steal", ans: "will steal", hint: "Use 'will' + base verb." },
+                { q: "The clock ___ (hit) 6 AM very soon. (+)", base: "hit", ans: "will hit", hint: "Use 'will' + base verb." },
+                { q: "I ___ (put) on the mask right now! (+)", base: "put", ans: "will put", hint: "Quick decision! Use 'will'." },
+                { q: "They ___ (not/find) me in this room. (-)", base: "not find", ans: "won't find", hint: "Use the negative form: won't + base verb." },
+                { q: "I ___ (not/leave) the office tonight. (-)", base: "not leave", ans: "won't leave", hint: "Use won't + base verb." },
+                { q: "The old animatronics ___ (not/work) properly. (-)", base: "not work", ans: "won't work", hint: "Use won't + base verb." },
+                { q: "Golden Freddy ___ (not/appear) if you look away. (-)", base: "not appear", ans: "won't appear", hint: "Use won't + base verb." },
+                { q: "The doors ___ (not/close) in this building. (-)", base: "not close", ans: "won't close", hint: "Use won't + base verb." },
+                { q: "I ___ (not/forget) to wind the music box. (-)", base: "not forget", ans: "won't forget", hint: "Use won't + base verb." },
+                { q: "He ___ (not/listen) to the phone guy. (-)", base: "not listen", ans: "won't listen", hint: "Use won't + base verb." },
+                { q: "We ___ (not/run) out of power. (-)", base: "not run", ans: "won't run", hint: "Use won't + base verb." },
+                { q: "Toy Chica ___ (not/stay) on the stage. (-)", base: "not stay", ans: "won't stay", hint: "Use won't + base verb." },
+                { q: "The night ___ (not/end) quickly. (-)", base: "not end", ans: "won't end", hint: "Use won't + base verb." }
+            ],
+            // Game 2: Multiple Choice
+            game2Pool: [
+                { q: "Oh no, Foxy is in the hallway! What will you do?", options: ["I will flash my light.", "I won't flashes my light.", "I will to flash my light."], ans: 0, hint: "After 'will', we use the pure base verb without 'to' or 's'." },
+                { q: "Will the Puppet attack if the music box plays?", options: ["Yes, it will.", "No, it won't.", "No, it will."], ans: 1, hint: "Think logically about the game rules. If music plays, you are safe." },
+                { q: "The power is at 1%. What will happen?", options: ["The building won't go dark.", "The building will goes dark.", "The building will go dark."], ans: 2, hint: "Prediction. Use 'will' + base verb (go)." },
+                { q: "Will you wear the mask?", options: ["Yes, I will.", "Yes, I won't.", "No, I will."], ans: 0, hint: "Positive short answer matches the positive auxiliary." },
+                { q: "Toy Freddy is in the office! Quick decision!", options: ["I will put on the mask!", "I will puts on the mask!", "I won't put on the mask!"], ans: 0, hint: "Spontaneous decision requires 'will' + base verb." },
+                { q: "What will Balloon Boy take?", options: ["He will takes the flashlight.", "He will take the batteries.", "He won't take nothing."], ans: 1, hint: "BB steals batteries. Use base verb after 'will'." },
+                { q: "Will the shift end at 6 AM?", options: ["Yes, it will.", "No, it won't.", "Yes, it won't."], ans: 0, hint: "Standard positive short answer." },
+                { q: "Mangle is in the vent. Will she drop down?", options: ["Yes, she will.", "Yes, she won't.", "No, she will."], ans: 0, hint: "Logical prediction based on the situation." },
+                { q: "I hear a noise. What will you do?", options: ["I will check the camera.", "I will checked the camera.", "I won't check the camera."], ans: 0, hint: "Quick decision. Base verb needed." },
+                { q: "Will they stay on the stage?", options: ["No, they won't.", "No, they will.", "Yes, they won't."], ans: 0, hint: "Negative short answer uses 'won't'." },
+                { q: "Prediction: The night guard ___ survive.", options: ["will", "won't", "will to"], ans: 0, hint: "Use 'will' for a positive prediction." },
+                { q: "Prediction: The toys ___ be friendly.", options: ["will", "won't", "wills"], ans: 1, hint: "Are they friendly in the game? No." },
+                { q: "I promise I ___ fall asleep.", options: ["will", "won't", "will not to"], ans: 1, hint: "A promise not to do something requires 'won't'." },
+                { q: "If you flash the light, Foxy ___ go away.", options: ["will", "won't", "will goes"], ans: 0, hint: "Base verb after will." },
+                { q: "Will you wind the music box?", options: ["Yes, I will.", "Yes, I wind.", "No, I won't."], ans: 0, hint: "Short answer must use 'will'." },
+                { q: "The phone guy ___ give you advice.", options: ["will", "wills", "will gives"], ans: 0, hint: "Base verb." },
+                { q: "Will Golden Freddy crash the game?", options: ["Yes, he will.", "No, he won't.", "Yes, he crashes."], ans: 0, hint: "Short answer format." },
+                { q: "It is 5:59 AM. I ___ win!", options: ["will", "won't", "will to"], ans: 0, hint: "Positive prediction." },
+                { q: "The mask ___ protect you from Foxy.", options: ["won't", "will", "won't protects"], ans: 0, hint: "Foxy ignores the mask. Use negative prediction." },
+                { q: "Will the old animatronics move?", options: ["Yes, they will.", "No, they won't.", "Yes, they do."], ans: 0, hint: "Match the auxiliary verb in the question." }
+            ],
+            // Game 3: Sentence Builder
+            game3Pool: [
+                { words: ["I", "will", "check", "the", "cameras."], ans: "I will check the cameras.", hint: "Subject + will + verb + object." },
+                { words: ["The", "puppet", "won't", "wake", "up."], ans: "The puppet won't wake up.", hint: "Subject + won't + verb." },
+                { words: ["Will", "Foxy", "jump", "now?"], ans: "Will Foxy jump now?", hint: "Question starts with 'Will'." },
+                { words: ["I", "won't", "leave", "the", "office."], ans: "I won't leave the office.", hint: "Negative statement." },
+                { words: ["Toy", "Bonnie", "will", "move", "soon."], ans: "Toy Bonnie will move soon.", hint: "Subject + will + verb." },
+                { words: ["Will", "they", "find", "me", "here?"], ans: "Will they find me here?", hint: "Question starts with 'Will'." },
+                { words: ["The", "battery", "will", "die", "fast."], ans: "The battery will die fast.", hint: "Subject + will + verb." },
+                { words: ["I", "will", "wear", "the", "mask."], ans: "I will wear the mask.", hint: "Subject + will + verb." },
+                { words: ["Balloon", "Boy", "won't", "leave", "you."], ans: "Balloon Boy won't leave you.", hint: "Negative statement." },
+                { words: ["Will", "the", "shift", "end", "soon?"], ans: "Will the shift end soon?", hint: "Question format." },
+                { words: ["We", "will", "survive", "the", "night."], ans: "We will survive the night.", hint: "Positive statement." },
+                { words: ["He", "won't", "listen", "to", "you."], ans: "He won't listen to you.", hint: "Negative statement." },
+                { words: ["Will", "the", "power", "run", "out?"], ans: "Will the power run out?", hint: "Question format." },
+                { words: ["I", "will", "wind", "the", "box."], ans: "I will wind the box.", hint: "Positive statement." },
+                { words: ["The", "toys", "won't", "stay", "still."], ans: "The toys won't stay still.", hint: "Negative statement." },
+                { words: ["Will", "she", "drop", "from", "above?"], ans: "Will she drop from above?", hint: "Question format." },
+                { words: ["I", "won't", "forget", "the", "light."], ans: "I won't forget the light.", hint: "Negative statement." },
+                { words: ["The", "guard", "will", "be", "scared."], ans: "The guard will be scared.", hint: "Positive statement." },
+                { words: ["Will", "it", "attack", "me", "now?"], ans: "Will it attack me now?", hint: "Question format." },
+                { words: ["They", "will", "wait", "in", "darkness."], ans: "They will wait in darkness.", hint: "Positive statement." }
+            ],
+            // Game 4: System Reboot (True/False Grammar Check)
+            game4Pool: [
+                { q: "I will survive the night.", ans: true, correct: "I will survive the night.", hint: "Correct structure: will + base verb." },
+                { q: "He will to jump at you.", ans: false, correct: "He will jump at you.", hint: "Do not use 'to' after 'will'." },
+                { q: "They won't leaves the stage.", ans: false, correct: "They won't leave the stage.", hint: "Use the base verb without 's'." },
+                { q: "Will the battery die soon?", ans: true, correct: "Will the battery die soon?", hint: "Correct question structure." },
+                { q: "I won't check the cameras.", ans: true, correct: "I won't check the cameras.", hint: "Correct negative structure." },
+                { q: "Will you winds the music box?", ans: false, correct: "Will you wind the music box?", hint: "Base verb needed in questions." },
+                { q: "The puppet won't wake up.", ans: true, correct: "The puppet won't wake up.", hint: "Correct negative." },
+                { q: "I will not to close the door.", ans: false, correct: "I will not close the door.", hint: "No 'to' after will not." },
+                { q: "Foxy will run down the hall.", ans: true, correct: "Foxy will run down the hall.", hint: "Correct affirmative." },
+                { q: "Do he will attack?", ans: false, correct: "Will he attack?", hint: "Start the question with 'Will'." },
+                { q: "We will survives this.", ans: false, correct: "We will survive this.", hint: "No 's' at the end of the verb." },
+                { q: "She won't stay there.", ans: true, correct: "She won't stay there.", hint: "Correct." },
+                { q: "Will it jumpscares me?", ans: false, correct: "Will it jumpscare me?", hint: "No 's' on the base verb." },
+                { q: "I will wear the Freddy mask.", ans: true, correct: "I will wear the Freddy mask.", hint: "Correct." },
+                { q: "They will not find us.", ans: true, correct: "They will not find us.", hint: "Correct." },
+                { q: "I will looking at the monitor.", ans: false, correct: "I will look at the monitor.", hint: "Use base verb (look), not -ing." },
+                { q: "Golden Freddy won't crashes the game.", ans: false, correct: "Golden Freddy won't crash the game.", hint: "Use base verb (crash)." },
+                { q: "Will the power go out?", ans: true, correct: "Will the power go out?", hint: "Correct." },
+                { q: "I will stay calm.", ans: true, correct: "I will stay calm.", hint: "Correct." },
+                { q: "He wills check the lights.", ans: false, correct: "He will check the lights.", hint: "'will' never takes an 's'." }
+            ],
+            badges: [
+                { id: "b_cam", icon: "📹", name: "Camera Tech", desc: "Completed Camera Logs" },
+                { id: "b_guard", icon: "🛡️", name: "Night Guard", desc: "Survived the Quiz" },
+                { id: "b_wire", icon: "🔌", name: "Wire Expert", desc: "Fixed the Sentences" },
+                { id: "b_reboot", icon: "💻", name: "System Admin", desc: "Passed Error Finder" },
+                { id: "b_vocab", icon: "🧠", name: "Data Miner", desc: "Reviewed Vocabulary" }
+            ]
+        };
+
+        // --- 2. AUDIO ENGINE (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTone(freq, type, duration, vol=0.1) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const Sound = {
+            click: () => playTone(800, 'sine', 0.05),
+            success: () => { playTone(600, 'sine', 0.1); setTimeout(()=>playTone(800, 'sine', 0.15), 100); },
+            error: () => playTone(150, 'sawtooth', 0.3, 0.2),
+            creepy: () => playTone(100, 'square', 0.5, 0.05)
+        };
+
+        // --- 3. SPEECH SYNTHESIS ENGINE ---
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; 
+                
+                const voices = window.speechSynthesis.getVoices();
+                const enVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB');
+                if (enVoice) utterance.voice = enVoice;
+
+                const indicator = document.getElementById('audio-indicator');
+                if(indicator) indicator.classList.remove('hidden');
+                
+                utterance.onend = () => {
+                    if(indicator) indicator.classList.add('hidden');
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+
+    <!-- HEADER NAVIGATION -->
+    <header class="bg-fnaf-panel border-b-2 border-fnaf-border p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl animate-flicker text-fnaf-primary">📹</span>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-mono font-bold text-white tracking-widest uppercase">Fazbear Security HQ</h1>
+                    <p class="text-xs text-fnaf-battery font-mono" id="level-display">Level: Loading...</p>
+                </div>
+            </div>
+            
+            <div id="audio-indicator" class="hidden flex items-center gap-2 text-fnaf-battery font-mono text-sm border border-fnaf-battery px-3 py-1 rounded bg-black">
+                <i class="animate-pulse">🔊</i> Audio Playing...
+            </div>
+
+            <nav class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar z-50 relative">
+                <button onclick="switchView('hub')" id="nav-hub" class="nav-btn active fnaf-btn px-4 py-2 rounded font-mono text-sm font-bold">HQ Hub</button>
+                <button onclick="switchView('game1')" id="nav-game1" class="nav-btn fnaf-btn px-4 py-2 rounded font-mono text-sm font-bold">Cam Logs</button>
+                <button onclick="switchView('game2')" id="nav-game2" class="nav-btn fnaf-btn px-4 py-2 rounded font-mono text-sm font-bold">Survival Quiz</button>
+                <button onclick="switchView('game3')" id="nav-game3" class="nav-btn fnaf-btn px-4 py-2 rounded font-mono text-sm font-bold">Wire Fix</button>
+                <button onclick="switchView('game4')" id="nav-game4" class="nav-btn fnaf-btn px-4 py-2 rounded font-mono text-sm font-bold">System Reboot</button>
+                <button onclick="switchView('badges')" id="nav-badges" class="nav-btn fnaf-btn px-4 py-2 rounded font-mono text-sm font-bold text-fnaf-accent">Badges</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow w-full max-w-6xl mx-auto p-4 md:p-6 mb-10 z-10 relative">
+        
+        <!-- 1. STORY & HUB VIEW -->
+        <section id="view-hub" class="view-section space-y-6">
+            <div class="camera-box p-6 md:p-8 rounded-lg shadow-2xl relative">
+                <!-- Decor: Withered Freddy & Toy Chica -->
+                <img src="https://i.postimg.cc/g0f7hjVV/Withered-Freddy-removebg-preview.png" class="decor-animatronic hidden md:block w-48 top-4 right-4" alt="Withered Freddy">
+                <img src="https://i.postimg.cc/rpvH4s1j/Toy-Chica-removebg-preview.png" class="decor-animatronic hidden md:block w-32 bottom-4 left-4" alt="Toy Chica">
+                
+                <div class="relative z-10">
+                    <h2 class="text-2xl md:text-3xl font-mono text-fnaf-primary mb-2 uppercase tracking-widest" id="story-title">Title</h2>
+                    <p class="text-lg text-gray-300 mb-6 leading-relaxed" id="story-text">Text</p>
+                    
+                    <div class="bg-fnaf-secondary p-5 rounded border border-blue-900 mb-6 shadow-inner relative overflow-hidden">
+                        <!-- Grammar Explanation updated with formulas -->
+                        <h3 class="text-fnaf-accent font-bold font-mono text-xl mb-3">Security Manual: Grammar Rules</h3>
+                        <p class="text-sm text-gray-300 mb-4" id="story-explanation">Explanation</p>
+                        
+                        <div class="space-y-3 font-mono text-sm bg-black p-4 rounded border border-fnaf-border">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <span class="text-fnaf-battery font-bold min-w-[120px]">(+) Affirmative:</span> 
+                                <span><strong class="text-white">Subject + will + verb</strong> <br><span class="text-gray-500 italic">e.g., I will check the cameras.</span></span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <span class="text-fnaf-primary font-bold min-w-[120px]">(-) Negative:</span> 
+                                <span><strong class="text-white">Subject + will not (won't) + verb</strong> <br><span class="text-gray-500 italic">e.g., They won't find me.</span></span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <span class="text-fnaf-accent font-bold min-w-[120px]">(?) Question:</span> 
+                                <span><strong class="text-white">Will + subject + verb + ?</strong> <br><span class="text-gray-500 italic">e.g., Will the battery die?</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-mono text-white mb-4 border-b border-gray-700 pb-2">Vocabulary Database</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10" id="vocab-grid">
+                        <!-- Vocab items generated via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. GAME 1: CAMERA LOGS -->
+        <section id="view-game1" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center bg-fnaf-panel p-4 rounded border border-fnaf-border">
+                <h2 class="text-xl font-mono text-white">Camera Logs: Predictions</h2>
+                <span class="text-fnaf-battery font-mono" id="g1-progress">0/5</span>
+            </div>
+            
+            <div class="camera-box p-6 md:p-10 rounded-lg min-h-[350px] flex flex-col justify-center items-center text-center relative">
+                <!-- Decor: Balloon Boy & Toy Bonnie -->
+                <img src="https://i.postimg.cc/25PtWyQ4/Baloon-Boy-removebg-preview.png" class="decor-animatronic hidden md:block w-32 bottom-2 left-4" alt="Balloon Boy">
+                <img src="https://i.postimg.cc/vmpKnTrX/Toy-Bonnie-removebg-preview.png" class="decor-animatronic hidden md:block w-40 top-4 right-4" alt="Toy Bonnie">
+
+                <!-- Active Game Area -->
+                <div id="g1-active-area" class="w-full max-w-2xl z-10 relative flex flex-col items-center">
+                    <p class="text-sm text-fnaf-muted font-mono mb-6 bg-black/50 p-2 rounded">Type the correct Future Simple form. Pay attention to (+) or (-).</p>
+                    <div class="text-2xl md:text-3xl font-bold mb-8 text-white w-full" id="g1-question">Question goes here</div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                        <input type="text" id="g1-input" class="flex-grow bg-black border-2 border-fnaf-border text-white px-4 py-3 font-mono text-lg focus:outline-none focus:border-fnaf-primary text-center" placeholder="e.g. will wake / won't hide" autocomplete="off" spellcheck="false">
+                        <button onclick="checkGame1()" class="fnaf-btn bg-fnaf-primary px-8 py-3 font-mono font-bold text-lg rounded">SUBMIT</button>
+                    </div>
+                    <div id="g1-feedback" class="mt-6 font-mono text-lg min-h-[30px]"></div>
+                </div>
+
+                <!-- End Screen Wrapper (Fixing the bug) -->
+                <div id="g1-end-screen" class="hidden w-full flex-col items-center text-center z-10 relative">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-mono text-fnaf-battery mb-4">Shift Segment Complete</h2>
+                    <p class="text-gray-300 mb-8 font-mono">You successfully survived this hour of the night.</p>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="startGame('game1')" class="fnaf-btn px-6 py-3 font-mono font-bold rounded">PLAY AGAIN</button>
+                        <button onclick="switchView('badges')" class="fnaf-btn bg-fnaf-primary px-6 py-3 font-mono font-bold rounded">CHECK BADGES</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. GAME 2: SURVIVAL QUIZ -->
+        <section id="view-game2" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center bg-fnaf-panel p-4 rounded border border-fnaf-border">
+                <h2 class="text-xl font-mono text-white">Night Guard Quiz</h2>
+                <span class="text-fnaf-battery font-mono" id="g2-progress">0/5</span>
+            </div>
+
+            <div class="camera-box p-6 md:p-10 rounded-lg min-h-[350px] flex flex-col justify-center items-center text-center relative">
+                <!-- Decor: Withered Foxy & Toy Freddy -->
+                <img src="https://i.postimg.cc/5tHGjLC3/Withered-Foxy-removebg-preview.png" class="decor-animatronic hidden md:block w-48 top-2 left-2" alt="Withered Foxy">
+                <img src="https://i.postimg.cc/FK26SzyD/Toy-Freddy-removebg-preview.png" class="decor-animatronic hidden md:block w-40 bottom-2 right-4" alt="Toy Freddy">
+
+                <div id="g2-active-area" class="w-full max-w-2xl z-10 relative flex flex-col items-center">
+                    <p class="text-sm text-fnaf-muted font-mono mb-6 bg-black/50 p-2 rounded">Choose the correct logical answer or prediction.</p>
+                    <div class="text-2xl md:text-3xl font-bold mb-8 text-white w-full" id="g2-question">Question goes here</div>
+                    <div class="grid grid-cols-1 gap-4 w-full max-w-md" id="g2-options">
+                        <!-- Options generated via JS -->
+                    </div>
+                    <div id="g2-feedback" class="mt-6 font-mono text-lg min-h-[30px]"></div>
+                </div>
+
+                <!-- End Screen Wrapper -->
+                <div id="g2-end-screen" class="hidden w-full flex-col items-center text-center z-10 relative">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-mono text-fnaf-battery mb-4">Shift Segment Complete</h2>
+                    <p class="text-gray-300 mb-8 font-mono">You successfully survived this hour of the night.</p>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="startGame('game2')" class="fnaf-btn px-6 py-3 font-mono font-bold rounded">PLAY AGAIN</button>
+                        <button onclick="switchView('badges')" class="fnaf-btn bg-fnaf-primary px-6 py-3 font-mono font-bold rounded">CHECK BADGES</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. GAME 3: WIRE FIX -->
+        <section id="view-game3" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center bg-fnaf-panel p-4 rounded border border-fnaf-border">
+                <h2 class="text-xl font-mono text-white">System Error: Fix the Wires</h2>
+                <span class="text-fnaf-battery font-mono" id="g3-progress">0/5</span>
+            </div>
+
+            <div class="camera-box p-6 md:p-10 rounded-lg min-h-[350px] flex flex-col justify-center items-center text-center relative">
+                <!-- Decor: Mangle & Withered Bonnie -->
+                <img src="https://i.postimg.cc/YSJPF06N/Mangle-removebg-preview.png" class="decor-animatronic hidden md:block w-48 top-0 right-0 opacity-40" alt="Mangle">
+                <img src="https://i.postimg.cc/tgLc6J3F/Withered-Bonnie-removebg-preview.png" class="decor-animatronic hidden md:block w-40 bottom-4 left-4" alt="Withered Bonnie">
+
+                <div id="g3-active-area" class="w-full max-w-2xl z-10 relative flex flex-col items-center">
+                    <p class="text-sm text-fnaf-muted font-mono mb-6 bg-black/50 p-2 rounded">Click the words in the correct order to fix the sentence.</p>
+                    
+                    <div id="g3-answer-box" class="w-full max-w-2xl min-h-[60px] border-2 border-dashed border-gray-600 bg-black mb-8 flex flex-wrap justify-center items-center gap-2 p-4 cursor-pointer hover:border-fnaf-accent transition-colors" onclick="removeLastWordG3()">
+                        <!-- Selected words go here -->
+                    </div>
+
+                    <div id="g3-word-bank" class="flex flex-wrap justify-center gap-3 w-full max-w-2xl mb-8">
+                        <!-- Words generated via JS -->
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button onclick="resetG3()" class="fnaf-btn px-6 py-2 font-mono rounded">RESET</button>
+                        <button onclick="checkGame3()" class="fnaf-btn bg-fnaf-primary px-8 py-2 font-mono font-bold rounded">CHECK</button>
+                    </div>
+
+                    <div id="g3-feedback" class="mt-6 font-mono text-lg min-h-[30px]"></div>
+                </div>
+
+                <!-- End Screen Wrapper -->
+                <div id="g3-end-screen" class="hidden w-full flex-col items-center text-center z-10 relative">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-mono text-fnaf-battery mb-4">Shift Segment Complete</h2>
+                    <p class="text-gray-300 mb-8 font-mono">You successfully survived this hour of the night.</p>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="startGame('game3')" class="fnaf-btn px-6 py-3 font-mono font-bold rounded">PLAY AGAIN</button>
+                        <button onclick="switchView('badges')" class="fnaf-btn bg-fnaf-primary px-6 py-3 font-mono font-bold rounded">CHECK BADGES</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. GAME 4: SYSTEM REBOOT -->
+        <section id="view-game4" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center bg-fnaf-panel p-4 rounded border border-fnaf-border">
+                <h2 class="text-xl font-mono text-white">System Reboot: Error Finder</h2>
+                <span class="text-fnaf-battery font-mono" id="g4-progress">0/5</span>
+            </div>
+
+            <div class="camera-box p-6 md:p-10 rounded-lg min-h-[350px] flex flex-col justify-center items-center text-center relative">
+                <!-- Decor: Withered Golden Freddy & Withered Chica -->
+                <img src="https://i.postimg.cc/zf9QhvCh/Withered-Golden-Freddy-removebg-preview.png" class="decor-animatronic hidden md:block w-48 top-2 right-2" alt="Withered Golden Freddy">
+                <img src="https://i.postimg.cc/6QDPZqrv/Withered-Chica-removebg-preview.png" class="decor-animatronic hidden md:block w-40 bottom-2 left-4" alt="Withered Chica">
+
+                <div id="g4-active-area" class="w-full max-w-2xl z-10 relative flex flex-col items-center">
+                    <p class="text-sm text-fnaf-muted font-mono mb-6 bg-black/50 p-2 rounded">Is this sentence grammatically correct?</p>
+                    
+                    <div class="text-2xl md:text-3xl font-bold mb-8 text-white w-full" id="g4-question">Question goes here</div>
+
+                    <div class="flex gap-4 w-full justify-center">
+                        <button onclick="checkGame4(true)" class="fnaf-btn border-green-800 bg-[#0a1a0a] hover:bg-green-900 px-6 py-4 font-mono font-bold text-green-400 rounded w-40">SYSTEM: OK</button>
+                        <button onclick="checkGame4(false)" class="fnaf-btn border-red-800 bg-[#1a0a0a] hover:bg-red-900 px-6 py-4 font-mono font-bold text-red-400 rounded w-40">ERROR</button>
+                    </div>
+
+                    <div id="g4-feedback" class="mt-6 font-mono text-lg min-h-[30px]"></div>
+                </div>
+
+                <!-- End Screen Wrapper -->
+                <div id="g4-end-screen" class="hidden w-full flex-col items-center text-center z-10 relative">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-mono text-fnaf-battery mb-4">Shift Segment Complete</h2>
+                    <p class="text-gray-300 mb-8 font-mono">You successfully survived this hour of the night.</p>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="startGame('game4')" class="fnaf-btn px-6 py-3 font-mono font-bold rounded">PLAY AGAIN</button>
+                        <button onclick="switchView('badges')" class="fnaf-btn bg-fnaf-primary px-6 py-3 font-mono font-bold rounded">CHECK BADGES</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. BADGES & ENDGAME -->
+        <section id="view-badges" class="view-section hidden space-y-6 relative">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-mono text-fnaf-accent mb-2 uppercase">Security Clearance</h2>
+                <p class="text-gray-400">Collect all badges to unlock your official Night Guard Certificate.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 relative z-10" id="badges-grid">
+                <!-- Badges generated via JS -->
+            </div>
+
+            <div id="certificate-unlock-area" class="mt-12 text-center hidden relative z-20">
+                <button onclick="showCertificate()" class="fnaf-btn bg-fnaf-accent text-black px-10 py-4 text-xl font-bold font-mono rounded animate-pulse shadow-[0_0_20px_#facc15]">
+                    VIEW CERTIFICATE
+                </button>
+            </div>
+        </section>
+
+        <!-- CERTIFICATE SECTION -->
+        <section id="certificate-section" class="hidden relative z-50">
+            <div class="max-w-4xl mx-auto mt-10 p-1 bg-fnaf-accent shadow-[0_0_50px_rgba(250,204,21,0.3)]">
+                <div class="bg-black p-10 md:p-16 border-4 border-fnaf-accent text-center relative overflow-hidden">
+                    
+                    <!-- Decorative Certificate Images -->
+                    <img src="https://i.postimg.cc/zfLM3KgF/Golden-Freddy-Jumpscare-removebg-preview.png" class="absolute -bottom-10 -right-10 w-64 opacity-20 pointer-events-none" style="filter: grayscale(100%) sepia(100%) hue-rotate(35deg) saturate(300%);" alt="Golden Freddy">
+                    <img src="https://i.postimg.cc/tgLc6J3V/The-Marionette-removebg-preview.png" class="absolute top-6 -left-4 w-56 opacity-20 pointer-events-none" style="filter: grayscale(100%) sepia(100%) hue-rotate(35deg) saturate(300%);" alt="Marionette">
+                    <img src="https://i.postimg.cc/6QDPZqrv/Withered-Chica-removebg-preview.png" class="absolute top-1/3 -right-20 w-48 opacity-10 pointer-events-none" alt="Withered Chica">
+                    <img src="https://i.postimg.cc/zf9QhvCh/Withered-Golden-Freddy-removebg-preview.png" class="absolute bottom-1/4 -left-16 w-48 opacity-10 pointer-events-none" alt="Withered Golden Freddy">
+
+                    <!-- Decorative borders -->
+                    <div class="absolute top-4 left-4 w-12 h-12 border-t-4 border-l-4 border-fnaf-accent"></div>
+                    <div class="absolute top-4 right-4 w-12 h-12 border-t-4 border-r-4 border-fnaf-accent"></div>
+                    <div class="absolute bottom-4 left-4 w-12 h-12 border-b-4 border-l-4 border-fnaf-accent"></div>
+                    <div class="absolute bottom-4 right-4 w-12 h-12 border-b-4 border-r-4 border-fnaf-accent"></div>
+
+                    <div class="relative z-10">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-mono text-fnaf-accent mb-4 uppercase tracking-widest drop-shadow-lg">Certificate of Survival</h1>
+                        <h2 class="text-xl md:text-2xl text-white mb-12 font-mono tracking-widest">Fazbear Entertainment Security</h2>
+                        
+                        <p class="text-lg text-gray-300 mb-4 font-sans">This certifies that</p>
+                        <div class="text-3xl md:text-4xl font-bold text-white border-b-2 border-fnaf-accent inline-block px-10 pb-2 mb-10 font-mono">
+                            Night Guard #1987
+                        </div>
+                        
+                        <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-16 font-sans leading-relaxed">
+                            has successfully survived the shift by mastering the <strong class="text-fnaf-accent">Future Simple</strong> tense. They demonstrated exceptional skill in predicting animatronic movements (+) and making split-second decisions (-) under extreme pressure.
+                        </p>
+
+                        <div class="flex justify-between items-end px-4 md:px-10">
+                            <div class="text-center w-1/3">
+                                <div class="border-b border-gray-500 mb-2 pb-2 text-fnaf-accent font-mono text-2xl">A2</div>
+                                <p class="text-xs md:text-sm text-gray-500 uppercase tracking-wider font-mono">Level Passed</p>
+                            </div>
+                            <div class="text-5xl md:text-6xl w-1/3">🐻🍕</div>
+                            <div class="text-center w-1/3">
+                                <div class="border-b border-gray-500 mb-2 pb-2 text-white font-mono text-xl" style="font-family: 'Brush Script MT', cursive;">F. Fazbear</div>
+                                <p class="text-xs md:text-sm text-gray-500 uppercase tracking-wider font-mono">Management</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8 no-print flex justify-center gap-4 relative z-50">
+                <button onclick="window.print()" class="fnaf-btn bg-white text-black px-6 py-3 font-bold font-mono rounded">🖨️ PRINT PDF</button>
+                <button onclick="closeCertificate()" class="fnaf-btn bg-fnaf-panel px-6 py-3 font-bold font-mono rounded">BACK TO HQ</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JS LOGIC ENGINE -->
+    <script>
+        // --- STATE MANAGEMENT ---
+        let STATE = {
+            unlockedBadges: JSON.parse(localStorage.getItem('fnaf_fs_badges_v2')) || [],
+            currentGame: null,
+            currentQuestions: [],
+            qIndex: 0,
+            failedOnce: false, 
+            currentG3Answer: [] 
+        };
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            document.getElementById('level-display').innerText = `Level: ${GAME_DATA.metadata.level} | ${GAME_DATA.metadata.topic}`;
+            populateHub();
+            renderBadges();
+            checkCertificateUnlock();
+        };
+
+        // --- NAVIGATION LOGIC ---
+        function switchView(viewName) {
+            Sound.click();
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${viewName}`).classList.add('active');
+
+            document.getElementById('certificate-section').classList.add('hidden');
+
+            if(viewName.startsWith('game')) {
+                startGame(viewName);
+            }
+        }
+
+        // --- HUB POPULATION ---
+        function populateHub() {
+            document.getElementById('story-title').innerText = GAME_DATA.story.title;
+            document.getElementById('story-text').innerText = GAME_DATA.story.text;
+            document.getElementById('story-explanation').innerText = GAME_DATA.story.explanation;
+
+            const grid = document.getElementById('vocab-grid');
+            grid.innerHTML = '';
+            GAME_DATA.vocabulary.forEach(v => {
+                const card = document.createElement('div');
+                card.className = "bg-[#0d0d12] border border-fnaf-border p-4 rounded flex items-center justify-between cursor-pointer hover:bg-[#1a1a24] hover:border-gray-500 transition shadow-md z-10 relative";
+                card.onclick = () => {
+                    Sound.click();
+                    speakText(v.word);
+                    if(!STATE.unlockedBadges.includes('b_vocab')) {
+                        awardBadge('b_vocab');
+                    }
+                };
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl drop-shadow-lg">${v.emoji}</span>
+                        <div class="text-left">
+                            <div class="font-bold text-white tracking-wide">${v.word}</div>
+                            <div class="text-xs text-gray-400">${v.trans}</div>
+                        </div>
+                    </div>
+                    <span class="text-gray-500 text-sm">🔊</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- GAME ENGINE ---
+        function getRandomQuestions(pool, count = 5) {
+            const shuffled = [...pool].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function startGame(gameId) {
+            STATE.currentGame = gameId;
+            STATE.qIndex = 0;
+            
+            // Reset Views - Show active area, hide end screen (Fixing the bug)
+            const activeId = gameId.replace('game', 'g');
+            document.getElementById(`${activeId}-active-area`).classList.remove('hidden');
+            document.getElementById(`${activeId}-active-area`).classList.add('flex');
+            document.getElementById(`${activeId}-end-screen`).classList.add('hidden');
+            document.getElementById(`${activeId}-end-screen`).classList.remove('flex');
+            
+            let pool = [];
+            if(gameId === 'game1') pool = GAME_DATA.game1Pool;
+            if(gameId === 'game2') pool = GAME_DATA.game2Pool;
+            if(gameId === 'game3') pool = GAME_DATA.game3Pool;
+            if(gameId === 'game4') pool = GAME_DATA.game4Pool;
+
+            STATE.currentQuestions = getRandomQuestions(pool, 5);
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            STATE.failedOnce = false; 
+            const gameId = STATE.currentGame;
+            const qData = STATE.currentQuestions[STATE.qIndex];
+            const activePrefix = gameId.replace('game', 'g');
+            
+            document.getElementById(`${activePrefix}-progress`).innerText = `${STATE.qIndex + 1}/5`;
+            
+            const fb = document.getElementById(`${activePrefix}-feedback`);
+            fb.innerText = '';
+            fb.className = 'mt-6 font-mono text-lg min-h-[30px]';
+
+            if(gameId === 'game1') {
+                // Keep the (+) or (-) in the prompt for clarity
+                document.getElementById('g1-question').innerText = qData.q;
+                document.getElementById('g1-input').value = '';
+                document.getElementById('g1-input').focus();
+            } 
+            else if (gameId === 'game2') {
+                document.getElementById('g2-question').innerText = qData.q;
+                const optsDiv = document.getElementById('g2-options');
+                optsDiv.innerHTML = '';
+                
+                let optionsWithIndex = qData.options.map((opt, i) => ({text: opt, originalIndex: i}));
+                optionsWithIndex.sort(() => 0.5 - Math.random());
+
+                optionsWithIndex.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "fnaf-btn p-4 font-sans font-semibold text-lg text-left rounded w-full z-10 relative";
+                    btn.innerText = opt.text;
+                    btn.onclick = () => checkGame2(opt.originalIndex);
+                    optsDiv.appendChild(btn);
+                });
+            }
+            else if (gameId === 'game3') {
+                STATE.currentG3Answer = [];
+                renderG3AnswerBox();
+                
+                const bankDiv = document.getElementById('g3-word-bank');
+                bankDiv.innerHTML = '';
+                
+                let shuffledWords = [...qData.words].sort(() => 0.5 - Math.random());
+                shuffledWords.forEach(word => {
+                    const btn = document.createElement('button');
+                    btn.className = "fnaf-btn px-4 py-2 font-sans font-bold text-lg rounded bg-[#111] z-10 relative";
+                    btn.innerText = word;
+                    btn.onclick = () => addToG3Answer(word, btn);
+                    bankDiv.appendChild(btn);
+                });
+            }
+            else if (gameId === 'game4') {
+                document.getElementById('g4-question').innerText = qData.q;
+            }
+        }
+
+        function showFeedback(gameId, isCorrect, message, isHint = false) {
+            const activePrefix = gameId.replace('game', 'g');
+            const fb = document.getElementById(`${activePrefix}-feedback`);
+            if(isCorrect) {
+                fb.innerHTML = `<span class="text-fnaf-battery drop-shadow-md">SUCCESS: ${message}</span>`;
+                Sound.success();
+            } else {
+                if(isHint) {
+                    fb.innerHTML = `<span class="text-fnaf-accent drop-shadow-md">SYSTEM HINT: ${message}</span>`;
+                } else {
+                    fb.innerHTML = `<span class="text-fnaf-primary drop-shadow-md">ERROR: ${message}</span>`;
+                }
+                Sound.error();
+            }
+        }
+
+        function nextQuestionOrFinish(gameId) {
+            setTimeout(() => {
+                STATE.qIndex++;
+                if(STATE.qIndex < 5) {
+                    loadQuestion();
+                } else {
+                    endGame(gameId);
+                }
+            }, 1500);
+        }
+
+        function endGame(gameId) {
+            let badgeId = '';
+            if(gameId === 'game1') badgeId = 'b_cam';
+            if(gameId === 'game2') badgeId = 'b_guard';
+            if(gameId === 'game3') badgeId = 'b_wire';
+            if(gameId === 'game4') badgeId = 'b_reboot';
+            
+            // Toggle view visibility without deleting DOM (Bug Fixed)
+            const activePrefix = gameId.replace('game', 'g');
+            document.getElementById(`${activePrefix}-active-area`).classList.add('hidden');
+            document.getElementById(`${activePrefix}-active-area`).classList.remove('flex');
+            
+            document.getElementById(`${activePrefix}-end-screen`).classList.remove('hidden');
+            document.getElementById(`${activePrefix}-end-screen`).classList.add('flex');
+            
+            awardBadge(badgeId);
+        }
+
+        // --- GAME 1 SPECIFIC ---
+        function checkGame1() {
+            const input = document.getElementById('g1-input').value.trim().toLowerCase();
+            const qData = STATE.currentQuestions[STATE.qIndex];
+            const correctAns = qData.ans.toLowerCase();
+            
+            let isCorrect = (input === correctAns);
+            if(correctAns === "won't" && input === "will not") isCorrect = true;
+            if(correctAns.includes("won't ") && input.includes("will not ")) {
+                if(input.replace("will not ", "") === correctAns.replace("won't ", "")) isCorrect = true;
+            }
+
+            if(isCorrect) {
+                let textToSpeak = qData.q.replace("___", qData.ans);
+                textToSpeak = textToSpeak.replace(/\(\+\)|\(\-\)/g, "").trim(); // Remove (+) (-) when speaking
+                speakText(textToSpeak); 
+                showFeedback('game1', true, "Log repaired.");
+                document.getElementById('g1-input').disabled = true; // prevent double enter
+                setTimeout(() => { document.getElementById('g1-input').disabled = false; }, 1500);
+                nextQuestionOrFinish('game1');
+            } else {
+                if(!STATE.failedOnce) {
+                    STATE.failedOnce = true;
+                    showFeedback('game1', false, qData.hint, true);
+                } else {
+                    showFeedback('game1', false, "Access Denied. Try again.");
+                }
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if(STATE.currentGame === 'game1' && e.key === 'Enter') {
+                if(!document.getElementById('g1-input').disabled) {
+                    checkGame1();
+                }
+            }
+        });
+
+        // --- GAME 2 SPECIFIC ---
+        function checkGame2(selectedIndex) {
+            const qData = STATE.currentQuestions[STATE.qIndex];
+            
+            if(selectedIndex === qData.ans) {
+                speakText(qData.options[qData.ans]);
+                showFeedback('game2', true, "Correct choice.");
+                document.querySelectorAll('#g2-options button').forEach(b => b.disabled = true);
+                nextQuestionOrFinish('game2');
+            } else {
+                if(!STATE.failedOnce) {
+                    STATE.failedOnce = true;
+                    showFeedback('game2', false, qData.hint, true);
+                } else {
+                    showFeedback('game2', false, "Incorrect response.");
+                }
+            }
+        }
+
+        // --- GAME 3 SPECIFIC ---
+        function addToG3Answer(word, btnElement) {
+            Sound.click();
+            STATE.currentG3Answer.push({word: word, btn: btnElement});
+            btnElement.style.visibility = 'hidden';
+            renderG3AnswerBox();
+        }
+
+        function removeLastWordG3() {
+            if(STATE.currentG3Answer.length > 0) {
+                Sound.click();
+                const lastItem = STATE.currentG3Answer.pop();
+                lastItem.btn.style.visibility = 'visible';
+                renderG3AnswerBox();
+            }
+        }
+
+        function resetG3() {
+            Sound.click();
+            STATE.currentG3Answer.forEach(item => {
+                item.btn.style.visibility = 'visible';
+            });
+            STATE.currentG3Answer = [];
+            renderG3AnswerBox();
+            document.getElementById('g3-feedback').innerText = '';
+        }
+
+        function renderG3AnswerBox() {
+            const box = document.getElementById('g3-answer-box');
+            if(STATE.currentG3Answer.length === 0) {
+                box.innerHTML = '<span class="text-gray-600 font-mono italic select-none">Click words to build sentence (Click here to undo)</span>';
+            } else {
+                box.innerHTML = '';
+                STATE.currentG3Answer.forEach(item => {
+                    const span = document.createElement('span');
+                    span.className = "bg-fnaf-secondary px-3 py-1 rounded border border-blue-900 font-sans font-bold text-lg shadow-md";
+                    span.innerText = item.word;
+                    box.appendChild(span);
+                });
+            }
+        }
+
+        function checkGame3() {
+            const qData = STATE.currentQuestions[STATE.qIndex];
+            const currentStr = STATE.currentG3Answer.map(i => i.word).join(" ");
+            
+            if(currentStr === qData.ans) {
+                speakText(qData.ans);
+                showFeedback('game3', true, "Wire connection restored.");
+                nextQuestionOrFinish('game3');
+            } else {
+                if(!STATE.failedOnce) {
+                    STATE.failedOnce = true;
+                    showFeedback('game3', false, qData.hint, true);
+                } else {
+                    showFeedback('game3', false, "Connection failed.");
+                }
+                setTimeout(resetG3, 1500);
+            }
+        }
+
+        // --- GAME 4 SPECIFIC ---
+        function checkGame4(playerChoice) {
+            const qData = STATE.currentQuestions[STATE.qIndex];
+            
+            if(playerChoice === qData.ans) {
+                speakText(qData.correct); // Now speaks the grammatically correct version
+                showFeedback('game4', true, "System verified.");
+                nextQuestionOrFinish('game4');
+            } else {
+                if(!STATE.failedOnce) {
+                    STATE.failedOnce = true;
+                    showFeedback('game4', false, qData.hint, true);
+                } else {
+                    showFeedback('game4', false, "Verification failed.");
+                }
+            }
+        }
+
+        // --- BADGES & CERTIFICATE ---
+        function awardBadge(badgeId) {
+            if(!STATE.unlockedBadges.includes(badgeId)) {
+                STATE.unlockedBadges.push(badgeId);
+                localStorage.setItem('fnaf_fs_badges_v2', JSON.stringify(STATE.unlockedBadges));
+                
+                Sound.creepy();
+                
+                renderBadges();
+                checkCertificateUnlock();
+            }
+        }
+
+        function renderBadges() {
+            const grid = document.getElementById('badges-grid');
+            grid.innerHTML = '';
+            
+            GAME_DATA.badges.forEach(b => {
+                const isUnlocked = STATE.unlockedBadges.includes(b.id);
+                const div = document.createElement('div');
+                div.className = `p-4 rounded border-2 text-center flex flex-col items-center justify-center min-h-[120px] transition-all relative z-10 ${isUnlocked ? 'border-fnaf-accent bg-[#1a1a00] shadow-[0_0_15px_rgba(250,204,21,0.2)]' : 'border-gray-800 bg-black opacity-50 grayscale'}`;
+                
+                div.innerHTML = `
+                    <div class="text-4xl mb-2 drop-shadow-md">${isUnlocked ? b.icon : '🔒'}</div>
+                    <div class="font-mono font-bold text-sm text-white">${b.name}</div>
+                    <div class="text-xs text-gray-500 mt-1">${b.desc}</div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function checkCertificateUnlock() {
+            if(STATE.unlockedBadges.length >= GAME_DATA.badges.length) {
+                document.getElementById('certificate-unlock-area').classList.remove('hidden');
+            }
+        }
+
+        function showCertificate() {
+            Sound.success();
+            // Confetti
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100, colors: ['#facc15', '#8b0000', '#ffffff'] };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('certificate-section').classList.remove('hidden');
+        }
+
+        function closeCertificate() {
+            Sound.click();
+            document.getElementById('certificate-section').classList.add('hidden');
+            switchView('hub');
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazbear Security: Present Simple Protocol</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            /* Unified Present Tenses Palette: Classic Pizzeria / Security Tablet (Emerald & Cyan) */
+            --bg-base: #060d10;
+            --panel-bg: #0c161c;
+            --border-color: #0e7490;
+            --primary-text: #34d399; /* Emerald */
+            --muted-text: #0d9488;   /* Teal */
+            --accent-red: #f43f5e;   /* Neon Rose */
+            --accent-yellow: #fbbf24;/* Amber Highlights */
+            --accent-blue: #22d3ee;  /* Cyan Accent */
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image:
+                radial-gradient(circle at 18% 12%, rgba(16, 185, 129, 0.12), transparent 40%),
+                radial-gradient(circle at 82% 85%, rgba(34, 211, 238, 0.1), transparent 42%);
+            color: var(--primary-text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .terminal-font {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* CRT Screen Effect */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(16, 185, 129, 0.04), rgba(0, 255, 0, 0.015), rgba(34, 211, 238, 0.05));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.32;
+        }
+
+        /* Glitch Animation */
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+        .glitch-hover:hover {
+            animation: glitch 0.2s linear infinite;
+            color: var(--accent-red);
+        }
+
+        /* UI Elements */
+        .security-panel {
+            background: var(--panel-bg);
+            border: 2px solid rgba(34, 211, 238, 0.35);
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 24px rgba(34, 211, 238, 0.06);
+        }
+
+        .btn-terminal {
+            background: rgba(6, 13, 16, 0.75);
+            border: 2px solid var(--primary-text);
+            color: var(--primary-text);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 48px; /* Touch friendly */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-terminal:hover {
+            background: linear-gradient(135deg, var(--primary-text), var(--accent-blue));
+            border-color: var(--accent-blue);
+            color: #051014;
+            box-shadow: 0 0 18px rgba(34, 211, 238, 0.45);
+        }
+
+        .btn-terminal.active-tab {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.22), rgba(34, 211, 238, 0.22));
+            border-color: var(--accent-blue);
+            color: #ecfeff;
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.25);
+        }
+
+        .btn-terminal:active {
+            transform: scale(0.95);
+        }
+
+        .btn-terminal:disabled {
+            border-color: var(--muted-text);
+            color: var(--muted-text);
+            cursor: not-allowed;
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .btn-red {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+        .btn-red:hover {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 15px var(--accent-red);
+        }
+
+        /* Hint & Feedback */
+        .hint-box {
+            background: rgba(34, 211, 238, 0.08);
+            border-left: 4px solid var(--accent-blue);
+            color: var(--accent-yellow);
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Share Tech Mono', monospace;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Top Bar */
+        .status-bar {
+            background: rgba(6, 13, 16, 0.95);
+            border-bottom: 2px solid #0d9488;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Badges */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 16px;
+        }
+
+        .badge {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 2px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.3;
+            filter: grayscale(100%);
+            transition: all 0.5s;
+        }
+
+        .badge.unlocked {
+            opacity: 1;
+            filter: grayscale(0%);
+            border: 2px solid var(--accent-yellow);
+            background: rgba(255, 183, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 183, 0, 0.3);
+        }
+
+        /* Drag/Drop styling (Click-to-place) */
+        .word-bank-item {
+            background: #222;
+            border: 1px solid var(--muted-text);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .word-bank-item.selected {
+            background: var(--primary-text);
+            color: #000;
+        }
+        
+        .slot {
+            min-width: 60px;
+            height: 40px;
+            border-bottom: 2px dashed var(--primary-text);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            color: var(--accent-yellow);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Character Selection Modal */
+        .char-card {
+            border: 2px solid var(--border-color);
+            background: #111;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .char-card:hover {
+            border-color: var(--accent-yellow);
+            box-shadow: 0 0 15px rgba(255, 183, 0, 0.4);
+            transform: translateY(-5px);
+        }
+        .char-card img {
+            max-height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .crt-overlay { display: none; }
+            #certificate-section, #certificate-section * {
+                visibility: visible;
+            }
+            #certificate-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                background: white !important;
+            }
+            #cert-board {
+                box-shadow: none !important;
+                margin: 0 auto;
+            }
+            .no-print { display: none !important; }
+        }
+
+        /* Canvas Confetti Layer */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Back to Hub Navigation -->
+    <style>
+        .hub-back-btn {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            z-index: 10000;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(6, 13, 16, 0.92);
+            color: #34d399;
+            border: 1px solid rgba(34, 211, 238, 0.55);
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.65), 0 0 10px rgba(34, 211, 238, 0.2);
+            transition: all 0.2s ease;
+        }
+        .hub-back-btn:hover {
+            background: linear-gradient(135deg, #34d399, #22d3ee);
+            color: #051014;
+            border-color: #22d3ee;
+            box-shadow: 0 0 16px rgba(34, 211, 238, 0.55);
+            transform: translateY(-1px);
+        }
+        .status-bar { padding-left: 148px !important; }
+        @media print {
+            .hub-back-btn { display: none !important; }
+        }
+    </style>
+    <a href="index.html" class="hub-back-btn no-print" title="Return to ESL Games Hub">⬅ Back to Hub</a>
+    <div class="crt-overlay"></div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- GAME DATA & LOGIC -->
+    <script>
+        /**
+         * GAME_DATA: All content, rules, questions, and image assets.
+         */
+        const GAME_DATA = {
+            images: {
+                plushies: {
+                    bonnie: "https://i.postimg.cc/J030kzQg/Bonnie-plushie-removebg-preview.png",
+                    chica: "https://i.postimg.cc/sxPxhgJw/Chica-plushie-removebg-preview.png",
+                    foxy: "https://i.postimg.cc/7h1h2ZNK/Foxy-Plushie-removebg-preview.png",
+                    freddy: "https://i.postimg.cc/qqcq3vG9/Freddy-Plushie-removebg-preview.png",
+                    cupcake: "https://i.postimg.cc/0jGjwyCf/Cupcake-removebg-preview.png"
+                },
+                characters: {
+                    bonnie: "https://i.postimg.cc/8cdc6zbY/Bonnie-removebg-preview.png",
+                    chica: "https://i.postimg.cc/L5k518VV/Chica-removebg-preview.png",
+                    foxy: "https://i.postimg.cc/wM5MmjkR/Foxy-removebg-preview.png",
+                    freddy: "https://i.postimg.cc/44pmMWTZ/Freddy-removebg-preview.png",
+                    golden: "https://i.postimg.cc/1X0Xq3Kb/Golden-Freddy-removebg-preview.png"
+                }
+            },
+            story: {
+                intro: "WELCOME TO FAZBEAR ENTERTAINMENT. You are the new Night Security Guard (Clearance: Beginner+). Your survival depends on analyzing the animatronics' daily routines. Read the files carefully.",
+                grammarTitle: "SECURITY PROTOCOL: PRESENT SIMPLE",
+                grammarRules: [
+                    "USAGE: We use Present Simple to talk about facts, habits, daily routines, and permanent situations.",
+                    "SIGNAL WORDS: always, usually, often, sometimes, never, every night.",
+                    "Rule 1 (+): For He, She, It -> add 's' or 'es' to the verb. (e.g., Freddy sings). For I, You, We, They -> use the base verb. (e.g., I watch).",
+                    "Rule 2 (-): Use 'doesn't' for He, She, It. Use 'don't' for I, You, We, They. The main verb stays in base form! (e.g., Bonnie doesn't sleep).",
+                    "Rule 3 (?): Start with 'Does' (He/She/It) or 'Do' (I/You/We/They)."
+                ]
+            },
+            badges: [
+                { id: "b1", icon: "🐻", name: "Log Fixer", desc: "Complete Camera Logs" },
+                { id: "b2", icon: "🔋", name: "Power Saver", desc: "Complete Power Routing" },
+                { id: "b3", icon: "📻", name: "Investigator", desc: "Complete Audio Decoy" },
+                { id: "b4", icon: "💾", name: "System Admin", desc: "Complete System Reboot" },
+                { id: "b5", icon: "🚪", name: "Door Guard", desc: "Complete Security Doors" }
+            ],
+            // Game 1: Positives (Fill in the blank)
+            game1: [
+                { text: "Freddy ___ songs on the stage.", options: ["sing", "sings", "singing"], answer: "sings", hint: "Freddy is 'He'. Rule: Add 's' to the verb!" },
+                { text: "I ___ the security cameras every hour.", options: ["checks", "check", "checking"], answer: "check", hint: "With 'I', we use the base verb without 's'." },
+                { text: "Chica ___ pizza in the kitchen.", options: ["eat", "eats", "eating"], answer: "eats", hint: "Chica is 'She'. Rule: Add 's' to the verb!" },
+                { text: "The animatronics ___ around at night.", options: ["walks", "walk", "walked"], answer: "walk", hint: "Animatronics = 'They' (plural). Use the base verb!" },
+                { text: "Foxy ___ fast down the hallway.", options: ["run", "running", "runs"], answer: "runs", hint: "Foxy is 'He'. Rule: Add 's' to the verb!" },
+                { text: "We ___ the doors to stay safe.", options: ["close", "closes", "closing"], answer: "close", hint: "With 'We', we use the base verb without 's'." },
+                { text: "The fan ___ on the desk.", options: ["spin", "spins", "spinning"], answer: "spins", hint: "The fan is 'It'. Rule: Add 's' to the verb!" },
+                { text: "You ___ the flashlight to see them.", options: ["uses", "use", "using"], answer: "use", hint: "With 'You', use the base verb without 's'." },
+                { text: "Bonnie ___ the guitar in the band.", options: ["play", "plays", "playing"], answer: "plays", hint: "Bonnie is 'He'. Rule: Add 's' to the verb!" },
+                { text: "The music box ___ a creepy tune.", options: ["play", "plays", "playing"], answer: "plays", hint: "The music box is 'It'. Rule: Add 's' to the verb!" },
+                { text: "I ___ scared when the power goes out.", options: ["feels", "feel", "feeling"], answer: "feel", hint: "With 'I', use the base verb." },
+                { text: "The guard ___ coffee to stay awake.", options: ["drink", "drinks", "drinking"], answer: "drinks", hint: "The guard is 'He' or 'She'. Rule: Add 's'." },
+                { text: "They ___ at you through the window.", options: ["looks", "look", "looking"], answer: "look", hint: "'They' needs the base verb without 's'." },
+                { text: "The clock ___ 6 AM finally.", options: ["strike", "strikes", "striking"], answer: "strikes", hint: "The clock is 'It'. Add 's' to the verb." },
+                { text: "Kids ___ Freddy during the day.", options: ["love", "loves", "loving"], answer: "love", hint: "'Kids' is plural (They). Use the base verb." },
+                { text: "The puppet ___ in the prize corner.", options: ["stay", "stays", "staying"], answer: "stays", hint: "The puppet is 'It'/'He'. Add 's'." },
+                { text: "I ___ the camera monitor carefully.", options: ["watches", "watch", "watching"], answer: "watch", hint: "With 'I', use the base verb." },
+                { text: "Golden Freddy ___ randomly.", options: ["appears", "appear", "appearing"], answer: "appears", hint: "Golden Freddy is 'He'. Add 's'." },
+                { text: "We ___ to survive until morning.", options: ["tries", "try", "trying"], answer: "try", hint: "With 'We', use the base verb." },
+                { text: "The generator ___ loud noises.", options: ["make", "makes", "making"], answer: "makes", hint: "The generator is 'It'. Add 's'." }
+            ],
+            // Game 2: Negatives (Don't vs Doesn't)
+            game2: [
+                { text: "Freddy ___ like closed doors.", options: ["don't", "doesn't"], answer: "doesn't", hint: "Freddy is 'He'. Use 'doesn't'." },
+                { text: "We ___ want to run out of power.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'We', use 'don't'." },
+                { text: "Chica ___ stay on the stage.", options: ["don't", "doesn't"], answer: "doesn't", hint: "Chica is 'She'. Use 'doesn't'." },
+                { text: "I ___ sleep during my shift.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'I', use 'don't'." },
+                { text: "The animatronics ___ hate children.", options: ["don't", "doesn't"], answer: "don't", hint: "Animatronics = 'They' (plural). Use 'don't'." },
+                { text: "Foxy ___ move when you watch him.", options: ["don't", "doesn't"], answer: "doesn't", hint: "Foxy is 'He'. Use 'doesn't'." },
+                { text: "You ___ have much battery left.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'You', use 'don't'." },
+                { text: "The phone guy ___ give good news.", options: ["don't", "doesn't"], answer: "doesn't", hint: "The phone guy is 'He'. Use 'doesn't'." },
+                { text: "They ___ walk slowly in the dark.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'They', use 'don't'." },
+                { text: "The camera ___ work in the kitchen.", options: ["don't", "doesn't"], answer: "doesn't", hint: "The camera is 'It'. Use 'doesn't'." },
+                { text: "I ___ hear anything in the vent.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'I', use 'don't'." },
+                { text: "Bonnie ___ go to the right door.", options: ["don't", "doesn't"], answer: "doesn't", hint: "Bonnie is 'He'. Use 'doesn't'." },
+                { text: "We ___ leave the office.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'We', use 'don't'." },
+                { text: "The music box ___ play forever.", options: ["don't", "doesn't"], answer: "doesn't", hint: "The music box is 'It'. Use 'doesn't'." },
+                { text: "Kids ___ see the scary robots.", options: ["don't", "doesn't"], answer: "don't", hint: "'Kids' is plural (They). Use 'don't'." },
+                { text: "The manager ___ pay very well.", options: ["don't", "doesn't"], answer: "doesn't", hint: "The manager is 'He'. Use 'doesn't'." },
+                { text: "I ___ open the doors until 6 AM.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'I', use 'don't'." },
+                { text: "Golden Freddy ___ follow the rules.", options: ["don't", "doesn't"], answer: "doesn't", hint: "Golden Freddy is 'He'. Use 'doesn't'." },
+                { text: "You ___ forget to check Pirate Cove.", options: ["don't", "doesn't"], answer: "don't", hint: "With 'You', use 'don't'." },
+                { text: "The flashlight ___ work without batteries.", options: ["don't", "doesn't"], answer: "doesn't", hint: "The flashlight is 'It'. Use 'doesn't'." }
+            ],
+            // Game 3: Questions (Sentence Building)
+            game3: [
+                { words: ["Does", "Freddy", "sing", "songs?"], answer: "Does Freddy sing songs?", hint: "Start with 'Does' for He/She/It. Then the subject (Freddy), then the base verb." },
+                { words: ["Do", "you", "check", "cameras?"], answer: "Do you check cameras?", hint: "Start with 'Do' for I/You/We/They." },
+                { words: ["Does", "Chica", "eat", "pizza?"], answer: "Does Chica eat pizza?", hint: "Start with 'Does' for Chica (She)." },
+                { words: ["Do", "they", "walk", "fast?"], answer: "Do they walk fast?", hint: "Start with 'Do' for 'they'." },
+                { words: ["Does", "Foxy", "run", "down the hall?"], answer: "Does Foxy run down the hall?", hint: "Start with 'Does' for Foxy (He)." },
+                { words: ["Do", "we", "have", "power?"], answer: "Do we have power?", hint: "Start with 'Do' for 'we'." },
+                { words: ["Does", "the fan", "make", "noise?"], answer: "Does the fan make noise?", hint: "Start with 'Does' for the fan (It)." },
+                { words: ["Do", "I", "survive", "the night?"], answer: "Do I survive the night?", hint: "Start with 'Do' for 'I'." },
+                { words: ["Does", "Bonnie", "play", "guitar?"], answer: "Does Bonnie play guitar?", hint: "Start with 'Does' for Bonnie (He)." },
+                { words: ["Do", "kids", "like", "Freddy?"], answer: "Do kids like Freddy?", hint: "Start with 'Do' for kids (They)." },
+                { words: ["Does", "the phone", "ring", "at 12 AM?"], answer: "Does the phone ring at 12 AM?", hint: "Start with 'Does' for the phone (It)." },
+                { words: ["Do", "you", "close", "the doors?"], answer: "Do you close the doors?", hint: "Start with 'Do' for 'you'." },
+                { words: ["Does", "she", "stand", "in the kitchen?"], answer: "Does she stand in the kitchen?", hint: "Start with 'Does' for 'she'." },
+                { words: ["Do", "they", "look", "at the camera?"], answer: "Do they look at the camera?", hint: "Start with 'Do' for 'they'." },
+                { words: ["Does", "he", "hide", "in the dark?"], answer: "Does he hide in the dark?", hint: "Start with 'Does' for 'he'." },
+                { words: ["Do", "we", "need", "the flashlight?"], answer: "Do we need the flashlight?", hint: "Start with 'Do' for 'we'." },
+                { words: ["Does", "the music", "stop", "suddenly?"], answer: "Does the music stop suddenly?", hint: "Start with 'Does' for the music (It)." },
+                { words: ["Do", "I", "check", "Pirate Cove?"], answer: "Do I check Pirate Cove?", hint: "Start with 'Do' for 'I'." },
+                { words: ["Does", "the boss", "call", "you?"], answer: "Does the boss call you?", hint: "Start with 'Does' for the boss (He)." },
+                { words: ["Do", "you", "feel", "scared?"], answer: "Do you feel scared?", hint: "Start with 'Do' for 'you'." }
+            ],
+            // Game 4: Spelling Sorter
+            game4: [
+                { word: "play", category: "+s", hint: "Ends in vowel+y. Just add 's'." },
+                { word: "watch", category: "+es", hint: "Ends in 'ch'. Add 'es'." },
+                { word: "study", category: "+ies", hint: "Ends in consonant+y. Change 'y' to 'i' and add 'es'." },
+                { word: "go", category: "+es", hint: "Ends in 'o'. Add 'es'." },
+                { word: "try", category: "+ies", hint: "Ends in consonant+y. Change 'y' to 'i' and add 'es'." },
+                { word: "sing", category: "+s", hint: "Regular verb. Just add 's'." },
+                { word: "fix", category: "+es", hint: "Ends in 'x'. Add 'es'." },
+                { word: "cry", category: "+ies", hint: "Ends in consonant+y. Change 'y' to 'i' and add 'es'." },
+                { word: "run", category: "+s", hint: "Regular verb. Just add 's'." },
+                { word: "wash", category: "+es", hint: "Ends in 'sh'. Add 'es'." },
+                { word: "fly", category: "+ies", hint: "Ends in consonant+y. Change 'y' to 'i' and add 'es'." },
+                { word: "look", category: "+s", hint: "Regular verb. Just add 's'." },
+                { word: "miss", category: "+es", hint: "Ends in 'ss'. Add 'es'." },
+                { word: "carry", category: "+ies", hint: "Ends in consonant+y. Change 'y' to 'i' and add 'es'." },
+                { word: "eat", category: "+s", hint: "Regular verb. Just add 's'." },
+                { word: "do", category: "+es", hint: "Ends in 'o'. Add 'es'." },
+                { word: "copy", category: "+ies", hint: "Ends in consonant+y. Change 'y' to 'i' and add 'es'." },
+                { word: "hide", category: "+s", hint: "Regular verb (ends in e). Just add 's'." },
+                { word: "teach", category: "+es", hint: "Ends in 'ch'. Add 'es'." },
+                { word: "stay", category: "+s", hint: "Ends in vowel+y. Just add 's'." }
+            ],
+            // Game 5: True / False (Security Doors)
+            game5: [
+                { text: "Freddy play the guitar.", isCorrect: false, correction: "Freddy plays the guitar.", hint: "Freddy is 'He'. You need to add 's'." },
+                { text: "Chica eats pizza in the kitchen.", isCorrect: true, hint: "Correct! Chica is 'She', so 'eats' is right." },
+                { text: "They walks in the dark.", isCorrect: false, correction: "They walk in the dark.", hint: "With 'They', use the base verb without 's'." },
+                { text: "Foxy run very fast.", isCorrect: false, correction: "Foxy runs very fast.", hint: "Foxy is 'He'. Add 's' to the verb." },
+                { text: "I check the cameras.", isCorrect: true, hint: "Correct! With 'I', we use the base verb." },
+                { text: "We doesn't sleep at night.", isCorrect: false, correction: "We don't sleep at night.", hint: "With 'We', use 'don't' for negatives." },
+                { text: "Golden Freddy appears suddenly.", isCorrect: true, hint: "Correct! Golden Freddy is 'He', so 'appears' is right." },
+                { text: "The music box stop playing.", isCorrect: false, correction: "The music box stops playing.", hint: "The music box is 'It'. Add 's'." },
+                { text: "You don't open the doors.", isCorrect: true, hint: "Correct! With 'You', we use 'don't'." },
+                { text: "Bonnie play the guitar.", isCorrect: false, correction: "Bonnie plays the guitar.", hint: "Bonnie is 'He'. Add 's'." },
+                { text: "Kids loves the show.", isCorrect: false, correction: "Kids love the show.", hint: "'Kids' is plural (They). Use base verb." },
+                { text: "The fan spins on the desk.", isCorrect: true, hint: "Correct! The fan is 'It', so 'spins' is right." },
+                { text: "He watch the monitor.", isCorrect: false, correction: "He watches the monitor.", hint: "He needs 'es' because 'watch' ends in 'ch'." },
+                { text: "I doesn't like jumpscares.", isCorrect: false, correction: "I don't like jumpscares.", hint: "With 'I', always use 'don't'." },
+                { text: "Animatronics wander at night.", isCorrect: true, hint: "Correct! 'Animatronics' is 'They', so base verb is right." },
+                { text: "The phone guy calls at 12 AM.", isCorrect: true, hint: "Correct! The phone guy is 'He'." },
+                { text: "She stand in the hallway.", isCorrect: false, correction: "She stands in the hallway.", hint: "She needs 's' on the verb." },
+                { text: "Do Freddy sing?", isCorrect: false, correction: "Does Freddy sing?", hint: "Freddy is 'He'. Use 'Does' for questions." },
+                { text: "Does Chica eat pizza?", isCorrect: true, hint: "Correct! 'Does' is used for She (Chica)." },
+                { text: "Do you survive the night?", isCorrect: true, hint: "Correct! 'Do' is used with 'you'." }
+            ]
+        };
+    </script>
+
+    <!-- Top Status Bar -->
+    <div class="status-bar no-print">
+        <div class="terminal-font text-lg font-bold flex items-center gap-2">
+            <i class="fas fa-video text-red-500 blink"></i> CAM 01
+        </div>
+        <div class="flex gap-6 items-center">
+            <div class="text-xl" title="Power Level">
+                <i class="fas fa-battery-half text-yellow-400"></i> <span id="ui-stars" class="font-bold">0</span>%
+            </div>
+            <div class="text-xl" title="Security Badges">
+                <i class="fas fa-shield-alt text-blue-400"></i> <span id="ui-badges" class="font-bold">0</span>/5
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="container mx-auto p-4 max-w-5xl pb-20 no-print">
+        
+        <!-- Story & Rules Hub -->
+        <section id="hub-section" class="security-panel p-6 mb-8 mt-4 relative overflow-hidden">
+            <!-- Decorative Plushies in Hub -->
+            <img src="https://i.postimg.cc/0jGjwyCf/Cupcake-removebg-preview.png" alt="Cupcake" class="absolute top-4 right-4 w-16 opacity-50">
+            <img src="https://i.postimg.cc/J030kzQg/Bonnie-plushie-removebg-preview.png" alt="Bonnie Plush" class="absolute bottom-4 right-20 w-20 opacity-30">
+            <img src="https://i.postimg.cc/sxPxhgJw/Chica-plushie-removebg-preview.png" alt="Chica Plush" class="absolute bottom-4 right-4 w-16 opacity-30">
+            <img src="https://i.postimg.cc/qqcq3vG9/Freddy-Plushie-removebg-preview.png" alt="Freddy Plush" class="absolute top-20 right-8 w-20 opacity-20">
+
+            <div class="flex justify-between items-start mb-4 relative z-10">
+                <h1 class="text-2xl md:text-3xl font-bold terminal-font text-[var(--accent-red)]">
+                    <i class="fas fa-exclamation-triangle"></i> NIGHT 1: BRIEFING
+                </h1>
+                <button onclick="readText(GAME_DATA.story.intro)" class="btn-terminal !p-2" title="Read Aloud">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+            <p class="text-lg mb-6 leading-relaxed border-l-4 border-[var(--primary-text)] pl-4 relative z-10" id="intro-text">
+                <!-- Story inserted here via JS -->
+            </p>
+
+            <div class="bg-[#0a0a0a] p-4 rounded border border-[var(--border-color)] relative z-10">
+                <h2 class="text-xl font-bold terminal-font mb-3 text-[var(--accent-yellow)]" id="grammar-title"></h2>
+                <ul class="list-disc pl-5 space-y-2 text-sm md:text-base text-gray-300" id="grammar-rules">
+                    <!-- Rules inserted here -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6 terminal-font">
+            <button onclick="showGame(1)" class="btn-terminal text-xs active-tab" id="tab-1">1: CAM LOGS</button>
+            <button onclick="showGame(2)" class="btn-terminal text-xs" id="tab-2">2: POWER ROUTING</button>
+            <button onclick="showGame(3)" class="btn-terminal text-xs" id="tab-3">3: AUDIO DECOY</button>
+            <button onclick="showGame(4)" class="btn-terminal text-xs" id="tab-4">4: REBOOT SYS</button>
+            <button onclick="showGame(5)" class="btn-terminal text-xs" id="tab-5">5: SEC DOORS</button>
+        </div>
+
+        <!-- Game Container -->
+        <section id="game-container" class="security-panel p-6 min-h-[400px] flex flex-col relative z-10">
+            <div class="flex justify-between items-center mb-6 border-b border-[var(--border-color)] pb-2">
+                <h2 id="game-title" class="text-xl font-bold terminal-font text-[var(--accent-blue)]">SYSTEM INITIATED</h2>
+                <div class="terminal-font text-sm">PROGRESS: <span id="game-progress">0/5</span></div>
+            </div>
+
+            <!-- Dynamic Game Area -->
+            <div id="game-area" class="flex-grow flex flex-col justify-center">
+                <!-- Game content injected here -->
+            </div>
+
+            <!-- Feedback & Next Button Area -->
+            <div id="feedback-area" class="mt-6 min-h-[60px] flex flex-col items-center justify-center">
+                <!-- Hints or success messages -->
+            </div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section class="security-panel p-6 mt-8">
+            <h2 class="text-xl font-bold terminal-font mb-4 text-center">SECURITY CLEARANCE BADGES</h2>
+            <div class="badge-grid" id="badge-container">
+                <!-- Badges injected here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Prize Corner (Character Selection for Certificate) -->
+    <section id="prize-corner-section" class="hidden h-screen flex-col items-center justify-center p-4 bg-black no-print relative z-50">
+        <div class="text-center max-w-4xl w-full">
+            <h1 class="text-4xl md:text-5xl font-bold text-[var(--accent-yellow)] terminal-font mb-4">PRIZE CORNER UNLOCKED!</h1>
+            <p class="text-xl text-white mb-8">You survived 5 nights! Select an animatronic for your official Security Certificate:</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="char-card" onclick="selectCharacter('freddy', 'Freddy Fazbear')">
+                    <img src="https://i.postimg.cc/44pmMWTZ/Freddy-removebg-preview.png" alt="Freddy">
+                    <span class="terminal-font font-bold text-white">FREDDY</span>
+                </div>
+                <div class="char-card" onclick="selectCharacter('bonnie', 'Bonnie the Bunny')">
+                    <img src="https://i.postimg.cc/8cdc6zbY/Bonnie-removebg-preview.png" alt="Bonnie">
+                    <span class="terminal-font font-bold text-white">BONNIE</span>
+                </div>
+                <div class="char-card" onclick="selectCharacter('chica', 'Chica the Chicken')">
+                    <img src="https://i.postimg.cc/L5k518VV/Chica-removebg-preview.png" alt="Chica">
+                    <span class="terminal-font font-bold text-white">CHICA</span>
+                </div>
+                <div class="char-card" onclick="selectCharacter('foxy', 'Foxy the Pirate')">
+                    <img src="https://i.postimg.cc/wM5MmjkR/Foxy-removebg-preview.png" alt="Foxy">
+                    <span class="terminal-font font-bold text-white">FOXY</span>
+                </div>
+                <div class="char-card" onclick="selectCharacter('golden', 'Golden Freddy')">
+                    <img src="https://i.postimg.cc/1X0Xq3Kb/Golden-Freddy-removebg-preview.png" alt="Golden Freddy">
+                    <span class="terminal-font font-bold text-[var(--accent-yellow)]">GOLDEN</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certificate Section (Hidden unless printing or selected) -->
+    <section id="certificate-section" class="hidden min-h-screen py-8 flex-col items-center justify-center p-4 md:p-10 text-center overflow-y-auto">
+        <div id="cert-board" class="border-8 border-double border-gray-800 p-6 md:p-12 max-w-4xl w-full mx-auto relative bg-white text-black shadow-2xl transition-colors duration-500">
+            <!-- Decor Plushies (Dynamic) -->
+            <img id="cert-decor-left" src="" class="absolute top-4 left-4 w-12 md:w-16" alt="decor">
+            <img id="cert-decor-right" src="" class="absolute top-4 right-4 w-12 md:w-16" alt="decor">
+            
+            <div class="flex justify-center items-center gap-4 md:gap-6 mb-4 mt-8 md:mt-0">
+                <img id="cert-char-img" src="" alt="Selected Character" class="h-24 md:h-32 object-contain hidden">
+                <div class="text-left">
+                    <h1 id="cert-title" class="text-3xl md:text-5xl font-black uppercase" style="font-family: 'Share Tech Mono', monospace;">Certificate of Survival</h1>
+                    <h2 id="cert-subtitle" class="text-xl md:text-2xl font-semibold text-gray-700">Fazbear Entertainment</h2>
+                </div>
+            </div>
+
+            <p class="text-base md:text-lg mt-6 mb-2 font-bold text-gray-600">This certifies that</p>
+            <div class="text-3xl md:text-4xl font-bold border-b-2 border-black inline-block px-4 md:px-10 pb-2 mb-6 text-red-700" id="cert-name" contenteditable="true">Junior Night Guard</div>
+            <p class="text-base md:text-lg mb-8 max-w-xl mx-auto font-medium text-gray-800">Has successfully mastered the <strong>Present Simple Protocol</strong> alongside <span id="cert-char-name" class="font-bold">their partner</span>, surviving 5 grueling nights of grammar checks and animatronic surveillance.</p>
+            
+            <div class="flex justify-between mt-8 md:mt-12 px-2 md:px-10 items-end">
+                <div class="text-center">
+                    <div class="border-b-2 border-gray-800 w-24 md:w-40 mb-2"></div>
+                    <p class="text-xs md:text-sm font-bold text-gray-700">Head of Security</p>
+                </div>
+                <div class="text-center hidden md:block">
+                    <div id="cert-stamp" class="w-20 h-20 md:w-24 md:h-24 border-4 border-red-700 rounded-full flex items-center justify-center text-red-700 font-bold transform -rotate-12 mx-auto mb-2 opacity-80 text-sm md:text-base" style="font-family: 'Share Tech Mono', monospace;">
+                        APPROVED
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="border-b-2 border-gray-800 w-24 md:w-40 mb-2 font-mono text-xs md:text-sm pt-4 font-bold text-gray-800" id="cert-date"></div>
+                    <p class="text-xs md:text-sm font-bold text-gray-700">Date</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 no-print flex flex-col md:flex-row gap-4">
+            <button onclick="window.print()" class="btn-terminal !bg-black !text-white !border-black">PRINT CERTIFICATE</button>
+            <button onclick="location.reload()" class="btn-terminal btn-red">NEW SHIFT (RESTART)</button>
+        </div>
+    </section>
+
+    <!-- CORE LOGIC -->
+    <script>
+        // State Management
+        let state = {
+            stars: parseInt(localStorage.getItem('fnaf_stars')) || 0,
+            badges: JSON.parse(localStorage.getItem('fnaf_badges')) || [],
+            currentGameId: 1,
+            currentRoundQ: [],
+            currentQIndex: 0,
+            mistakeMade: false,
+            certCharId: null
+        };
+
+        // Audio Context (Web Audio API) for Retro Sounds
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        
+        function initAudio() {
+            if(!audioCtx) {
+                try {
+                    audioCtx = new AudioContext();
+                } catch(e) {
+                    console.warn("AudioContext not supported or blocked.");
+                }
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'win') {
+                    const freqs = [440, 554, 659, 880];
+                    freqs.forEach((f, i) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.type = 'square';
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.value = f;
+                        g.gain.setValueAtTime(0, audioCtx.currentTime + i*0.1);
+                        g.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + i*0.1 + 0.05);
+                        g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + i*0.1 + 0.2);
+                        o.start(audioCtx.currentTime + i*0.1);
+                        o.stop(audioCtx.currentTime + i*0.1 + 0.2);
+                    });
+                }
+            } catch(e) {}
+        }
+
+        // Web Speech API
+        function readText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop current speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Utility: Shuffle Array (Fisher-Yates)
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex > 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Initialization
+        window.onload = () => {
+            document.getElementById('intro-text').innerText = GAME_DATA.story.intro;
+            document.getElementById('grammar-title').innerText = GAME_DATA.story.grammarTitle;
+            const rulesUl = document.getElementById('grammar-rules');
+            GAME_DATA.story.grammarRules.forEach(rule => {
+                let li = document.createElement('li');
+                li.innerText = rule;
+                rulesUl.appendChild(li);
+            });
+            
+            document.getElementById('cert-date').innerText = new Date().toLocaleDateString();
+
+            updateUI();
+            renderBadges();
+            showGame(1);
+        };
+
+        function updateUI() {
+            document.getElementById('ui-stars').innerText = Math.min(state.stars, 100);
+            document.getElementById('ui-badges').innerText = state.badges.length;
+            localStorage.setItem('fnaf_stars', state.stars);
+            localStorage.setItem('fnaf_badges', JSON.stringify(state.badges));
+
+            if(state.badges.length === 5) {
+                showPrizeCornerTrigger();
+            }
+        }
+
+        function renderBadges() {
+            const container = document.getElementById('badge-container');
+            container.innerHTML = '';
+            GAME_DATA.badges.forEach(b => {
+                const isUnlocked = state.badges.includes(b.id);
+                container.innerHTML += `
+                    <div class="badge ${isUnlocked ? 'unlocked' : ''} text-center p-2" title="${b.desc}">
+                        <div class="text-3xl mb-1">${b.icon}</div>
+                        <div class="text-xs font-bold">${b.name}</div>
+                        ${isUnlocked ? '<i class="fas fa-check text-green-500 mt-1"></i>' : '<i class="fas fa-lock text-gray-600 mt-1"></i>'}
+                    </div>
+                `;
+            });
+        }
+
+        // --- Game Flow Control ---
+        function showGame(gameId) {
+            playSound('click');
+            state.currentGameId = gameId;
+            
+            // Update tabs
+            for(let i=1; i<=5; i++) {
+                let tab = document.getElementById(`tab-${i}`);
+                if(i === gameId) {
+                    tab.classList.add('bg-[var(--primary-text)]', 'text-[var(--bg-base)]');
+                    tab.classList.remove('bg-transparent', 'text-[var(--primary-text)]');
+                } else {
+                    tab.classList.remove('bg-[var(--primary-text)]', 'text-[var(--bg-base)]');
+                    tab.classList.add('bg-transparent', 'text-[var(--primary-text)]');
+                }
+            }
+
+            const titles = ["CAMERA LOGS (POS+)", "POWER ROUTING (NEG-)", "AUDIO DECOY (Q?)", "REBOOT SYSTEM (SPELLING)", "SECURITY DOORS (T/F)"];
+            document.getElementById('game-title').innerText = titles[gameId-1];
+
+            startRound();
+        }
+
+        function startRound() {
+            let pool = GAME_DATA[`game${state.currentGameId}`];
+            let shuffledPool = shuffle([...pool]);
+            state.currentRoundQ = shuffledPool.slice(0, 5); // Pick 5 random questions
+            state.currentQIndex = 0;
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            state.mistakeMade = false;
+            document.getElementById('game-progress').innerText = `${state.currentQIndex + 1}/5`;
+            const gameArea = document.getElementById('game-area');
+            const feedbackArea = document.getElementById('feedback-area');
+            gameArea.innerHTML = '';
+            feedbackArea.innerHTML = '';
+
+            if (state.currentQIndex >= 5) {
+                endRound();
+                return;
+            }
+
+            const q = state.currentRoundQ[state.currentQIndex];
+
+            // Render based on Game ID
+            if (state.currentGameId === 1 || state.currentGameId === 2) {
+                renderMultipleChoice(q, gameArea);
+            } else if (state.currentGameId === 3) {
+                renderSentenceBuilder(q, gameArea);
+            } else if (state.currentGameId === 4) {
+                renderSpellingSorter(q, gameArea);
+            } else if (state.currentGameId === 5) {
+                renderTrueFalse(q, gameArea);
+            }
+        }
+
+        // --- Game 1 & 2: Multiple Choice ---
+        function renderMultipleChoice(q, container) {
+            let questionText = document.createElement('div');
+            questionText.className = 'text-2xl md:text-3xl mb-8 text-center leading-relaxed';
+            let formattedText = q.text.replace('___', '<span class="inline-block w-20 border-b-2 border-[var(--primary-text)] mx-2"></span>');
+            
+            questionText.innerHTML = `
+                <button onclick="readText('${q.text.replace('___', 'blank')}')" class="mr-2 text-gray-400 hover:text-white"><i class="fas fa-volume-up text-lg"></i></button>
+                ${formattedText}
+            `;
+            container.appendChild(questionText);
+
+            let optionsDiv = document.createElement('div');
+            optionsDiv.className = 'flex flex-wrap justify-center gap-4';
+            let shuffledOptions = shuffle([...q.options]);
+            
+            shuffledOptions.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = 'btn-terminal text-lg w-full md:w-auto md:min-w-[150px]';
+                btn.innerText = opt;
+                btn.onclick = () => checkMultipleChoice(opt, q, btn, questionText);
+                optionsDiv.appendChild(btn);
+            });
+            container.appendChild(optionsDiv);
+        }
+
+        function checkMultipleChoice(selected, q, btn, questionTextDiv) {
+            const feedbackArea = document.getElementById('feedback-area');
+            
+            if (selected === q.answer) {
+                playSound('success');
+                btn.classList.add('!bg-green-500', '!text-black', '!border-green-500');
+                
+                let filledText = q.text.replace('___', `<span class="text-[var(--accent-yellow)] border-b-2 border-[var(--accent-yellow)] px-2">${selected}</span>`);
+                let fullSentence = q.text.replace('___', selected);
+                questionTextDiv.innerHTML = `<button onclick="readText('${fullSentence}')" class="mr-2 text-gray-400 hover:text-white"><i class="fas fa-volume-up text-lg"></i></button> ${filledText}`;
+                
+                // Read full correct sentence aloud
+                readText(fullSentence);
+
+                if (!state.mistakeMade) state.stars += 2;
+                
+                disableAllButtons();
+                showNextButton();
+            } else {
+                playSound('error');
+                state.mistakeMade = true;
+                btn.classList.add('btn-red');
+                btn.disabled = true;
+                feedbackArea.innerHTML = `<div class="hint-box"><i class="fas fa-lightbulb"></i> SYSTEM HINT: ${q.hint}</div>`;
+            }
+            updateUI();
+        }
+
+        // --- Game 3: Sentence Builder ---
+        function renderSentenceBuilder(q, container) {
+            let instruction = document.createElement('div');
+            instruction.className = 'text-center mb-6 text-gray-400 text-sm terminal-font uppercase';
+            instruction.innerText = "Reconstruct the corrupted audio file (Click words in order)";
+            container.appendChild(instruction);
+
+            let shuffledWords = shuffle([...q.words]);
+            let selectedWords = [];
+
+            let displayArea = document.createElement('div');
+            displayArea.className = 'flex flex-wrap justify-center items-center gap-2 mb-8 min-h-[50px] p-4 bg-[#111] border border-[#333] rounded';
+            container.appendChild(displayArea);
+
+            let wordBank = document.createElement('div');
+            wordBank.className = 'flex flex-wrap justify-center gap-3';
+            
+            function renderState() {
+                displayArea.innerHTML = '';
+                wordBank.innerHTML = '';
+
+                if (selectedWords.length > 0) {
+                     let readBtn = document.createElement('button');
+                     readBtn.className = "text-gray-500 hover:text-white mr-2";
+                     readBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                     readBtn.onclick = () => readText(selectedWords.join(' '));
+                     displayArea.appendChild(readBtn);
+                }
+
+                selectedWords.forEach((word, index) => {
+                    let wBtn = document.createElement('div');
+                    wBtn.className = 'word-bank-item selected text-lg';
+                    wBtn.innerText = word;
+                    wBtn.onclick = () => {
+                        selectedWords.splice(index, 1);
+                        shuffledWords.push(word);
+                        playSound('click');
+                        renderState();
+                        checkBuilderAnswer();
+                    };
+                    displayArea.appendChild(wBtn);
+                });
+
+                shuffledWords.forEach((word, index) => {
+                    let wBtn = document.createElement('div');
+                    wBtn.className = 'word-bank-item text-lg hover:bg-[#333]';
+                    wBtn.innerText = word;
+                    wBtn.onclick = () => {
+                        shuffledWords.splice(index, 1);
+                        selectedWords.push(word);
+                        playSound('click');
+                        renderState();
+                        checkBuilderAnswer();
+                    };
+                    wordBank.appendChild(wBtn);
+                });
+            }
+
+            function checkBuilderAnswer() {
+                const feedbackArea = document.getElementById('feedback-area');
+                let currentSentence = selectedWords.join(' ');
+                
+                if (shuffledWords.length === 0) {
+                    if (currentSentence === q.answer) {
+                        playSound('success');
+                        readText(currentSentence); // Read correct sentence aloud
+                        displayArea.classList.add('border-green-500', 'bg-green-900', 'bg-opacity-20');
+                        if (!state.mistakeMade) state.stars += 2;
+                        document.querySelectorAll('.word-bank-item').forEach(el => el.style.pointerEvents = 'none');
+                        showNextButton();
+                    } else {
+                        playSound('error');
+                        state.mistakeMade = true;
+                        displayArea.classList.add('border-red-500');
+                        setTimeout(() => displayArea.classList.remove('border-red-500'), 500);
+                        feedbackArea.innerHTML = `<div class="hint-box"><i class="fas fa-lightbulb"></i> SYSTEM HINT: ${q.hint}</div>`;
+                    }
+                    updateUI();
+                } else {
+                    feedbackArea.innerHTML = '';
+                }
+            }
+
+            renderState();
+            container.appendChild(wordBank);
+        }
+
+        // --- Game 4: Spelling Sorter ---
+        function renderSpellingSorter(q, container) {
+            let questionText = document.createElement('div');
+            questionText.className = 'text-center mb-8';
+            questionText.innerHTML = `
+                <div class="text-gray-400 text-sm terminal-font uppercase mb-2">Assign correct protocol to verb for VIP (He/She/It)</div>
+                <div class="text-4xl md:text-5xl font-bold text-white flex justify-center items-center gap-4">
+                    <button onclick="readText('${q.word}')" class="text-2xl text-gray-400 hover:text-[var(--primary-text)]"><i class="fas fa-volume-up"></i></button>
+                    ${q.word}
+                </div>
+            `;
+            container.appendChild(questionText);
+
+            let binsContainer = document.createElement('div');
+            binsContainer.className = 'grid grid-cols-3 gap-2 md:gap-4';
+
+            const categories = ["+s", "+es", "+ies"];
+            categories.forEach(cat => {
+                let bin = document.createElement('button');
+                bin.className = 'btn-terminal flex-col !p-4 md:!p-8 hover:!bg-[var(--accent-blue)]';
+                bin.innerHTML = `<div class="text-2xl md:text-4xl font-bold mb-2">${cat}</div>`;
+                
+                bin.onclick = () => {
+                    const feedbackArea = document.getElementById('feedback-area');
+                    if (cat === q.category) {
+                        playSound('success');
+                        bin.classList.add('!bg-green-500', '!text-black', '!border-green-500');
+                        if (!state.mistakeMade) state.stars += 2;
+                        
+                        let finalWord = "";
+                        if(cat==="+s") finalWord = q.word + "s";
+                        if(cat==="+es") finalWord = q.word + "es";
+                        if(cat==="+ies") finalWord = q.word.slice(0,-1) + "ies";
+                        
+                        readText(finalWord); // Read correct word aloud
+
+                        questionText.innerHTML = `<div class="text-4xl md:text-5xl font-bold text-[var(--accent-yellow)]">${finalWord} <button onclick="readText('${finalWord}')" class="text-2xl text-gray-400 hover:text-white ml-2"><i class="fas fa-volume-up"></i></button></div>`;
+                        
+                        disableAllButtons();
+                        showNextButton();
+                    } else {
+                        playSound('error');
+                        state.mistakeMade = true;
+                        bin.classList.add('btn-red');
+                        setTimeout(() => bin.classList.remove('btn-red'), 500);
+                        feedbackArea.innerHTML = `<div class="hint-box"><i class="fas fa-lightbulb"></i> SYSTEM HINT: ${q.hint}</div>`;
+                    }
+                    updateUI();
+                };
+                binsContainer.appendChild(bin);
+            });
+            container.appendChild(binsContainer);
+        }
+
+        // --- Game 5: True / False (Security Doors) ---
+        function renderTrueFalse(q, container) {
+            let questionText = document.createElement('div');
+            questionText.className = 'text-center mb-8';
+            questionText.innerHTML = `
+                <div class="text-gray-400 text-sm terminal-font uppercase mb-4">Validate Security Grammar Protocol:</div>
+                <div class="text-2xl md:text-3xl font-bold text-white flex justify-center items-center gap-4 p-4 border border-[var(--border-color)] bg-[#111] rounded">
+                    <button onclick="readText('${q.text}')" class="text-2xl text-gray-400 hover:text-[var(--primary-text)]"><i class="fas fa-volume-up"></i></button>
+                    "${q.text}"
+                </div>
+            `;
+            container.appendChild(questionText);
+
+            let buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'flex flex-col md:flex-row justify-center gap-6 mt-4';
+
+            let btnTrue = document.createElement('button');
+            btnTrue.className = 'btn-terminal w-full md:w-48 !text-green-500 !border-green-500 hover:!bg-green-500 hover:!text-black';
+            btnTrue.innerHTML = `<i class="fas fa-check-circle"></i> TRUE (SAFE)`;
+            
+            let btnFalse = document.createElement('button');
+            btnFalse.className = 'btn-terminal w-full md:w-48 !text-red-500 !border-red-500 hover:!bg-red-500 hover:!text-black';
+            btnFalse.innerHTML = `<i class="fas fa-times-circle"></i> FALSE (DANGER)`;
+
+            btnTrue.onclick = () => checkTrueFalse(true, q, btnTrue, btnFalse, questionText);
+            btnFalse.onclick = () => checkTrueFalse(false, q, btnFalse, btnTrue, questionText);
+
+            buttonsContainer.appendChild(btnTrue);
+            buttonsContainer.appendChild(btnFalse);
+            container.appendChild(buttonsContainer);
+        }
+
+        function checkTrueFalse(selectedTruth, q, clickedBtn, otherBtn, questionTextDiv) {
+            const feedbackArea = document.getElementById('feedback-area');
+            
+            if (selectedTruth === q.isCorrect) {
+                playSound('success');
+                clickedBtn.classList.add('!bg-green-500', '!text-black');
+                otherBtn.style.opacity = '0.3';
+                if (!state.mistakeMade) state.stars += 2;
+                
+                let correctSentence = q.isCorrect ? q.text : q.correction;
+                readText(correctSentence); // Read correct sentence aloud
+                
+                if (!q.isCorrect) {
+                    questionTextDiv.innerHTML = `
+                        <div class="text-green-500 text-sm terminal-font uppercase mb-2">Protocol Corrected:</div>
+                        <div class="text-2xl md:text-3xl font-bold text-[var(--accent-yellow)] flex justify-center items-center gap-4 p-4 border border-[var(--accent-yellow)] bg-[#222] rounded">
+                            <button onclick="readText('${correctSentence}')" class="text-2xl text-gray-400 hover:text-white"><i class="fas fa-volume-up"></i></button>
+                            "${correctSentence}"
+                        </div>
+                    `;
+                }
+
+                disableAllButtons();
+                showNextButton();
+            } else {
+                playSound('error');
+                state.mistakeMade = true;
+                clickedBtn.classList.add('btn-red');
+                clickedBtn.disabled = true;
+                feedbackArea.innerHTML = `<div class="hint-box"><i class="fas fa-lightbulb"></i> SYSTEM HINT: ${q.hint}</div>`;
+            }
+            updateUI();
+        }
+
+        // --- Helpers ---
+        function disableAllButtons() {
+            document.querySelectorAll('#game-area button, #game-area .word-bank-item').forEach(btn => {
+                btn.style.pointerEvents = 'none';
+                if(btn.tagName === 'BUTTON') btn.disabled = true;
+            });
+        }
+
+        function showNextButton() {
+            const feedbackArea = document.getElementById('feedback-area');
+            feedbackArea.innerHTML = `
+                <button onclick="advanceQuestion()" class="btn-terminal !bg-[var(--primary-text)] !text-[#000] w-full max-w-sm mt-4">
+                    NEXT SEQUENCE <i class="fas fa-forward"></i>
+                </button>
+            `;
+        }
+
+        function advanceQuestion() {
+            playSound('click');
+            state.currentQIndex++;
+            renderQuestion();
+        }
+
+        function endRound() {
+            const gameArea = document.getElementById('game-area');
+            const feedbackArea = document.getElementById('feedback-area');
+            
+            // Check badge logic
+            const badgeId = `b${state.currentGameId}`;
+            let badgeMessage = "";
+            if (!state.badges.includes(badgeId)) {
+                state.badges.push(badgeId);
+                badgeMessage = `<div class="text-[var(--accent-yellow)] text-xl font-bold mt-4 blink"><i class="fas fa-unlock"></i> NEW BADGE UNLOCKED!</div>`;
+                playSound('win');
+                triggerConfetti();
+            }
+
+            gameArea.innerHTML = `
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-[var(--primary-text)] mb-4">MODULE COMPLETE</h2>
+                    <p class="text-lg text-gray-300">Power Level: ${Math.min(state.stars, 100)}%</p>
+                    ${badgeMessage}
+                </div>
+            `;
+            
+            feedbackArea.innerHTML = `
+                <button onclick="startRound()" class="btn-terminal mt-6">
+                    <i class="fas fa-redo"></i> RUN DIAGNOSTICS AGAIN
+                </button>
+            `;
+            updateUI();
+            renderBadges();
+        }
+
+        function triggerConfetti() {
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#00ff41', '#ffb700'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#00ff41', '#ffb700'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        function showPrizeCornerTrigger() {
+            let container = document.getElementById('badge-container');
+            if(!document.getElementById('prize-btn')) {
+                let prizeBtnContainer = document.createElement('div');
+                prizeBtnContainer.className = "col-span-full flex justify-center mt-6 fade-in";
+                prizeBtnContainer.innerHTML = `
+                    <button id="prize-btn" onclick="openPrizeCorner()" class="btn-terminal !border-[var(--accent-yellow)] !text-[var(--accent-yellow)] hover:!bg-[var(--accent-yellow)] hover:!text-black text-lg p-4 blink">
+                        <i class="fas fa-gift"></i> ACCESS PRIZE CORNER
+                    </button>
+                `;
+                container.parentNode.appendChild(prizeBtnContainer);
+            }
+        }
+
+        function openPrizeCorner() {
+            playSound('win');
+            document.querySelector('.container').style.display = 'none';
+            document.querySelector('.status-bar').style.display = 'none';
+            document.getElementById('prize-corner-section').classList.remove('hidden');
+            document.getElementById('prize-corner-section').classList.add('flex');
+            triggerConfetti();
+        }
+
+        function selectCharacter(id, name) {
+            playSound('click');
+            state.certCharId = id;
+            document.getElementById('cert-char-img').src = GAME_DATA.images.characters[id];
+            document.getElementById('cert-char-img').classList.remove('hidden');
+            document.getElementById('cert-char-name').innerText = name;
+            
+            // --- THEMATIC CERTIFICATE LOGIC ---
+            const themes = {
+                freddy: { main: '#4e342e', accent: '#3e2723', bg: '#f7f3f0', decorL: GAME_DATA.images.plushies.freddy, decorR: GAME_DATA.images.plushies.freddy },
+                bonnie: { main: '#512DA8', accent: '#311b92', bg: '#f3e5f5', decorL: GAME_DATA.images.plushies.bonnie, decorR: GAME_DATA.images.plushies.bonnie },
+                chica:  { main: '#E65100', accent: '#E65100', bg: '#fffde7', decorL: GAME_DATA.images.plushies.chica, decorR: GAME_DATA.images.plushies.cupcake },
+                foxy:   { main: '#b71c1c', accent: '#b71c1c', bg: '#ffebee', decorL: GAME_DATA.images.plushies.foxy, decorR: GAME_DATA.images.plushies.foxy },
+                golden: { main: '#F57F17', accent: '#F57F17', bg: '#fffde7', decorL: GAME_DATA.images.characters.golden, decorR: GAME_DATA.images.characters.golden }
+            };
+
+            const t = themes[id];
+            
+            // Apply colors and background
+            const board = document.getElementById('cert-board');
+            board.style.borderColor = t.main;
+            board.style.backgroundColor = t.bg;
+            
+            document.getElementById('cert-title').style.color = t.main;
+            document.getElementById('cert-name').style.color = t.accent;
+            document.getElementById('cert-name').style.borderBottomColor = t.accent;
+            document.getElementById('cert-char-name').style.color = t.main;
+            
+            const stamp = document.getElementById('cert-stamp');
+            stamp.style.borderColor = t.main;
+            stamp.style.color = t.main;
+            
+            // Apply decor images
+            document.getElementById('cert-decor-left').src = t.decorL;
+            document.getElementById('cert-decor-right').src = t.decorR;
+
+            document.getElementById('prize-corner-section').classList.add('hidden');
+            document.getElementById('prize-corner-section').classList.remove('flex');
+            
+            document.getElementById('certificate-section').classList.remove('hidden');
+            document.getElementById('certificate-section').classList.add('flex');
+            triggerConfetti();
+        }
+
+    </script>
+</body>
+</html>

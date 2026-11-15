@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESL Interactive Hub — Theme-Based Grammar Games</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        :root {
+            /* Theme-neutral portal surface tokens (extensible for light/cozy themes later) */
+            --hub-bg: #0b0f17;
+        }
+
+        body {
+            background-color: var(--hub-bg);
+            background-image:
+                radial-gradient(circle at 12% 8%, rgba(56, 189, 248, 0.08), transparent 34%),
+                radial-gradient(circle at 88% 12%, rgba(99, 102, 241, 0.08), transparent 36%),
+                radial-gradient(circle at 50% 95%, rgba(148, 163, 184, 0.05), transparent 40%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .lesson-card {
+            transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Scoped exclusively to the FNAF featured banner */
+        @keyframes recPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.25; }
+        }
+        .fnaf-rec-dot {
+            animation: recPulse 1.4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-sky-500/30 selection:text-sky-100">
+
+    <!-- =========================================================
+         MAIN PORTAL CONTAINER (Theme-Neutral Shell)
+    ========================================================== -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
+
+        <!-- MAIN PORTAL TITLE & UNIVERSAL CONTROLS -->
+        <section aria-label="Portal header and lesson filters" class="space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-slate-300 text-xs font-medium">
+                        <i class="fa-solid fa-graduation-cap text-sky-400"></i>
+                        <span>Interactive ESL Grammar Games Portal</span>
+                    </div>
+                    <h1 class="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white">
+                        English Grammar Hub
+                    </h1>
+                    <p class="text-sm sm:text-base text-slate-400 leading-relaxed">
+                        Choose a themed collection below to practice English tenses through interactive missions, spoken audio prompts, and printable certificates.
+                    </p>
+                </div>
+
+                <!-- Quick Search Bar -->
+                <div class="relative w-full lg:w-80 shrink-0">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none"></i>
+                    <input
+                        id="search-input"
+                        type="search"
+                        placeholder="Search tense, theme, or level..."
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-400/70 focus:ring-1 focus:ring-sky-400/40 transition"
+                    />
+                </div>
+            </div>
+
+            <!-- Category & Time-Period Filter Tabs (Rendered dynamically from THEME_CATEGORIES) -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0" id="category-tabs">
+                    <!-- Tabs injected by JS; see THEME_CATEGORIES below to add future themes -->
+                </div>
+                <div class="text-xs text-slate-400 shrink-0">
+                    Showing <span id="visible-count" class="text-white font-semibold">6</span> of <span id="total-count" class="text-slate-300">6</span> lessons
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             FEATURED FNAF COLLECTION BANNER (FNAF styling scoped here)
+        ========================================================== -->
+        <section
+            id="featured-banner"
+            class="relative overflow-hidden rounded-2xl border border-zinc-700/80 bg-gradient-to-br from-zinc-950 via-zinc-900 to-slate-950 p-6 sm:p-8 shadow-2xl"
+        >
+            <!-- FNAF Ambient Glows (strictly inside banner) -->
+            <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-16 w-72 h-72 rounded-full bg-violet-500/10 blur-3xl pointer-events-none"></div>
+
+            <!-- Security Monitor Corner Brackets -->
+            <div class="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-emerald-400/50 pointer-events-none"></div>
+            <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-emerald-400/50 pointer-events-none"></div>
+            <div class="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-emerald-400/50 pointer-events-none"></div>
+            <div class="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-emerald-400/50 pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="space-y-4 max-w-3xl">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-400 font-mono text-xs font-bold tracking-wider uppercase">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 fnaf-rec-dot"></span>
+                            REC &bull; Featured Collection
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800/90 border border-zinc-700 text-zinc-200 font-mono text-xs">
+                            <i class="fa-solid fa-layer-group text-emerald-400"></i> 6 Security Shifts
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800/90 border border-zinc-700 text-zinc-200 font-mono text-xs">
+                            <i class="fa-solid fa-volume-high text-amber-400"></i> Web Speech + Audio FX
+                        </span>
+                    </div>
+
+                    <h2 class="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white">
+                        FNAF Grammar Shift: <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-amber-300 to-violet-400">Simple &amp; Continuous Tenses</span>
+                    </h2>
+
+                    <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
+                        Clock in for six interactive survival shifts across Freddy Fazbear's Pizza and Fazbear's Fright.
+                        Color-coded by time period so you can quickly distinguish <span class="text-emerald-300 font-semibold">Present</span>, <span class="text-amber-300 font-semibold">Past</span>, and <span class="text-violet-300 font-semibold">Future</span> shifts.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                        <a
+                            href="present-simple-fnaf.html"
+                            class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition"
+                        >
+                            <i class="fa-solid fa-play"></i>
+                            Start Night 1: Present Simple
+                        </a>
+                        <button
+                            type="button"
+                            onclick="setCategory('present')"
+                            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/35 text-emerald-300 text-xs font-semibold transition cursor-pointer"
+                        >
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Present (2)
+                        </button>
+                        <button
+                            type="button"
+                            onclick="setCategory('past')"
+                            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/35 text-amber-300 text-xs font-semibold transition cursor-pointer"
+                        >
+                            <span class="w-2 h-2 rounded-full bg-amber-400"></span> Past (2)
+                        </button>
+                        <button
+                            type="button"
+                            onclick="setCategory('future')"
+                            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/35 text-violet-300 text-xs font-semibold transition cursor-pointer"
+                        >
+                            <span class="w-2 h-2 rounded-full bg-violet-400"></span> Future (2)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Color-Coded Time Period Legend inside FNAF Banner -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2.5 shrink-0 lg:w-72">
+                    <div class="rounded-xl bg-zinc-900/90 border border-emerald-500/30 px-3.5 py-2.5 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+                            <div>
+                                <div class="font-mono text-xs font-bold text-emerald-300">PRESENT SERIES</div>
+                                <div class="text-[11px] text-zinc-400">Pizzeria Security Tablet</div>
+                            </div>
+                        </div>
+                        <span class="font-mono text-xs text-cyan-300">2 Shifts</span>
+                    </div>
+                    <div class="rounded-xl bg-zinc-900/90 border border-amber-500/30 px-3.5 py-2.5 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]"></span>
+                            <div>
+                                <div class="font-mono text-xs font-bold text-amber-300">PAST ARCHIVE</div>
+                                <div class="text-[11px] text-zinc-400">Fazbear's Fright Logs</div>
+                            </div>
+                        </div>
+                        <span class="font-mono text-xs text-orange-300">2 Shifts</span>
+                    </div>
+                    <div class="rounded-xl bg-zinc-900/90 border border-violet-500/30 px-3.5 py-2.5 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-violet-400 shadow-[0_0_8px_#a855f7]"></span>
+                            <div>
+                                <div class="font-mono text-xs font-bold text-violet-300">FUTURE NEON</div>
+                                <div class="text-[11px] text-zinc-400">High-Tech Night Shift</div>
+                            </div>
+                        </div>
+                        <span class="font-mono text-xs text-sky-300">2 Shifts</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             LESSONS WORKSPACE (Grouped / Color-Coded by Time Period)
+        ========================================================== -->
+        <section aria-label="Interactive grammar lessons" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                <div>
+                    <h2 id="grid-heading" class="font-display text-xl sm:text-2xl font-bold text-white">
+                        All Lessons
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-0.5">
+                        Each lesson opens directly in this tab for full Web Speech pronunciation and interactive audio effects.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dynamic Grouped or Filtered Lessons Container -->
+            <div id="lessons-container" class="space-y-8">
+                <!-- Rendered from LESSONS_DATA -->
+            </div>
+
+            <!-- Empty State (Neutral) -->
+            <div id="empty-state" class="hidden rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-12 text-center space-y-3">
+                <div class="w-12 h-12 mx-auto rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </div>
+                <h3 class="font-display text-lg font-bold text-white">No lessons matched your filter</h3>
+                <p class="text-sm text-slate-400 max-w-md mx-auto">Try clearing your search query or switching back to All Games.</p>
+                <button
+                    type="button"
+                    onclick="resetFilters()"
+                    class="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500/15 border border-sky-500/40 text-sky-300 text-xs font-semibold hover:bg-sky-500/25 transition cursor-pointer"
+                >
+                    <i class="fa-solid fa-rotate-left"></i> Reset Filters
+                </button>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             MODULAR PORTAL EXPANSION NOTE (Theme-Neutral)
+        ========================================================== -->
+        <!-- Add new theme collections (Cozy Games, Cartoons, Lego, Pop Culture) in THEME_CATEGORIES & LESSONS_DATA -->
+        <section class="rounded-2xl border border-dashed border-slate-800 bg-slate-900/30 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-start sm:items-center gap-4">
+                <div class="w-11 h-11 rounded-xl bg-slate-800/90 border border-slate-700 flex items-center justify-center text-sky-400 shrink-0">
+                    <i class="fa-solid fa-cubes-stacked"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-display font-bold text-sm sm:text-base text-slate-200">Ready for Any Lesson Theme</h3>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-slate-800 text-slate-300 border border-slate-700">Modular</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
+                        Add cozy games, cartoons, pop culture, or Lego packs anytime by appending entries to <code class="font-mono text-sky-300">THEME_CATEGORIES</code> and <code class="font-mono text-sky-300">LESSONS_DATA</code>.
+                    </p>
+                </div>
+            </div>
+            <span class="text-xs text-slate-500 shrink-0">
+                <i class="fa-solid fa-folder-plus mr-1"></i> Next Slot: Cozy / Cartoon / Lego
+            </span>
+        </section>
+    </main>
+
+    <!-- =========================================================
+         NEUTRAL FOOTER
+    ========================================================== -->
+    <footer class="border-t border-slate-900 mt-10 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>ESL Interactive Hub &bull; Modular Multi-Theme Learning Portal</span>
+            <span>Direct in-tab launch for reliable Web Speech API &amp; Web Audio playback</span>
+        </div>
+    </footer>
+
+    <!-- =========================================================
+         MODULAR PORTAL DATA & RENDER ENGINE
+    ========================================================== -->
+    <script>
+        /**
+         * 1. CATEGORY / THEME FILTER TABS CONFIGURATION
+         * Add new theme universes (e.g., cozy, cartoon, lego, pop-culture) here.
+         * type: 'all' | 'theme' | 'aspect' | 'timePeriod'
+         */
+        const THEME_CATEGORIES = [
+            { id: 'all', label: 'All Games', icon: 'fa-border-all', type: 'all' },
+            { id: 'fnaf', label: 'FNAF Universe', icon: 'fa-mask', type: 'theme' },
+            { id: 'simple', label: 'Simple Tenses', icon: 'fa-bolt', type: 'aspect' },
+            { id: 'continuous', label: 'Continuous Tenses', icon: 'fa-wave-square', type: 'aspect' },
+            { id: 'present', label: 'Present', icon: 'fa-circle-dot', type: 'timePeriod' },
+            { id: 'past', label: 'Past', icon: 'fa-clock-rotate-left', type: 'timePeriod' },
+            { id: 'future', label: 'Future', icon: 'fa-forward', type: 'timePeriod' },
+            /*
+             * PLACEHOLDER FOR FUTURE THEMES:
+             * { id: 'cozy', label: 'Cozy Games', icon: 'fa-mug-hot', type: 'theme' },
+             * { id: 'cartoons', label: 'Cartoons', icon: 'fa-wand-magic-sparkles', type: 'theme' },
+             * { id: 'lego', label: 'Lego Worlds', icon: 'fa-cubes', type: 'theme' },
+             */
+        ];
+
+        /**
+         * 2. TIME-PERIOD VISUAL GROUPING METADATA
+         * Matches the unified color palettes inside the 6 lesson HTML files.
+         */
+        const TIME_PERIOD_META = {
+            present: {
+                id: 'present',
+                heading: 'Present Tenses — Classic Pizzeria Tablet',
+                sublabel: 'Emerald & Cyan Theme',
+                dotClass: 'bg-emerald-400 shadow-[0_0_8px_#34d399]',
+                borderClass: 'border-emerald-500/30',
+                badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35',
+            },
+            past: {
+                id: 'past',
+                heading: "Past Tenses — Fazbear's Fright Archive",
+                sublabel: 'Amber, Rust & Sepia-Olive Theme',
+                dotClass: 'bg-amber-400 shadow-[0_0_8px_#fbbf24]',
+                borderClass: 'border-amber-500/30',
+                badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/35',
+            },
+            future: {
+                id: 'future',
+                heading: 'Future Tenses — High-Tech Neon Shift',
+                sublabel: 'Violet, Indigo & Cyber-Blue Theme',
+                dotClass: 'bg-violet-400 shadow-[0_0_8px_#a855f7]',
+                borderClass: 'border-violet-500/30',
+                badgeClass: 'bg-violet-500/15 text-violet-300 border-violet-500/35',
+            },
+        };
+
+        /**
+         * 3. MODULAR LESSONS REGISTRY
+         * Ordered by time period (Present -> Past -> Future) so pairs sit together cleanly.
+         */
+        const LESSONS_DATA = [
+            // --- PRESENT PAIR (Emerald & Cyan) ---
+            {
+                id: 'present-simple-fnaf',
+                href: 'present-simple-fnaf.html',
+                theme: 'fnaf',
+                themeLabel: 'FNAF 1 • Security Shift',
+                timePeriod: 'present',
+                timePeriodLabel: 'PRESENT TIME',
+                aspect: 'simple',
+                aspectLabel: 'Simple Tense',
+                nightBadge: 'Night 1',
+                tenseName: 'Present Simple',
+                subtitle: 'Fazbear Security Protocol',
+                level: 'Beginner+ (A1–A2)',
+                formula: "S + V(s/es) | don't / doesn't",
+                description: "Analyze daily routines, facts, and habits at Freddy Fazbear's Pizzeria. Master -s/-es endings, negatives, and Do/Does questions across 5 interactive tasks.",
+                modules: ['Cam Logs', 'Power Routing', 'Audio Decoy', 'Spelling Sorter', 'Security Doors'],
+                icon: 'fa-shield-halved',
+                characterName: 'Freddy Fazbear',
+                imageUrl: 'https://i.postimg.cc/44pmMWTZ/Freddy-removebg-preview.png',
+                paletteKey: 'present',
+            },
+            {
+                id: 'present-continuous-fnaf',
+                href: 'present-continuous-fnaf.html',
+                theme: 'fnaf',
+                themeLabel: 'FNAF 1 • Live CAM Feed',
+                timePeriod: 'present',
+                timePeriodLabel: 'PRESENT TIME',
+                aspect: 'continuous',
+                aspectLabel: 'Continuous Tense',
+                nightBadge: 'Night 2',
+                tenseName: 'Present Continuous',
+                subtitle: 'Fazbear Security Tablet',
+                level: 'Pre-Intermediate (A2)',
+                formula: 'am / is / are + V-ing',
+                description: 'Track Freddy, Bonnie, Chica, and Foxy on live cameras and log what they are doing RIGHT NOW using am/is/are + -ing.',
+                modules: ['CAM Tracking', 'System Reboot', 'Audio Decrypt', 'Error Purge'],
+                icon: 'fa-video',
+                characterName: 'Bonnie the Bunny',
+                imageUrl: 'https://i.postimg.cc/8cdc6zbY/Bonnie-removebg-preview.png',
+                paletteKey: 'present',
+            },
+
+            // --- PAST PAIR (Amber, Rust & Sepia-Olive) ---
+            {
+                id: 'past-simple-fnaf',
+                href: 'past-simple-fnaf.html',
+                theme: 'fnaf',
+                themeLabel: 'FNAF 3 • Horror Attraction',
+                timePeriod: 'past',
+                timePeriodLabel: 'PAST TIME',
+                aspect: 'simple',
+                aspectLabel: 'Simple Tense',
+                nightBadge: 'Night 3',
+                tenseName: 'Past Simple',
+                subtitle: "Fazbear's Fright Night Shift",
+                level: 'Intermediate (A2–B1)',
+                formula: "S + V-ed / V2 | did / didn't",
+                description: "Investigate incidents from 30 years ago inside Fazbear's Fright. Practice regular -ed verbs, 30 irregular V2 pairs, and did/didn't past questions.",
+                modules: ['CAM 01 Reboot', 'Irregular Wires', 'Audio Sync', 'Incident Logs', 'System Core'],
+                icon: 'fa-fan',
+                characterName: 'Phantom Freddy',
+                imageUrl: 'https://i.postimg.cc/DwvbPcvM/Phantom-Freddy-removebg-preview.png',
+                paletteKey: 'past',
+            },
+            {
+                id: 'past-continuous-fnaf',
+                href: 'past-continuous-fnaf.html',
+                theme: 'fnaf',
+                themeLabel: 'FNAF 3 • Archive OS',
+                timePeriod: 'past',
+                timePeriodLabel: 'PAST TIME',
+                aspect: 'continuous',
+                aspectLabel: 'Continuous Tense',
+                nightBadge: 'Night 4',
+                tenseName: 'Past Continuous',
+                subtitle: "Fazbear's Fright Log",
+                level: 'Intermediate (B1)',
+                formula: 'was / were + V-ing',
+                description: 'Review archived surveillance tapes to reconstruct what was happening in the dark during the shift with was/were + V-ing.',
+                modules: ['System Power', 'Vent Fix', 'Audio Decoy', 'Data Recovery'],
+                icon: 'fa-walkie-talkie',
+                characterName: 'Springtrap',
+                imageUrl: 'https://i.postimg.cc/NjsrkxsS/Springtrap-removebg-preview.png',
+                paletteKey: 'past',
+            },
+
+            // --- FUTURE PAIR (Violet, Indigo & Cyber-Blue) ---
+            {
+                id: 'future-simple-fnaf',
+                href: 'future-simple-fnaf.html',
+                theme: 'fnaf',
+                themeLabel: 'FNAF 2 • Toy Factory',
+                timePeriod: 'future',
+                timePeriodLabel: 'FUTURE TIME',
+                aspect: 'simple',
+                aspectLabel: 'Simple Tense',
+                nightBadge: 'Night 5',
+                tenseName: 'Future Simple',
+                subtitle: 'Night Shift Survival',
+                level: 'Beginner+ (A2)',
+                formula: "S + will / won't + V",
+                description: 'Make split-second decisions, promises, and predictions to survive until 6 AM. Master will and won’t while keeping the music box wound.',
+                modules: ['Cam Logs', 'Survival Quiz', 'Wire Fix', 'System Reboot'],
+                icon: 'fa-bolt',
+                characterName: 'Toy Chica',
+                imageUrl: 'https://i.postimg.cc/rpvH4s1j/Toy-Chica-removebg-preview.png',
+                paletteKey: 'future',
+            },
+            {
+                id: 'future-continuous-fnaf',
+                href: 'future-continuous-fnaf.html',
+                theme: 'fnaf',
+                themeLabel: 'FNAF 2 • Night Guard Ops',
+                timePeriod: 'future',
+                timePeriodLabel: 'FUTURE TIME',
+                aspect: 'continuous',
+                aspectLabel: 'Continuous Tense',
+                nightBadge: 'Night 6',
+                tenseName: 'Future Continuous',
+                subtitle: 'Security Guard Clearance',
+                level: 'Intermediate (A2–B1)',
+                formula: 'will be + V-ing',
+                description: 'Forecast what the animatronics will be doing at specific hours tonight (1 AM–5 AM) and defend the hallway to earn your Guard License.',
+                modules: ['CAM 01–05 Feeds', 'Suspect Logs', 'Wire Builder', 'Guard License'],
+                icon: 'fa-satellite-dish',
+                characterName: 'Withered Foxy',
+                imageUrl: 'https://i.postimg.cc/5tHGjLC3/Withered-Foxy-removebg-preview.png',
+                paletteKey: 'future',
+            },
+        ];
+
+        // Unified Card Palettes matching each time-period pair
+        const CARD_PALETTES = {
+            present: {
+                cardBorder: 'border-emerald-500/25 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(34,211,238,0.16)]',
+                topStrip: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400',
+                periodPill: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40',
+                nightPill: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40',
+                formulaText: 'text-cyan-300',
+                btnBg: 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-zinc-950',
+                glowBg: 'from-emerald-500/12 via-cyan-500/5 to-transparent',
+                iconColor: 'text-emerald-400',
+            },
+            past: {
+                cardBorder: 'border-amber-500/25 hover:border-amber-400/75 hover:shadow-[0_0_28px_rgba(245,158,11,0.18)]',
+                topStrip: 'bg-gradient-to-r from-amber-500 via-orange-500 to-lime-600',
+                periodPill: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
+                nightPill: 'bg-orange-500/15 text-orange-300 border-orange-500/40',
+                formulaText: 'text-amber-300',
+                btnBg: 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950',
+                glowBg: 'from-amber-500/12 via-orange-600/5 to-transparent',
+                iconColor: 'text-amber-400',
+            },
+            future: {
+                cardBorder: 'border-violet-500/30 hover:border-sky-400/75 hover:shadow-[0_0_28px_rgba(139,92,246,0.22)]',
+                topStrip: 'bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-400',
+                periodPill: 'bg-violet-500/15 text-violet-300 border-violet-500/40',
+                nightPill: 'bg-sky-500/15 text-sky-300 border-sky-500/40',
+                formulaText: 'text-sky-300',
+                btnBg: 'bg-gradient-to-r from-violet-500 to-sky-500 hover:from-violet-400 hover:to-sky-400 text-white',
+                glowBg: 'from-violet-500/14 via-indigo-500/5 to-transparent',
+                iconColor: 'text-violet-400',
+            },
+        };
+
+        let activeCategory = 'all';
+        let searchQuery = '';
+
+        function getCategoryCount(cat) {
+            if (cat.type === 'all') return LESSONS_DATA.length;
+            if (cat.type === 'theme') return LESSONS_DATA.filter((l) => l.theme === cat.id).length;
+            if (cat.type === 'aspect') return LESSONS_DATA.filter((l) => l.aspect === cat.id).length;
+            if (cat.type === 'timePeriod') return LESSONS_DATA.filter((l) => l.timePeriod === cat.id).length;
+            return 0;
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('category-tabs');
+            const tabsHtml = THEME_CATEGORIES.map((cat) => {
+                const isActive = activeCategory === cat.id;
+                const count = getCategoryCount(cat);
+                const btnClasses = isActive
+                    ? 'bg-white text-slate-950 border-white shadow-md font-bold'
+                    : 'bg-slate-900/90 text-slate-300 border-slate-800 hover:border-slate-600 hover:text-white font-medium';
+                const badgeClasses = isActive
+                    ? 'bg-slate-900/15 text-slate-900'
+                    : 'bg-slate-800 text-slate-400';
+
+                return `
+                    <button
+                        type="button"
+                        onclick="setCategory('${cat.id}')"
+                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs sm:text-sm whitespace-nowrap transition cursor-pointer ${btnClasses}"
+                    >
+                        <i class="fa-solid ${cat.icon}"></i>
+                        <span>${cat.label}</span>
+                        <span class="px-1.5 py-0.5 rounded-md font-mono text-[11px] ${badgeClasses}">${count}</span>
+                    </button>
+                `;
+            }).join('');
+
+            // Visual placeholder pill indicating future theme packs
+            const placeholderHtml = `
+                <span
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-dashed border-slate-800 text-slate-500 text-xs whitespace-nowrap select-none"
+                    title="Future theme slot: edit THEME_CATEGORIES in index.html to activate"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    <span>More Themes Soon</span>
+                </span>
+            `;
+
+            container.innerHTML = tabsHtml + placeholderHtml;
+        }
+
+        function buildLessonCardHtml(lesson) {
+            const palette = CARD_PALETTES[lesson.paletteKey] || CARD_PALETTES.present;
+            const modulesHtml = lesson.modules
+                .map((mod) => `<span class="px-2 py-0.5 rounded bg-zinc-950/90 border border-zinc-800 text-[11px] text-zinc-400">${mod}</span>`)
+                .join('');
+
+            return `
+                <article class="lesson-card group relative flex flex-col justify-between rounded-2xl border bg-zinc-900/90 backdrop-blur-sm overflow-hidden ${palette.cardBorder}">
+                    <!-- Time-Period Color Ribbon -->
+                    <div class="h-1.5 w-full ${palette.topStrip}"></div>
+
+                    <!-- Subtle FNAF Card Ambient Glow -->
+                    <div class="absolute inset-0 bg-gradient-to-br ${palette.glowBg} opacity-80 pointer-events-none"></div>
+
+                    <div class="relative z-10 p-5 sm:p-6 flex flex-col gap-4 flex-grow">
+                        <!-- Top Badges Row -->
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-mono font-bold ${palette.periodPill}">
+                                    ${lesson.timePeriodLabel}
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-mono font-bold ${palette.nightPill}">
+                                    <i class="fa-solid ${lesson.icon}"></i>
+                                    ${lesson.nightBadge}
+                                </span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-950/90 border border-zinc-800 text-[11px] font-mono text-zinc-300">
+                                    ${lesson.themeLabel}
+                                </span>
+                            </div>
+
+                            <!-- Animatronic Thumbnail -->
+                            <div class="w-12 h-12 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-center shrink-0 overflow-hidden p-1">
+                                <img
+                                    src="${lesson.imageUrl}"
+                                    alt="${lesson.characterName}"
+                                    loading="lazy"
+                                    class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                                    onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                                />
+                                <i class="fa-solid ${lesson.icon} ${palette.iconColor} text-lg hidden"></i>
+                            </div>
+                        </div>
+
+                        <!-- Tense Title & Aspect -->
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-zinc-400 mb-1">
+                                <span>${lesson.aspectLabel}</span>
+                                <span class="text-zinc-700">&bull;</span>
+                                <span>${lesson.level}</span>
+                            </div>
+                            <h3 class="font-display text-2xl font-bold text-white tracking-tight">
+                                ${lesson.tenseName}
+                            </h3>
+                            <p class="text-xs font-mono text-zinc-400 mt-0.5">${lesson.subtitle}</p>
+                        </div>
+
+                        <!-- Grammar Formula Pill -->
+                        <div class="rounded-xl bg-zinc-950/95 border border-zinc-800/90 px-3.5 py-2 flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Pattern</span>
+                            <code class="font-mono text-xs sm:text-sm font-bold ${palette.formulaText}">${lesson.formula}</code>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="text-sm text-zinc-300 leading-relaxed flex-grow">
+                            ${lesson.description}
+                        </p>
+
+                        <!-- Included Mini-Games -->
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            ${modulesHtml}
+                        </div>
+                    </div>
+
+                    <!-- Card Action Footer (Direct same-tab link, zero iframes) -->
+                    <div class="relative z-10 px-5 sm:px-6 pb-5 sm:pb-6 pt-2">
+                        <a
+                            href="${lesson.href}"
+                            class="w-full inline-flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl font-bold text-sm transition shadow-sm ${palette.btnBg}"
+                        >
+                            <span>Play ${lesson.tenseName}</span>
+                            <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderLessons() {
+            const container = document.getElementById('lessons-container');
+            const emptyState = document.getElementById('empty-state');
+            const visibleCountEl = document.getElementById('visible-count');
+            const totalCountEl = document.getElementById('total-count');
+            const headingEl = document.getElementById('grid-heading');
+
+            const selectedCat = THEME_CATEGORIES.find((c) => c.id === activeCategory) || THEME_CATEGORIES[0];
+
+            const filtered = LESSONS_DATA.filter((lesson) => {
+                let matchesCategory = true;
+                if (selectedCat.type === 'theme') matchesCategory = lesson.theme === selectedCat.id;
+                if (selectedCat.type === 'aspect') matchesCategory = lesson.aspect === selectedCat.id;
+                if (selectedCat.type === 'timePeriod') matchesCategory = lesson.timePeriod === selectedCat.id;
+
+                const q = searchQuery.trim().toLowerCase();
+                if (!q) return matchesCategory;
+
+                const haystack = [
+                    lesson.tenseName,
+                    lesson.subtitle,
+                    lesson.themeLabel,
+                    lesson.timePeriodLabel,
+                    lesson.aspectLabel,
+                    lesson.nightBadge,
+                    lesson.level,
+                    lesson.formula,
+                    lesson.description,
+                    lesson.characterName,
+                    ...lesson.modules,
+                ].join(' ').toLowerCase();
+
+                return matchesCategory && haystack.includes(q);
+            });
+
+            headingEl.textContent = selectedCat.id === 'all' ? 'All Lessons' : selectedCat.label;
+            visibleCountEl.textContent = filtered.length;
+            totalCountEl.textContent = LESSONS_DATA.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Group cleanly into 2-card Time Period rows when viewing full/theme collections
+            const distinctPeriods = [...new Set(filtered.map((l) => l.timePeriod))];
+            const shouldGroupByPeriod = distinctPeriods.length > 1 && filtered.length > 3;
+
+            if (shouldGroupByPeriod) {
+                const orderedPeriods = ['present', 'past', 'future'].filter((p) => distinctPeriods.includes(p));
+                container.innerHTML = orderedPeriods.map((periodKey) => {
+                    const meta = TIME_PERIOD_META[periodKey];
+                    const periodLessons = filtered.filter((l) => l.timePeriod === periodKey);
+                    const cardsHtml = periodLessons.map(buildLessonCardHtml).join('');
+
+                    return `
+                        <div class="rounded-2xl border ${meta.borderClass} bg-slate-900/35 p-4 sm:p-5 space-y-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-2.5 h-2.5 rounded-full ${meta.dotClass}"></span>
+                                    <h3 class="font-display text-lg font-bold text-white">${meta.heading}</h3>
+                                </div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full border text-xs font-medium ${meta.badgeClass}">
+                                    ${meta.sublabel}
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                return;
+            }
+
+            // Single-row grid when filtered to Simple, Continuous, a single Time Period, or narrow search
+            const colsClass = filtered.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 xl:grid-cols-3';
+            container.innerHTML = `
+                <div class="grid grid-cols-1 ${colsClass} gap-6">
+                    ${filtered.map(buildLessonCardHtml).join('')}
+                </div>
+            `;
+        }
+
+        function setCategory(categoryId) {
+            activeCategory = categoryId;
+            renderTabs();
+            renderLessons();
+        }
+
+        function resetFilters() {
+            activeCategory = 'all';
+            searchQuery = '';
+            document.getElementById('search-input').value = '';
+            renderTabs();
+            renderLessons();
+        }
+
+        // Initialize Portal
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTabs();
+            renderLessons();
+
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderLessons();
+            });
+        });
+    </script>
+</body>
+</html>

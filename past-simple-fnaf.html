@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazbear's Fright: Past Simple Night Shift</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            /* Unified Past Tenses Palette: Fazbear's Fright Archive (Amber, Rust & Sepia-Olive) */
+            --primary: rgba(18, 15, 10, 0.93);
+            --secondary: rgba(28, 23, 16, 0.95);
+            --accent: #d97706;
+            --danger: #ea580c;
+            --text-main: #fbbf24;
+            --text-muted: #a3be6c;
+        }
+
+        body {
+            /* Background image of the office with a warm sepia-amber archive overlay */
+            background: linear-gradient(var(--primary), var(--primary)), url('https://i.postimg.cc/HkY79tYK/Office-(FNAF-3).jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-horror {
+            font-family: 'Creepster', cursive;
+            letter-spacing: 2px;
+        }
+
+        /* Archive Palette Overrides for Unified Past Series */
+        .border-\[\#2e8b57\] { border-color: #9a6b26 !important; }
+        .border-\[\#33ff33\] { border-color: #fbbf24 !important; }
+        .bg-\[\#1a2620\] { background-color: rgba(28, 23, 16, 0.94) !important; }
+        .bg-\[\#0a0f0d\] { background-color: rgba(18, 15, 10, 0.96) !important; }
+        .bg-\[\#2e8b57\] { background-color: #d97706 !important; color: #120f0a !important; }
+        .text-\[\#33ff33\] { color: #fbbf24 !important; }
+        .text-\[\#4d994d\] { color: #a3be6c !important; }
+        .text-\[\#8b0000\] { color: #ea580c !important; }
+
+        /* CRT Scanline Effect */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(245, 158, 11, 0.04), rgba(163, 190, 108, 0.02), rgba(234, 88, 12, 0.04));
+            z-index: 100;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #120f0a; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        /* Buttons & Interactions */
+        .sys-btn {
+            background: var(--secondary);
+            border: 2px solid #9a6b26;
+            color: var(--text-main);
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(217, 119, 6, 0.22);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+        .sys-btn:hover {
+            background: var(--accent);
+            border-color: #fbbf24;
+            color: #120f0a;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.55);
+        }
+        .sys-btn:active { transform: scale(0.95); }
+
+        .sys-btn.danger {
+            border-color: var(--danger);
+            color: #fdba74;
+            box-shadow: 0 0 10px rgba(234, 88, 12, 0.4);
+        }
+        .sys-btn.danger:hover {
+            background: var(--danger);
+            color: white;
+            box-shadow: 0 0 20px rgba(234, 88, 12, 0.8);
+        }
+
+        .glitch {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px, 0) skew(0deg); }
+            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+            62% { transform: translate(0, 0) skew(5deg); }
+        }
+
+        .speaking-pulse {
+            animation: speakPulse 1s infinite alternate;
+        }
+        @keyframes speakPulse {
+            from { box-shadow: 0 0 5px var(--text-main); }
+            to { box-shadow: 0 0 20px var(--text-main); }
+        }
+
+        /* Phantom Decor Image Styling */
+        .phantom-decor {
+            position: absolute;
+            opacity: 0.16;
+            pointer-events: none;
+            z-index: -1;
+            filter: grayscale(100%) sepia(85%) hue-rotate(-10deg) saturate(140%);
+            transition: opacity 0.5s;
+        }
+        section:hover .phantom-decor {
+            opacity: 0.3;
+        }
+
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            .crt::before { display: none; }
+            #prize-view, #prize-view * { visibility: visible; }
+            #prize-view {
+                position: absolute;
+                left: 0; top: 0;
+                width: 100%; height: 100%;
+                background: white !important;
+                color: black !important;
+            }
+            .no-print { display: none !important; }
+            .phantom-decor { display: none !important; }
+        }
+    </style>
+</head>
+<body class="crt flex flex-col h-screen">
+    <!-- Floating Back to Hub Navigation -->
+    <style>
+        .hub-back-btn {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            z-index: 10000;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(24, 18, 11, 0.92);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.55);
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.65), 0 0 10px rgba(245, 158, 11, 0.22);
+            transition: all 0.2s ease;
+        }
+        .hub-back-btn:hover {
+            background: linear-gradient(135deg, #fbbf24, #ea580c);
+            color: #120f0a;
+            border-color: #fbbf24;
+            box-shadow: 0 0 16px rgba(251, 191, 36, 0.55);
+            transform: translateY(-1px);
+        }
+        body > header { padding-left: 148px !important; }
+        @media print {
+            .hub-back-btn { display: none !important; }
+        }
+    </style>
+    <a href="index.html" class="hub-back-btn no-print" title="Return to ESL Games Hub">⬅ Back to Hub</a>
+
+    <!-- DATA & LOGIC SEPARATION -->
+    <script>
+        const GAME_DATA = {
+            config: {
+                theme: "Fazbear's Fright Night Shift",
+                grammarFocus: "Past Simple (Intermediate)",
+                totalHours: 5,
+                badgesRequired: 5
+            },
+            story: {
+                intro: "Welcome to Fazbear's Fright: The Horror Attraction. You are the new night guard. It is 12 AM. Thirty years have passed since the original pizzeria closed. Survive until 6 AM by fixing the systems and mastering the Past Simple tense!",
+                grammarRule: "SYSTEM LOG: Past Simple Tense.\n1) Regular verbs add '-ed' (survive -> survived).\n2) Irregular verbs change completely (hide -> hid).\n3) Questions & Negatives use 'did' or 'didn't' + base verb (I didn't see him. / Did he move?).\n4) 'To be' becomes 'was/were'."
+            },
+            badges: [
+                { id: 'cam', icon: '📹', name: 'Camera Rebooted' },
+                { id: 'vent', icon: '💨', name: 'Vents Cleared' },
+                { id: 'audio', icon: '🔊', name: 'Audio Lured' },
+                { id: 'log', icon: '💾', name: 'Logs Decrypted' },
+                { id: 'phantom', icon: '👻', name: 'Phantoms Avoided' }
+            ],
+            // 30 Multiple Choice Questions
+            pool_multipleChoice: [
+                { q: "The night guard ___ (survive) the first night.", a: "survived", options: ["survive", "survived", "survives", "surviving"], hint: "Regular verb. Add -ed!" },
+                { q: "Springtrap ___ (not / stay) in Camera 9.", a: "didn't stay", options: ["don't stay", "didn't stayed", "didn't stay", "not stayed"], hint: "Use 'didn't' and the BASE verb." },
+                { q: "___ you (hear) the audio lure?", a: "Did you hear", options: ["Do you hear", "Did you heard", "Did you hear", "Are you hear"], hint: "Questions in the past start with 'Did' + base verb." },
+                { q: "The Phantom Balloon Boy ___ (scare) me.", a: "scared", options: ["scare", "scared", "scares", "did scare"], hint: "Regular verb. Add -d." },
+                { q: "He ___ (be) the Purple Guy.", a: "was", options: ["is", "were", "was", "be"], hint: "'He' uses 'was'." },
+                { q: "The phantoms ___ (not / be) real.", a: "weren't", options: ["wasn't", "aren't", "didn't be", "weren't"], hint: "'Phantoms' is plural (they), so use 'were not' (weren't)." },
+                { q: "The ventilation ___ (break) down.", a: "broke", options: ["breaked", "broke", "break", "broken"], hint: "Irregular verb. Break -> Broke." },
+                { q: "I ___ (close) the vent on time.", a: "closed", options: ["close", "closed", "closes", "did close"], hint: "Regular verb ending in 'e'. Just add -d." },
+                { q: "The fire ___ (burn) the attraction.", a: "burned", options: ["burns", "burned", "burning", "did burn"], hint: "Regular verb. Add -ed." },
+                { q: "___ the guard (sleep) on the job?", a: "Did the guard sleep", options: ["Did the guard slept", "Do the guard sleep", "Did the guard sleep", "Was the guard sleep"], hint: "Questions use 'Did' + base verb." },
+                { q: "I ___ (find) a secret minigame.", a: "found", options: ["finded", "found", "finds", "finding"], hint: "Irregular verb. Find -> Found." },
+                { q: "She ___ (not / know) about the ghosts.", a: "didn't know", options: ["didn't knew", "not know", "doesn't know", "didn't know"], hint: "Negative past: didn't + base verb." },
+                { q: "We ___ (run) out of power.", a: "ran", options: ["run", "ran", "runned", "running"], hint: "Irregular verb. Run -> Ran." },
+                { q: "___ the camera (go) offline?", a: "Did the camera go", options: ["Did the camera went", "Did the camera go", "Does the camera go", "Was the camera go"], hint: "Question: Did + subject + base verb." },
+                { q: "The children ___ (leave) the pizzeria.", a: "left", options: ["leaved", "left", "leave", "leaving"], hint: "Irregular verb. Leave -> Left." },
+                { q: "He ___ (hide) inside the suit.", a: "hid", options: ["hided", "hide", "hid", "hidden"], hint: "Irregular verb. Hide -> Hid." },
+                { q: "They ___ (build) a horror attraction.", a: "built", options: ["builded", "builds", "built", "building"], hint: "Irregular verb. Build -> Built." },
+                { q: "I ___ (not / press) the reboot button.", a: "didn't press", options: ["didn't pressed", "don't press", "didn't press", "not pressed"], hint: "Negative past: didn't + base verb." },
+                { q: "___ the phone guy (call) tonight?", a: "Did the phone guy call", options: ["Did the phone guy called", "Did the phone guy call", "Do the phone guy call", "Was the phone guy call"], hint: "Question: Did + subject + base verb." },
+                { q: "The animatronic ___ (bite) him.", a: "bit", options: ["bited", "bit", "bite", "bitten"], hint: "Irregular verb. Bite -> Bit." },
+                { q: "It ___ (take) thirty years to find him.", a: "took", options: ["taked", "takes", "took", "taken"], hint: "Irregular verb. Take -> Took." },
+                { q: "The guard ___ (watch) the monitor.", a: "watched", options: ["watch", "watched", "watches", "watching"], hint: "Regular verb. Add -ed." },
+                { q: "The system ___ (fail) again.", a: "failed", options: ["fail", "failed", "fails", "failing"], hint: "Regular verb. Add -ed." },
+                { q: "___ you (see) Phantom Foxy?", a: "Did you see", options: ["Did you saw", "Did you see", "Do you see", "Are you see"], hint: "Question: Did + subject + base verb." },
+                { q: "He ___ (not / listen) to the instructions.", a: "didn't listen", options: ["didn't listened", "didn't listen", "doesn't listen", "not listened"], hint: "Negative past: didn't + base verb." },
+                { q: "The puppet ___ (look) at the camera.", a: "looked", options: ["look", "looked", "looks", "looking"], hint: "Regular verb. Add -ed." },
+                { q: "I ___ (feel) very scared.", a: "felt", options: ["feeled", "felt", "feels", "feeling"], hint: "Irregular verb. Feel -> Felt." },
+                { q: "The door ___ (not / open).", a: "didn't open", options: ["didn't opened", "didn't open", "doesn't open", "not opened"], hint: "Negative past: didn't + base verb." },
+                { q: "They ___ (forget) to check the vent.", a: "forgot", options: ["forgetted", "forgot", "forget", "forgotten"], hint: "Irregular verb. Forget -> Forgot." },
+                { q: "___ the alarm (ring)?", a: "Did the alarm ring", options: ["Did the alarm rang", "Did the alarm ring", "Does the alarm ring", "Was the alarm ring"], hint: "Question: Did + subject + base verb." }
+            ],
+            // 30 Irregular Verbs Match
+            pool_irregularMatch: [
+                { v1: "go", v2: "went" }, { v1: "see", v2: "saw" },
+                { v1: "hear", v2: "heard" }, { v1: "find", v2: "found" },
+                { v1: "run", v2: "ran" }, { v1: "hide", v2: "hid" },
+                { v1: "know", v2: "knew" }, { v1: "build", v2: "built" },
+                { v1: "strike", v2: "struck" }, { v1: "forget", v2: "forgot" },
+                { v1: "bite", v2: "bit" }, { v1: "take", v2: "took" },
+                { v1: "leave", v2: "left" }, { v1: "feel", v2: "felt" },
+                { v1: "think", v2: "thought" }, { v1: "make", v2: "made" },
+                { v1: "do", v2: "did" }, { v1: "have", v2: "had" },
+                { v1: "come", v2: "came" }, { v1: "say", v2: "said" },
+                { v1: "tell", v2: "told" }, { v1: "give", v2: "gave" },
+                { v1: "keep", v2: "kept" }, { v1: "let", v2: "let" },
+                { v1: "put", v2: "put" }, { v1: "read", v2: "read" },
+                { v1: "catch", v2: "caught" }, { v1: "bring", v2: "brought" },
+                { v1: "buy", v2: "bought" }, { v1: "lose", v2: "lost" }
+            ],
+            // 30 Sentence Builders
+            pool_sentenceBuilder: [
+                { words: ["I", "survived", "the", "night."], hint: "Subject + Verb + Object" },
+                { words: ["He", "didn't", "find", "the", "exit."], hint: "Subject + didn't + base verb..." },
+                { words: ["Did", "you", "hear", "the", "noise?"], hint: "Did + Subject + base verb..." },
+                { words: ["Springtrap", "was", "in", "the", "vent."], hint: "Subject + was + place." },
+                { words: ["The", "phantoms", "weren't", "real."], hint: "Subject + weren't + adjective." },
+                { words: ["They", "built", "a", "horror", "attraction."], hint: "Subject + Verb + Object" },
+                { words: ["She", "didn't", "check", "the", "cameras."], hint: "Subject + didn't + base verb..." },
+                { words: ["Did", "he", "close", "the", "door?"], hint: "Did + Subject + base verb..." },
+                { words: ["We", "saw", "a", "ghost", "yesterday."], hint: "Subject + Verb + Object + Time" },
+                { words: ["The", "power", "went", "out", "suddenly."], hint: "Subject + Verb + Adverb" },
+                { words: ["I", "didn't", "want", "to", "die."], hint: "Subject + didn't + base verb..." },
+                { words: ["Where", "did", "he", "go", "now?"], hint: "Wh-word + did + subject + verb..." },
+                { words: ["The", "guard", "looked", "very", "tired."], hint: "Subject + Verb + Adjective" },
+                { words: ["You", "played", "the", "audio", "lure."], hint: "Subject + Verb + Object" },
+                { words: ["The", "system", "crashed", "at", "midnight."], hint: "Subject + Verb + Time" },
+                { words: ["Did", "the", "phantom", "scare", "you?"], hint: "Did + Subject + base verb..." },
+                { words: ["I", "knew", "it", "was", "him."], hint: "Subject + Verb + Clause" },
+                { words: ["She", "ran", "away", "very", "fast."], hint: "Subject + Verb + Adverb" },
+                { words: ["They", "didn't", "listen", "to", "me."], hint: "Subject + didn't + base verb..." },
+                { words: ["He", "hid", "inside", "the", "suit."], hint: "Subject + Verb + Place" },
+                { words: ["The", "place", "burned", "to", "the", "ground."], hint: "Subject + Verb + Prepositional phrase" },
+                { words: ["Did", "you", "survive", "until", "six?"], hint: "Did + Subject + base verb..." },
+                { words: ["I", "found", "the", "secret", "room."], hint: "Subject + Verb + Object" },
+                { words: ["The", "animatronic", "moved", "very", "quietly."], hint: "Subject + Verb + Adverb" },
+                { words: ["We", "didn't", "understand", "the", "message."], hint: "Subject + didn't + base verb..." },
+                { words: ["He", "left", "the", "building", "quickly."], hint: "Subject + Verb + Object + Adverb" },
+                { words: ["Did", "they", "fix", "the", "ventilation?"], hint: "Did + Subject + base verb..." },
+                { words: ["The", "clock", "struck", "six", "AM."], hint: "Subject + Verb + Time" },
+                { words: ["I", "felt", "a", "cold", "wind."], hint: "Subject + Verb + Object" },
+                { words: ["She", "thought", "she", "was", "alone."], hint: "Subject + Verb + Clause" }
+            ],
+            // 30 Fill in the Blanks with predefined specific options
+            pool_fillBlanks: [
+                { q: "I (know) ___ it was a trap.", a: "knew", options: ["knew", "knowed", "known"], hint: "Starts with K. Irregular verb." },
+                { q: "They (build) ___ Fazbear's Fright.", a: "built", options: ["built", "builded", "builds"], hint: "Starts with B. Irregular verb." },
+                { q: "The clock (strike) ___ 6 AM.", a: "struck", options: ["struck", "striked", "strikes"], hint: "Starts with S. Irregular verb." },
+                { q: "The phantom (disappear) ___ quickly.", a: "disappeared", options: ["disappeared", "disappear", "disappears"], hint: "Starts with D. Regular verb." },
+                { q: "Springtrap (move) ___ while I looked away.", a: "moved", options: ["moved", "move", "mooved"], hint: "Starts with M. Regular verb." },
+                { q: "He (hide) ___ in the shadows.", a: "hid", options: ["hid", "hided", "hide"], hint: "Irregular. Hide -> ?" },
+                { q: "The camera (stop) ___ working.", a: "stopped", options: ["stopped", "stoped", "stops"], hint: "Regular verb. Double the 'p'." },
+                { q: "I (see) ___ him in the vent.", a: "saw", options: ["saw", "seed", "seen"], hint: "Irregular. See -> ?" },
+                { q: "She (do) ___ not press the button.", a: "did", options: ["did", "doed", "done"], hint: "Past tense of 'do'." },
+                { q: "The guard (panic) ___ completely.", a: "panicked", options: ["panicked", "paniced", "panic"], hint: "Regular, but add 'k' before 'ed'." },
+                { q: "We (survive) ___ the night.", a: "survived", options: ["survived", "survive", "surviving"], hint: "Regular verb. Ends in 'e', just add 'd'." },
+                { q: "The fire (start) ___ in the office.", a: "started", options: ["started", "start", "starts"], hint: "Regular verb. Add 'ed'." },
+                { q: "He (take) ___ the tapes.", a: "took", options: ["took", "taked", "taken"], hint: "Irregular. Take -> ?" },
+                { q: "I (find) ___ a strange box.", a: "found", options: ["found", "finded", "find"], hint: "Irregular. Find -> ?" },
+                { q: "The lights (flicker) ___ ominously.", a: "flickered", options: ["flickered", "flicker", "flickers"], hint: "Regular verb. Add 'ed'." },
+                { q: "They (say) ___ it was safe.", a: "said", options: ["said", "sayed", "says"], hint: "Irregular. Say -> ?" },
+                { q: "He (leave) ___ the room.", a: "left", options: ["left", "leaved", "leave"], hint: "Irregular. Leave -> ?" },
+                { q: "The alarm (ring) ___ loudly.", a: "rang", options: ["rang", "ringed", "rung"], hint: "Irregular. Ring -> ?" },
+                { q: "I (think) ___ it was just a hallucination.", a: "thought", options: ["thought", "thinked", "thinks"], hint: "Irregular. Think -> ?" },
+                { q: "She (run) ___ to the exit.", a: "ran", options: ["ran", "runned", "run"], hint: "Irregular. Run -> ?" },
+                { q: "We (have) ___ only one hour left.", a: "had", options: ["had", "haved", "has"], hint: "Irregular. Have -> ?" },
+                { q: "The man (become) ___ a monster.", a: "became", options: ["became", "becomed", "become"], hint: "Irregular. Become -> ?" },
+                { q: "I (hear) ___ a creepy laugh.", a: "heard", options: ["heard", "heared", "hears"], hint: "Irregular. Hear -> ?" },
+                { q: "They (put) ___ the mask on.", a: "put", options: ["put", "putted", "puts"], hint: "Irregular. It doesn't change!" },
+                { q: "The ghost (bite) ___ the guard.", a: "bit", options: ["bit", "bited", "bite"], hint: "Irregular. Bite -> ?" },
+                { q: "He (forget) ___ the code.", a: "forgot", options: ["forgot", "forgetted", "forget"], hint: "Irregular. Forget -> ?" },
+                { q: "I (try) ___ to reset the system.", a: "tried", options: ["tried", "tryed", "trys"], hint: "Regular. Change 'y' to 'i' and add 'ed'." },
+                { q: "She (cry) ___ for help.", a: "cried", options: ["cried", "cryed", "crys"], hint: "Regular. Change 'y' to 'i' and add 'ed'." },
+                { q: "The audio (fail) ___ again.", a: "failed", options: ["failed", "fail", "fails"], hint: "Regular verb. Add 'ed'." },
+                { q: "We (win) ___ the game.", a: "won", options: ["won", "winned", "win"], hint: "Irregular. Win -> ?" }
+            ]
+        };
+    </script>
+
+    <!-- HEADER / HUD -->
+    <header class="flex-shrink-0 border-b-2 border-[#2e8b57] p-4 flex justify-between items-center bg-[#0a0f0d] bg-opacity-90 z-50">
+        <div class="flex items-center gap-4">
+            <button onclick="returnToHub()" class="sys-btn px-3 py-2 rounded text-lg" title="Return to Hub">
+                <i class="fa-solid fa-house"></i>
+            </button>
+            <div class="text-3xl font-horror text-[#8b0000] drop-shadow-md hidden sm:block">NIGHT 1</div>
+            <div class="text-xl" id="time-display">12:00 AM</div>
+        </div>
+        <div class="flex items-center gap-2 text-xl" id="badge-container">
+            <!-- Badges appear here -->
+        </div>
+        <button id="tts-indicator" class="hidden text-xl text-[#33ff33]">
+            <i class="fa-solid fa-volume-up speaking-pulse"></i>
+        </button>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow relative overflow-y-auto p-4 md:p-8" id="main-container">
+
+        <!-- 0. HUB VIEW -->
+        <section id="hub-view" class="max-w-3xl mx-auto flex flex-col gap-6 relative">
+            <img src="https://i.postimg.cc/XYjykgj1/Phantom-Balloon-Boy-removebg-preview.png" alt="Decor" class="phantom-decor w-48 -left-20 top-0">
+            <div class="border-2 border-[#2e8b57] bg-[#1a2620] bg-opacity-90 p-6 rounded-lg shadow-lg relative overflow-hidden">
+                <h1 class="text-4xl font-horror text-[#33ff33] mb-4 text-center glitch">Fazbear's Fright</h1>
+                <p id="story-intro" class="text-lg leading-relaxed mb-4"></p>
+                <div class="bg-[#0a0f0d] bg-opacity-80 border border-[#2e8b57] p-4 rounded text-sm mb-6 whitespace-pre-line" id="story-grammar"></div>
+                
+                <div class="flex justify-center gap-4">
+                    <button onclick="speakText(GAME_DATA.story.intro)" class="sys-btn px-6 py-3 rounded text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> AUDIO LOG
+                    </button>
+                    <button onclick="startShift()" class="sys-btn px-6 py-3 rounded text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-power-off"></i> START SHIFT
+                    </button>
+                </div>
+                
+                <div class="mt-8 border-t border-[#2e8b57] pt-6">
+                    <h3 class="text-xl font-bold text-center mb-4 text-[#ffcc00]"><i class="fa-solid fa-gamepad"></i> FREE PLAY MODULES</h3>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button onclick="startFreePlay('mc')" class="sys-btn px-4 py-2 rounded font-bold"><i class="fa-solid fa-video"></i> CAM 01</button>
+                        <button onclick="startFreePlay('match')" class="sys-btn px-4 py-2 rounded font-bold"><i class="fa-solid fa-fan"></i> VENTS</button>
+                        <button onclick="startFreePlay('build')" class="sys-btn px-4 py-2 rounded font-bold"><i class="fa-solid fa-volume-high"></i> AUDIO</button>
+                        <button onclick="startFreePlay('fill')" class="sys-btn px-4 py-2 rounded font-bold"><i class="fa-solid fa-file-code"></i> LOGS</button>
+                        <button onclick="startFreePlay('mc2')" class="sys-btn px-4 py-2 rounded font-bold"><i class="fa-solid fa-server"></i> CORE</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. MULTIPLE CHOICE (CAMERA REBOOT) -->
+        <section id="game-mc-view" class="hidden max-w-3xl mx-auto flex flex-col gap-6 relative">
+            <img src="https://i.postimg.cc/DwvbPcvM/Phantom-Freddy-removebg-preview.png" alt="Decor" class="phantom-decor w-64 -right-32 bottom-0">
+            <div class="flex justify-between items-center border-b border-[#2e8b57] pb-2 bg-[#0a0f0d] bg-opacity-70 p-2 rounded">
+                <h2 class="text-2xl font-bold"><i class="fa-solid fa-video"></i> CAM 01: Video Feed Reboot</h2>
+                <div class="text-lg font-bold text-[#ffcc00]">Progress: <span id="mc-progress">0/X</span></div>
+            </div>
+            <div class="bg-[#1a2620] bg-opacity-90 border-2 border-[#2e8b57] p-6 rounded-lg text-center min-h-[250px] flex flex-col justify-center">
+                <p id="mc-question" class="text-2xl mb-8 font-bold"></p>
+                <div id="mc-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <div id="mc-hint-box" class="hidden mt-4 text-[#ffcc00] text-sm"></div>
+            </div>
+            <div class="flex justify-between">
+                <button onclick="showHint('mc')" class="sys-btn px-4 py-2 rounded flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> HINT</button>
+            </div>
+        </section>
+
+        <!-- 2. MATCHING (VENTILATION WIRES) -->
+        <section id="game-match-view" class="hidden max-w-4xl mx-auto flex flex-col gap-6 relative">
+            <img src="https://i.postimg.cc/t4qVNzq8/Phantom-Foxy-removebg-preview.png" alt="Decor" class="phantom-decor w-72 -left-32 top-10">
+            <div class="flex justify-between items-center border-b border-[#2e8b57] pb-2 bg-[#0a0f0d] bg-opacity-70 p-2 rounded">
+                <h2 class="text-2xl font-bold"><i class="fa-solid fa-fan"></i> VENTILATION: Connect Wires (V1 to V2)</h2>
+                <div class="text-lg font-bold text-[#ffcc00]">Progress: <span id="match-progress">0/X</span></div>
+            </div>
+            <div class="bg-[#1a2620] bg-opacity-90 border-2 border-[#2e8b57] p-6 rounded-lg flex flex-col md:flex-row justify-between gap-8">
+                <div id="match-col-1" class="flex flex-col gap-4 w-full"></div>
+                <div id="match-col-2" class="flex flex-col gap-4 w-full"></div>
+            </div>
+            <div id="match-hint-box" class="hidden text-center text-[#ffcc00] text-sm"></div>
+            <div class="flex justify-between">
+                <button onclick="showHint('match')" class="sys-btn px-4 py-2 rounded flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> HINT</button>
+            </div>
+        </section>
+
+        <!-- 3. SENTENCE BUILDER (AUDIO DEVICES) -->
+        <section id="game-build-view" class="hidden max-w-3xl mx-auto flex flex-col gap-6 relative">
+            <img src="https://i.postimg.cc/L89Z3V9W/Phantom-Chika-removebg-preview.png" alt="Decor" class="phantom-decor w-56 -right-20 top-20">
+            <div class="flex justify-between items-center border-b border-[#2e8b57] pb-2 bg-[#0a0f0d] bg-opacity-70 p-2 rounded">
+                <h2 class="text-2xl font-bold"><i class="fa-solid fa-volume-high"></i> AUDIO DEVICES: Sync Signal</h2>
+                <div class="text-lg font-bold text-[#ffcc00]">Progress: <span id="build-progress">0/X</span></div>
+            </div>
+            <div class="bg-[#1a2620] bg-opacity-90 border-2 border-[#2e8b57] p-6 rounded-lg text-center">
+                <p class="mb-4 text-sm text-[#4d994d]">Click words in the correct order to rebuild the audio log.</p>
+                <div id="build-answer-box" class="min-h-[60px] border-b-2 border-dashed border-[#33ff33] mb-8 flex flex-wrap gap-2 justify-center items-end pb-2"></div>
+                <div id="build-word-bank" class="flex flex-wrap gap-4 justify-center"></div>
+                <div id="build-hint-box" class="hidden mt-6 text-[#ffcc00] text-sm"></div>
+            </div>
+            <div class="flex justify-between">
+                <button onclick="showHint('build')" class="sys-btn px-4 py-2 rounded flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> HINT</button>
+            </div>
+        </section>
+
+        <!-- 4. FILL IN BLANKS (INCIDENT LOGS) -->
+        <section id="game-fill-view" class="hidden max-w-3xl mx-auto flex flex-col gap-6 relative">
+            <img src="https://i.postimg.cc/wjqsQkqf/Phantom-Puppet-removebg-preview.png" alt="Decor" class="phantom-decor w-48 -left-16 bottom-0">
+            <div class="flex justify-between items-center border-b border-[#2e8b57] pb-2 bg-[#0a0f0d] bg-opacity-70 p-2 rounded">
+                <h2 class="text-2xl font-bold"><i class="fa-solid fa-file-code"></i> MAINTENANCE PANEL: Decrypt Logs</h2>
+                <div class="text-lg font-bold text-[#ffcc00]">Progress: <span id="fill-progress">0/X</span></div>
+            </div>
+            <div class="bg-[#1a2620] bg-opacity-90 border-2 border-[#2e8b57] p-6 rounded-lg text-center min-h-[200px] flex flex-col justify-center items-center gap-6">
+                <p id="fill-question" class="text-2xl font-bold"></p>
+                <!-- Click to select from 3 options -->
+                <div id="fill-options" class="flex flex-wrap gap-4 justify-center"></div>
+                <div id="fill-hint-box" class="hidden mt-4 text-[#ffcc00] text-sm"></div>
+            </div>
+            <div class="flex justify-between">
+                <button onclick="showHint('fill')" class="sys-btn px-4 py-2 rounded flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> HINT</button>
+            </div>
+        </section>
+
+        <!-- 5. MULTIPLE CHOICE 2 (SYSTEM CORE) -->
+        <section id="game-mc2-view" class="hidden max-w-3xl mx-auto flex flex-col gap-6 relative">
+            <img src="https://i.postimg.cc/kgJtvyJh/Phantom-Mangle-removebg-preview.png" alt="Decor" class="phantom-decor w-64 -right-10 top-0">
+            <div class="flex justify-between items-center border-b border-[#2e8b57] pb-2 bg-[#0a0f0d] bg-opacity-70 p-2 rounded">
+                <h2 class="text-2xl font-bold"><i class="fa-solid fa-server"></i> SYSTEM CORE: Final Reboot</h2>
+                <div class="text-lg font-bold text-[#ffcc00]">Progress: <span id="mc2-progress">0/X</span></div>
+            </div>
+            <div class="bg-[#1a2620] bg-opacity-90 border-2 border-[#2e8b57] p-6 rounded-lg text-center min-h-[250px] flex flex-col justify-center">
+                <p id="mc2-question" class="text-2xl mb-8 font-bold"></p>
+                <div id="mc2-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <div id="mc2-hint-box" class="hidden mt-4 text-[#ffcc00] text-sm"></div>
+            </div>
+            <div class="flex justify-between">
+                <button onclick="showHint('mc2')" class="sys-btn px-4 py-2 rounded flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> HINT</button>
+            </div>
+        </section>
+
+        <!-- 6. PRIZE / CERTIFICATE -->
+        <section id="prize-view" class="hidden max-w-4xl mx-auto pb-10">
+            <div class="border-4 border-[#33ff33] bg-[#0a0f0d] bg-opacity-95 p-8 md:p-12 rounded-xl text-center relative overflow-hidden shadow-[0_0_50px_rgba(51,255,51,0.3)]">
+                
+                <!-- Springtrap Decor Huge -->
+                <img src="https://i.postimg.cc/NjsrkxsS/Springtrap-removebg-preview.png" alt="Springtrap" class="absolute -bottom-20 -right-20 w-[500px] opacity-30 z-0 pointer-events-none drop-shadow-2xl">
+                
+                <div class="relative z-10">
+                    <h1 class="text-6xl font-horror text-[#33ff33] mb-2 drop-shadow-[0_0_10px_rgba(51,255,51,0.8)]">6:00 AM</h1>
+                    <h2 class="text-2xl font-bold mb-8">SHIFT COMPLETED</h2>
+                    
+                    <div class="border-2 border-dashed border-[#2e8b57] p-8 mb-8 bg-[#1a2620] bg-opacity-80 backdrop-blur-sm">
+                        <h3 class="text-3xl font-bold mb-4 uppercase">Certificate of Survival</h3>
+                        <p class="text-lg mb-6">This certifies that</p>
+                        <input type="text" value="Night Guard" class="bg-transparent border-b-2 border-[#33ff33] text-center text-4xl text-[#33ff33] font-bold outline-none mb-6 w-full max-w-md print:border-none print:text-black">
+                        <p class="text-lg leading-relaxed max-w-2xl mx-auto">
+                            has successfully survived five nights at Fazbear's Fright by mastering the <strong>Past Simple Tense</strong>, fixing the ventilation, rebooting the camera systems, and avoiding the Phantoms.
+                        </p>
+                        <div class="mt-12 flex justify-between items-end px-4 md:px-12">
+                            <div class="border-b border-[#2e8b57] w-24 md:w-32 pb-2 text-sm md:text-base">Fazbear Ent.</div>
+                            <div class="text-4xl md:text-5xl text-[#8b0000] font-horror transform -rotate-12 drop-shadow-md">SURVIVED</div>
+                            <div class="border-b border-[#2e8b57] w-24 md:w-32 pb-2 text-sm md:text-base">Manager</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-6 no-print">
+                        <button onclick="window.print()" class="sys-btn px-8 py-4 rounded text-xl font-bold inline-flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-print"></i> PRINT PDF
+                        </button>
+                        <button onclick="restartFullGame()" class="sys-btn danger px-8 py-4 rounded text-xl font-bold inline-flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-rotate-right"></i> PLAY AGAIN
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JS LOGIC -->
+    <script>
+        // --- AUDIO ENGINE ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSynthesizedSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'success') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'scare') {
+                // White noise burst for phantom scare
+                const bufferSize = audioCtx.sampleRate * 0.5;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const noiseFilter = audioCtx.createBiquadFilter();
+                noiseFilter.type = 'lowpass';
+                noiseFilter.frequency.value = 1000;
+                noise.connect(noiseFilter);
+                noiseFilter.connect(gainNode);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                noise.start();
+            }
+        }
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            
+            // Clean underscores so TTS doesn't read them
+            const cleanText = text.replace(/_/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            
+            const indicator = document.getElementById('tts-indicator');
+            utterance.onstart = () => indicator.classList.remove('hidden');
+            utterance.onend = () => indicator.classList.add('hidden');
+            utterance.onerror = () => indicator.classList.add('hidden');
+            
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- STATE MANAGEMENT ---
+        let state = {
+            time: 12, // 12 AM
+            badgesEarned: 0,
+            currentGame: null,
+            roundQuestions: [],
+            questionsTotal: 5,
+            currentQIndex: 0,
+            mistakesMade: 0,
+            // Match game specific
+            matchSelected1: null,
+            matchSelected2: null,
+            matchPairsFound: 0,
+            // Build game specific
+            buildCurrentWords: [],
+            // Lock interaction during transitions
+            isTransitioning: false,
+            advancing: false,
+            isFreePlay: false
+        };
+
+        const GAMES_ORDER = ['mc', 'match', 'build', 'fill', 'mc2'];
+
+        // --- UTILS ---
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function buildCorrectSentence(question, answer) {
+            // Fix Fill in Blanks format: (verb) ___
+            if (question.match(/\([^)]+\)\s*___/)) {
+                return question.replace(/\([^)]+\)\s*___/, answer);
+            } 
+            // Fix Multiple Choice format: ___ ... (verb)
+            else if (question.match(/___\s*.*?\([^)]+\)/)) {
+                return question.split('___')[0] + answer + question.split(')')[1];
+            }
+            // Fallback
+            return question.replace(/___/g, answer);
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function returnToHub() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            state.isTransitioning = false;
+            switchView('hub-view');
+            playSynthesizedSound('success');
+        }
+
+        function advanceTimeAndBadge() {
+            state.badgesEarned++;
+            state.time = state.time === 12 ? 1 : state.time + 1;
+            document.getElementById('time-display').innerText = `${state.time}:00 AM`;
+            
+            const badge = GAME_DATA.badges[state.badgesEarned - 1];
+            const badgeEl = document.createElement('span');
+            badgeEl.innerText = badge.icon;
+            badgeEl.title = badge.name;
+            badgeEl.classList.add('glitch');
+            document.getElementById('badge-container').appendChild(badgeEl);
+
+            if (state.badgesEarned === GAME_DATA.config.badgesRequired) {
+                setTimeout(() => {
+                    switchView('prize-view');
+                    document.body.classList.remove('crt'); // Clear view for cert
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                    playSynthesizedSound('success');
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    const nextGame = GAMES_ORDER[state.badgesEarned] || 'mc';
+                    loadGame(nextGame);
+                }, 1500);
+            }
+        }
+
+        function restartFullGame() {
+            state.time = 12;
+            state.badgesEarned = 0;
+            document.getElementById('badge-container').innerHTML = '';
+            document.getElementById('time-display').innerText = `12:00 AM`;
+            document.body.classList.add('crt');
+            switchView('hub-view');
+            playSynthesizedSound('success');
+        }
+
+        // --- GAME FLOW ---
+        window.onload = () => {
+            document.getElementById('story-intro').innerText = GAME_DATA.story.intro;
+            document.getElementById('story-grammar').innerText = GAME_DATA.story.grammarRule;
+        }
+
+        function startShift() {
+            state.isFreePlay = false;
+            playSynthesizedSound('success');
+            loadGame('mc'); // First game
+        }
+
+        function startFreePlay(gameType) {
+            state.isFreePlay = true;
+            playSynthesizedSound('success');
+            loadGame(gameType);
+        }
+
+        function loadGame(gameType) {
+            state.currentGame = gameType;
+            state.currentQIndex = 0;
+            state.mistakesMade = 0;
+            state.advancing = false;
+            
+            // Randomly select between 5 to 10 questions for this round
+            state.questionsTotal = Math.floor(Math.random() * 6) + 5; 
+            
+            document.getElementById(`${gameType}-hint-box`).classList.add('hidden');
+
+            if (gameType === 'mc') {
+                state.roundQuestions = shuffle([...GAME_DATA.pool_multipleChoice]).slice(0, state.questionsTotal);
+                renderMC();
+                switchView('game-mc-view');
+            } else if (gameType === 'match') {
+                state.roundQuestions = shuffle([...GAME_DATA.pool_irregularMatch]).slice(0, state.questionsTotal);
+                state.matchPairsFound = 0;
+                renderMatch();
+                switchView('game-match-view');
+            } else if (gameType === 'build') {
+                state.roundQuestions = shuffle([...GAME_DATA.pool_sentenceBuilder]).slice(0, state.questionsTotal);
+                renderBuild();
+                switchView('game-build-view');
+            } else if (gameType === 'fill') {
+                state.roundQuestions = shuffle([...GAME_DATA.pool_fillBlanks]).slice(0, state.questionsTotal);
+                renderFill();
+                switchView('game-fill-view');
+            } else if (gameType === 'mc2') {
+                state.roundQuestions = shuffle([...GAME_DATA.pool_multipleChoice]).slice(0, state.questionsTotal);
+                renderMC2();
+                switchView('game-mc2-view');
+            }
+        }
+
+        function showHint(gameType) {
+            const hintBox = document.getElementById(`${gameType}-hint-box`);
+            hintBox.classList.remove('hidden');
+            if (gameType === 'match') {
+                hintBox.innerText = "Hint: Match the present form (left) to its past form (right). Example: go -> went.";
+            } else {
+                hintBox.innerText = "Hint: " + state.roundQuestions[state.currentQIndex].hint;
+            }
+            playSynthesizedSound('error');
+        }
+
+        function checkGameComplete(gameType) {
+            if (state.currentQIndex >= state.questionsTotal || (gameType === 'match' && state.matchPairsFound >= state.questionsTotal)) {
+                speakText("System restored.");
+                if (state.isFreePlay) {
+                    setTimeout(() => {
+                        returnToHub();
+                    }, 2000);
+                } else {
+                    if (!state.advancing) {
+                        state.advancing = true;
+                        advanceTimeAndBadge();
+                    }
+                }
+            } else {
+                if (gameType === 'mc') renderMC();
+                if (gameType === 'mc2') renderMC2();
+                if (gameType === 'build') renderBuild();
+                if (gameType === 'fill') renderFill();
+            }
+        }
+
+        // --- GAME 1: MULTIPLE CHOICE ---
+        function renderMC() {
+            document.getElementById('mc-progress').innerText = `${state.currentQIndex}/${state.questionsTotal}`;
+            document.getElementById('mc-hint-box').classList.add('hidden');
+            const q = state.roundQuestions[state.currentQIndex];
+            document.getElementById('mc-question').innerText = q.q;
+            
+            const optionsBox = document.getElementById('mc-options');
+            optionsBox.innerHTML = '';
+            shuffle([...q.options]).forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'sys-btn px-6 py-4 text-xl rounded font-bold';
+                btn.innerText = opt;
+                btn.onclick = () => handleMCAnswer(opt, q.a, btn, 'mc');
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function handleMCAnswer(selected, correct, btn, gameType = 'mc') {
+            if (state.isTransitioning) return;
+            if (selected === correct) {
+                state.isTransitioning = true;
+                btn.classList.add('bg-[#2e8b57]', 'text-black');
+                playSynthesizedSound('success');
+                
+                const q = state.roundQuestions[state.currentQIndex];
+                const finalSentence = buildCorrectSentence(q.q, correct);
+                speakText(finalSentence);
+
+                state.currentQIndex++;
+                setTimeout(() => {
+                    state.isTransitioning = false;
+                    checkGameComplete(gameType);
+                }, 800);
+            } else {
+                btn.classList.add('danger');
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                playSynthesizedSound('error');
+                showHint(gameType);
+                if(Math.random() > 0.7) playSynthesizedSound('scare');
+            }
+        }
+
+        // --- GAME 5: MULTIPLE CHOICE 2 ---
+        function renderMC2() {
+            document.getElementById('mc2-progress').innerText = `${state.currentQIndex}/${state.questionsTotal}`;
+            document.getElementById('mc2-hint-box').classList.add('hidden');
+            const q = state.roundQuestions[state.currentQIndex];
+            document.getElementById('mc2-question').innerText = q.q;
+            
+            const optionsBox = document.getElementById('mc2-options');
+            optionsBox.innerHTML = '';
+            shuffle([...q.options]).forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'sys-btn px-6 py-4 text-xl rounded font-bold';
+                btn.innerText = opt;
+                btn.onclick = () => handleMCAnswer(opt, q.a, btn, 'mc2');
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        // --- GAME 2: MATCHING ---
+        function renderMatch() {
+            document.getElementById('match-progress').innerText = `0/${state.questionsTotal}`;
+            document.getElementById('match-hint-box').classList.add('hidden');
+            const col1 = document.getElementById('match-col-1');
+            const col2 = document.getElementById('match-col-2');
+            col1.innerHTML = ''; col2.innerHTML = '';
+            
+            const v1Arr = shuffle([...state.roundQuestions]);
+            const v2Arr = shuffle([...state.roundQuestions]);
+
+            v1Arr.forEach(q => {
+                const btn = document.createElement('button');
+                btn.className = 'sys-btn px-4 py-3 text-lg rounded font-bold text-left';
+                btn.innerText = q.v1;
+                btn.dataset.val = q.v1;
+                btn.onclick = () => handleMatchSelect(1, btn, q.v1);
+                col1.appendChild(btn);
+            });
+
+            v2Arr.forEach(q => {
+                const btn = document.createElement('button');
+                btn.className = 'sys-btn px-4 py-3 text-lg rounded font-bold text-right';
+                btn.innerText = q.v2;
+                btn.dataset.val = q.v2;
+                btn.onclick = () => handleMatchSelect(2, btn, q.v2);
+                col2.appendChild(btn);
+            });
+        }
+
+        function handleMatchSelect(col, btn, val) {
+            if (state.isTransitioning) return;
+            // Deselect previous in same column
+            document.querySelectorAll(`#match-col-${col} button`).forEach(b => {
+                if(!b.disabled) b.style.borderColor = 'var(--accent)';
+            });
+            
+            btn.style.borderColor = '#ffffff';
+
+            if (col === 1) state.matchSelected1 = { btn, val };
+            if (col === 2) state.matchSelected2 = { btn, val };
+
+            if (state.matchSelected1 && state.matchSelected2) {
+                state.isTransitioning = true;
+                let btn1 = state.matchSelected1.btn;
+                let btn2 = state.matchSelected2.btn;
+
+                // Check match
+                const q = state.roundQuestions.find(x => x.v1 === state.matchSelected1.val);
+                if (q && q.v2 === state.matchSelected2.val) {
+                    // Correct
+                    playSynthesizedSound('success');
+                    btn1.disabled = true;
+                    btn2.disabled = true;
+                    btn1.classList.add('opacity-50', 'cursor-not-allowed');
+                    btn2.classList.add('opacity-50', 'cursor-not-allowed');
+                    state.matchPairsFound++;
+                    document.getElementById('match-progress').innerText = `${state.matchPairsFound}/${state.questionsTotal}`;
+                    state.isTransitioning = false;
+                    checkGameComplete('match');
+                } else {
+                    // Incorrect
+                    playSynthesizedSound('error');
+                    btn1.style.borderColor = 'var(--danger)';
+                    btn2.style.borderColor = 'var(--danger)';
+                    showHint('match');
+                    setTimeout(() => {
+                        btn1.style.borderColor = 'var(--accent)';
+                        btn2.style.borderColor = 'var(--accent)';
+                        state.isTransitioning = false;
+                    }, 800);
+                }
+                state.matchSelected1 = null;
+                state.matchSelected2 = null;
+            }
+        }
+
+        // --- GAME 3: SENTENCE BUILDER ---
+        function renderBuild() {
+            document.getElementById('build-progress').innerText = `${state.currentQIndex}/${state.questionsTotal}`;
+            document.getElementById('build-hint-box').classList.add('hidden');
+            state.buildCurrentWords = [];
+            
+            const q = state.roundQuestions[state.currentQIndex];
+            const wordBank = document.getElementById('build-word-bank');
+            const answerBox = document.getElementById('build-answer-box');
+            wordBank.innerHTML = '';
+            answerBox.innerHTML = '';
+
+            shuffle([...q.words]).forEach((word, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'sys-btn px-4 py-2 text-lg rounded font-bold';
+                btn.innerText = word;
+                btn.id = `build-word-${idx}`;
+                btn.onclick = () => handleBuildSelect(word, btn);
+                wordBank.appendChild(btn);
+            });
+        }
+
+        function handleBuildSelect(word, btn) {
+            if (state.isTransitioning) return;
+            playSynthesizedSound('success'); 
+            btn.classList.add('hidden'); 
+            
+            const wordObj = { word: word, btn: btn, id: Math.random() };
+            state.buildCurrentWords.push(wordObj);
+            
+            // Add to answer box
+            const ansBtn = document.createElement('button');
+            ansBtn.className = 'bg-transparent text-[#33ff33] text-xl font-bold px-2 py-1 transition-transform hover:scale-110';
+            ansBtn.innerText = word;
+            ansBtn.onclick = () => {
+                if (state.isTransitioning) return;
+                ansBtn.remove();
+                btn.classList.remove('hidden');
+                state.buildCurrentWords = state.buildCurrentWords.filter(w => w.id !== wordObj.id);
+            };
+            document.getElementById('build-answer-box').appendChild(ansBtn);
+
+            const q = state.roundQuestions[state.currentQIndex];
+            if (state.buildCurrentWords.length === q.words.length) {
+                state.isTransitioning = true;
+                const currentSentence = state.buildCurrentWords.map(w => w.word).join(" ");
+                if (currentSentence === q.words.join(" ")) {
+                    playSynthesizedSound('success');
+                    speakText(q.words.join(" "));
+                    state.currentQIndex++;
+                    setTimeout(() => {
+                        state.isTransitioning = false;
+                        checkGameComplete('build');
+                    }, 1000);
+                } else {
+                    playSynthesizedSound('error');
+                    showHint('build');
+                    const ansBox = document.getElementById('build-answer-box');
+                    ansBox.classList.add('danger', 'glitch');
+                    setTimeout(() => {
+                        ansBox.classList.remove('danger', 'glitch');
+                        state.isTransitioning = false;
+                        renderBuild(); // reset level
+                    }, 1000);
+                }
+            }
+        }
+
+        // --- GAME 4: FILL IN BLANKS ---
+        function renderFill() {
+            document.getElementById('fill-progress').innerText = `${state.currentQIndex}/${state.questionsTotal}`;
+            document.getElementById('fill-hint-box').classList.add('hidden');
+            const q = state.roundQuestions[state.currentQIndex];
+            
+            document.getElementById('fill-question').innerText = q.q.replace('___', '_____');
+            
+            const optBox = document.getElementById('fill-options');
+            optBox.innerHTML = '';
+            
+            // Options are predefined and guaranteed distinct
+            shuffle([...q.options]).forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'sys-btn px-6 py-3 text-xl rounded font-bold';
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (state.isTransitioning) return;
+                    if (opt === q.a) {
+                        state.isTransitioning = true;
+                        btn.classList.add('bg-[#2e8b57]', 'text-black');
+                        playSynthesizedSound('success');
+                        
+                        const finalSentence = buildCorrectSentence(q.q, q.a);
+                        document.getElementById('fill-question').innerText = finalSentence;
+                        speakText(finalSentence);
+                        
+                        state.currentQIndex++;
+                        setTimeout(() => {
+                            state.isTransitioning = false;
+                            checkGameComplete('fill');
+                        }, 1500);
+                    } else {
+                        btn.classList.add('danger');
+                        btn.disabled = true;
+                        btn.classList.add('opacity-50', 'cursor-not-allowed');
+                        playSynthesizedSound('error');
+                        showHint('fill');
+                    }
+                };
+                optBox.appendChild(btn);
+            });
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazbear Security: Future Continuous</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        fnaf: {
+                            bg: '#070714',
+                            panel: '#0f1026',
+                            border: '#4338ca',
+                            green: '#38bdf8',
+                            red: '#f43f5e',
+                            yellow: '#c084fc',
+                            static: 'rgba(139, 92, 246, 0.06)'
+                        }
+                    },
+                    animation: {
+                        'flicker': 'flicker 4s infinite',
+                        'scanline': 'scanline 8s linear infinite',
+                        'glitch': 'glitch 0.2s ease-in-out'
+                    },
+                    keyframes: {
+                        flicker: {
+                            '0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%': { opacity: 1 },
+                            '20%, 21.999%, 63%, 63.999%, 65%, 69.999%': { opacity: 0.4 }
+                        },
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100vh)' }
+                        },
+                        glitch: {
+                            '0%': { transform: 'translate(0)' },
+                            '20%': { transform: 'translate(-2px, 2px)' },
+                            '40%': { transform: 'translate(-2px, -2px)' },
+                            '60%': { transform: 'translate(2px, 2px)' },
+                            '80%': { transform: 'translate(2px, -2px)' },
+                            '100%': { transform: 'translate(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* Unified Future Tenses Palette: Future Shift / High-Tech Neon (Violet, Indigo & Cyber-Blue) */
+            --primary: #38bdf8;
+            --secondary: #4338ca;
+            --accent: #a855f7;
+            --bg-dark: #070714;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.16), transparent 42%),
+                radial-gradient(circle at 85% 80%, rgba(56, 189, 248, 0.12), transparent 44%);
+            color: #eef2ff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        body > header {
+            background: rgba(10, 11, 30, 0.94) !important;
+            border-bottom: 2px solid #4338ca !important;
+            box-shadow: 0 4px 24px rgba(124, 58, 237, 0.22);
+            backdrop-filter: blur(8px);
+        }
+
+        /* CRT Screen Effects */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(124, 58, 237, 0.04), rgba(0, 0, 0, 0.01), rgba(56, 189, 248, 0.05));
+            z-index: 50;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+        
+        .scanline {
+            width: 100%;
+            height: 10px;
+            background: rgba(56, 189, 248, 0.12);
+            position: fixed;
+            z-index: 51;
+            pointer-events: none;
+        }
+
+        .btn-camera {
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
+        }
+        
+        .btn-camera:hover:not(:disabled) {
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-camera:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .broken-cam {
+            background: repeating-linear-gradient(
+                45deg,
+                #111,
+                #111 10px,
+                #222 10px,
+                #222 20px
+            );
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Certificate Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #certificate-screen, #certificate-screen * { visibility: visible; }
+            #certificate-screen {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                background: #0a0a0c !important;
+                padding: 20px;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .crt::before, .scanline, .no-print { display: none !important; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+    </style>
+</head>
+<body class="font-sans flex flex-col h-screen relative">
+    <!-- Floating Back to Hub Navigation -->
+    <style>
+        .hub-back-btn {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            z-index: 10000;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(10, 11, 30, 0.92);
+            color: #38bdf8;
+            border: 1px solid rgba(139, 92, 246, 0.65);
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.65), 0 0 12px rgba(124, 58, 237, 0.25);
+            transition: all 0.2s ease;
+        }
+        .hub-back-btn:hover {
+            background: linear-gradient(135deg, #7c3aed, #38bdf8);
+            color: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.55);
+            transform: translateY(-1px);
+        }
+        body > header { padding-left: 148px !important; }
+        @media print {
+            .hub-back-btn { display: none !important; }
+        }
+    </style>
+    <a href="index.html" class="hub-back-btn no-print" title="Return to ESL Games Hub">⬅ Back to Hub</a>
+    
+    <div class="crt"></div>
+    <div class="scanline animate-scanline"></div>
+
+    <!-- JAVASCRIPT GAME LOGIC & DATA -->
+    <script>
+        const GAME_DATA = {
+            config: {
+                levelTitle: "Intermediate Security Cadet",
+                topic: "Future Continuous (will be + V-ing)",
+                totalNights: 5
+            },
+            story: {
+                introTitle: "NIGHT GUARD BRIEFING",
+                introText: "Welcome to your new job at the Fazbear facility. Your task is to monitor the cameras and predict the animatronics' movements. You must know what they WILL BE DOING to survive until 6 AM. Check the rules and access the cameras.",
+                rules: [
+                    { type: "Positive (+)", rule: "will be + V-ing", ex: "At 2 AM, Foxy will be running." },
+                    { type: "Negative (-)", rule: "will not (won't) be + V-ing", ex: "Chica won't be eating pizza." },
+                    { type: "Question (?)", rule: "Will + subject + be + V-ing?", ex: "Will Bonnie be playing guitar?" }
+                ],
+                suspects: [
+                    { name: "Toy Bonnie", log: "Active in Party Room 1", img: "https://i.postimg.cc/vmpKnTrX/Toy-Bonnie-removebg-preview.png" },
+                    { name: "Mangle", log: "Hanging in Kid's Cove", img: "https://i.postimg.cc/YSJPF06N/Mangle-removebg-preview.png" },
+                    { name: "Balloon Boy", log: "Looking for batteries", img: "https://i.postimg.cc/25PtWyQ4/Baloon-Boy-removebg-preview.png" },
+                    { name: "Withered Foxy", log: "Standing in the hallway", img: "https://i.postimg.cc/5tHGjLC3/Withered-Foxy-removebg-preview.png" },
+                    { name: "The Puppet", log: "Waking up in the Prize Corner", img: "https://i.postimg.cc/tgLc6J3V/The-Marionette-removebg-preview.png" },
+                    { name: "Toy Chica", log: "Missing beak", img: "https://i.postimg.cc/rpvH4s1j/Toy-Chica-removebg-preview.png" },
+                    { name: "Withered Bonnie", log: "Missing face", img: "https://i.postimg.cc/tgLc6J3F/Withered-Bonnie-removebg-preview.png" },
+                    { name: "Golden Freddy", log: "Appearing randomly", img: "https://i.postimg.cc/zfLM3KgF/Golden-Freddy-Jumpscare-removebg-preview.png" }
+                ]
+            },
+            // Розширений масив із понад 45 питань для перемішування
+            questionPool: [
+                { type: "mc", text: "At 1 AM, Toy Bonnie ___ down the hall.", answer: "will be walking", distractors: ["will walking", "will be walk"] },
+                { type: "mc", text: "We ___ the cameras very closely tonight.", answer: "will be watching", distractors: ["will watching", "will watch be"] },
+                { type: "mc", text: "The security guard ___ on the job!", answer: "will not be sleeping", distractors: ["will not sleeping", "not will be sleeping"] },
+                { type: "mc", text: "___ Mangle ___ from the ceiling?", answer: "Will / be hanging", distractors: ["Will / hanging", "Be / will hanging"] },
+                { type: "mc", text: "I ___ the Freddy mask to hide.", answer: "will be wearing", distractors: ["will be wear", "will wearing"] },
+                { type: "mc", text: "At 3 AM, the animatronics ___ faster.", answer: "will be moving", distractors: ["will be move", "will moving"] },
+                { type: "mc", text: "Withered Chica ___ the right doorway.", answer: "will be blocking", distractors: ["will blocking", "be will blocking"] },
+                { type: "mc", text: "The manager ___ on the phone soon.", answer: "will be calling", distractors: ["will calling", "will be call"] },
+                { type: "mc", text: "At 2 AM, the Puppet ___ out of its box.", answer: "will be coming", distractors: ["will coming", "will be come"] },
+                { type: "mc", text: "___ Balloon Boy ___ your batteries?", answer: "Will / be stealing", distractors: ["Will / stealing", "Be / will stealing"] },
+                { type: "mc", text: "The old animatronics ___ in the Parts and Service room.", answer: "will be resting", distractors: ["will resting", "will be rest"] },
+                { type: "mc", text: "Mangle ___ radio static to scare you.", answer: "will be playing", distractors: ["will playing", "will be play"] },
+                { type: "mc", text: "I ___ the music box all night!", answer: "will be winding", distractors: ["will winding", "will be wind"] },
+                { type: "mc", text: "Toy Freddy ___ games in the corner.", answer: "will be playing", distractors: ["will playing", "will be play"] },
+                { type: "mc", text: "___ the power ___ down quickly?", answer: "Will / be draining", distractors: ["Will / draining", "Be / will draining"] },
+                { type: "mc", text: "At 4 AM, Withered Foxy ___ in the hallway.", answer: "will be standing", distractors: ["will standing", "will be stand"] },
+                { type: "mc", text: "Toy Chica ___ her beak.", answer: "will be missing", distractors: ["will missing", "will be miss"] },
+                { type: "mc", text: "___ the animatronics ___ at the cameras?", answer: "Will / be staring", distractors: ["Will / staring", "Be / will staring"] },
+                { type: "mc", text: "Withered Freddy ___ the office soon.", answer: "will be entering", distractors: ["will entering", "will be enter"] },
+                { type: "mc", text: "We ___ the mask to survive.", answer: "will be using", distractors: ["will using", "will be use"] },
+                { type: "mc", text: "Golden Freddy ___ in the corner of your eye.", answer: "will be appearing", distractors: ["will appearing", "will be appear"] },
+                { type: "mc", text: "___ the flashlight ___ properly?", answer: "Will / be working", distractors: ["Will / working", "Be / will working"] },
+                { type: "mc", text: "The guards ___ pizza tonight.", answer: "will not be eating", distractors: ["will not eating", "not will be eating"] },
+                { type: "mc", text: "___ you ___ the vents at 5 AM?", answer: "Will / be checking", distractors: ["Will / checking", "Be / will checking"] },
+                { type: "mc", text: "Withered Bonnie ___ his face.", answer: "will be missing", distractors: ["will missing", "will be miss"] },
+                
+                // Sentence Builder
+                { type: "build", text: "Foxy / running / be / will / .", answer: "Foxy will be running ." },
+                { type: "build", text: "box / playing / The / music / be / will / .", answer: "The music box will be playing ." },
+                { type: "build", text: "using / not / We / flashlight / will / the / be / .", answer: "We will not be using the flashlight ." },
+                { type: "build", text: "you / waiting / Will / be / ? ", answer: "Will you be waiting ?" },
+                { type: "build", text: "laughing / Balloon Boy / be / will / .", answer: "Balloon Boy will be laughing ." },
+                { type: "build", text: "power / quickly / The / be / draining / will / .", answer: "The power will be draining quickly ." },
+                { type: "build", text: "Freddy / corner / the / standing / be / will / in / .", answer: "Freddy will be standing in the corner ." },
+                { type: "build", text: "surviving / I / be / 6 AM / until / will / .", answer: "I will be surviving until 6 AM ." },
+                { type: "build", text: "Puppet / The / waking / will / up / be / .", answer: "The Puppet will be waking up ." },
+                { type: "build", text: "mask / wearing / be / will / I / my / .", answer: "I will be wearing my mask ." },
+                { type: "build", text: "vent / crawling / the / Chica / in / be / will / ?", answer: "Will Chica be crawling in the vent ?" },
+                { type: "build", text: "not / moving / Golden Freddy / be / will / .", answer: "Golden Freddy will not be moving ." },
+                { type: "build", text: "looking / camera / at / Will / he / be / the / ?", answer: "Will he be looking at the camera ?" },
+                { type: "build", text: "animatronics / The / staring / will / be / .", answer: "The animatronics will be staring ." },
+                { type: "build", text: "attacking / Puppet / The / be / will / .", answer: "The Puppet will be attacking ." },
+                { type: "build", text: "batteries / stealing / Balloon Boy / be / Will / ?", answer: "Will Balloon Boy be stealing batteries ?" },
+                { type: "build", text: "Withered Bonnie / still / sitting / not / be / will / .", answer: "Withered Bonnie will not be sitting still ." },
+                { type: "build", text: "around / hanging / Mangle / be / will / .", answer: "Mangle will be hanging around ." },
+                { type: "build", text: "guards / sleeping / the / be / Will / ?", answer: "Will the guards be sleeping ?" },
+                { type: "build", text: "tonight / panicking / not / I / be / will / .", answer: "I will not be panicking tonight ." },
+                { type: "build", text: "flash / be / using / will / We / the / .", answer: "We will be using the flash ." },
+                { type: "build", text: "hallway / Will / running / Foxy / be / the / in / ?", answer: "Will Foxy be running in the hallway ?" },
+                { type: "build", text: "Chica / kitchen / cooking / the / in / be / will / .", answer: "Chica will be cooking in the kitchen ." },
+
+                // Grammar Check
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "At 4 AM, they will be searching for you.", distractors: ["At 4 AM, they will searching for you.", "At 4 AM, they will be search for you."] },
+                { type: "correct", text: "Find the CORRECT negative sentence.", answer: "I will not be making loud noises.", distractors: ["I will not making loud noises.", "I not will be making loud noises."] },
+                { type: "correct", text: "Find the CORRECT question.", answer: "Will the camera be rebooting?", distractors: ["Will the camera rebooting?", "Be the camera will rebooting?"] },
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "Tomorrow, we will be fixing the doors.", distractors: ["Tomorrow, we will be fix the doors.", "Tomorrow, we will fixing the doors."] },
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "Golden Freddy will be sitting here.", distractors: ["Golden Freddy will sitting here.", "Golden Freddy be will sitting here."] },
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "At 5 AM, we will be surviving.", distractors: ["At 5 AM, we will surviving.", "At 5 AM, we will be survive."] },
+                { type: "correct", text: "Find the CORRECT question.", answer: "Will Foxy be running down the hall?", distractors: ["Will Foxy running down the hall?", "Will be Foxy running down the hall?"] },
+                { type: "correct", text: "Find the CORRECT negative sentence.", answer: "I will not be flashing the light.", distractors: ["I will not flashing the light.", "I not will be flashing the light."] },
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "The guards will be watching the monitors.", distractors: ["The guards will watching the monitors.", "The guards will be watch the monitors."] },
+                { type: "correct", text: "Find the CORRECT question.", answer: "Will Toy Chica be holding her cupcake?", distractors: ["Will Toy Chica holding her cupcake?", "Will Toy Chica be hold her cupcake?"] },
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "Toy Freddy will be playing games.", distractors: ["Toy Freddy will playing games.", "Toy Freddy will be play games."] },
+                { type: "correct", text: "Find the CORRECT question.", answer: "Will Golden Freddy be watching you?", distractors: ["Will Golden Freddy watching you?", "Will Golden Freddy watch you?"] },
+                { type: "correct", text: "Find the CORRECT negative sentence.", answer: "We will not be using the doors.", distractors: ["We will not using the doors.", "We not will be using the doors."] },
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "The cameras will be glitching.", distractors: ["The cameras will glitching.", "The cameras be will glitching."] },
+                { type: "correct", text: "Find the CORRECT question.", answer: "Will the power be running out?", distractors: ["Will the power running out?", "Be the power will running out?"] },
+                { type: "correct", text: "Find the CORRECT negative sentence.", answer: "The Puppet will not be sleeping.", distractors: ["The Puppet will not sleeping.", "The Puppet not will be sleeping."] },
+                { type: "correct", text: "Which sentence is CORRECT?", answer: "They will be checking the vents.", distractors: ["They will checking the vents.", "They will be check the vents."] }
+            ],
+            // Усі 18 запитаних вами картинок для галереї сертифіката
+            avatars: [
+                "https://i.postimg.cc/9QKM43Mh/Balloon-Boy.jpg",
+                "https://i.postimg.cc/YCZ94c9w/bite-of-78.jpg",
+                "https://i.postimg.cc/DwHZWVZk/chica-cupcake.jpg",
+                "https://i.postimg.cc/9QKM43MW/Endoskeleton-02.jpg",
+                "https://i.postimg.cc/jSm5WV5t/Ferdinand-fazbear.jpg",
+                "https://i.postimg.cc/t4wT10TR/Fnaf-Cupcake.jpg",
+                "https://i.postimg.cc/2SM6qp6C/fnaf-fan.jpg",
+                "https://i.postimg.cc/RZyF3rF0/Golden-freddy.jpg",
+                "https://i.postimg.cc/GmV2B02R/Mangle-fnaf.jpg",
+                "https://i.postimg.cc/ht6jJFjz/Puppet.jpg",
+                "https://i.postimg.cc/TPbPgkL2/Toy-Bonnie.jpg",
+                "https://i.postimg.cc/bwWJGXJ2/Toy-chica-(1).jpg",
+                "https://i.postimg.cc/TPbPgkLd/Toy-Freddy-(2).jpg",
+                "https://i.postimg.cc/dVp17M1L/W-Bonnie.jpg",
+                "https://i.postimg.cc/Bnk68W6Q/Withered-Bonnie.jpg",
+                "https://i.postimg.cc/8z95F85s/Withered-Chica-(1).jpg",
+                "https://i.postimg.cc/zG6BLmBL/Withered-fredy.jpg",
+                "https://i.postimg.cc/QdwtBLtK/𝖬𝖺𝗇𝗀𝗅𝖾-𝖥𝗇𝖺𝖿-𝟤.jpg"
+            ]
+        };
+
+        // Audio System (Web Audio API)
+        const AudioSys = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+            },
+            playTone(freq, type, duration, vol=0.1) {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            },
+            click() { this.playTone(800, 'square', 0.05, 0.05); },
+            success() { 
+                this.playTone(400, 'sine', 0.1); 
+                setTimeout(() => this.playTone(600, 'sine', 0.2), 100);
+            },
+            error() { this.playTone(150, 'sawtooth', 0.3, 0.1); },
+            chime6AM() {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, i) => {
+                    setTimeout(() => this.playTone(freq, 'sine', 1.5, 0.2), i * 500);
+                });
+            }
+        };
+
+        // Speech API з фільтром для спецсимволів (щоб не читало _ чи /)
+        function speak(text) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            
+            let cleanText = text.replace(/_+/g, ' blank ')
+                                .replace(/\//g, ' ')
+                                .replace(/['"]/g, '');
+                                
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            utterance.pitch = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function speakCurrentPrompt() {
+            const q = STATE.currentGameQuestions[STATE.currentQuestionIndex];
+            speak(q.text);
+        }
+
+        // Global State
+        let STATE = {
+            currentHour: 1,
+            power: 100,
+            badges: JSON.parse(localStorage.getItem('fnaf_badges')) || [],
+            currentGameQuestions: [],
+            currentQuestionIndex: 0,
+            mistakesInRow: 0,
+            builderSelected: []
+        };
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        window.onload = () => {
+            renderHub();
+            updateTopBar();
+        };
+
+        function startAudio() {
+            AudioSys.init();
+        }
+
+        function showScreen(screenId) {
+            startAudio();
+            AudioSys.click();
+            document.querySelectorAll('.screen-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+            
+            document.body.classList.add('animate-glitch');
+            setTimeout(() => document.body.classList.remove('animate-glitch'), 200);
+        }
+
+        function renderHub() {
+            document.getElementById('hub-title').innerHTML = `
+                <i class="fa-solid fa-shield-halved text-fnaf-green mr-2"></i>
+                ${GAME_DATA.story.introTitle}
+            `;
+            document.getElementById('hub-text').innerText = GAME_DATA.story.introText;
+            document.getElementById('hub-level').innerText = `Clearance: ${GAME_DATA.config.levelTitle}`;
+
+            const rulesHtml = GAME_DATA.story.rules.map(r => `
+                <div class="bg-fnaf-panel border border-fnaf-border p-3 rounded cursor-pointer hover:border-fnaf-green transition" onclick="speak('${(r.rule + '. Example: ' + r.ex).replace(/'/g, "\\'")}')">
+                    <div class="text-fnaf-green font-bold text-sm mb-1">${r.type} <i class="fa-solid fa-volume-up text-xs float-right mt-1"></i></div>
+                    <div class="font-mono text-xs text-gray-300">${r.rule}</div>
+                    <div class="text-xs text-gray-500 italic mt-1">${r.ex}</div>
+                </div>
+            `).join('');
+            document.getElementById('rules-container').innerHTML = rulesHtml;
+
+            const suspectsHtml = GAME_DATA.story.suspects.map(s => `
+                <div class="flex items-center gap-3 bg-fnaf-panel p-2 rounded border border-fnaf-border cursor-pointer hover:bg-gray-800 transition" onclick="speak('${(s.name + '. ' + s.log).replace(/'/g, "\\'")}')">
+                    <div class="w-12 h-12 rounded bg-black border border-gray-600 overflow-hidden flex-shrink-0 flex items-center justify-center relative">
+                        <i class="fa-solid fa-user-secret text-gray-700 absolute text-2xl z-0"></i>
+                        <img src="${s.img}" alt="${s.name}" class="w-full h-full object-contain relative z-10" onerror="this.style.display='none'">
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-gray-200">${s.name}</div>
+                        <div class="text-[10px] text-fnaf-green">${s.log}</div>
+                    </div>
+                    <i class="fa-solid fa-volume-up text-gray-600 ml-auto text-xs"></i>
+                </div>
+            `).join('');
+            document.getElementById('suspects-container').innerHTML = suspectsHtml;
+
+            renderCameraButtons();
+            renderBadges();
+        }
+
+        function renderCameraButtons() {
+            const container = document.getElementById('camera-btns');
+            let html = '';
+            for(let i = 1; i <= 5; i++) {
+                const isLocked = i > STATE.currentHour;
+                const isDone = i < STATE.currentHour;
+                
+                let btnClass = isLocked ? "broken-cam text-gray-500" : (isDone ? "border-fnaf-green text-fnaf-green" : "border-gray-500 text-white hover:text-fnaf-green");
+                let icon = isLocked ? "fa-lock" : (isDone ? "fa-check" : "fa-video");
+                
+                html += `
+                    <button onclick="setupGame(${i})" ${isLocked ? 'disabled' : ''} class="btn-camera p-4 rounded-lg border-2 ${btnClass} flex flex-col items-center justify-center gap-2 bg-fnaf-panel">
+                        <i class="fa-solid ${icon} text-xl"></i>
+                        <span class="font-mono font-bold">CAM 0${i}</span>
+                        <span class="text-xs">${i} AM</span>
+                    </button>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function updateTopBar() {
+            document.getElementById('top-time').innerText = `0${STATE.currentHour}:00 AM`;
+            const pwrEl = document.getElementById('top-power');
+            pwrEl.innerText = `Power: ${STATE.power}%`;
+            if(STATE.power <= 20) pwrEl.classList.add('text-fnaf-red', 'animate-pulse');
+            else pwrEl.classList.remove('text-fnaf-red', 'animate-pulse');
+        }
+
+        function setupGame(camId) {
+            AudioSys.click();
+            STATE.currentQuestionIndex = 0;
+            STATE.mistakesInRow = 0;
+            
+            let pool = shuffle([...GAME_DATA.questionPool]);
+            STATE.currentGameQuestions = pool.slice(0, 5);
+            
+            document.getElementById('game-cam-title').innerText = `CAM 0${camId} Feed`;
+            showScreen('game-screen');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = STATE.currentGameQuestions[STATE.currentQuestionIndex];
+            document.getElementById('game-progress').innerText = `Log ${STATE.currentQuestionIndex + 1} of 5`;
+            document.getElementById('hint-box').classList.add('hidden');
+            
+            const workspace = document.getElementById('game-workspace');
+            workspace.innerHTML = '';
+
+            let promptHtml = `
+                <div class="mb-6 flex items-start gap-3">
+                    <button onclick="speakCurrentPrompt()" class="bg-gray-800 p-3 rounded-full hover:bg-gray-700 transition flex-shrink-0 border border-gray-600">
+                        <i class="fa-solid fa-volume-up text-fnaf-green"></i>
+                    </button>
+                    <div class="text-xl md:text-2xl font-semibold leading-relaxed">${q.text}</div>
+                </div>
+            `;
+            workspace.innerHTML += promptHtml;
+
+            const interactiveArea = document.createElement('div');
+            
+            if (q.type === 'mc' || q.type === 'correct') {
+                let options = shuffle([q.answer, ...q.distractors]);
+                interactiveArea.className = "flex flex-col gap-3 max-w-md mx-auto";
+                
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "p-4 bg-fnaf-panel border-2 border-fnaf-border rounded-lg text-left hover:border-fnaf-green transition font-mono md:text-lg w-full active:scale-95";
+                    btn.innerText = opt;
+                    btn.onclick = () => checkAnswer(opt === q.answer, opt, q);
+                    interactiveArea.appendChild(btn);
+                });
+            } 
+            else if (q.type === 'build') {
+                STATE.builderSelected = [];
+                let words = shuffle(q.answer.split(' '));
+                
+                const dropArea = document.createElement('div');
+                dropArea.id = "build-drop-area";
+                dropArea.className = "min-h-[60px] p-4 bg-black border-2 border-dashed border-gray-600 rounded-lg mb-6 flex flex-wrap gap-2 items-center justify-center";
+                
+                const wordBank = document.createElement('div');
+                wordBank.id = "build-word-bank";
+                wordBank.className = "flex flex-wrap gap-2 justify-center";
+                
+                const renderBuilder = () => {
+                    dropArea.innerHTML = '';
+                    wordBank.innerHTML = '';
+                    
+                    STATE.builderSelected.forEach((w, i) => {
+                        const b = document.createElement('button');
+                        b.className = "px-3 py-2 bg-fnaf-green text-black font-bold rounded shadow cursor-pointer";
+                        b.innerText = w;
+                        b.onclick = () => {
+                            AudioSys.click();
+                            STATE.builderSelected.splice(i, 1);
+                            renderBuilder();
+                        };
+                        dropArea.appendChild(b);
+                    });
+
+                    let remaining = [...words];
+                    STATE.builderSelected.forEach(sw => {
+                        let idx = remaining.indexOf(sw);
+                        if(idx > -1) remaining.splice(idx, 1);
+                    });
+
+                    remaining.forEach(w => {
+                        const b = document.createElement('button');
+                        b.className = "px-3 py-2 bg-fnaf-panel border border-gray-500 rounded hover:border-white transition cursor-pointer";
+                        b.innerText = w;
+                        b.onclick = () => {
+                            AudioSys.click();
+                            STATE.builderSelected.push(w);
+                            renderBuilder();
+                        };
+                        wordBank.appendChild(b);
+                    });
+
+                    if (remaining.length === 0) {
+                        const checkBtn = document.createElement('button');
+                        checkBtn.className = "mt-6 w-full py-3 bg-fnaf-green text-black font-bold rounded-lg uppercase tracking-widest hover:bg-green-400 transition";
+                        checkBtn.innerText = "Check Connection";
+                        checkBtn.onclick = () => checkAnswer(STATE.builderSelected.join(' ') === q.answer, STATE.builderSelected.join(' '), q);
+                        wordBank.appendChild(checkBtn);
+                    }
+                };
+                
+                interactiveArea.appendChild(dropArea);
+                interactiveArea.appendChild(wordBank);
+                renderBuilder();
+            }
+
+            workspace.appendChild(interactiveArea);
+        }
+
+        function checkAnswer(isCorrect, selectedOption, qData) {
+            const hintBox = document.getElementById('hint-box');
+            const hintText = document.getElementById('hint-text');
+
+            if (isCorrect) {
+                AudioSys.success();
+                STATE.mistakesInRow = 0;
+                
+                let textToSpeak = qData.answer;
+                if (qData.type === 'mc') {
+                    textToSpeak = qData.text.replace('___', qData.answer);
+                }
+                speak(textToSpeak);
+                
+                const overlay = document.createElement('div');
+                overlay.className = "fixed inset-0 bg-green-500/20 z-50 pointer-events-none flex items-center justify-center";
+                overlay.innerHTML = `<div class="text-fnaf-green text-4xl font-mono bg-black/80 px-6 py-3 border border-fnaf-green rounded">SIGNAL RESTORED</div>`;
+                document.body.appendChild(overlay);
+                
+                setTimeout(() => {
+                    overlay.remove();
+                    STATE.currentQuestionIndex++;
+                    if (STATE.currentQuestionIndex < 5) {
+                        renderQuestion();
+                    } else {
+                        finishMiniGame();
+                    }
+                }, 1000);
+
+            } else {
+                AudioSys.error();
+                STATE.power = Math.max(0, STATE.power - 5);
+                updateTopBar();
+                STATE.mistakesInRow++;
+
+                document.body.classList.add('animate-glitch');
+                setTimeout(() => document.body.classList.remove('animate-glitch'), 200);
+
+                hintBox.classList.remove('hidden');
+                
+                let ruleHint = "";
+                if (qData.type === 'mc') {
+                    ruleHint = "Remember the formula: <b>will be + V-ing</b>. Check if you missed 'be' or the '-ing' ending!";
+                } else if (qData.type === 'build') {
+                    ruleHint = "Word order is key: <b>Subject + will be + V-ing</b>. Questions start with 'Will'!";
+                } else if (qData.type === 'correct') {
+                    ruleHint = "Read carefully! The correct sentence MUST have <b>will</b> AND <b>be</b> AND a verb ending in <b>-ing</b>.";
+                }
+                
+                if (STATE.mistakesInRow === 1) {
+                    hintText.innerHTML = `<strong class="text-fnaf-red">SYSTEM WARNING.</strong> <br>${ruleHint}`;
+                } else {
+                    hintText.innerHTML = `<strong class="text-fnaf-red">CRITICAL ERROR.</strong> <br>${ruleHint} <br><br>The correct log was: <br><span class="text-fnaf-green font-bold text-lg">${qData.answer}</span>`;
+                }
+            }
+        }
+
+        function finishMiniGame() {
+            AudioSys.success();
+            STATE.currentHour++;
+            updateTopBar();
+            
+            checkBadges();
+
+            if (STATE.currentHour > 5) {
+                trigger6AM();
+            } else {
+                document.getElementById('hub-text').innerText = `Camera 0${STATE.currentHour-1} restored. Animatronics are moving. Proceed to the next camera immediately.`;
+                renderCameraButtons();
+                showScreen('hub-screen');
+            }
+        }
+
+        function checkBadges() {
+            let newBadge = null;
+            if (STATE.currentHour === 2 && !STATE.badges.includes("Cam1")) newBadge = { id: "Cam1", icon: "fa-video", name: "Camera 1 Restored", desc: "Survived 1 AM" };
+            if (STATE.currentHour === 4 && !STATE.badges.includes("Halfway")) newBadge = { id: "Halfway", icon: "fa-battery-half", name: "Halfway There", desc: "Reached 3 AM" };
+            
+            if (newBadge) {
+                STATE.badges.push(newBadge.id);
+                localStorage.setItem('fnaf_badges', JSON.stringify(STATE.badges));
+                showBadgeNotification(newBadge);
+                renderBadges();
+            }
+        }
+
+        function renderBadges() {
+            const container = document.getElementById('badges-container');
+            const allPossible = [
+                { id: "Cam1", icon: "fa-video", name: "First Cam" },
+                { id: "Halfway", icon: "fa-battery-half", name: "3 AM" },
+                { id: "Survivor", icon: "fa-star", name: "6 AM Survivor" }
+            ];
+
+            let html = '';
+            allPossible.forEach(b => {
+                const has = STATE.badges.includes(b.id);
+                html += `
+                    <div class="flex flex-col items-center justify-center p-2 border border-gray-700 rounded ${has ? 'bg-fnaf-panel text-fnaf-yellow border-fnaf-yellow' : 'bg-black text-gray-600'}">
+                        <i class="fa-solid ${b.icon} text-2xl mb-1"></i>
+                        <span class="text-[10px] text-center leading-tight uppercase font-bold">${b.name}</span>
+                        ${!has ? '<i class="fa-solid fa-lock text-[8px] mt-1"></i>' : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function showBadgeNotification(badge) {
+            const notif = document.createElement('div');
+            notif.className = "fixed top-4 right-4 bg-black border-2 border-fnaf-yellow p-4 rounded z-[100] flex items-center gap-4 animate-bounce";
+            notif.innerHTML = `
+                <div class="text-fnaf-yellow text-3xl"><i class="fa-solid ${badge.icon}"></i></div>
+                <div>
+                    <div class="text-xs text-gray-400 font-bold tracking-widest uppercase">Badge Unlocked</div>
+                    <div class="text-fnaf-yellow font-bold">${badge.name}</div>
+                </div>
+            `;
+            document.body.appendChild(notif);
+            AudioSys.success();
+            setTimeout(() => notif.remove(), 4000);
+        }
+
+        function trigger6AM() {
+            showScreen('certificate-screen');
+            AudioSys.chime6AM();
+            
+            if (!STATE.badges.includes("Survivor")) {
+                STATE.badges.push("Survivor");
+                localStorage.setItem('fnaf_badges', JSON.stringify(STATE.badges));
+                renderBadges();
+            }
+
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            for(let i=0; i<100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 10 + 5,
+                    color: ['#00ff41', '#fcee0a', '#ff003c'][Math.floor(Math.random()*3)],
+                    speed: Math.random() * 3 + 2,
+                    rot: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speed;
+                    p.rot += p.rotSpeed;
+                    if(p.y > canvas.height) p.y = -20;
+                    
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                });
+                if(document.getElementById('certificate-screen').classList.contains('hidden') === false) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            animate();
+
+            document.getElementById('cert-date').innerText = new Date().toLocaleDateString();
+            renderAvatarSelector();
+        }
+
+        function renderAvatarSelector() {
+            const grid = document.getElementById('avatar-selector-grid');
+            if(!grid || grid.innerHTML !== '') return;
+            let html = '';
+            GAME_DATA.avatars.forEach((url) => {
+                const safeUrl = url.replace(/'/g, "\\'");
+                html += `<img src="${safeUrl}" onclick="selectAvatar('${safeUrl}')" class="w-20 h-20 md:w-24 md:h-24 object-cover border-4 border-gray-600 hover:border-fnaf-green cursor-pointer rounded transition-all hover:scale-105 avatar-thumb bg-black">`;
+            });
+            grid.innerHTML = html;
+        }
+        
+        function selectAvatar(url) {
+            AudioSys.click();
+            document.getElementById('cert-placeholder-icon').classList.add('hidden');
+            const pt = document.getElementById('cert-placeholder-text');
+            if (pt) pt.classList.add('hidden');
+            
+            const img = document.getElementById('cert-avatar-img');
+            img.src = url;
+            img.classList.remove('hidden');
+            
+            document.getElementById('avatar-gallery-modal').classList.add('hidden');
+        }
+
+        function restartGame() {
+            STATE.currentHour = 1;
+            STATE.power = 100;
+            updateTopBar();
+            document.getElementById('hub-text').innerText = GAME_DATA.story.introText;
+            renderCameraButtons();
+            showScreen('hub-screen');
+        }
+
+        function closeCertificate() {
+            showScreen('hub-screen');
+        }
+
+        function printCertificate() {
+            window.print();
+        }
+
+    </script>
+    
+    <!-- TOP BAR -->
+    <header class="bg-black border-b-2 border-fnaf-border p-3 flex justify-between items-center z-40 relative no-print">
+        <div class="flex items-center gap-4">
+            <div class="font-mono text-xl font-bold text-white tracking-widest">
+                NIGHT <span id="top-night">1</span>
+            </div>
+            <div class="text-fnaf-yellow font-mono text-xl font-bold" id="top-time">
+                12:00 AM
+            </div>
+        </div>
+        <div class="font-mono font-bold" id="top-power">
+            Power: 100%
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow relative overflow-y-auto z-40 p-4 lg:p-8 no-print">
+        
+        <!-- HUB SCREEN -->
+        <section id="hub-screen" class="screen-section max-w-5xl mx-auto h-full flex flex-col lg:flex-row gap-6">
+            <div class="flex-1 flex flex-col gap-6">
+                <div class="bg-black/80 border border-fnaf-border p-6 rounded-lg shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-fnaf-green/30"></div>
+                    <h2 id="hub-title" class="font-mono text-2xl font-bold text-white mb-2 tracking-wide"></h2>
+                    <div id="hub-level" class="text-xs font-bold text-fnaf-yellow bg-yellow-900/30 inline-block px-2 py-1 rounded mb-4 border border-yellow-700/50 uppercase"></div>
+                    <p id="hub-text" class="text-gray-300 leading-relaxed text-sm md:text-base"></p>
+                </div>
+
+                <div class="bg-black/80 border border-fnaf-border p-6 rounded-lg shadow-xl flex-1">
+                    <h3 class="font-mono text-xl font-bold text-white mb-4 border-b border-gray-800 pb-2">CAMERA ACCESS</h3>
+                    <div id="camera-btns" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-80 flex flex-col gap-6">
+                <div class="bg-black/80 border border-fnaf-border p-5 rounded-lg shadow-xl">
+                    <h3 class="font-mono text-lg font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-book-journal-whills text-fnaf-green"></i> System Rules
+                    </h3>
+                    <p class="text-xs text-gray-400 mb-3">Topic: ${GAME_DATA.config.topic}</p>
+                    <div id="rules-container" class="space-y-3"></div>
+                </div>
+
+                <div class="bg-black/80 border border-fnaf-border p-5 rounded-lg shadow-xl flex-1 flex flex-col">
+                    <h3 class="font-mono text-lg font-bold text-fnaf-red mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-address-card"></i> Suspects Logs
+                    </h3>
+                    <div id="suspects-container" class="space-y-2 flex-1 overflow-y-auto pr-2" style="max-height: 300px;"></div>
+                </div>
+
+                <div class="bg-black/80 border border-fnaf-border p-4 rounded-lg shadow-xl">
+                    <h3 class="font-mono text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest text-center">Clearances</h3>
+                    <div id="badges-container" class="grid grid-cols-3 gap-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GAME SCREEN -->
+        <section id="game-screen" class="screen-section hidden max-w-3xl mx-auto h-full flex flex-col justify-center">
+            <div class="mb-4 flex justify-between items-center">
+                <button onclick="showScreen('hub-screen')" class="text-gray-400 hover:text-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Abort
+                </button>
+                <div class="text-fnaf-yellow font-mono text-xl font-bold animate-pulse flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-600"></div> REC
+                </div>
+            </div>
+
+            <div class="bg-black/90 border border-gray-700 p-6 md:p-10 rounded-lg shadow-2xl relative">
+                <div class="absolute top-4 right-6 font-mono text-gray-500" id="game-cam-title">CAM 01</div>
+                <div class="absolute top-4 left-6 font-mono text-fnaf-green text-sm" id="game-progress">Log 1 of 5</div>
+                
+                <div class="mt-8">
+                    <div id="game-workspace" class="min-h-[250px] flex flex-col justify-center"></div>
+
+                    <div id="hint-box" class="hidden mt-6 bg-red-950/40 border border-fnaf-red p-4 rounded text-center">
+                        <i class="fa-solid fa-triangle-exclamation text-fnaf-red text-2xl mb-2"></i>
+                        <p id="hint-text" class="text-sm text-gray-200"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- CERTIFICATE SCREEN (GRAND FINAL) -->
+    <section id="certificate-screen" class="screen-section hidden z-[100] fixed inset-0 bg-fnaf-bg flex flex-col items-center justify-start p-4 pt-16 overflow-y-auto">
+        <canvas id="confetti" class="fixed inset-0 pointer-events-none z-10 no-print"></canvas>
+        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,transparent_50%,rgba(0,255,65,0.15)_100%)] z-10"></div>
+        
+        <!-- FIXED CLOSE BUTTON -->
+        <button onclick="closeCertificate()" class="fixed top-4 right-4 w-12 h-12 bg-black border-4 border-fnaf-red text-fnaf-red rounded-full font-black text-xl hover:bg-fnaf-red hover:text-black shadow-[0_0_15px_#ff003c] transition-all z-[200] flex items-center justify-center cursor-pointer no-print" title="Close Certificate">
+            X
+        </button>
+
+        <div class="relative z-30 w-full max-w-3xl mt-4 mb-4" id="license-card">
+            <div class="border-4 border-fnaf-green bg-[#051005] p-6 md:p-8 flex flex-col gap-6 relative shadow-[0_0_40px_rgba(0,255,65,0.4)] rounded-lg">
+                <div class="absolute inset-0 bg-[linear-gradient(rgba(0,255,65,0.05)_50%,rgba(0,0,0,0.2)_50%)] bg-[length:100%_4px] pointer-events-none z-0"></div>
+                
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-4 border-fnaf-green pb-4 relative z-10 gap-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fa-solid fa-shield-halved text-5xl md:text-7xl text-fnaf-yellow drop-shadow-[0_0_15px_#fcee0a] animate-pulse"></i>
+                        <div>
+                            <h1 class="text-2xl md:text-4xl font-black text-fnaf-green tracking-[0.2em] drop-shadow-[0_0_8px_#00ff41] uppercase">FAZBEAR ENT.</h1>
+                            <h2 class="text-base md:text-xl font-bold text-fnaf-yellow tracking-widest uppercase">Security Guard License</h2>
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right bg-fnaf-green/20 p-2 border border-fnaf-green rounded">
+                        <div class="text-xs text-fnaf-green uppercase tracking-widest font-bold">Authorized</div>
+                        <div class="font-mono text-fnaf-yellow font-bold text-lg">1987-A2</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8 relative z-10 items-center md:items-stretch">
+                    <div class="flex flex-col gap-2 flex-shrink-0 items-center relative z-20">
+                        <div onclick="document.getElementById('avatar-gallery-modal').classList.remove('hidden')" class="w-40 h-48 border-4 border-fnaf-green bg-black flex flex-col items-center justify-center shadow-[inset_0_0_20px_#00ff41] relative overflow-hidden cursor-pointer hover:border-fnaf-yellow transition-colors group" title="Click to select photo">
+                            <i id="cert-placeholder-icon" class="fa-solid fa-user-secret text-7xl text-fnaf-green opacity-50 group-hover:text-fnaf-yellow transition-colors"></i>
+                            <div id="cert-placeholder-text" class="text-fnaf-green text-xs font-bold mt-2 text-center group-hover:text-fnaf-yellow pointer-events-none">CLICK TO<br>SELECT PHOTO</div>
+                            <img id="cert-avatar-img" src="" class="hidden w-full h-full object-cover relative z-0">
+                            <div class="absolute bottom-0 w-full bg-fnaf-green text-black text-center text-xs font-bold py-1 uppercase tracking-widest z-10 pointer-events-none">NIGHT GUARD</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 flex flex-col gap-5 w-full">
+                        <div class="bg-black/50 p-4 border border-fnaf-green rounded">
+                            <label class="text-xs text-fnaf-green uppercase font-bold tracking-widest mb-1 block">Officer Name / ID:</label>
+                            <input type="text" value="JEREMY F." class="block w-full bg-transparent border-b-2 border-fnaf-green text-3xl font-mono font-bold text-white focus:outline-none focus:border-fnaf-yellow focus:text-fnaf-yellow transition-colors placeholder-gray-700 uppercase" placeholder="ENTER NAME">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 bg-black/50 p-4 border border-fnaf-green rounded flex-1">
+                            <div>
+                                <label class="text-[10px] md:text-xs text-gray-400 uppercase font-bold tracking-widest">Clearance:</label>
+                                <div class="font-mono text-fnaf-yellow font-bold text-sm md:text-lg">INTERMEDIATE (A2)</div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] md:text-xs text-gray-400 uppercase font-bold tracking-widest">Skill Verified:</label>
+                                <div class="font-mono text-fnaf-yellow font-bold text-sm md:text-lg">FUTURE CONTINUOUS</div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] md:text-xs text-gray-400 uppercase font-bold tracking-widest">Status:</label>
+                                <div class="font-mono text-fnaf-green font-bold text-sm md:text-lg animate-pulse">SURVIVED 6 AM</div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] md:text-xs text-gray-400 uppercase font-bold tracking-widest">Issued Date:</label>
+                                <div class="font-mono text-fnaf-green font-bold text-sm md:text-lg" id="cert-date"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-2 pt-4 border-t-4 border-fnaf-green flex justify-between items-center relative z-10 gap-4">
+                    <div class="font-mono text-4xl md:text-6xl text-fnaf-green opacity-70 tracking-tighter flex-1 overflow-hidden" style="font-family: monospace;">||||||| |||| || |||||| |||||</div>
+                    <div class="w-20 h-20 rounded-full border-4 border-fnaf-red flex items-center justify-center -rotate-12 bg-red-950/90 shadow-[0_0_20px_#ff003c] flex-shrink-0">
+                        <span class="font-bold text-xs md:text-sm text-fnaf-red text-center leading-none tracking-widest uppercase">Official<br>Seal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar Gallery Modal -->
+        <div id="avatar-gallery-modal" class="fixed inset-0 bg-black/90 z-[250] hidden flex-col items-center justify-center p-4 no-print pointer-events-auto">
+            <div class="bg-[#051005] border-4 border-fnaf-green p-6 rounded-lg max-w-3xl w-full shadow-[0_0_30px_#00ff41] relative">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-mono text-fnaf-yellow text-xl md:text-2xl font-bold uppercase tracking-widest">Select ID Photo</h3>
+                    <button onclick="document.getElementById('avatar-gallery-modal').classList.add('hidden')" class="text-fnaf-red text-3xl hover:scale-110 font-bold bg-black w-10 h-10 rounded-full border-2 border-fnaf-red flex items-center justify-center cursor-pointer">X</button>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 max-h-[60vh] overflow-y-auto p-2" id="avatar-selector-grid"></div>
+            </div>
+        </div>
+
+        <!-- Controls below certificate -->
+        <div class="relative z-[60] mt-4 mb-12 flex flex-wrap gap-4 w-full max-w-3xl no-print justify-center pointer-events-auto">
+            <button onclick="printCertificate()" class="px-6 py-4 bg-black text-fnaf-green border-2 border-fnaf-green font-mono font-bold uppercase tracking-widest hover:bg-fnaf-green hover:text-black transition shadow-[0_0_15px_#00ff41] flex-1 min-w-[200px] text-center cursor-pointer">
+                <i class="fa-solid fa-print mr-2"></i> Print License
+            </button>
+            <button onclick="restartGame()" class="px-6 py-4 bg-black text-fnaf-yellow border-2 border-fnaf-yellow font-mono font-bold uppercase tracking-widest hover:bg-fnaf-yellow hover:text-black transition shadow-[0_0_15px_#fcee0a] flex-1 min-w-[200px] text-center cursor-pointer">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Next Shift
+            </button>
+            <button onclick="closeCertificate()" class="px-6 py-4 bg-black text-gray-400 border-2 border-gray-600 font-mono font-bold uppercase tracking-widest hover:bg-gray-600 hover:text-white transition shadow-[0_0_15px_#666] flex-1 min-w-[200px] text-center cursor-pointer">
+                <i class="fa-solid fa-times mr-2"></i> Close
+            </button>
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazbear Security: Night Shift</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Share+Tech+Mono&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            /* Unified Present Tenses Palette: Classic Pizzeria / Security Tablet (Emerald & Cyan) */
+            --primary: #34d399;      /* Emerald */
+            --secondary: #f43f5e;    /* Neon Rose */
+            --accent: #22d3ee;       /* Cyan Accent */
+            --bg-dark: #060d10;
+            --panel-bg: #0c161c;
+            --border-color: #0e7490;
+            --text-light: #ecfeff;
+            --text-muted: #67e8f9;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 18% 12%, rgba(16, 185, 129, 0.12), transparent 40%),
+                radial-gradient(circle at 82% 85%, rgba(34, 211, 238, 0.1), transparent 42%);
+            color: var(--text-light);
+            font-family: 'Inter', 'Nunito', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        .font-tech {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        #tablet-container {
+            border: 2px solid rgba(34, 211, 238, 0.4) !important;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 28px rgba(16, 185, 129, 0.14) !important;
+        }
+
+        #tablet-container > header {
+            background: rgba(6, 13, 16, 0.96) !important;
+            border-bottom: 2px solid #0d9488 !important;
+        }
+
+        /* CRT Scanline Effect */
+        .scanlines {
+            position: relative;
+        }
+        .scanlines::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(16, 185, 129, 0.04), rgba(0, 255, 0, 0.015), rgba(34, 211, 238, 0.05));
+            z-index: 100;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .btn-tech {
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-tech:hover {
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+        }
+        .btn-tech:active {
+            transform: scale(0.95);
+        }
+        .btn-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Glitch Effect for Title */
+        .glitch {
+            position: relative;
+            color: white;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+        }
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            5% { clip: rect(70px, 9999px, 71px, 0); }
+            10% { clip: rect(100px, 9999px, 80px, 0); }
+            15% { clip: rect(29px, 9999px, 48px, 0); }
+            20% { clip: rect(65px, 9999px, 15px, 0); }
+            100% { clip: rect(65px, 9999px, 15px, 0); }
+        }
+
+        .cert-border {
+            border: 8px solid #3f3f46;
+            outline: 4px solid #18181b;
+            outline-offset: -12px;
+            background: #fff;
+            color: #000;
+        }
+
+        @media print {
+            body { background: white !important; color: black !important; }
+            .print\:hidden { display: none !important; }
+            .print\:block { display: block !important; }
+            .scanlines::before { display: none !important; }
+            #tablet-container { border: none !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4">
+    <!-- Floating Back to Hub Navigation -->
+    <style>
+        .hub-back-btn {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            z-index: 10000;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(6, 13, 16, 0.92);
+            color: #34d399;
+            border: 1px solid rgba(34, 211, 238, 0.55);
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.65), 0 0 10px rgba(34, 211, 238, 0.2);
+            transition: all 0.2s ease;
+        }
+        .hub-back-btn:hover {
+            background: linear-gradient(135deg, #34d399, #22d3ee);
+            color: #051014;
+            border-color: #22d3ee;
+            box-shadow: 0 0 16px rgba(34, 211, 238, 0.55);
+            transform: translateY(-1px);
+        }
+        @media (max-width: 1150px) {
+            #tablet-container > header { padding-left: 140px !important; }
+        }
+        @media print {
+            .hub-back-btn { display: none !important; }
+        }
+    </style>
+    <a href="index.html" class="hub-back-btn print:hidden" title="Return to ESL Games Hub">⬅ Back to Hub</a>
+
+    <!-- Audio Indicator -->
+    <div id="speech-indicator" class="hidden fixed top-4 right-4 z-50 bg-gray-800 border-2 border-[var(--primary)] text-[var(--primary)] px-4 py-2 rounded font-tech shadow-[0_0_10px_var(--primary)] animate-pulse flex items-center gap-2 pointer-events-none">
+        <i class="fa-solid fa-satellite-dish"></i> TRANSMITTING AUDIO...
+    </div>
+
+    <!-- Main Tablet Interface -->
+    <div id="tablet-container" class="w-full max-w-4xl bg-[var(--panel-bg)] border-4 sm:border-8 border-gray-900 rounded-xl sm:rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)] relative scanlines print:border-none print:shadow-none print:rounded-none">
+        
+        <!-- Header -->
+        <header class="bg-black border-b-2 border-[var(--border-color)] p-3 flex justify-between items-center print:hidden">
+            <div class="flex items-center gap-3 font-tech">
+                <div class="w-3 h-3 rounded-full bg-[var(--secondary)] animate-pulse"></div>
+                <span class="text-[var(--secondary)] font-bold tracking-widest text-xs sm:text-sm">REC</span>
+                <span class="text-[var(--text-muted)] text-xs hidden sm:inline ml-2">CAM-SYS v1.0</span>
+            </div>
+            <div class="font-tech font-bold text-white text-sm sm:text-lg">
+                12:00 AM
+            </div>
+            <div class="flex items-center gap-3 font-tech text-xs">
+                <span class="text-[var(--primary)] font-bold border border-[var(--primary)] px-2 py-0.5 rounded">Level: Pre-Intermediate</span>
+                <i class="fa-solid fa-battery-three-quarters text-white"></i>
+            </div>
+        </header>
+
+        <!-- VIEW: HUB -->
+        <main id="view-hub" class="p-4 sm:p-6 h-[80vh] overflow-y-auto print:hidden">
+            
+            <div class="text-center mb-8">
+                <h1 class="font-tech text-3xl sm:text-4xl font-black text-white mb-2 glitch uppercase" data-text="Freddy Fazbear's Pizza">Freddy Fazbear's Pizza</h1>
+                <p class="text-[var(--text-muted)] font-tech text-sm max-w-2xl mx-auto">
+                    > INCOMING MESSAGE FROM PREVIOUS GUARD...<br>
+                    <span class="text-white font-bold">"Welcome to the night shift. To survive, you must track the animatronics (Freddy, Bonnie, Chica, and Foxy) using the cameras. Log exactly what they are doing RIGHT NOW. Good luck."</span>
+                </p>
+            </div>
+
+            <!-- Asset Preview Showcase Carousel (Using Provided PostImg Assets) -->
+            <div class="bg-black border border-[var(--border-color)] rounded-lg p-4 mb-6 shadow-inner text-center">
+                <h3 class="font-tech text-xs text-[var(--text-muted)] tracking-widest uppercase mb-3">Live Feed Asset Previews (FNAF 1 Registry)</h3>
+                <div class="flex flex-wrap justify-center gap-3 items-center">
+                    <img src="https://i.postimg.cc/44pmMWTZ/Freddy-removebg-preview.png" alt="Freddy" class="w-12 h-12 object-contain filter drop-shadow-[0_0_5px_rgba(255,255,255,0.3)] hover:scale-110 transition-transform" title="Freddy Fazbear">
+                    <img src="https://i.postimg.cc/8cdc6zbY/Bonnie-removebg-preview.png" alt="Bonnie" class="w-12 h-12 object-contain filter drop-shadow-[0_0_5px_rgba(168,85,247,0.5)] hover:scale-110 transition-transform" title="Bonnie the Bunny">
+                    <img src="https://i.postimg.cc/L5k518VV/Chica-removebg-preview.png" alt="Chica" class="w-12 h-12 object-contain filter drop-shadow-[0_0_5px_rgba(252,211,77,0.5)] hover:scale-110 transition-transform" title="Chica the Chicken">
+                    <img src="https://i.postimg.cc/wM5MmjkR/Foxy-removebg-preview.png" alt="Foxy" class="w-12 h-12 object-contain filter drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] hover:scale-110 transition-transform" title="Foxy the Pirate">
+                    <img src="https://i.postimg.cc/0jGjwyCf/Cupcake-removebg-preview.png" alt="Cupcake" class="w-10 h-10 object-contain hover:scale-110 transition-transform" title="Mr. Cupcake">
+                    <img src="https://i.postimg.cc/1X0Xq3Kb/Golden-Freddy-removebg-preview.png" alt="Golden Freddy" class="w-12 h-12 object-contain filter drop-shadow-[0_0_5px_rgba(251,191,36,0.8)] hover:scale-110 transition-transform" title="Golden Freddy">
+                </div>
+            </div>
+
+            <!-- Grammar Rules (English Only) -->
+            <div class="bg-black border border-[var(--border-color)] rounded-lg p-4 mb-6 shadow-inner">
+                <h2 class="font-tech text-[var(--primary)] text-lg font-bold mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-book-journal-whills"></i> Security Manual: Present Continuous
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="rules-container">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- Badges & Progress -->
+            <div class="flex justify-between items-center mb-4 px-2 font-tech">
+                <h2 class="text-xl text-white"><i class="fa-solid fa-video text-[var(--text-muted)]"></i> Security Tasks</h2>
+                <div class="text-[var(--primary)] font-bold">Badges: <span id="badge-count">0</span>/4</div>
+            </div>
+
+            <!-- Mini Games Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <!-- Game 1 -->
+                <button onclick="startMiniGame('game1')" class="btn-tech bg-black hover:bg-gray-900 border border-[var(--border-color)] hover:border-[var(--primary)] rounded-lg p-4 flex flex-col items-center gap-2 text-center relative group">
+                    <div id="badge-game1" class="hidden absolute -top-2 -right-2 bg-[var(--primary)] text-black w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-lg"><i class="fa-solid fa-check"></i></div>
+                    <img src="https://i.postimg.cc/qqcq3vG9/Freddy-Plushie-removebg-preview.png" alt="Freddy Plush" class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                    <h3 class="font-tech font-bold text-white uppercase tracking-wider">CAM Tracking</h3>
+                    <p class="text-xs text-[var(--text-muted)] font-body">Identify current actions.</p>
+                </button>
+                <!-- Game 2 -->
+                <button onclick="startMiniGame('game2')" class="btn-tech bg-black hover:bg-gray-900 border border-[var(--border-color)] hover:border-[var(--primary)] rounded-lg p-4 flex flex-col items-center gap-2 text-center relative group">
+                    <div id="badge-game2" class="hidden absolute -top-2 -right-2 bg-[var(--primary)] text-black w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-lg"><i class="fa-solid fa-check"></i></div>
+                    <img src="https://i.postimg.cc/J030kzQg/Bonnie-plushie-removebg-preview.png" alt="Bonnie Plush" class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                    <h3 class="font-tech font-bold text-white uppercase tracking-wider">System Reboot</h3>
+                    <p class="text-xs text-[var(--text-muted)] font-body">Rebuild scrambled data logs.</p>
+                </button>
+                <!-- Game 3 -->
+                <button onclick="startMiniGame('game3')" class="btn-tech bg-black hover:bg-gray-900 border border-[var(--border-color)] hover:border-[var(--primary)] rounded-lg p-4 flex flex-col items-center gap-2 text-center relative group">
+                    <div id="badge-game3" class="hidden absolute -top-2 -right-2 bg-[var(--primary)] text-black w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-lg"><i class="fa-solid fa-check"></i></div>
+                    <img src="https://i.postimg.cc/sxPxhgJw/Chica-plushie-removebg-preview.png" alt="Chica Plush" class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                    <h3 class="font-tech font-bold text-white uppercase tracking-wider">Audio Decrypt</h3>
+                    <p class="text-xs text-[var(--text-muted)] font-body">Fix the -ing spelling errors.</p>
+                </button>
+                <!-- Game 4 -->
+                <button onclick="startMiniGame('game4')" class="btn-tech bg-black hover:bg-gray-900 border border-[var(--border-color)] hover:border-[var(--primary)] rounded-lg p-4 flex flex-col items-center gap-2 text-center relative group">
+                    <div id="badge-game4" class="hidden absolute -top-2 -right-2 bg-[var(--primary)] text-black w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-lg"><i class="fa-solid fa-check"></i></div>
+                    <img src="https://i.postimg.cc/7h1h2ZNK/Foxy-Plushie-removebg-preview.png" alt="Foxy Plush" class="w-10 h-10 object-contain group-hover:scale-110 transition-transform">
+                    <h3 class="font-tech font-bold text-white uppercase tracking-wider">Error Purge</h3>
+                    <p class="text-xs text-[var(--text-muted)] font-body">Fix the corrupted grammar.</p>
+                </button>
+            </div>
+
+            <!-- Grand Prize Banner -->
+            <div id="prize-banner" class="hidden bg-gray-900 border border-[var(--primary)] rounded-lg p-6 text-center shadow-[0_0_15px_rgba(74,222,128,0.2)] animate-pulse">
+                <h2 class="font-tech text-2xl font-black text-[var(--primary)] mb-2 uppercase tracking-widest">6 AM Reached</h2>
+                <p class="font-body text-sm text-[var(--text-light)] mb-4">You survived the night! You are a master of Present Continuous.</p>
+                <button onclick="showCertificate()" class="btn-tech bg-white text-black font-tech font-bold px-6 py-3 rounded shadow hover:bg-gray-200 flex items-center justify-center gap-2 mx-auto uppercase">
+                    <i class="fa-solid fa-print"></i> Open Paycheck
+                </button>
+            </div>
+        </main>
+
+        <!-- VIEW: ACTIVE GAME -->
+        <main id="view-game" class="hidden p-4 sm:p-6 h-[80vh] flex flex-col print:hidden">
+            <div class="flex justify-between items-center mb-6 border-b border-[var(--border-color)] pb-4">
+                <button onclick="goBackToHub()" class="btn-tech text-[var(--text-muted)] hover:text-white font-tech text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-angle-left"></i> ABORT TASK
+                </button>
+                <div class="font-tech text-white font-bold tracking-widest uppercase" id="game-title">CAM 01</div>
+                <div class="font-tech text-[var(--primary)] font-bold">
+                    <span id="q-current">1</span> / <span id="q-total">5</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Game Area -->
+            <div id="game-area" class="flex-grow flex flex-col justify-center items-center max-w-2xl mx-auto w-full">
+                <!-- Content injected here -->
+            </div>
+
+            <!-- Controls / Feedback -->
+            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 w-full max-w-2xl mx-auto min-h-[60px]">
+                <button onclick="showHint()" id="btn-hint" class="btn-tech text-yellow-500 hover:text-yellow-400 font-tech text-sm flex items-center gap-2 border border-yellow-500/30 px-3 py-1.5 rounded">
+                    <i class="fa-solid fa-triangle-exclamation"></i> GET HINT
+                </button>
+                <div id="feedback-box" class="flex-grow text-center font-tech font-bold text-sm px-4 hidden"></div>
+                <button id="btn-next" onclick="nextQuestion()" class="hidden btn-tech bg-[var(--primary)] text-black px-6 py-2 rounded font-tech font-bold text-sm flex items-center gap-2 uppercase">
+                    NEXT <i class="fa-solid fa-angle-right"></i>
+                </button>
+            </div>
+        </main>
+
+        <!-- VIEW: GAME FINISHED -->
+        <main id="view-game-finished" class="hidden p-4 sm:p-6 h-[80vh] flex flex-col items-center justify-center text-center print:hidden">
+            <img src="https://i.postimg.cc/qqcq3vG9/Freddy-Plushie-removebg-preview.png" alt="Badge Trophy" class="w-20 h-20 object-contain mb-4 animate-bounce">
+            <h2 class="font-tech text-2xl font-black text-white mb-2 uppercase tracking-widest">Sector Secured</h2>
+            <p class="font-body text-[var(--text-muted)] mb-8 max-w-md">Task completed successfully. Security badge acquired.</p>
+            <div class="flex gap-4">
+                <button onclick="goBackToHub()" class="btn-tech bg-transparent border border-white hover:bg-white hover:text-black text-white px-6 py-3 rounded font-tech font-bold uppercase transition-colors">
+                    MONITOR MENU
+                </button>
+            </div>
+        </main>
+
+        <!-- VIEW: CERTIFICATE (Visible on print) -->
+        <main id="view-certificate" class="hidden bg-[#e5e5e5] h-full sm:h-[80vh] p-4 sm:p-8 flex flex-col items-center justify-center relative print:block print:h-auto print:p-0 overflow-y-auto">
+            <div class="absolute top-4 left-4 print:hidden z-10">
+                <button onclick="goBackToHub()" class="btn-tech bg-gray-800 text-white hover:bg-gray-700 px-4 py-2 rounded font-tech text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-angle-left"></i> BACK
+                </button>
+            </div>
+            
+            <div class="cert-border p-8 sm:p-12 max-w-2xl w-full text-center relative mt-12 sm:mt-0 shadow-2xl">
+                <div class="absolute top-4 left-4 text-3xl opacity-20">
+                    <img src="https://i.postimg.cc/0jGjwyCf/Cupcake-removebg-preview.png" alt="Cupcake" class="w-10 h-10 inline-block">
+                </div>
+                <div class="absolute bottom-4 right-4 text-3xl opacity-20">
+                    <img src="https://i.postimg.cc/1X0Xq3Kb/Golden-Freddy-removebg-preview.png" alt="Golden Freddy" class="w-10 h-10 inline-block">
+                </div>
+                
+                <h3 class="font-tech text-gray-600 tracking-widest uppercase text-sm mb-2 font-bold">Fazbear Entertainment</h3>
+                <h1 class="font-serif text-3xl sm:text-5xl font-black text-black mb-6 uppercase tracking-wider">Employee Paycheck</h1>
+                
+                <p class="font-serif text-gray-800 text-lg mb-4 italic">This acknowledges the survival of</p>
+                
+                <input type="text" value="Night Guard" class="text-center font-tech text-2xl sm:text-4xl font-bold text-gray-900 border-b-2 border-gray-400 focus:outline-none focus:border-black bg-transparent w-3/4 mx-auto mb-6 pb-2" spellcheck="false" title="Click to edit name">
+                
+                <p class="font-sans text-gray-800 max-w-lg mx-auto leading-relaxed mb-8">
+                    For successfully completing the night shift from 12 AM to 6 AM and mastering the <strong>Present Continuous</strong> tense. You flawlessly tracked Freddy, Bonnie, Chica, and Foxy with 100% accuracy.
+                </p>
+                
+                <div class="flex justify-between items-end px-4 sm:px-12 mt-8">
+                    <div class="text-center">
+                        <div class="border-b border-gray-500 w-32 mb-1 h-6 font-tech text-sm text-gray-800 font-bold">11-1993</div>
+                        <span class="font-sans text-xs text-gray-600 uppercase tracking-wider">Date</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="border-b border-gray-500 w-32 mb-1 h-6 font-tech text-sm text-gray-800 font-bold" style="font-family: 'Brush Script MT', cursive;">$120.00</div>
+                        <span class="font-sans text-xs text-gray-600 uppercase tracking-wider">Amount</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 print:hidden">
+                <button onclick="window.print()" class="btn-tech bg-[var(--primary)] hover:bg-green-500 text-black px-8 py-3 rounded font-tech font-black text-lg shadow-lg flex items-center gap-3 uppercase">
+                    <i class="fa-solid fa-print"></i> Print Document
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // STRICT GAME DATA (ENGLISH ONLY, FNAF 1 ONLY, WITH ASSET INTEGRATION)
+        const GAME_DATA = {
+            rules: [
+                { title: "When to use", text: "Use Present Continuous for actions happening RIGHT NOW in the cameras." },
+                { title: "The Formula", text: "Subject + am/is/are + verb ending in -ing." },
+                { title: "Negatives (-)", text: "Add not after am/is/are. Example: Freddy is not (isn't) moving." },
+                { title: "Questions (?)", text: "Put am/is/are before the subject. Example: Is Foxy running?" },
+                { title: "Keywords", text: "Look out for clue words like: now, right now, at the moment, look, listen." }
+            ],
+            game1: [
+                { q: "Freddy ___ in the dark corner.", opts: ["is hiding", "are hiding", "am hiding"], ans: "is hiding", hint: "Freddy is one character (he). Use 'is'." },
+                { q: "Bonnie and Chica ___ at the camera.", opts: ["are looking", "is looking", "am looking"], ans: "are looking", hint: "Bonnie and Chica are two characters (they). Use 'are'." },
+                { q: "I ___ the security doors right now!", opts: ["am closing", "is closing", "are closing"], ans: "am closing", hint: "Always use 'am' with 'I'." },
+                { q: "Foxy ___ down the West Hallway!", opts: ["is running", "are running", "am running"], ans: "is running", hint: "Foxy is singular (he). Use 'is'." },
+                { q: "The animatronics ___ around the pizzeria.", opts: ["are moving", "is moving", "am moving"], ans: "are moving", hint: "Animatronics is plural (they). Use 'are'." },
+                { q: "I ___ the camera monitor.", opts: ["am checking", "is checking", "are checking"], ans: "am checking", hint: "Use 'am' with 'I'." },
+                { q: "The power ___ down quickly!", opts: ["is going", "are going", "am going"], ans: "is going", hint: "The power is singular (it). Use 'is'." },
+                { q: "You ___ a great job surviving.", opts: ["are doing", "is doing", "am doing"], ans: "are doing", hint: "Always use 'are' with 'You'." },
+                { q: "We ___ the main stage on CAM 1A.", opts: ["are watching", "is watching", "am watching"], ans: "are watching", hint: "Always use 'are' with 'We'." },
+                { q: "Freddy and Bonnie ___ outside the office.", opts: ["are waiting", "is waiting", "am waiting"], ans: "are waiting", hint: "Two characters (they) take 'are'." },
+                { q: "Chica ___ noise in the kitchen.", opts: ["is making", "are making", "am making"], ans: "is making", hint: "Chica is singular (she). Use 'is'." },
+                { q: "The camera system ___ right now.", opts: ["is glitching", "are glitching", "am glitching"], ans: "is glitching", hint: "The camera system is singular (it)." },
+                { q: "I ___ to the Phone Guy's message.", opts: ["am listening", "is listening", "are listening"], ans: "am listening", hint: "Use 'am' with 'I'." },
+                { q: "Foxy ___ from Pirate Cove.", opts: ["is peeking", "are peeking", "am peeking"], ans: "is peeking", hint: "Foxy is one character (he)." },
+                { q: "The doors ___ shut.", opts: ["are closing", "is closing", "am closing"], ans: "are closing", hint: "The doors are plural (they)." },
+                { q: "He ___ down the East Hall.", opts: ["is walking", "are walking", "am walking"], ans: "is walking", hint: "'He' takes 'is'." },
+                { q: "She ___ into the window.", opts: ["is staring", "are staring", "am staring"], ans: "is staring", hint: "'She' takes 'is'." },
+                { q: "They ___ closer to the office.", opts: ["are getting", "is getting", "am getting"], ans: "are getting", hint: "'They' takes 'are'." },
+                { q: "I ___ in the security chair.", opts: ["am sitting", "is sitting", "are sitting"], ans: "am sitting", hint: "'I' takes 'am'." },
+                { q: "The desk fan ___ very fast.", opts: ["is spinning", "are spinning", "am spinning"], ans: "is spinning", hint: "The fan is singular (it)." }
+            ],
+            game2: [
+                { words: ["Freddy", "is", "hiding", "in", "the", "dark"], hint: "Start with the character's name, then the 'be' verb, then the action." },
+                { words: ["Bonnie", "is", "standing", "right", "there"], hint: "Who is doing the action? Start with Bonnie." },
+                { words: ["Chica", "is", "eating", "a", "pizza", "slice"], hint: "Subject + is + V-ing + object." },
+                { words: ["Foxy", "is", "running", "down", "the", "hall"], hint: "Subject (Foxy) + is + action (running)." },
+                { words: ["They", "are", "moving", "very", "fast", "now"], hint: "Start with 'They'." },
+                { words: ["I", "am", "checking", "the", "camera", "feeds"], hint: "Start with 'I am'." },
+                { words: ["The", "power", "is", "going", "down", "quickly"], hint: "Start with 'The power'." },
+                { words: ["You", "are", "doing", "a", "great", "job"], hint: "Start with 'You are'." },
+                { words: ["We", "are", "watching", "the", "main", "stage"], hint: "Start with 'We are'." },
+                { words: ["Freddy", "and", "Bonnie", "are", "waiting", "outside"], hint: "Start with the two characters." },
+                { words: ["Chica", "is", "making", "noise", "in", "there"], hint: "Start with Chica." },
+                { words: ["The", "camera", "is", "glitching", "right", "now"], hint: "Start with 'The camera'." },
+                { words: ["I", "am", "listening", "to", "the", "phone"], hint: "Start with 'I am'." },
+                { words: ["Foxy", "is", "peeking", "from", "the", "curtain"], hint: "Start with Foxy." },
+                { words: ["The", "doors", "are", "closing", "right", "now"], hint: "Start with 'The doors'." },
+                { words: ["He", "is", "walking", "to", "the", "office"], hint: "Start with 'He is'." },
+                { words: ["She", "is", "looking", "at", "the", "camera"], hint: "Start with 'She is'." },
+                { words: ["They", "are", "staring", "at", "the", "guard"], hint: "Start with 'They are'." },
+                { words: ["I", "am", "sitting", "in", "the", "chair"], hint: "Start with 'I am'." },
+                { words: ["The", "desk", "fan", "is", "spinning", "fast"], hint: "Start with 'The desk fan'." }
+            ],
+            game3: [
+                { q: "Foxy is (run) ___ fast.", opts: ["running", "runing", "runnes"], ans: "running", hint: "Short vowel + one consonant = double the last letter (run -> running)." },
+                { q: "Chica is (make) ___ noise in the kitchen.", opts: ["making", "makeing", "makes"], ans: "making", hint: "If the verb ends in 'e', drop the 'e' and add -ing (make -> making)." },
+                { q: "I am (sit) ___ in the office.", opts: ["sitting", "siting", "sits"], ans: "sitting", hint: "Short vowel + consonant = double it (sit -> sitting)." },
+                { q: "Freddy is (hide) ___ in the shadows.", opts: ["hiding", "hideing", "hides"], ans: "hiding", hint: "Drop the silent 'e' before adding -ing (hide -> hiding)." },
+                { q: "They are (stare) ___ at the camera.", opts: ["staring", "stareing", "stares"], ans: "staring", hint: "Drop the 'e' (stare -> staring)." },
+                { q: "The fan is (spin) ___.", opts: ["spinning", "spining", "spins"], ans: "spinning", hint: "Double the final consonant (spin -> spinning)." },
+                { q: "The doors are (close) ___.", opts: ["closing", "closeing", "closes"], ans: "closing", hint: "Drop the 'e' (close -> closing)." },
+                { q: "They are (get) ___ closer.", opts: ["getting", "geting", "gets"], ans: "getting", hint: "Double the 't' (get -> getting)." },
+                { q: "Bonnie is (look) ___ into the room.", opts: ["looking", "lookking", "looks"], ans: "looking", hint: "Just add -ing (look -> looking)." },
+                { q: "Freddy and Bonnie are (wait) ___.", opts: ["waiting", "waitting", "waits"], ans: "waiting", hint: "Just add -ing. Two vowels together mean no doubling (wait -> waiting)." },
+                { q: "He is (walk) ___ down the hall.", opts: ["walking", "wallking", "walks"], ans: "walking", hint: "Just add -ing." },
+                { q: "The system is (glitch) ___.", opts: ["glitching", "glitchhing", "glitches"], ans: "glitching", hint: "Just add -ing." },
+                { q: "Bonnie is (stand) ___ in the closet.", opts: ["standing", "standding", "stands"], ans: "standing", hint: "Just add -ing." },
+                { q: "Chica is (eat) ___.", opts: ["eating", "eatting", "eats"], ans: "eating", hint: "Two vowels (ea) = no double consonant. Just add -ing." },
+                { q: "You are (do) ___ great.", opts: ["doing", "doeing", "dos"], ans: "doing", hint: "Just add -ing (do -> doing)." },
+                { q: "Foxy is (peek) ___ out.", opts: ["peeking", "peekking", "peeks"], ans: "peeking", hint: "Two vowels (ee) = no double consonant." },
+                { q: "The power is (go) ___ down.", opts: ["going", "goeing", "goes"], ans: "going", hint: "Just add -ing." },
+                { q: "We are (watch) ___ the monitors.", opts: ["watching", "watchhing", "watches"], ans: "watching", hint: "Just add -ing." },
+                { q: "I am (listen) ___ to the call.", opts: ["listening", "listenning", "listens"], ans: "listening", hint: "Listen does not double the 'n'. Just add -ing." },
+                { q: "They are (move) ___.", opts: ["moving", "moveing", "moves"], ans: "moving", hint: "Drop the 'e' (move -> moving)." }
+            ],
+            game4: [
+                { q: "Fix the error: 'I is watching the cameras.'", opts: ["I am watching the cameras.", "I are watching the cameras.", "I watching the cameras."], ans: "I am watching the cameras.", hint: "Use 'am' with 'I'." },
+                { q: "Fix the error: 'Bonnie runing down the hall.'", opts: ["Bonnie is running down the hall.", "Bonnie running down the hall.", "Bonnie is runing down the hall."], ans: "Bonnie is running down the hall.", hint: "Don't forget the 'is' and double the 'n' in running." },
+                { q: "Fix the error: 'They is waiting outside.'", opts: ["They are waiting outside.", "They am waiting outside.", "They waiting outside."], ans: "They are waiting outside.", hint: "Use 'are' with 'They'." },
+                { q: "Fix the error: 'Foxy are peeking out.'", opts: ["Foxy is peeking out.", "Foxy am peeking out.", "Foxy peeking out."], ans: "Foxy is peeking out.", hint: "Foxy is singular (he). Use 'is'." },
+                { q: "Fix the error: 'Chica makeing pizza.'", opts: ["Chica is making pizza.", "Chica are making pizza.", "Chica is makeing pizza."], ans: "Chica is making pizza.", hint: "Drop the 'e' from make, and use 'is'." },
+                { q: "Fix the error: 'The fan spin very fast.'", opts: ["The fan is spinning very fast.", "The fan is spin very fast.", "The fan spinning very fast."], ans: "The fan is spinning very fast.", hint: "Add 'is' and double the 'n' in spinning." },
+                { q: "Fix the error: 'We am looking at CAM 2B.'", opts: ["We are looking at CAM 2B.", "We is looking at CAM 2B.", "We looking at CAM 2B."], ans: "We are looking at CAM 2B.", hint: "Use 'are' with 'We'." },
+                { q: "Fix the error: 'You is doing a great job.'", opts: ["You are doing a great job.", "You am doing a great job.", "You doing a great job."], ans: "You are doing a great job.", hint: "Always use 'are' with 'You'." },
+                { q: "Fix the error: 'Freddy and Bonnie is moving.'", opts: ["Freddy and Bonnie are moving.", "Freddy and Bonnie moving.", "Freddy and Bonnie am moving."], ans: "Freddy and Bonnie are moving.", hint: "Two characters = plural. Use 'are'." },
+                { q: "Fix the error: 'The power going down.'", opts: ["The power is going down.", "The power are going down.", "The power am going down."], ans: "The power is going down.", hint: "Don't forget the 'be' verb! The power = it, so use 'is'." },
+                { q: "Fix the error: 'I am sit in the office.'", opts: ["I am sitting in the office.", "I am siting in the office.", "I are sitting in the office."], ans: "I am sitting in the office.", hint: "Add -ing to the verb. Double the 't' in sit." },
+                { q: "Fix the error: 'He are walking to the door.'", opts: ["He is walking to the door.", "He am walking to the door.", "He walking to the door."], ans: "He is walking to the door.", hint: "Use 'is' with 'He'." },
+                { q: "Fix the error: 'She is stareing at us.'", opts: ["She is staring at us.", "She are staring at us.", "She is staring us."], ans: "She is staring at us.", hint: "Drop the 'e' from stare before adding -ing." },
+                { q: "Fix the error: 'The doors is closing.'", opts: ["The doors are closing.", "The doors am closing.", "The doors closing."], ans: "The doors are closing.", hint: "The doors = plural (they). Use 'are'." },
+                { q: "Fix the error: 'Foxy is run fast.'", opts: ["Foxy is running fast.", "Foxy is runing fast.", "Foxy are running fast."], ans: "Foxy is running fast.", hint: "Verb must end in -ing. Double the 'n'." },
+                { q: "Fix the error: 'I am not checks the lights.'", opts: ["I am not checking the lights.", "I is not checking the lights.", "I not checking the lights."], ans: "I am not checking the lights.", hint: "Negative continuous uses: am not + V-ing." },
+                { q: "Fix the error: 'Are Freddy hide?'", opts: ["Is Freddy hiding?", "Are Freddy hiding?", "Am Freddy hiding?"], ans: "Is Freddy hiding?", hint: "Freddy = he. Use 'Is' for the question." },
+                { q: "Fix the error: 'Is they coming closer?'", opts: ["Are they coming closer?", "Am they coming closer?", "Are they come closer?"], ans: "Are they coming closer?", hint: "Use 'Are' with 'they'." },
+                { q: "Fix the error: 'Bonnie not is standing there.'", opts: ["Bonnie is not standing there.", "Bonnie are not standing there.", "Bonnie standing not there."], ans: "Bonnie is not standing there.", hint: "The order is: is + not + V-ing." },
+                { q: "Fix the error: 'What am Chica doing?'", opts: ["What is Chica doing?", "What are Chica doing?", "What Chica is doing?"], ans: "What is Chica doing?", hint: "Chica = she. Use 'is'." },
+                { q: "Fix the error: 'We is not listening.'", opts: ["We are not listening.", "We am not listening.", "We not are listening."], ans: "We are not listening.", hint: "Use 'are' with 'We'." },
+                { q: "Fix the error: 'The cameras glitching right now.'", opts: ["The cameras are glitching right now.", "The cameras is glitching right now.", "The camera are glitching right now."], ans: "The cameras are glitching right now.", hint: "The cameras = plural. Add 'are'." },
+                { q: "Fix the error: 'I looking at the monitor.'", opts: ["I am looking at the monitor.", "I is looking at the monitor.", "I are looking at the monitor."], ans: "I am looking at the monitor.", hint: "Don't forget the 'be' verb! Use 'am' with 'I'." },
+                { q: "Fix the error: 'He is geting closer.'", opts: ["He is getting closer.", "He are getting closer.", "He is getting close."], ans: "He is getting closer.", hint: "Double the final consonant 't' in get." },
+                { q: "Fix the error: 'They are wait.'", opts: ["They are waiting.", "They is waiting.", "They are waitting."], ans: "They are waiting.", hint: "Add -ing to wait (no double consonant needed)." },
+                { q: "Fix the error: 'Is the power go down?'", opts: ["Is the power going down?", "Are the power going down?", "Am the power going down?"], ans: "Is the power going down?", hint: "Add -ing to the main verb (go -> going)." },
+                { q: "Fix the error: 'You am surviving the night.'", opts: ["You are surviving the night.", "You is surviving the night.", "You surviving the night."], ans: "You are surviving the night.", hint: "Always use 'are' with 'You'." },
+                { q: "Fix the error: 'Chica is eat the pizza.'", opts: ["Chica is eating the pizza.", "Chica are eating the pizza.", "Chica is eatting the pizza."], ans: "Chica is eating the pizza.", hint: "Add -ing to eat (eating)." },
+                { q: "Fix the error: 'Freddy are not moving.'", opts: ["Freddy is not moving.", "Freddy am not moving.", "Freddy is not moveing."], ans: "Freddy is not moving.", hint: "Freddy = he. Use 'is'." },
+                { q: "Fix the error: 'Is I doing this right?'", opts: ["Am I doing this right?", "Are I doing this right?", "Is I doing right?"], ans: "Am I doing this right?", hint: "Always use 'Am' for questions with 'I'." }
+            ]
+        };
+
+        // Application State
+        let state = { badges: { game1: false, game2: false, game3: false, game4: false } };
+        let activeGame = null;
+        let roundData = [];
+        let currentQIndex = 0;
+        let errorMade = false;
+
+        // Game 2 Specific State
+        let g2Source = [];
+        let g2Target = [];
+
+        // Audio System (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration, vol=0.1) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+        function playCorrect() { playTone(600, 'sine', 0.1); setTimeout(() => playTone(800, 'sine', 0.15), 100); }
+        function playWrong() { playTone(150, 'sawtooth', 0.3, 0.2); }
+        function playClick() { playTone(400, 'square', 0.05, 0.05); }
+
+        // Speech System (English Only)
+        function speakText(text) {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'en-US';
+            utter.rate = 0.9;
+            utter.onstart = () => document.getElementById('speech-indicator').classList.remove('hidden');
+            utter.onend = () => document.getElementById('speech-indicator').classList.add('hidden');
+            utter.onerror = () => document.getElementById('speech-indicator').classList.add('hidden');
+            window.speechSynthesis.speak(utter);
+        }
+
+        // Init
+        window.onload = () => {
+            const saved = localStorage.getItem('fnaf1_edu_state');
+            if(saved) state = JSON.parse(saved);
+            
+            // Render rules
+            const rc = document.getElementById('rules-container');
+            GAME_DATA.rules.forEach(r => {
+                rc.innerHTML += `
+                    <div class="bg-gray-900 p-3 rounded flex flex-col gap-1 border border-gray-700 cursor-pointer hover:border-[var(--primary)] transition-colors" onclick="speakText('${r.text.replace(/'/g, "\\'")}')">
+                        <span class="text-[var(--primary)] font-bold text-sm uppercase tracking-wide">${r.title}</span>
+                        <span class="text-white text-xs">${r.text} <i class="fa-solid fa-volume-up text-gray-500 text-[10px] ml-1"></i></span>
+                    </div>
+                `;
+            });
+            updateHubUI();
+        };
+
+        function updateHubUI() {
+            let count = 0;
+            if(state.badges.game1) { document.getElementById('badge-game1').classList.remove('hidden'); count++; }
+            if(state.badges.game2) { document.getElementById('badge-game2').classList.remove('hidden'); count++; }
+            if(state.badges.game3) { document.getElementById('badge-game3').classList.remove('hidden'); count++; }
+            if(state.badges.game4) { document.getElementById('badge-game4').classList.remove('hidden'); count++; }
+            
+            document.getElementById('badge-count').innerText = count;
+
+            if(count === 4) {
+                document.getElementById('prize-banner').classList.remove('hidden');
+            }
+        }
+
+        function shuffle(array) {
+            return [...array].sort(() => 0.5 - Math.random());
+        }
+
+        // Navigation
+        function showView(id) {
+            ['view-hub', 'view-game', 'view-game-finished', 'view-certificate'].forEach(v => {
+                document.getElementById(v).classList.add('hidden');
+            });
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function goBackToHub() {
+            playClick();
+            activeGame = null;
+            showView('view-hub');
+            updateHubUI();
+        }
+
+        function startMiniGame(gameId) {
+            playClick();
+            activeGame = gameId;
+            const fullPool = GAME_DATA[gameId];
+            const limit = gameId === 'game4' ? 10 : 5; // 10 questions for Game 4, 5 for others
+            roundData = shuffle(fullPool).slice(0, limit);
+            currentQIndex = 0;
+            
+            let title = "";
+            if(gameId === 'game1') title = "CAM Tracking";
+            if(gameId === 'game2') title = "System Reboot";
+            if(gameId === 'game3') title = "Audio Decrypt";
+            if(gameId === 'game4') title = "Error Purge";
+            document.getElementById('game-title').innerText = title;
+            document.getElementById('q-total').innerText = limit;
+            
+            showView('view-game');
+            renderQuestion();
+        }
+
+        // Render Logic
+        function renderQuestion() {
+            errorMade = false;
+            document.getElementById('q-current').innerText = currentQIndex + 1;
+            const area = document.getElementById('game-area');
+            const fb = document.getElementById('feedback-box');
+            const nextBtn = document.getElementById('btn-next');
+            const hintBtn = document.getElementById('btn-hint');
+            
+            fb.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            hintBtn.classList.remove('btn-disabled');
+            area.innerHTML = '';
+
+            const qData = roundData[currentQIndex];
+
+            // Game 1 (Multiple Choice), Game 3 (Spelling) & Game 4 (Error Correction)
+            if(activeGame === 'game1' || activeGame === 'game3' || activeGame === 'game4') {
+                const plushies = {
+                    game1: 'https://i.postimg.cc/qqcq3vG9/Freddy-Plushie-removebg-preview.png',
+                    game2: 'https://i.postimg.cc/J030kzQg/Bonnie-plushie-removebg-preview.png',
+                    game3: 'https://i.postimg.cc/sxPxhgJw/Chica-plushie-removebg-preview.png',
+                    game4: 'https://i.postimg.cc/7h1h2ZNK/Foxy-Plushie-removebg-preview.png'
+                };
+                const assetImg = plushies[activeGame];
+                
+                let html = `
+                    <div class="bg-black p-6 rounded-lg w-full border border-[var(--border-color)] shadow-inner text-center mb-6 relative flex items-center justify-between">
+                        <img src="${assetImg}" alt="Animatronic" class="w-12 h-12 object-contain opacity-80">
+                        <div class="text-xl sm:text-2xl text-white font-body font-bold cursor-pointer inline-flex items-center gap-3 hover:text-gray-300 transition-colors flex-grow justify-center" onclick="speakText('${qData.q.replace('___', 'blank').replace(/'/g, "\\'")}')">
+                            ${qData.q} <i class="fa-solid fa-volume-up text-gray-500 text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+                `;
+                
+                const opts = shuffle(qData.opts);
+                opts.forEach(opt => {
+                    html += `
+                        <button onclick="checkAnswer('${opt}')" class="btn-tech bg-[var(--panel-bg)] hover:bg-gray-800 border border-[var(--border-color)] hover:border-white text-white font-tech font-bold text-lg py-4 rounded shadow-md">
+                            ${opt}
+                        </button>
+                    `;
+                });
+                html += `</div>`;
+                area.innerHTML = html;
+            } 
+            // Game 2 (Sentence Builder - Click Based)
+            else if(activeGame === 'game2') {
+                g2Source = shuffle([...qData.words]);
+                g2Target = [];
+                renderGame2UI();
+            }
+        }
+
+        // Game 2 Specific Rendering
+        function renderGame2UI() {
+            const area = document.getElementById('game-area');
+            let html = `
+                <div class="w-full text-center mb-4 flex items-center justify-center gap-2">
+                    <img src="https://i.postimg.cc/J030kzQg/Bonnie-plushie-removebg-preview.png" alt="Bonnie Plush" class="w-8 h-8 object-contain">
+                    <div>
+                        <p class="text-yellow-500 text-xs font-tech tracking-widest uppercase mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Data Corrupted</p>
+                        <p class="text-gray-400 font-body text-sm">Click words to rebuild the sentence log in the correct order.</p>
+                    </div>
+                </div>
+                
+                <!-- Target Area -->
+                <div class="bg-black w-full min-h-[80px] rounded border border-dashed border-gray-600 p-4 flex flex-wrap gap-2 justify-center items-center mb-6" id="g2-target">
+            `;
+            
+            g2Target.forEach((word, idx) => {
+                html += `<button onclick="moveG2Word('target', ${idx})" class="btn-tech bg-white text-black px-4 py-2 rounded font-body font-bold text-lg border-b-4 border-gray-400 active:border-b-0 active:translate-y-1">${word}</button>`;
+            });
+            if(g2Target.length === 0) html += `<span class="text-gray-600 font-tech text-sm">Target Data Log</span>`;
+            
+            html += `</div>
+                
+                <!-- Source Area -->
+                <div class="w-full flex flex-wrap gap-3 justify-center mb-6" id="g2-source">`;
+            
+            g2Source.forEach((word, idx) => {
+                html += `<button onclick="moveG2Word('source', ${idx})" class="btn-tech bg-[var(--panel-bg)] text-white hover:bg-gray-800 px-4 py-2 rounded font-body font-bold text-lg border border-[var(--border-color)]">${word}</button>`;
+            });
+            
+            html += `</div>`;
+            
+            // Verify Button
+            if(g2Source.length === 0) {
+                html += `<button onclick="checkGame2Answer()" class="btn-tech w-full sm:w-auto bg-[var(--primary)] text-black font-tech font-bold px-8 py-3 rounded uppercase tracking-wider">Compile Data</button>`;
+            }
+            
+            area.innerHTML = html;
+        }
+
+        function moveG2Word(from, idx) {
+            playClick();
+            if(from === 'source') {
+                g2Target.push(g2Source.splice(idx, 1)[0]);
+            } else {
+                g2Source.push(g2Target.splice(idx, 1)[0]);
+            }
+            renderGame2UI();
+        }
+
+        function checkGame2Answer() {
+            const qData = roundData[currentQIndex];
+            const answer = g2Target.join(' ');
+            const correct = qData.words.join(' ');
+            
+            if(answer === correct) {
+                playCorrect();
+                speakText(correct);
+                showFeedback(true, "Data restored successfully.");
+            } else {
+                playWrong();
+                errorMade = true;
+                showFeedback(false, "Corruption detected. Sequence invalid.");
+                // Reset to let them try again
+                g2Source = shuffle([...qData.words]);
+                g2Target = [];
+                renderGame2UI();
+            }
+        }
+
+        // Checking standard answers (Game 1 & 3)
+        function checkAnswer(selected) {
+            const qData = roundData[currentQIndex];
+            if(selected === qData.ans) {
+                playCorrect();
+                const fullSentence = qData.q.replace('___', qData.ans);
+                speakText(fullSentence);
+                showFeedback(true, "Match confirmed.");
+                
+                // Visual update for buttons
+                const btns = document.getElementById('game-area').querySelectorAll('button');
+                btns.forEach(b => {
+                    b.classList.add('btn-disabled');
+                    if(b.innerText === selected) {
+                        b.classList.remove('bg-[var(--panel-bg)]', 'border-[var(--border-color)]');
+                        b.classList.add('bg-[var(--primary)]', 'text-black', 'border-[var(--primary)]');
+                    }
+                });
+            } else {
+                playWrong();
+                errorMade = true;
+                showFeedback(false, "Error: Incorrect parameter.");
+            }
+        }
+
+        function showFeedback(isSuccess, msg) {
+            const fb = document.getElementById('feedback-box');
+            const nextBtn = document.getElementById('btn-next');
+            const hintBtn = document.getElementById('btn-hint');
+            
+            fb.classList.remove('hidden', 'text-[var(--primary)]', 'text-[var(--secondary)]');
+            fb.classList.add(isSuccess ? 'text-[var(--primary)]' : 'text-[var(--secondary)]');
+            fb.innerText = msg;
+            
+            if(isSuccess) {
+                nextBtn.classList.remove('hidden');
+                hintBtn.classList.add('btn-disabled');
+            } else {
+                // Auto show hint on error
+                showHint();
+            }
+        }
+
+        function showHint() {
+            playClick();
+            const qData = roundData[currentQIndex];
+            const fb = document.getElementById('feedback-box');
+            const hintBtn = document.getElementById('btn-hint');
+            
+            hintBtn.classList.add('btn-disabled');
+            fb.classList.remove('hidden', 'text-[var(--primary)]', 'text-[var(--secondary)]');
+            fb.classList.add('text-yellow-400');
+            fb.innerHTML = `> HINT: ${qData.hint}`;
+            speakText(qData.hint);
+        }
+
+        function nextQuestion() {
+            playClick();
+            if(currentQIndex < roundData.length - 1) {
+                currentQIndex++;
+                renderQuestion();
+            } else {
+                endMiniGame();
+            }
+        }
+
+        function endMiniGame() {
+            state.badges[activeGame] = true;
+            localStorage.setItem('fnaf1_edu_state', JSON.stringify(state));
+            
+            // Subtle celebration appropriate for FNAF theme
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 }, colors: ['#4ade80', '#000000', '#ffffff'] });
+            showView('view-game-finished');
+        }
+
+        function showCertificate() {
+            playClick();
+            showView('view-certificate');
+        }
+    </script>
+</body>
+</html>
