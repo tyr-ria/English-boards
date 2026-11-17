@@ -419,7 +419,7 @@
                     </div>
                 </div>
                 <div class="flex justify-between items-center mt-4">
-                    <span class="text-sm font-bold text-rose-700 bg-rose-100 px-4 py-2 rounded-xl border border-rose-200">Served: <span id="listen-score">0</span>/3</span>
+                    <span class="text-sm font-bold text-rose-700 bg-rose-100 px-4 py-2 rounded-xl border border-rose-200">Served: <span id="listen-score">0</span>/6</span>
                     <button onclick="startListenGame()" class="btn-3d bg-rose-100 text-rose-700 hover:bg-rose-200 px-4 py-2 rounded-xl text-sm font-bold border-2 border-rose-300">
                         Reset Task
                     </button>
@@ -475,7 +475,7 @@
                     </div>
                 </div>
                 <div class="flex justify-between items-center mt-4">
-                    <span class="text-sm font-bold text-sky-700 bg-sky-100 px-4 py-2 rounded-xl border border-sky-200">Labels: <span id="letter-score">0</span>/3</span>
+                    <span class="text-sm font-bold text-sky-700 bg-sky-100 px-4 py-2 rounded-xl border border-sky-200">Labels: <span id="letter-score">0</span>/6</span>
                     <button onclick="startLetterGame()" class="btn-3d bg-sky-100 text-sky-700 hover:bg-sky-200 px-4 py-2 rounded-xl text-sm font-bold border-2 border-sky-300">
                         Reset Task
                     </button>
@@ -507,7 +507,7 @@
                     <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-3xl border-4 border-rose-200 shrink-0 shadow-inner">🤝</div>
                     <div>
                         <h4 class="font-black text-slate-800 text-lg">Service Star</h4>
-                        <p class="text-xs font-bold text-slate-500 mt-1">Serve 3 customers successfully.</p>
+                        <p class="text-xs font-bold text-slate-500 mt-1">Serve 6 customers successfully.</p>
                         <span class="inline-block mt-2 text-[10px] uppercase font-black tracking-wider bg-slate-200 text-slate-500 px-2.5 py-1 rounded-md">Locked</span>
                     </div>
                 </div>
@@ -525,7 +525,7 @@
                     <div class="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center text-3xl border-4 border-sky-200 shrink-0 shadow-inner">🔤</div>
                     <div>
                         <h4 class="font-black text-slate-800 text-lg">Label Maker</h4>
-                        <p class="text-xs font-bold text-slate-500 mt-1">Fix 3 pet labels correctly.</p>
+                        <p class="text-xs font-bold text-slate-500 mt-1">Fix 6 pet labels correctly.</p>
                         <span class="inline-block mt-2 text-[10px] uppercase font-black tracking-wider bg-slate-200 text-slate-500 px-2.5 py-1 rounded-md">Locked</span>
                     </div>
                 </div>
@@ -631,7 +631,12 @@
             { id: 'fish', word: 'Fish', icon: '🐠', foodId: 'flakes', letter: 'F' },
             { id: 'hamster', word: 'Hamster', icon: '🐹', foodId: 'seeds', letter: 'H' },
             { id: 'snake', word: 'Snake', icon: '🐍', foodId: 'mouse_toy', letter: 'S' },
-            { id: 'lizard', word: 'Lizard', icon: '🦎', foodId: 'bugs', letter: 'L' }
+            { id: 'lizard', word: 'Lizard', icon: '🦎', foodId: 'bugs', letter: 'L' },
+            { id: 'frog', word: 'Frog', icon: '🐸', foodId: 'bugs', letter: 'F' },
+            { id: 'duck', word: 'Duck', icon: '🦆', foodId: 'seeds', letter: 'D' },
+            { id: 'pig', word: 'Pig', icon: '🐷', foodId: 'apple', letter: 'P' },
+            { id: 'crab', word: 'Crab', icon: '🦀', foodId: 'fish', letter: 'C' },
+            { id: 'snail', word: 'Snail', icon: '🐌', foodId: 'leaf', letter: 'S' }
         ];
 
         const defaultPetNames = {
@@ -644,7 +649,12 @@
             '🐠': 'Dori',
             '🐹': 'Cheese',
             '🐍': 'Sssasha',
-            '🦎': 'Rick'
+            '🦎': 'Rick',
+            '🐸': 'Kvak',
+            '🦆': 'Donald',
+            '🐷': 'Peppa',
+            '🦀': 'Sebastian',
+            '🐌': 'Gary'
         };
 
         const foodData = {
@@ -656,7 +666,8 @@
             'cheese': { icon: '🧀', name: 'Cheese' },
             'flakes': { icon: '🥫', name: 'Flakes' },
             'bugs': { icon: '🦗', name: 'Bugs' },
-            'mouse_toy': { icon: '🐁', name: 'Mouse Toy' }
+            'mouse_toy': { icon: '🐁', name: 'Mouse Toy' },
+            'apple': { icon: '🍎', name: 'Apple' }
         };
 
         const starterPets = ['🐶', '🐱', '🐰', '🦜']; // We will dynamically replace this usage
@@ -1078,18 +1089,24 @@
         }
 
         // GAME 2: LISTEN & FIND
+        const LISTEN_QUESTIONS_PER_ROUND = 6;
+        let listenQueue = [];
         let listenTarget = null;
         
         function startListenGame() {
             state.listenScore = 0;
+            listenQueue = [...petData].sort(() => 0.5 - Math.random()).slice(0, LISTEN_QUESTIONS_PER_ROUND);
             document.getElementById('listen-score').innerText = state.listenScore;
             nextListenRound();
         }
 
         function nextListenRound() {
-            let shuffled = [...petData].sort(() => 0.5 - Math.random());
-            let options = shuffled.slice(0, 4);
-            listenTarget = options[Math.floor(Math.random() * options.length)];
+            listenTarget = listenQueue[state.listenScore];
+            let distractors = petData
+                .filter(p => p.id !== listenTarget.id)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+            let options = [listenTarget, ...distractors].sort(() => 0.5 - Math.random());
 
             const container = document.getElementById('listen-options');
             container.innerHTML = '';
@@ -1109,7 +1126,12 @@
                 const sentences = [
                     `Hello, I would like a ${listenTarget.word}, please.`,
                     `Do you have a ${listenTarget.word}?`,
-                    `I am looking for a cute ${listenTarget.word}.`
+                    `I am looking for a cute ${listenTarget.word}.`,
+                    `Excuse me, can I see the ${listenTarget.word}?`,
+                    `I want to adopt a ${listenTarget.word} today.`,
+                    `Please show me the ${listenTarget.word}.`,
+                    `My family would love a friendly ${listenTarget.word}.`,
+                    `Could you help me find a ${listenTarget.word}?`
                 ];
                 speakText(sentences[Math.floor(Math.random() * sentences.length)]);
             }
@@ -1119,13 +1141,14 @@
             if (!listenTarget) return;
             
             if (petId === listenTarget.id) {
+                listenTarget = null;
                 playSuccess();
                 showToast("Excellent service!", true);
                 state.listenScore++;
                 document.getElementById('listen-score').innerText = state.listenScore;
                 addStars(2);
                 
-                if (state.listenScore >= 3) {
+                if (state.listenScore >= LISTEN_QUESTIONS_PER_ROUND) {
                     setTimeout(() => {
                         unlockBadge(2);
                         confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
@@ -1242,17 +1265,19 @@
         }
 
         // GAME 4: FIRST LETTER
+        const LETTER_QUESTIONS_PER_ROUND = 6;
+        let letterQueue = [];
         let letterTarget = null;
 
         function startLetterGame() {
             state.letterScore = 0;
+            letterQueue = [...petData].sort(() => 0.5 - Math.random()).slice(0, LETTER_QUESTIONS_PER_ROUND);
             document.getElementById('letter-score').innerText = state.letterScore;
             nextLetterRound();
         }
 
         function nextLetterRound() {
-            let shuffled = [...petData].sort(() => 0.5 - Math.random());
-            letterTarget = shuffled[0];
+            letterTarget = letterQueue[state.letterScore];
 
             document.getElementById('letter-pet-emoji').innerText = letterTarget.icon;
             
@@ -1260,12 +1285,11 @@
             document.getElementById('letter-pet-word').innerText = "_ " + restOfWord.split('').join(' ');
             document.getElementById('letter-pet-word').classList.remove('text-emerald-500');
 
-            // Generate options
-            let wrongOptions = shuffled.slice(1, 4).map(p => p.letter);
-            let options = [letterTarget.letter, ...wrongOptions];
-            // Ensure unique letters just in case
-            options = [...new Set(options)].slice(0,4);
-            options.sort(() => 0.5 - Math.random());
+            // Generate 4 distinct letter options from reserve pool
+            let wrongLetters = [...new Set(petData.map(p => p.letter).filter(l => l !== letterTarget.letter))]
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+            let options = [letterTarget.letter, ...wrongLetters].sort(() => 0.5 - Math.random());
 
             const container = document.getElementById('letter-options');
             container.innerHTML = '';
@@ -1279,21 +1303,25 @@
         }
 
         function checkLetterAnswer(letter) {
+            if (!letterTarget) return;
+
             if (letter === letterTarget.letter) {
+                const matchedPet = letterTarget;
+                letterTarget = null;
                 playSuccess();
                 showToast("Perfect label!", true);
                 state.letterScore++;
                 document.getElementById('letter-score').innerText = state.letterScore;
                 
-                let restOfWord = letterTarget.word.substring(1).toUpperCase();
+                let restOfWord = matchedPet.word.substring(1).toUpperCase();
                 document.getElementById('letter-pet-word').innerText = letter + " " + restOfWord.split('').join(' ');
                 document.getElementById('letter-pet-word').classList.add('text-emerald-500');
                 
                 addStars(1);
-                speakText(letterTarget.word);
+                speakText(matchedPet.word);
 
                 setTimeout(() => {
-                    if (state.letterScore >= 3) {
+                    if (state.letterScore >= LETTER_QUESTIONS_PER_ROUND) {
                         unlockBadge(4);
                         confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
                         startLetterGame();
