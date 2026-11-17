@@ -146,43 +146,6 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col relative">
-  <!-- Floating Back to Hub Navigation -->
-  <style>
-    .hub-back-btn {
-      position: fixed;
-      top: 10px;
-      left: 12px;
-      z-index: 10000;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: rgba(24, 18, 11, 0.92);
-      color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.55);
-      border-radius: 8px;
-      font-family: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-decoration: none;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.65), 0 0 10px rgba(245, 158, 11, 0.22);
-      transition: all 0.2s ease;
-    }
-    .hub-back-btn:hover {
-      background: linear-gradient(135deg, #fbbf24, #ea580c);
-      color: #120f0a;
-      border-color: #fbbf24;
-      box-shadow: 0 0 16px rgba(251, 191, 36, 0.55);
-      transform: translateY(-1px);
-    }
-    body > header { padding-left: 148px !important; }
-    @media print {
-      .hub-back-btn { display: none !important; }
-    }
-  </style>
-  <a href="index.html" class="hub-back-btn no-print" title="Return to ESL Games Hub">⬅ Back to Hub</a>
   <div class="scanlines"></div>
 
   <!-- Audio Indicator -->

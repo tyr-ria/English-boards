@@ -76,9 +76,60 @@
 <body class="antialiased selection:bg-sky-500/30 selection:text-sky-100">
 
     <!-- =========================================================
+         TEACHER PASSWORD GATE
+    ========================================================== -->
+    <div id="teacher-lock-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0b0f17]/95 backdrop-blur-md">
+        <div class="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/95 p-6 sm:p-8 shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-sky-500/15 border border-sky-500/35 flex items-center justify-center text-sky-400 text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[11px] font-medium text-slate-300">
+                    Teacher Access Only
+                </div>
+                <h2 class="font-display text-2xl font-bold text-white tracking-tight">
+                    English Grammar Hub
+                </h2>
+                <p class="text-sm text-slate-400">
+                    Enter the teacher passcode to unlock the lessons menu.
+                </p>
+            </div>
+
+            <form id="teacher-lock-form" class="space-y-4">
+                <div class="space-y-1.5">
+                    <label for="teacher-pass-input" class="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        Teacher Passcode
+                    </label>
+                    <input
+                        id="teacher-pass-input"
+                        type="password"
+                        inputmode="numeric"
+                        placeholder="••••"
+                        autocomplete="off"
+                        required
+                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-center text-lg font-mono tracking-[0.35em] text-white placeholder-slate-600 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/50 transition"
+                    />
+                </div>
+
+                <p id="teacher-pass-error" class="hidden text-center text-xs font-medium text-rose-400">
+                    Incorrect passcode. Please try again.
+                </p>
+
+                <button
+                    type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 transition cursor-pointer"
+                >
+                    <i class="fa-solid fa-unlock-keyhole"></i>
+                    <span>Unlock Hub</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================
          MAIN PORTAL CONTAINER (Theme-Neutral Shell)
     ========================================================== -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
+    <main id="portal-main" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
 
         <!-- MAIN PORTAL TITLE & UNIVERSAL CONTROLS -->
         <section aria-label="Portal header and lesson filters" class="space-y-6">
@@ -96,15 +147,27 @@
                     </p>
                 </div>
 
-                <!-- Quick Search Bar -->
-                <div class="relative w-full lg:w-80 shrink-0">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none"></i>
-                    <input
-                        id="search-input"
-                        type="search"
-                        placeholder="Search tense, theme, or level..."
-                        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-400/70 focus:ring-1 focus:ring-sky-400/40 transition"
-                    />
+                <!-- Quick Search Bar & Lock Button -->
+                <div class="flex items-center gap-2.5 w-full lg:w-auto shrink-0">
+                    <div class="relative flex-1 lg:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none"></i>
+                        <input
+                            id="search-input"
+                            type="search"
+                            placeholder="Search tense, theme, or level..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-400/70 focus:ring-1 focus:ring-sky-400/40 transition"
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        id="lock-hub-btn"
+                        onclick="lockPortal()"
+                        class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-600 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer shrink-0"
+                        title="Lock teacher hub"
+                    >
+                        <i class="fa-solid fa-lock text-sky-400"></i>
+                        <span class="hidden sm:inline">Lock Hub</span>
+                    </button>
                 </div>
             </div>
 
@@ -114,7 +177,7 @@
                     <!-- Tabs injected by JS; see THEME_CATEGORIES below to add future themes -->
                 </div>
                 <div class="text-xs text-slate-400 shrink-0">
-                    Showing <span id="visible-count" class="text-white font-semibold">6</span> of <span id="total-count" class="text-slate-300">6</span> lessons
+                    Showing <span id="visible-count" class="text-white font-semibold">7</span> of <span id="total-count" class="text-slate-300">7</span> lessons
                 </div>
             </div>
         </section>
@@ -293,7 +356,7 @@
     <!-- =========================================================
          NEUTRAL FOOTER
     ========================================================== -->
-    <footer class="border-t border-slate-900 mt-10 py-6 text-center text-xs text-slate-500">
+    <footer id="portal-footer" class="hidden border-t border-slate-900 mt-10 py-6 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <span>ESL Interactive Hub &bull; Modular Multi-Theme Learning Portal</span>
             <span>Direct in-tab launch for reliable Web Speech API &amp; Web Audio playback</span>
@@ -312,6 +375,7 @@
         const THEME_CATEGORIES = [
             { id: 'all', label: 'All Games', icon: 'fa-border-all', type: 'all' },
             { id: 'fnaf', label: 'FNAF Universe', icon: 'fa-mask', type: 'theme' },
+            { id: 'pets', label: 'Pets & Animals', icon: 'fa-paw', type: 'theme' },
             { id: 'simple', label: 'Simple Tenses', icon: 'fa-bolt', type: 'aspect' },
             { id: 'continuous', label: 'Continuous Tenses', icon: 'fa-wave-square', type: 'aspect' },
             { id: 'present', label: 'Present', icon: 'fa-circle-dot', type: 'timePeriod' },
@@ -330,6 +394,14 @@
          * Matches the unified color palettes inside the 6 lesson HTML files.
          */
         const TIME_PERIOD_META = {
+            vocabulary: {
+                id: 'vocabulary',
+                heading: 'Starter Vocabulary & Phonics — Happy PetShop Hub',
+                sublabel: 'Sky-Blue & Sunny Amber Theme (A0)',
+                dotClass: 'bg-sky-400 shadow-[0_0_8px_#38bdf8]',
+                borderClass: 'border-sky-500/30',
+                badgeClass: 'bg-sky-500/15 text-sky-300 border-sky-500/35',
+            },
             present: {
                 id: 'present',
                 heading: 'Present Tenses — Classic Pizzeria Tablet',
@@ -358,9 +430,33 @@
 
         /**
          * 3. MODULAR LESSONS REGISTRY
-         * Ordered by time period (Present -> Past -> Future) so pairs sit together cleanly.
+         * Ordered by time period (Vocabulary -> Present -> Past -> Future) so pairs sit together cleanly.
          */
         const LESSONS_DATA = [
+            // --- STARTER VOCABULARY & PHONICS (Sky-Blue & Amber) ---
+            {
+                id: 'petshop-consultant-hub',
+                href: 'petshop_consultant_hub.html',
+                theme: 'pets',
+                themeLabel: 'Happy PetShop • Consultant Shift',
+                timePeriod: 'vocabulary',
+                timePeriodLabel: 'VOCABULARY & PHONICS',
+                aspect: 'vocabulary',
+                aspectLabel: 'Vocabulary & Listening',
+                nightBadge: 'Starter Hub',
+                tenseName: 'Happy PetShop Consultant',
+                subtitle: 'Pets, Food Missions & Phonics Hub',
+                level: 'Starter (A0)',
+                formula: 'Pets • Listening • First Letters',
+                description: 'Choose a virtual pet assistant, learn 10 animal names with audio pronunciation, serve customers, feed pets, fix labels, and print an official Consultant Certificate!',
+                modules: ['Pet Roster', 'Inventory Match', 'Customer Service', 'Feeding Time', 'Label Making'],
+                icon: 'fa-paw',
+                characterName: 'Patron the Dog',
+                emoji: '🐶',
+                imageUrl: '',
+                paletteKey: 'petshop',
+            },
+
             // --- PRESENT PAIR (Emerald & Cyan) ---
             {
                 id: 'present-simple-fnaf',
@@ -496,6 +592,16 @@
 
         // Unified Card Palettes matching each time-period pair
         const CARD_PALETTES = {
+            petshop: {
+                cardBorder: 'border-sky-500/30 hover:border-amber-400/75 hover:shadow-[0_0_28px_rgba(14,165,233,0.22)]',
+                topStrip: 'bg-gradient-to-r from-sky-400 via-cyan-400 to-amber-400',
+                periodPill: 'bg-sky-500/15 text-sky-300 border-sky-500/40',
+                nightPill: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
+                formulaText: 'text-amber-300',
+                btnBg: 'bg-gradient-to-r from-sky-500 to-amber-500 hover:from-sky-400 hover:to-amber-400 text-zinc-950',
+                glowBg: 'from-sky-500/14 via-amber-500/5 to-transparent',
+                iconColor: 'text-sky-400',
+            },
             present: {
                 cardBorder: 'border-emerald-500/25 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(34,211,238,0.16)]',
                 topStrip: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400',
@@ -583,6 +689,18 @@
             const modulesHtml = lesson.modules
                 .map((mod) => `<span class="px-2 py-0.5 rounded bg-zinc-950/90 border border-zinc-800 text-[11px] text-zinc-400">${mod}</span>`)
                 .join('');
+            const thumbnailHtml = lesson.imageUrl
+                ? `<img
+                        src="${lesson.imageUrl}"
+                        alt="${lesson.characterName}"
+                        loading="lazy"
+                        class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                    />
+                    <i class="fa-solid ${lesson.icon} ${palette.iconColor} text-lg hidden"></i>`
+                : lesson.emoji
+                    ? `<span class="text-2xl leading-none group-hover:scale-110 transition-transform duration-300 select-none" role="img" aria-label="${lesson.characterName}">${lesson.emoji}</span>`
+                    : `<i class="fa-solid ${lesson.icon} ${palette.iconColor} text-lg"></i>`;
 
             return `
                 <article class="lesson-card group relative flex flex-col justify-between rounded-2xl border bg-zinc-900/90 backdrop-blur-sm overflow-hidden ${palette.cardBorder}">
@@ -608,16 +726,9 @@
                                 </span>
                             </div>
 
-                            <!-- Animatronic Thumbnail -->
+                            <!-- Character / Theme Thumbnail -->
                             <div class="w-12 h-12 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-center shrink-0 overflow-hidden p-1">
-                                <img
-                                    src="${lesson.imageUrl}"
-                                    alt="${lesson.characterName}"
-                                    loading="lazy"
-                                    class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                                    onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
-                                />
-                                <i class="fa-solid ${lesson.icon} ${palette.iconColor} text-lg hidden"></i>
+                                ${thumbnailHtml}
                             </div>
                         </div>
 
@@ -717,7 +828,7 @@
             const shouldGroupByPeriod = distinctPeriods.length > 1 && filtered.length > 3;
 
             if (shouldGroupByPeriod) {
-                const orderedPeriods = ['present', 'past', 'future'].filter((p) => distinctPeriods.includes(p));
+                const orderedPeriods = ['vocabulary', 'present', 'past', 'future'].filter((p) => distinctPeriods.includes(p));
                 container.innerHTML = orderedPeriods.map((periodKey) => {
                     const meta = TIME_PERIOD_META[periodKey];
                     const periodLessons = filtered.filter((l) => l.timePeriod === periodKey);
@@ -766,10 +877,73 @@
             renderLessons();
         }
 
-        // Initialize Portal
+        const AUTH_KEY = 'esl_hub_auth';
+
+        function verifyTeacherPasscode(val) {
+            try {
+                return btoa(String(val || '').trim()) === 'ODg0MQ==';
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function unlockPortal() {
+            document.getElementById('teacher-lock-screen').classList.add('hidden');
+            document.getElementById('portal-main').classList.remove('hidden');
+            document.getElementById('portal-footer').classList.remove('hidden');
+            document.getElementById('teacher-pass-error').classList.add('hidden');
+            document.getElementById('teacher-pass-input').value = '';
+        }
+
+        function lockPortal() {
+            try {
+                sessionStorage.removeItem(AUTH_KEY);
+            } catch (_) {}
+            document.getElementById('portal-main').classList.add('hidden');
+            document.getElementById('portal-footer').classList.add('hidden');
+            document.getElementById('teacher-lock-screen').classList.remove('hidden');
+            document.getElementById('teacher-pass-error').classList.add('hidden');
+            const passInput = document.getElementById('teacher-pass-input');
+            passInput.value = '';
+            passInput.focus();
+        }
+
+        // Initialize Portal & Teacher Password Gate
         document.addEventListener('DOMContentLoaded', () => {
             renderTabs();
             renderLessons();
+
+            let isAuthed = false;
+            try {
+                isAuthed = sessionStorage.getItem(AUTH_KEY) === 'ok';
+            } catch (_) {}
+
+            if (isAuthed) {
+                unlockPortal();
+            } else {
+                document.getElementById('teacher-pass-input').focus();
+            }
+
+            document.getElementById('teacher-lock-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const passInput = document.getElementById('teacher-pass-input');
+                const errorEl = document.getElementById('teacher-pass-error');
+
+                if (verifyTeacherPasscode(passInput.value)) {
+                    try {
+                        sessionStorage.setItem(AUTH_KEY, 'ok');
+                    } catch (_) {}
+                    unlockPortal();
+                } else {
+                    errorEl.classList.remove('hidden');
+                    passInput.value = '';
+                    passInput.focus();
+                }
+            });
+
+            document.getElementById('teacher-pass-input').addEventListener('input', () => {
+                document.getElementById('teacher-pass-error').classList.add('hidden');
+            });
 
             document.getElementById('search-input').addEventListener('input', (e) => {
                 searchQuery = e.target.value;

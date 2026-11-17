@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetShop Consultant - English A0 Hub</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            light: '#e0f2fe',
+                            DEFAULT: '#0ea5e9',
+                            dark: '#0369a1',
+                            accent: '#f59e0b'
+                        }
+                    },
+                    animation: {
+                        'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite alternate',
+                    },
+                    keyframes: {
+                        pop: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 5px rgba(245, 158, 11, 0.5)' },
+                            '100%': { boxShadow: '0 0 20px rgba(245, 158, 11, 0.9)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1, h2, h3, h4, .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* 3D Button Effect */
+        .btn-3d {
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0 0 rgba(0,0,0,0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 0 rgba(0,0,0,0.15);
+        }
+
+        /* Memory Card Flip */
+        .perspective {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+            width: 100%;
+            height: 100%;
+        }
+        .flip-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            position: absolute;
+            inset: 0;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Safe text wrapping */
+        .text-safe {
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        /* Print Styles for Certificate */
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible !important;
+            }
+            #printable-certificate {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 20px;
+                background: white !important;
+                border: 15px solid #0ea5e9 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                z-index: 9999;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+        
+        /* Level Up Animation */
+        .level-up-fx {
+            animation: levelUpAnim 1s ease-out forwards;
+        }
+        @keyframes levelUpAnim {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.3); filter: brightness(1.5) drop-shadow(0 0 15px gold); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        
+        /* Draggable Widget Styles */
+        #pet-tracker-widget {
+            touch-action: none;
+            cursor: grab;
+        }
+        #pet-tracker-widget:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="text-slate-700 min-h-screen flex flex-col">
+
+    <!-- Starter Modal (Choose Consultant Pet) -->
+    <div id="starter-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-3xl p-6 md:p-8 shadow-2xl border-4 border-brand-accent text-center animate-pop max-h-[95vh] overflow-y-auto">
+            <h2 class="text-3xl font-black text-slate-800 font-fredoka mb-2">Welcome, Pet Consultant!</h2>
+            <p class="text-slate-500 font-bold mb-6">Choose your virtual assistant. They will level up as you earn stars!</p>
+            
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 mb-6" id="starter-pets-grid">
+                <!-- Generated by JS -->
+            </div>
+            
+            <div class="bg-slate-50 p-4 rounded-xl border-2 border-slate-200 mb-6">
+                <label class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wide">Name your assistant:</label>
+                <input type="text" id="starter-name-input" value="Patron" maxlength="12" class="w-full text-center text-xl font-bold text-brand-dark p-3 rounded-xl border-2 border-brand focus:outline-none focus:border-brand-accent transition-colors">
+            </div>
+            
+            <button onclick="confirmStarterPet()" class="btn-3d w-full bg-brand text-white font-black text-xl py-4 rounded-2xl border-b-4 border-brand-dark">
+                Start My Shift! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- Feedback Toast Overlay -->
+    <div id="toast-overlay" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[60] pointer-events-none hidden">
+        <div id="toast-message" class="bg-white px-6 py-3 rounded-full shadow-2xl border-4 font-black text-xl font-fredoka transform transition-transform scale-0 flex items-center gap-3">
+            <span id="toast-icon">⭐</span>
+            <span id="toast-text">Correct!</span>
+        </div>
+    </div>
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-4 border-slate-200 px-4 py-3 shadow-sm">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-brand text-white rounded-2xl flex items-center justify-center text-2xl shadow-md border-2 border-brand-light transform -rotate-3">
+                    🏪
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-800 tracking-wide font-fredoka leading-tight">
+                        Happy PetShop
+                    </h1>
+                    <p class="text-xs font-bold text-brand-dark uppercase tracking-wider">Consultant Dashboard</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <!-- Badges Status -->
+                <button onclick="switchTab('badges')" class="btn-3d flex items-center gap-2 bg-amber-100 border-2 border-amber-400 px-4 py-2 rounded-xl text-amber-800 font-bold text-sm">
+                    <i class="fa-solid fa-medal"></i>
+                    <span>Badges: <span id="badge-counter" class="font-black">0/4</span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="max-w-6xl mx-auto mt-3 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <button onclick="switchTab('hub')" id="tab-hub" class="btn-3d flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 bg-brand text-white border-b-4 border-brand-dark">
+                <i class="fa-solid fa-clipboard-list"></i> 1. Pet Roster
+            </button>
+            <button onclick="switchTab('games')" id="tab-games" class="btn-3d flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 bg-white text-slate-500 border-b-4 border-slate-200 hover:bg-slate-50">
+                <i class="fa-solid fa-briefcase"></i> 2. Daily Tasks
+            </button>
+            <button onclick="switchTab('badges')" id="tab-badges" class="btn-3d flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 bg-white text-slate-500 border-b-4 border-slate-200 hover:bg-slate-50">
+                <i class="fa-solid fa-trophy"></i> 3. Achievements
+            </button>
+            <button onclick="switchTab('prize')" id="tab-prize" class="btn-3d flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 bg-white text-slate-500 border-b-4 border-slate-200 hover:bg-slate-50 relative">
+                <i class="fa-solid fa-certificate"></i> 4. Certificate <span id="prize-lock" class="absolute -top-1 -right-1 text-xs">🔒</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Floating Point Tracker / Virtual Pet -->
+    <aside id="pet-tracker-widget" class="fixed bottom-4 right-4 z-50 bg-white/95 backdrop-blur-md border-4 border-brand rounded-3xl p-3 shadow-2xl w-40 hidden flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-1 drag-handle" title="Drag to move">
+            <i class="fa-solid fa-grip-lines text-slate-300 hover:text-slate-500 cursor-grab"></i>
+            <button onclick="toggleTracker()" class="text-slate-400 hover:text-slate-600 font-black text-lg leading-none">&times;</button>
+        </div>
+        <div class="relative w-20 h-20 bg-brand-light rounded-full flex items-center justify-center text-4xl border-2 border-brand-dark mb-2 shadow-inner">
+            <span id="tracker-pet-emoji" class="z-10">🐶</span>
+            <!-- Accessory Layers -->
+            <span id="acc-glasses" class="absolute text-2xl z-20 top-2 hidden pointer-events-none">🕶️</span>
+            <span id="acc-bowtie" class="absolute text-2xl z-20 -bottom-2 hidden pointer-events-none">🎀</span>
+            <span id="acc-scarf" class="absolute text-3xl z-20 -bottom-3 hidden pointer-events-none">🧣</span>
+            <span id="acc-crown" class="absolute text-3xl z-20 -top-5 hidden drop-shadow-md pointer-events-none">👑</span>
+            <span id="acc-star" class="absolute text-xl z-20 top-1 right-0 hidden drop-shadow-md pointer-events-none">⭐</span>
+        </div>
+        <div class="text-center w-full">
+            <h4 id="tracker-pet-name" class="font-black text-brand-dark text-sm truncate uppercase tracking-wider">Buddy</h4>
+            <div class="flex justify-between items-center text-xs font-bold text-slate-500 mt-1 mb-1">
+                <span id="tracker-level">Lvl 1</span>
+                <span id="tracker-stars-text"><span class="text-brand-accent">★</span> 0/5</span>
+            </div>
+            <!-- XP Bar -->
+            <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden border border-slate-300 mb-2">
+                <div id="tracker-xp-bar" class="bg-brand-accent h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <button onclick="openWardrobe()" class="btn-3d w-full bg-brand-light text-brand-dark hover:bg-brand hover:text-white border-2 border-brand px-2 py-1 rounded-xl text-xs font-bold transition-colors">
+                <i class="fa-solid fa-shirt"></i> Wardrobe
+            </button>
+        </div>
+    </aside>
+
+    <aside id="pet-tracker-minimized" class="fixed bottom-4 right-4 z-50 hidden">
+        <button onclick="toggleTracker()" class="btn-3d w-14 h-14 bg-brand rounded-full border-4 border-white shadow-2xl flex items-center justify-center text-2xl animate-bounce-slow hover:bg-brand-dark transition-colors">
+            <span id="minimized-pet-emoji">🐶</span>
+        </button>
+    </aside>
+
+    <!-- Wardrobe Modal -->
+    <div id="wardrobe-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl border-4 border-brand-accent text-center animate-pop p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-black text-slate-800 font-fredoka"><i class="fa-solid fa-shirt text-brand"></i> Wardrobe</h3>
+                <button onclick="closeWardrobe()" class="w-8 h-8 bg-slate-200 hover:bg-slate-300 rounded-full text-slate-600 font-black">&times;</button>
+            </div>
+            
+            <div class="relative w-24 h-24 mx-auto bg-brand-light rounded-full flex items-center justify-center text-5xl border-4 border-brand-dark mb-6 shadow-inner">
+                <span id="wardrobe-pet-emoji" class="z-10">🐶</span>
+                <span id="w-acc-glasses" class="absolute text-3xl z-20 top-2 hidden">🕶️</span>
+                <span id="w-acc-bowtie" class="absolute text-3xl z-20 -bottom-2 hidden">🎀</span>
+                <span id="w-acc-scarf" class="absolute text-4xl z-20 -bottom-3 hidden">🧣</span>
+                <span id="w-acc-crown" class="absolute text-4xl z-20 -top-5 hidden drop-shadow-md">👑</span>
+                <span id="w-acc-star" class="absolute text-2xl z-20 top-1 right-0 hidden drop-shadow-md">⭐</span>
+            </div>
+
+            <div class="space-y-3 text-left">
+                <!-- Glasses -->
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🕶️</span>
+                        <div>
+                            <div class="font-bold text-slate-700">Cool Glasses</div>
+                            <div class="text-[10px] text-slate-500 uppercase font-black">Unlocks at Lvl 2</div>
+                        </div>
+                    </div>
+                    <button id="btn-equip-glasses" onclick="toggleAccessory('glasses')" class="px-3 py-1 rounded-lg text-xs font-bold border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed" disabled>Locked 🔒</button>
+                </div>
+                <!-- Bowtie -->
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🎀</span>
+                        <div>
+                            <div class="font-bold text-slate-700">Cute Bowtie</div>
+                            <div class="text-[10px] text-slate-500 uppercase font-black">Unlocks at Lvl 3</div>
+                        </div>
+                    </div>
+                    <button id="btn-equip-bowtie" onclick="toggleAccessory('bowtie')" class="px-3 py-1 rounded-lg text-xs font-bold border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed" disabled>Locked 🔒</button>
+                </div>
+                <!-- Crown -->
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">👑</span>
+                        <div>
+                            <div class="font-bold text-slate-700">Royal Crown</div>
+                            <div class="text-[10px] text-slate-500 uppercase font-black">Unlocks at Lvl 4</div>
+                        </div>
+                    </div>
+                    <button id="btn-equip-crown" onclick="toggleAccessory('crown')" class="px-3 py-1 rounded-lg text-xs font-bold border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed" disabled>Locked 🔒</button>
+                </div>
+                <!-- Scarf -->
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🧣</span>
+                        <div>
+                            <div class="font-bold text-slate-700">Warm Scarf</div>
+                            <div class="text-[10px] text-slate-500 uppercase font-black">Unlocks at Lvl 5</div>
+                        </div>
+                    </div>
+                    <button id="btn-equip-scarf" onclick="toggleAccessory('scarf')" class="px-3 py-1 rounded-lg text-xs font-bold border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed" disabled>Locked 🔒</button>
+                </div>
+                <!-- Star -->
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">⭐</span>
+                        <div>
+                            <div class="font-bold text-slate-700">Hero Star</div>
+                            <div class="text-[10px] text-slate-500 uppercase font-black">Unlocks at Lvl 6</div>
+                        </div>
+                    </div>
+                    <button id="btn-equip-star" onclick="toggleAccessory('star')" class="px-3 py-1 rounded-lg text-xs font-bold border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed" disabled>Locked 🔒</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 w-full max-w-6xl mx-auto p-4 sm:p-6 pb-32">
+        
+        <!-- ========================================== -->
+        <!-- SECTION 1: PET ROSTER (LEARNING HUB)       -->
+        <!-- ========================================== -->
+        <section id="sec-hub" class="space-y-6 animate-pop">
+            <div class="bg-white border-4 border-slate-200 rounded-3xl p-5 sm:p-8 shadow-sm flex flex-col md:flex-row items-center gap-4">
+                <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center text-3xl shrink-0 border-4 border-brand animate-pulse-glow">
+                    📋
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-800 font-fredoka">Store Inventory</h2>
+                    <p class="text-slate-500 font-bold mt-1 text-sm sm:text-base">Review the pets currently available in the shop. Click a pet to hear its English name.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" id="pet-hub-grid">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 2: DAILY TASKS (MINI GAMES)        -->
+        <!-- ========================================== -->
+        <section id="sec-games" class="hidden space-y-6">
+            <div class="bg-white border-4 border-slate-200 rounded-3xl p-5 sm:p-8 shadow-sm text-center">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 font-fredoka">Daily Tasks</h2>
+                <p class="text-slate-500 font-bold mt-1 text-sm">Complete your consultant duties to earn stars, level up your assistant, and collect badges!</p>
+            </div>
+
+            <!-- Game 1: Memory Match -->
+            <div class="bg-indigo-50 border-4 border-indigo-200 rounded-3xl p-5 sm:p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b-2 border-indigo-100 pb-3">
+                    <h3 class="text-xl font-black text-indigo-800 font-fredoka"><i class="fa-solid fa-clone mr-2"></i>Task 1: Inventory Match</h3>
+                    <span id="badge-status-1" class="text-xs font-black bg-slate-200 text-slate-500 px-3 py-1 rounded-lg uppercase tracking-wider">Incomplete</span>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-sm font-bold text-indigo-600">Find 5 matching pairs of pets in the stockroom.</p>
+                    <button onclick="initMemoryGame()" class="btn-3d bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-3 py-1.5 rounded-lg text-xs font-bold border-2 border-indigo-300">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Restart
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-5 gap-2 sm:gap-3 max-w-3xl mx-auto" id="memory-grid">
+                    <!-- Cards generated by JS -->
+                </div>
+            </div>
+
+            <!-- Game 2: Listen & Find (Customers) -->
+            <div class="bg-rose-50 border-4 border-rose-200 rounded-3xl p-5 sm:p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b-2 border-rose-100 pb-3">
+                    <h3 class="text-xl font-black text-rose-800 font-fredoka"><i class="fa-solid fa-users mr-2"></i>Task 2: Customer Service</h3>
+                    <span id="badge-status-2" class="text-xs font-black bg-slate-200 text-slate-500 px-3 py-1 rounded-lg uppercase tracking-wider">Incomplete</span>
+                </div>
+                <p class="text-sm font-bold text-rose-600 mb-4">Listen to the customer's request and select the correct pet for them.</p>
+                
+                <div class="flex flex-col items-center bg-white p-6 rounded-2xl border-2 border-rose-100 shadow-sm max-w-2xl mx-auto">
+                    <button onclick="playCustomerRequest()" class="btn-3d w-16 h-16 bg-rose-500 text-white rounded-full flex items-center justify-center text-2xl shadow-md border-b-4 border-rose-700 mb-3 hover:bg-rose-400">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <p class="text-xs font-bold text-slate-400 mb-6 uppercase tracking-widest text-center">Click to hear request</p>
+                    
+                    <div class="flex flex-wrap gap-4 w-full justify-center" id="listen-options">
+                        <!-- Options generated by JS -->
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm font-bold text-rose-700 bg-rose-100 px-4 py-2 rounded-xl border border-rose-200">Served: <span id="listen-score">0</span>/3</span>
+                    <button onclick="startListenGame()" class="btn-3d bg-rose-100 text-rose-700 hover:bg-rose-200 px-4 py-2 rounded-xl text-sm font-bold border-2 border-rose-300">
+                        Reset Task
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game 3: Feed the Pet (Missions) -->
+            <div class="bg-emerald-50 border-4 border-emerald-200 rounded-3xl p-5 sm:p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b-2 border-emerald-100 pb-3">
+                    <h3 class="text-xl font-black text-emerald-800 font-fredoka"><i class="fa-solid fa-bowl-food mr-2"></i>Task 3: Feeding Time</h3>
+                    <span id="badge-status-3" class="text-xs font-black bg-slate-200 text-slate-500 px-3 py-1 rounded-lg uppercase tracking-wider">Incomplete</span>
+                </div>
+                <p class="text-sm font-bold text-emerald-600 mb-4">Read the mission. Select the food, then click the correct pet to feed them.</p>
+                
+                <div class="bg-white p-5 rounded-2xl border-2 border-emerald-100 shadow-sm mb-4 max-w-3xl mx-auto">
+                    <div class="bg-emerald-800 text-emerald-50 p-4 rounded-xl text-center mb-6 shadow-inner">
+                        <span class="text-xs font-bold uppercase tracking-widest text-emerald-300 mb-1 block">Current Mission:</span>
+                        <h4 id="feed-mission-text" class="text-xl font-black font-fredoka">Feed the Cat with Fish!</h4>
+                    </div>
+
+                    <h4 class="text-xs font-black uppercase text-emerald-500 mb-3 text-center tracking-wider">1. Select Food:</h4>
+                    <div class="flex flex-wrap justify-center gap-3 mb-8" id="food-rack">
+                        <!-- Foods generated by JS -->
+                    </div>
+
+                    <h4 class="text-xs font-black uppercase text-emerald-500 mb-3 text-center tracking-wider">2. Select Pet:</h4>
+                    <div class="flex flex-wrap justify-center gap-3" id="feed-pets">
+                        <!-- Pets generated by JS -->
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-bold text-emerald-700 bg-emerald-100 px-4 py-2 rounded-xl border border-emerald-200">Fed: <span id="feed-score">0</span>/3</span>
+                    <button onclick="startFeedGame()" class="btn-3d bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-4 py-2 rounded-xl text-sm font-bold border-2 border-emerald-300">
+                        Reset Task
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game 4: First Letter -->
+            <div class="bg-sky-50 border-4 border-sky-200 rounded-3xl p-5 sm:p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b-2 border-sky-100 pb-3">
+                    <h3 class="text-xl font-black text-sky-800 font-fredoka"><i class="fa-solid fa-spell-check mr-2"></i>Task 4: Label Making</h3>
+                    <span id="badge-status-4" class="text-xs font-black bg-slate-200 text-slate-500 px-3 py-1 rounded-lg uppercase tracking-wider">Incomplete</span>
+                </div>
+                <p class="text-sm font-bold text-sky-600 mb-4">Identify the missing first letter for the pet's label.</p>
+                
+                <div class="flex flex-col items-center bg-white p-6 rounded-2xl border-2 border-sky-100 shadow-sm max-w-xl mx-auto">
+                    <div id="letter-pet-emoji" class="text-7xl mb-4 animate-bounce-slow drop-shadow-md">🐶</div>
+                    <div id="letter-pet-word" class="text-3xl font-black text-slate-800 font-fredoka mb-8 tracking-[0.2em] border-b-4 border-dashed border-sky-200 pb-2">_ O G</div>
+                    
+                    <div class="flex gap-4 justify-center w-full" id="letter-options">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm font-bold text-sky-700 bg-sky-100 px-4 py-2 rounded-xl border border-sky-200">Labels: <span id="letter-score">0</span>/3</span>
+                    <button onclick="startLetterGame()" class="btn-3d bg-sky-100 text-sky-700 hover:bg-sky-200 px-4 py-2 rounded-xl text-sm font-bold border-2 border-sky-300">
+                        Reset Task
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 3: ACHIEVEMENTS                    -->
+        <!-- ========================================== -->
+        <section id="sec-badges" class="hidden space-y-6">
+            <div class="bg-white border-4 border-slate-200 rounded-3xl p-5 sm:p-8 shadow-sm text-center">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 font-fredoka">Achievement Badges</h2>
+                <p class="text-slate-500 font-bold mt-1 text-sm">Earn all 4 task badges to unlock your Official Consultant Certificate!</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Badge 1 -->
+                <div id="badge-card-1" class="bg-white border-4 border-slate-200 rounded-2xl p-5 flex items-center gap-4 grayscale opacity-60 transition-all duration-500">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-3xl border-4 border-indigo-200 shrink-0 shadow-inner">🧠</div>
+                    <div>
+                        <h4 class="font-black text-slate-800 text-lg">Inventory Master</h4>
+                        <p class="text-xs font-bold text-slate-500 mt-1">Complete the Inventory Match task.</p>
+                        <span class="inline-block mt-2 text-[10px] uppercase font-black tracking-wider bg-slate-200 text-slate-500 px-2.5 py-1 rounded-md">Locked</span>
+                    </div>
+                </div>
+                <!-- Badge 2 -->
+                <div id="badge-card-2" class="bg-white border-4 border-slate-200 rounded-2xl p-5 flex items-center gap-4 grayscale opacity-60 transition-all duration-500">
+                    <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-3xl border-4 border-rose-200 shrink-0 shadow-inner">🤝</div>
+                    <div>
+                        <h4 class="font-black text-slate-800 text-lg">Service Star</h4>
+                        <p class="text-xs font-bold text-slate-500 mt-1">Serve 3 customers successfully.</p>
+                        <span class="inline-block mt-2 text-[10px] uppercase font-black tracking-wider bg-slate-200 text-slate-500 px-2.5 py-1 rounded-md">Locked</span>
+                    </div>
+                </div>
+                <!-- Badge 3 -->
+                <div id="badge-card-3" class="bg-white border-4 border-slate-200 rounded-2xl p-5 flex items-center gap-4 grayscale opacity-60 transition-all duration-500">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-3xl border-4 border-emerald-200 shrink-0 shadow-inner">🥕</div>
+                    <div>
+                        <h4 class="font-black text-slate-800 text-lg">Happy Feeder</h4>
+                        <p class="text-xs font-bold text-slate-500 mt-1">Complete 3 feeding missions.</p>
+                        <span class="inline-block mt-2 text-[10px] uppercase font-black tracking-wider bg-slate-200 text-slate-500 px-2.5 py-1 rounded-md">Locked</span>
+                    </div>
+                </div>
+                <!-- Badge 4 -->
+                <div id="badge-card-4" class="bg-white border-4 border-slate-200 rounded-2xl p-5 flex items-center gap-4 grayscale opacity-60 transition-all duration-500">
+                    <div class="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center text-3xl border-4 border-sky-200 shrink-0 shadow-inner">🔤</div>
+                    <div>
+                        <h4 class="font-black text-slate-800 text-lg">Label Maker</h4>
+                        <p class="text-xs font-bold text-slate-500 mt-1">Fix 3 pet labels correctly.</p>
+                        <span class="inline-block mt-2 text-[10px] uppercase font-black tracking-wider bg-slate-200 text-slate-500 px-2.5 py-1 rounded-md">Locked</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 4: CERTIFICATE (PRIZE)             -->
+        <!-- ========================================== -->
+        <section id="sec-prize" class="hidden space-y-6">
+            
+            <!-- Locked State -->
+            <div id="prize-locked-view" class="bg-white border-4 border-slate-200 rounded-3xl p-10 sm:p-16 shadow-sm text-center flex flex-col items-center max-w-3xl mx-auto">
+                <div class="text-6xl mb-6 opacity-50">🔒</div>
+                <h2 class="text-2xl sm:text-4xl font-black text-slate-400 font-fredoka mb-3">Certificate Locked</h2>
+                <p class="text-slate-500 font-bold mb-8 max-w-md">You must earn all 4 achievement badges from your Daily Tasks to unlock this area.</p>
+                <button onclick="switchTab('games')" class="btn-3d bg-brand text-white px-8 py-3 rounded-xl font-black text-lg border-b-4 border-brand-dark">
+                    Return to Tasks
+                </button>
+            </div>
+
+            <!-- Unlocked State -->
+            <div id="prize-unlocked-view" class="hidden space-y-6 animate-pop">
+                
+                <div class="bg-white border-4 border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between no-print">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-800 font-fredoka mb-1 flex items-center gap-2">
+                            <i class="fa-solid fa-print text-brand"></i> Print Your Certificate
+                        </h3>
+                        <p class="text-sm font-bold text-slate-500">Ensure your name is correct before generating the PDF.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <input type="text" id="final-name-input" class="flex-1 sm:w-48 bg-slate-50 border-2 border-slate-300 rounded-xl px-4 py-2 font-bold text-slate-800 focus:outline-none focus:border-brand" onkeyup="updateCertName()">
+                        <button onclick="printDiploma()" class="btn-3d bg-brand text-white px-6 py-2 rounded-xl font-black text-base border-b-4 border-brand-dark whitespace-nowrap">
+                            Print PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Visual Certificate Preview (Also used for actual printing) -->
+                <div id="printable-certificate" class="bg-white text-center flex-col items-center justify-center relative p-12 border-[12px] border-double border-brand-accent rounded-3xl shadow-2xl max-w-4xl mx-auto min-h-[600px] flex">
+                    <div class="absolute top-6 left-6 text-5xl opacity-30">🐾</div>
+                    <div class="absolute top-6 right-6 text-5xl opacity-30">🐾</div>
+                    <div class="absolute bottom-6 left-6 text-5xl opacity-30">🐾</div>
+                    <div class="absolute bottom-6 right-6 text-5xl opacity-30">🐾</div>
+                    
+                    <div class="relative w-28 h-28 bg-brand-light rounded-full text-white flex items-center justify-center text-6xl shadow-lg mb-4 border-4 border-brand-dark">
+                        <span id="cert-pet-emoji" class="z-10">🐶</span>
+                        <span id="cert-acc-glasses" class="absolute text-4xl z-20 top-2 hidden">🕶️</span>
+                        <span id="cert-acc-bowtie" class="absolute text-4xl z-20 -bottom-2 hidden">🎀</span>
+                        <span id="cert-acc-scarf" class="absolute text-5xl z-20 -bottom-4 hidden">🧣</span>
+                        <span id="cert-acc-crown" class="absolute text-5xl z-20 -top-6 hidden drop-shadow-md">👑</span>
+                        <span id="cert-acc-star" class="absolute text-3xl z-20 top-2 -right-1 hidden drop-shadow-md">⭐</span>
+                    </div>
+                    
+                    <div class="bg-brand text-white text-xs font-black uppercase px-3 py-1 rounded-full mb-6 shadow-sm border border-brand-dark">
+                        <span id="cert-pet-level">Level 1</span> Assistant: <span id="cert-pet-name">Buddy</span>
+                    </div>
+
+                    <h1 class="text-5xl font-black text-slate-800 font-fredoka mb-2 tracking-widest uppercase">CERTIFICATE</h1>
+                    <h2 class="text-xl font-bold text-brand uppercase tracking-widest mb-10">Of Excellent Consultancy</h2>
+                    
+                    <p class="text-base font-bold text-slate-500 mb-4 uppercase tracking-wider">This officially certifies that</p>
+                    
+                    <div id="cert-name-display" class="text-4xl font-black text-brand-dark font-fredoka mb-10 border-b-4 border-brand-accent pb-2 px-16 inline-block min-w-[300px]">
+                        Consultant
+                    </div>
+                    
+                    <p class="text-lg font-bold text-slate-600 max-w-2xl mx-auto leading-relaxed mb-12">
+                        Has successfully completed all training modules at the Happy PetShop. They have demonstrated outstanding ability in identifying pets, serving customers in English, and managing feeding missions!
+                    </p>
+                    
+                    <div class="flex justify-between w-full max-w-2xl mt-8 px-8 items-end">
+                        <div class="text-center">
+                            <div class="w-40 border-b-2 border-slate-800 mb-2 font-bold text-slate-700 pb-1" id="cert-date">Date</div>
+                            <p class="font-bold text-[10px] uppercase tracking-widest text-slate-400">Date Issued</p>
+                        </div>
+                        <div class="w-20 h-20 bg-brand-accent rounded-full border-4 border-amber-300 flex items-center justify-center text-3xl shadow-inner transform rotate-12 relative">
+                            <span class="absolute text-[8px] font-black uppercase text-amber-900 tracking-tighter top-2">Official</span>
+                            ⭐
+                        </div>
+                        <div class="text-center">
+                            <div class="w-40 border-b-2 border-slate-800 mb-2 font-bold text-slate-700 pb-1 font-fredoka text-lg">PetShop Manager</div>
+                            <p class="font-bold text-[10px] uppercase tracking-widest text-slate-400">Authorized Signature</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- 1. DATA & STATE ---
+        const petData = [
+            { id: 'dog', word: 'Dog', icon: '🐶', foodId: 'bone', letter: 'D' },
+            { id: 'cat', word: 'Cat', icon: '🐱', foodId: 'fish', letter: 'C' },
+            { id: 'bird', word: 'Bird', icon: '🦜', foodId: 'seeds', letter: 'B' },
+            { id: 'rabbit', word: 'Rabbit', icon: '🐰', foodId: 'carrot', letter: 'R' },
+            { id: 'turtle', word: 'Turtle', icon: '🐢', foodId: 'leaf', letter: 'T' },
+            { id: 'mouse', word: 'Mouse', icon: '🐭', foodId: 'cheese', letter: 'M' },
+            { id: 'fish', word: 'Fish', icon: '🐠', foodId: 'flakes', letter: 'F' },
+            { id: 'hamster', word: 'Hamster', icon: '🐹', foodId: 'seeds', letter: 'H' },
+            { id: 'snake', word: 'Snake', icon: '🐍', foodId: 'mouse_toy', letter: 'S' },
+            { id: 'lizard', word: 'Lizard', icon: '🦎', foodId: 'bugs', letter: 'L' }
+        ];
+
+        const defaultPetNames = {
+            '🐶': 'Patron',
+            '🐱': 'Murchyk',
+            '🦜': 'Kesha',
+            '🐰': 'Kiki',
+            '🐢': 'Max',
+            '🐭': 'Pip',
+            '🐠': 'Dori',
+            '🐹': 'Cheese',
+            '🐍': 'Sssasha',
+            '🦎': 'Rick'
+        };
+
+        const foodData = {
+            'bone': { icon: '🦴', name: 'Bone' },
+            'fish': { icon: '🐟', name: 'Fish' },
+            'seeds': { icon: '🌻', name: 'Seeds' },
+            'carrot': { icon: '🥕', name: 'Carrot' },
+            'leaf': { icon: '🥬', name: 'Leaf' },
+            'cheese': { icon: '🧀', name: 'Cheese' },
+            'flakes': { icon: '🥫', name: 'Flakes' },
+            'bugs': { icon: '🦗', name: 'Bugs' },
+            'mouse_toy': { icon: '🐁', name: 'Mouse Toy' }
+        };
+
+        const starterPets = ['🐶', '🐱', '🐰', '🦜']; // We will dynamically replace this usage
+
+        let state = {
+            consultantName: 'Patron',
+            consultantIcon: '🐶',
+            stars: 0,
+            level: 1,
+            equipped: { glasses: false, bowtie: false, crown: false, scarf: false, star: false },
+            badges: { game1: false, game2: false, game3: false, game4: false },
+            listenScore: 0,
+            feedScore: 0,
+            letterScore: 0,
+            selectedFood: null,
+            feedMission: null
+        };
+
+        // --- 2. AUDIO SYNTHESIS & SPEECH ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTone(freq, type, duration, vol) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playSuccess() {
+            playTone(523.25, 'sine', 0.1, 0.2); // C5
+            setTimeout(() => playTone(659.25, 'sine', 0.2, 0.2), 100); // E5
+        }
+
+        function playError() {
+            playTone(220, 'sawtooth', 0.3, 0.1); // A3
+        }
+
+        function playPop() {
+            playTone(400, 'sine', 0.1, 0.1);
+        }
+
+        function playLevelUp() {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+                setTimeout(() => playTone(freq, 'triangle', 0.15, 0.2), i * 100);
+            });
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- 3. UI & PROGRESS HELPERS ---
+        function showToast(text, isCorrect) {
+            const overlay = document.getElementById('toast-overlay');
+            const msg = document.getElementById('toast-message');
+            const icon = document.getElementById('toast-icon');
+            const textEl = document.getElementById('toast-text');
+            
+            textEl.innerText = text;
+            icon.innerText = isCorrect ? '⭐' : '❌';
+            
+            msg.className = `bg-white px-6 py-3 rounded-full shadow-2xl border-4 font-black text-xl font-fredoka transform transition-transform duration-300 flex items-center gap-3 ${isCorrect ? 'border-emerald-400 text-emerald-600' : 'border-rose-400 text-rose-600'}`;
+            
+            overlay.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('scale-100'), 10);
+            
+            setTimeout(() => {
+                msg.classList.remove('scale-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }, 1200);
+        }
+
+        function addStars(num) {
+            state.stars += num;
+            updateTrackerUI();
+            checkLevelUp();
+        }
+
+        function updateTrackerUI() {
+            const starsReq = [0, 5, 15, 30, 50, 75]; // Requirements for Lvl 1 to 6
+            let currentReq = starsReq[state.level] || 75; // Max out at visual calculation
+            let baseStars = starsReq[state.level - 1] || 0;
+            
+            let progress = 100;
+            if (state.level < 6) {
+                progress = ((state.stars - baseStars) / (currentReq - baseStars)) * 100;
+                document.getElementById('tracker-stars-text').innerHTML = `<span class="text-brand-accent">★</span> ${state.stars}/${currentReq}`;
+            } else {
+                document.getElementById('tracker-stars-text').innerHTML = `<span class="text-brand-accent">★</span> ${state.stars} (Max)`;
+            }
+            
+            document.getElementById('tracker-xp-bar').style.width = `${Math.min(100, Math.max(0, progress))}%`;
+            document.getElementById('tracker-level').innerText = `Lvl ${state.level}`;
+        }
+
+        function toggleTracker() {
+            const widget = document.getElementById('pet-tracker-widget');
+            const minimized = document.getElementById('pet-tracker-minimized');
+            playPop();
+            if (widget.classList.contains('hidden')) {
+                widget.classList.remove('hidden');
+                widget.classList.add('flex');
+                minimized.classList.add('hidden');
+            } else {
+                widget.classList.add('hidden');
+                widget.classList.remove('flex');
+                minimized.classList.remove('hidden');
+            }
+        }
+
+        function openWardrobe() {
+            playPop();
+            document.getElementById('wardrobe-modal').classList.remove('hidden');
+            document.getElementById('wardrobe-modal').classList.add('flex');
+            updateWardrobeUI();
+        }
+
+        function closeWardrobe() {
+            playPop();
+            document.getElementById('wardrobe-modal').classList.add('hidden');
+            document.getElementById('wardrobe-modal').classList.remove('flex');
+        }
+
+        function toggleAccessory(type) {
+            playPop();
+            state.equipped[type] = !state.equipped[type];
+            updateWardrobeUI();
+            applyAccessories();
+        }
+
+        function updateWardrobeUI() {
+            document.getElementById('wardrobe-pet-emoji').innerText = state.consultantIcon;
+            
+            const setupButton = (id, accType, reqLevel) => {
+                const btn = document.getElementById(id);
+                if (state.level >= reqLevel) {
+                    btn.disabled = false;
+                    if (state.equipped[accType]) {
+                        btn.innerText = "Equipped ✓";
+                        btn.className = "px-3 py-1 rounded-lg text-xs font-bold border-2 bg-emerald-100 text-emerald-600 border-emerald-300";
+                    } else {
+                        btn.innerText = "Equip";
+                        btn.className = "px-3 py-1 rounded-lg text-xs font-bold border-2 bg-white text-brand border-brand hover:bg-brand-light";
+                    }
+                } else {
+                    btn.disabled = true;
+                    btn.innerText = "Locked 🔒";
+                    btn.className = "px-3 py-1 rounded-lg text-xs font-bold border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed";
+                }
+            };
+
+            setupButton('btn-equip-glasses', 'glasses', 2);
+            setupButton('btn-equip-bowtie', 'bowtie', 3);
+            setupButton('btn-equip-crown', 'crown', 4);
+            setupButton('btn-equip-scarf', 'scarf', 5);
+            setupButton('btn-equip-star', 'star', 6);
+
+            // Update Wardrobe Pet Preview
+            document.getElementById('w-acc-glasses').classList.toggle('hidden', !state.equipped.glasses);
+            document.getElementById('w-acc-bowtie').classList.toggle('hidden', !state.equipped.bowtie);
+            document.getElementById('w-acc-crown').classList.toggle('hidden', !state.equipped.crown);
+            document.getElementById('w-acc-scarf').classList.toggle('hidden', !state.equipped.scarf);
+            document.getElementById('w-acc-star').classList.toggle('hidden', !state.equipped.star);
+        }
+
+        function applyAccessories() {
+            // Tracker
+            document.getElementById('acc-glasses').classList.toggle('hidden', !state.equipped.glasses);
+            document.getElementById('acc-bowtie').classList.toggle('hidden', !state.equipped.bowtie);
+            document.getElementById('acc-crown').classList.toggle('hidden', !state.equipped.crown);
+            document.getElementById('acc-scarf').classList.toggle('hidden', !state.equipped.scarf);
+            document.getElementById('acc-star').classList.toggle('hidden', !state.equipped.star);
+            // Cert
+            document.getElementById('cert-acc-glasses').classList.toggle('hidden', !state.equipped.glasses);
+            document.getElementById('cert-acc-bowtie').classList.toggle('hidden', !state.equipped.bowtie);
+            document.getElementById('cert-acc-crown').classList.toggle('hidden', !state.equipped.crown);
+            document.getElementById('cert-acc-scarf').classList.toggle('hidden', !state.equipped.scarf);
+            document.getElementById('cert-acc-star').classList.toggle('hidden', !state.equipped.star);
+        }
+
+        function checkLevelUp() {
+            const starsReq = [0, 5, 15, 30, 50, 75];
+            let newLevel = 1;
+            if (state.stars >= 75) newLevel = 6;
+            else if (state.stars >= 50) newLevel = 5;
+            else if (state.stars >= 30) newLevel = 4;
+            else if (state.stars >= 15) newLevel = 3;
+            else if (state.stars >= 5) newLevel = 2;
+
+            if (newLevel > state.level) {
+                state.level = newLevel;
+                playLevelUp();
+                
+                const widget = document.getElementById('pet-tracker-widget');
+                widget.classList.add('level-up-fx');
+                setTimeout(() => widget.classList.remove('level-up-fx'), 1000);
+
+                showToast(`Reached Level ${state.level}! New Wardrobe item!`, true);
+                
+                updateTrackerUI();
+                updateCertPetInfo();
+            }
+        }
+
+        function unlockBadge(gameNum) {
+            if (state.badges[`game${gameNum}`]) return; 
+            state.badges[`game${gameNum}`] = true;
+            
+            // Update Card
+            const card = document.getElementById(`badge-card-${gameNum}`);
+            card.classList.remove('grayscale', 'opacity-60', 'border-slate-200');
+            card.classList.add('border-amber-400', 'shadow-md');
+            card.querySelector('span').innerText = "UNLOCKED";
+            card.querySelector('span').className = "inline-block mt-2 text-[10px] uppercase font-black tracking-wider bg-amber-400 text-white px-2.5 py-1 rounded-md shadow-sm";
+            
+            // Update Game Status
+            const gameStatus = document.getElementById(`badge-status-${gameNum}`);
+            gameStatus.innerText = "Completed ✓";
+            gameStatus.className = "text-xs font-black bg-emerald-100 text-emerald-600 border border-emerald-300 px-3 py-1 rounded-lg uppercase tracking-wider shadow-sm";
+
+            // Update Header Counter
+            const totalUnlocked = Object.values(state.badges).filter(Boolean).length;
+            document.getElementById('badge-counter').innerText = `${totalUnlocked}/4`;
+
+            if (totalUnlocked === 4) {
+                document.getElementById('prize-lock').innerText = "⭐";
+                document.getElementById('prize-lock').classList.add('animate-bounce');
+                document.getElementById('tab-prize').classList.replace('text-slate-500', 'text-amber-500');
+                
+                document.getElementById('prize-locked-view').classList.add('hidden');
+                document.getElementById('prize-unlocked-view').classList.remove('hidden');
+            }
+        }
+
+        function switchTab(tabId) {
+            playPop();
+            ['hub', 'games', 'badges', 'prize'].forEach(id => {
+                document.getElementById(`sec-${id}`).classList.add('hidden');
+                document.getElementById(`tab-${id}`).classList.remove('bg-brand', 'text-white', 'border-brand-dark');
+                document.getElementById(`tab-${id}`).classList.add('bg-white', 'text-slate-500', 'border-slate-200');
+            });
+            
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.remove('bg-white', 'text-slate-500', 'border-slate-200');
+            document.getElementById(`tab-${tabId}`).classList.add('bg-brand', 'text-white', 'border-brand-dark');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- 4. INITIALIZATION & HUB ---
+        function initStarterModal() {
+            const grid = document.getElementById('starter-pets-grid');
+            grid.innerHTML = '';
+            
+            petData.forEach((pet, index) => {
+                const btn = document.createElement('button');
+                btn.className = `text-4xl bg-slate-50 border-4 border-slate-200 rounded-2xl p-3 hover:bg-brand-light hover:border-brand transition-all starter-pet-btn ${index === 0 ? 'border-brand bg-brand-light' : ''}`;
+                btn.innerText = pet.icon;
+                btn.onclick = () => {
+                    playPop();
+                    document.querySelectorAll('.starter-pet-btn').forEach(b => {
+                        b.classList.remove('border-brand', 'bg-brand-light');
+                        b.classList.add('border-slate-200', 'bg-slate-50');
+                    });
+                    btn.classList.remove('border-slate-200', 'bg-slate-50');
+                    btn.classList.add('border-brand', 'bg-brand-light');
+                    state.consultantIcon = pet.icon;
+                    document.getElementById('starter-name-input').value = defaultPetNames[pet.icon] || 'Buddy';
+                };
+                grid.appendChild(btn);
+            });
+            // Init default
+            state.consultantIcon = petData[0].icon;
+            document.getElementById('starter-name-input').value = defaultPetNames[petData[0].icon] || 'Buddy';
+        }
+
+        function confirmStarterPet() {
+            const nameInput = document.getElementById('starter-name-input').value.trim() || 'Buddy';
+            state.consultantName = nameInput;
+            
+            document.getElementById('tracker-pet-emoji').innerText = state.consultantIcon;
+            document.getElementById('minimized-pet-emoji').innerText = state.consultantIcon;
+            document.getElementById('tracker-pet-name').innerText = nameInput;
+            document.getElementById('final-name-input').value = `Consultant ${nameInput}`;
+            updateCertName();
+            updateCertPetInfo();
+            
+            document.getElementById('starter-modal').classList.add('hidden');
+            document.getElementById('pet-tracker-widget').classList.remove('hidden');
+            document.getElementById('pet-tracker-widget').classList.add('flex');
+            
+            playLevelUp();
+            updateTrackerUI();
+            applyAccessories();
+            
+            // Set date
+            document.getElementById('cert-date').innerText = new Date().toLocaleDateString();
+        }
+
+        function updateCertPetInfo() {
+            document.getElementById('cert-pet-emoji').innerText = state.consultantIcon;
+            document.getElementById('cert-pet-name').innerText = state.consultantName;
+            document.getElementById('cert-pet-level').innerText = `Level ${state.level}`;
+        }
+
+        function initHub() {
+            const grid = document.getElementById('pet-hub-grid');
+            grid.innerHTML = '';
+            
+            petData.forEach(pet => {
+                const card = document.createElement('button');
+                card.className = "btn-3d bg-white border-4 border-slate-200 hover:border-brand rounded-2xl p-4 flex flex-col items-center justify-center transition-all group";
+                card.onclick = () => {
+                    playPop();
+                    speakText(pet.word);
+                    card.classList.add('border-brand', 'bg-brand-light/50');
+                    setTimeout(() => card.classList.remove('border-brand', 'bg-brand-light/50'), 400);
+                };
+                card.innerHTML = `
+                    <div class="text-5xl mb-3 group-hover:scale-110 transition-transform drop-shadow-sm">${pet.icon}</div>
+                    <div class="font-black text-lg text-slate-700 font-fredoka tracking-wide">${pet.word}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- 5. GAMES LOGIC ---
+
+        // GAME 1: MEMORY
+        let memCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function initMemoryGame() {
+            // Pick 5 random pets for 10 cards
+            let shuffledPets = [...petData].sort(() => 0.5 - Math.random());
+            let selectedPets = shuffledPets.slice(0, 5);
+            let deck = [...selectedPets, ...selectedPets];
+            deck.sort(() => 0.5 - Math.random());
+
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            matchedPairs = 0;
+            flippedCards = [];
+
+            deck.forEach((pet, index) => {
+                const card = document.createElement('div');
+                card.className = "perspective w-full aspect-square cursor-pointer";
+                card.innerHTML = `
+                    <div class="flip-card-inner relative shadow-sm rounded-xl" id="mem-inner-${index}">
+                        <div class="flip-card-front bg-indigo-100 border-4 border-indigo-200 rounded-xl flex items-center justify-center hover:bg-indigo-200 transition-colors">
+                            <span class="text-2xl text-indigo-400 font-black">?</span>
+                        </div>
+                        <div class="flip-card-back bg-white border-4 border-indigo-400 rounded-xl flex items-center justify-center shadow-md">
+                            <span class="text-4xl drop-shadow-sm">${pet.icon}</span>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => flipMemoryCard(index, pet.id);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipMemoryCard(index, petId) {
+            if (flippedCards.length >= 2) return;
+            const inner = document.getElementById(`mem-inner-${index}`);
+            if (inner.classList.contains('flipped')) return;
+
+            playPop();
+            inner.classList.add('flipped');
+            flippedCards.push({ index, petId, el: inner });
+
+            if (flippedCards.length === 2) {
+                setTimeout(checkMemoryMatch, 700);
+            }
+        }
+
+        function checkMemoryMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.petId === card2.petId) {
+                playSuccess();
+                matchedPairs++;
+                addStars(1);
+                
+                card1.el.querySelector('.flip-card-back').classList.replace('border-indigo-400', 'border-emerald-400');
+                card1.el.querySelector('.flip-card-back').classList.add('bg-emerald-50');
+                card2.el.querySelector('.flip-card-back').classList.replace('border-indigo-400', 'border-emerald-400');
+                card2.el.querySelector('.flip-card-back').classList.add('bg-emerald-50');
+
+                speakText(petData.find(p => p.id === card1.petId).word);
+
+                if (matchedPairs === 5) {
+                    setTimeout(() => {
+                        showToast("Perfect Match!", true);
+                        addStars(5);
+                        unlockBadge(1);
+                        confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
+                    }, 500);
+                }
+            } else {
+                playError();
+                card1.el.classList.remove('flipped');
+                card2.el.classList.remove('flipped');
+            }
+            flippedCards = [];
+        }
+
+        // GAME 2: LISTEN & FIND
+        let listenTarget = null;
+        
+        function startListenGame() {
+            state.listenScore = 0;
+            document.getElementById('listen-score').innerText = state.listenScore;
+            nextListenRound();
+        }
+
+        function nextListenRound() {
+            let shuffled = [...petData].sort(() => 0.5 - Math.random());
+            let options = shuffled.slice(0, 4);
+            listenTarget = options[Math.floor(Math.random() * options.length)];
+
+            const container = document.getElementById('listen-options');
+            container.innerHTML = '';
+            
+            options.forEach(pet => {
+                const btn = document.createElement('button');
+                btn.className = "btn-3d w-20 h-24 bg-white border-4 border-slate-200 rounded-2xl flex flex-col items-center justify-center text-4xl hover:border-rose-400 hover:bg-rose-50 transition-colors shadow-sm";
+                btn.innerHTML = pet.icon;
+                btn.onclick = () => checkListenAnswer(pet.id);
+                container.appendChild(btn);
+            });
+        }
+
+        function playCustomerRequest() {
+            playPop();
+            if (listenTarget) {
+                const sentences = [
+                    `Hello, I would like a ${listenTarget.word}, please.`,
+                    `Do you have a ${listenTarget.word}?`,
+                    `I am looking for a cute ${listenTarget.word}.`
+                ];
+                speakText(sentences[Math.floor(Math.random() * sentences.length)]);
+            }
+        }
+
+        function checkListenAnswer(petId) {
+            if (!listenTarget) return;
+            
+            if (petId === listenTarget.id) {
+                playSuccess();
+                showToast("Excellent service!", true);
+                state.listenScore++;
+                document.getElementById('listen-score').innerText = state.listenScore;
+                addStars(2);
+                
+                if (state.listenScore >= 3) {
+                    setTimeout(() => {
+                        unlockBadge(2);
+                        confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
+                        startListenGame(); 
+                    }, 1200);
+                } else {
+                    setTimeout(nextListenRound, 1200);
+                }
+            } else {
+                playError();
+                showToast("Wrong pet, try again!", false);
+            }
+        }
+
+        // GAME 3: FEED THE PET (MISSIONS)
+        function startFeedGame() {
+            state.feedScore = 0;
+            document.getElementById('feed-score').innerText = state.feedScore;
+            generateFeedMission();
+        }
+
+        function generateFeedMission() {
+            state.selectedFood = null;
+            updateFoodUI();
+            
+            // Pick random pet
+            let shuffledPets = [...petData].sort(() => 0.5 - Math.random());
+            let targetPet = shuffledPets[0];
+            let optionsPets = shuffledPets.slice(0, 4); // Show 4 pets
+            
+            // Ensure target is in options
+            if (!optionsPets.includes(targetPet)) optionsPets[0] = targetPet;
+            optionsPets.sort(() => 0.5 - Math.random());
+
+            let targetFoodId = targetPet.foodId;
+            let targetFood = foodData[targetFoodId];
+            
+            state.feedMission = { pet: targetPet, food: targetFoodId };
+
+            // Mission Text
+            document.getElementById('feed-mission-text').innerText = `Feed the ${targetPet.word} with ${targetFood.name}!`;
+
+            // Food Rack (Show target food + 3 random others)
+            let allFoodIds = Object.keys(foodData);
+            let wrongFoods = allFoodIds.filter(id => id !== targetFoodId).sort(() => 0.5 - Math.random()).slice(0, 3);
+            let foodOptions = [targetFoodId, ...wrongFoods].sort(() => 0.5 - Math.random());
+
+            const foodRack = document.getElementById('food-rack');
+            foodRack.innerHTML = '';
+            foodOptions.forEach(fId => {
+                const btn = document.createElement('button');
+                btn.className = `food-btn btn-3d w-16 h-16 bg-slate-50 rounded-xl text-3xl border-2 border-slate-300 flex items-center justify-center transition-all hover:bg-slate-100`;
+                btn.innerHTML = foodData[fId].icon;
+                btn.onclick = () => selectFood(fId, btn);
+                foodRack.appendChild(btn);
+            });
+
+            // Pet Selection
+            const petsContainer = document.getElementById('feed-pets');
+            petsContainer.innerHTML = '';
+            optionsPets.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = `btn-3d flex flex-col items-center justify-center w-20 h-24 bg-white rounded-2xl border-4 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 transition-colors shadow-sm`;
+                btn.innerHTML = `<span class="text-4xl mb-1 drop-shadow-sm">${p.icon}</span><span class="text-xs font-bold text-slate-500">${p.word}</span>`;
+                btn.onclick = () => checkFeedAction(p.id);
+                petsContainer.appendChild(btn);
+            });
+        }
+
+        function selectFood(fId, btnEl) {
+            playPop();
+            state.selectedFood = fId;
+            updateFoodUI(btnEl);
+        }
+
+        function updateFoodUI(selectedBtn = null) {
+            document.querySelectorAll('.food-btn').forEach(b => {
+                b.classList.remove('border-emerald-500', 'bg-emerald-100', 'scale-110');
+                b.classList.add('border-slate-300', 'bg-slate-50');
+            });
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-slate-300', 'bg-slate-50');
+                selectedBtn.classList.add('border-emerald-500', 'bg-emerald-100', 'scale-110');
+            }
+        }
+
+        function checkFeedAction(petId) {
+            if (!state.selectedFood) {
+                playError();
+                showToast("Select food first!", false);
+                return;
+            }
+
+            if (petId === state.feedMission.pet.id && state.selectedFood === state.feedMission.food) {
+                playSuccess();
+                showToast("Yummy!", true);
+                state.feedScore++;
+                document.getElementById('feed-score').innerText = state.feedScore;
+                addStars(2);
+                
+                if (state.feedScore >= 3) {
+                    setTimeout(() => {
+                        unlockBadge(3);
+                        confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
+                        startFeedGame();
+                    }, 1200);
+                } else {
+                    setTimeout(generateFeedMission, 1200);
+                }
+            } else {
+                playError();
+                showToast("Wrong combination!", false);
+            }
+        }
+
+        // GAME 4: FIRST LETTER
+        let letterTarget = null;
+
+        function startLetterGame() {
+            state.letterScore = 0;
+            document.getElementById('letter-score').innerText = state.letterScore;
+            nextLetterRound();
+        }
+
+        function nextLetterRound() {
+            let shuffled = [...petData].sort(() => 0.5 - Math.random());
+            letterTarget = shuffled[0];
+
+            document.getElementById('letter-pet-emoji').innerText = letterTarget.icon;
+            
+            let restOfWord = letterTarget.word.substring(1).toUpperCase();
+            document.getElementById('letter-pet-word').innerText = "_ " + restOfWord.split('').join(' ');
+            document.getElementById('letter-pet-word').classList.remove('text-emerald-500');
+
+            // Generate options
+            let wrongOptions = shuffled.slice(1, 4).map(p => p.letter);
+            let options = [letterTarget.letter, ...wrongOptions];
+            // Ensure unique letters just in case
+            options = [...new Set(options)].slice(0,4);
+            options.sort(() => 0.5 - Math.random());
+
+            const container = document.getElementById('letter-options');
+            container.innerHTML = '';
+            options.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = "btn-3d w-14 h-14 sm:w-16 sm:h-16 bg-white border-4 border-slate-200 rounded-2xl font-black text-2xl text-sky-600 hover:border-sky-400 hover:bg-sky-50 transition-colors shadow-sm";
+                btn.innerText = letter;
+                btn.onclick = () => checkLetterAnswer(letter);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkLetterAnswer(letter) {
+            if (letter === letterTarget.letter) {
+                playSuccess();
+                showToast("Perfect label!", true);
+                state.letterScore++;
+                document.getElementById('letter-score').innerText = state.letterScore;
+                
+                let restOfWord = letterTarget.word.substring(1).toUpperCase();
+                document.getElementById('letter-pet-word').innerText = letter + " " + restOfWord.split('').join(' ');
+                document.getElementById('letter-pet-word').classList.add('text-emerald-500');
+                
+                addStars(1);
+                speakText(letterTarget.word);
+
+                setTimeout(() => {
+                    if (state.letterScore >= 3) {
+                        unlockBadge(4);
+                        confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
+                        startLetterGame();
+                    } else {
+                        nextLetterRound();
+                    }
+                }, 1500);
+
+            } else {
+                playError();
+                showToast("Try again!", false);
+            }
+        }
+
+        // --- 6. CERTIFICATE ---
+        function updateCertName() {
+            const input = document.getElementById('final-name-input').value.trim();
+            document.getElementById('cert-name-display').innerText = input || 'Consultant';
+        }
+        
+        function printDiploma() {
+            updateCertName();
+            playPop();
+            window.print();
+        }
+
+        // --- 7. DRAGGABLE WIDGET LOGIC ---
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            // Allow dragging from anywhere on the widget except buttons/inputs
+            element.onmousedown = dragMouseDown;
+            element.addEventListener('touchstart', dragTouchStart, {passive: false});
+
+            function isInteractiveElement(target) {
+                const tag = target.tagName.toLowerCase();
+                return tag === 'button' || tag === 'input' || target.closest('button');
+            }
+
+            function dragMouseDown(e) {
+                if (isInteractiveElement(e.target)) return;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function dragTouchStart(e) {
+                if (isInteractiveElement(e.target)) return;
+                // preventDefault helps stop scrolling while dragging, but might interfere with buttons if not careful
+                // e.preventDefault(); 
+                pos3 = e.touches[0].clientX;
+                pos4 = e.touches[0].clientY;
+                document.addEventListener('touchend', closeDragElement, {passive: false});
+                document.addEventListener('touchmove', elementTouchDrag, {passive: false});
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                updatePosition();
+            }
+
+            function elementTouchDrag(e) {
+                // Prevent scrolling while dragging the pet
+                if(e.cancelable) e.preventDefault(); 
+                pos1 = pos3 - e.touches[0].clientX;
+                pos2 = pos4 - e.touches[0].clientY;
+                pos3 = e.touches[0].clientX;
+                pos4 = e.touches[0].clientY;
+                updatePosition();
+            }
+
+            function updatePosition() {
+                // Reset bottom/right constraints so top/left take over
+                element.style.bottom = 'auto';
+                element.style.right = 'auto';
+                
+                // Calculate new position
+                let newTop = element.offsetTop - pos2;
+                let newLeft = element.offsetLeft - pos1;
+                
+                // Keep within screen bounds
+                const maxTop = window.innerHeight - element.offsetHeight;
+                const maxLeft = window.innerWidth - element.offsetWidth;
+                
+                if (newTop < 0) newTop = 0;
+                if (newLeft < 0) newLeft = 0;
+                if (newTop > maxTop) newTop = maxTop;
+                if (newLeft > maxLeft) newLeft = maxLeft;
+
+                element.style.top = newTop + "px";
+                element.style.left = newLeft + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.removeEventListener('touchend', closeDragElement);
+                document.removeEventListener('touchmove', elementTouchDrag);
+            }
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            initStarterModal();
+            initHub();
+            initMemoryGame();
+            startListenGame();
+            startFeedGame();
+            startLetterGame();
+            makeDraggable(document.getElementById('pet-tracker-widget'));
+        };
+
+    </script>
+</body>
+</html>
