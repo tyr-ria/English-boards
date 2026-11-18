@@ -177,7 +177,7 @@
                     <!-- Tabs injected by JS; see THEME_CATEGORIES below to add future themes -->
                 </div>
                 <div class="text-xs text-slate-400 shrink-0">
-                    Showing <span id="visible-count" class="text-white font-semibold">8</span> of <span id="total-count" class="text-slate-300">8</span> lessons
+                    Showing <span id="visible-count" class="text-white font-semibold">10</span> of <span id="total-count" class="text-slate-300">10</span> lessons
                 </div>
             </div>
         </section>
@@ -376,6 +376,8 @@
             { id: 'all', label: 'All Games', icon: 'fa-border-all', type: 'all' },
             { id: 'fnaf', label: 'FNAF Universe', icon: 'fa-mask', type: 'theme' },
             { id: 'pets', label: 'Pets & Animals', icon: 'fa-paw', type: 'theme' },
+            { id: 'minecraft', label: 'Minecraft', icon: 'fa-cubes', type: 'theme' },
+            { id: 'art', label: 'Art & Colors', icon: 'fa-palette', type: 'theme' },
             { id: 'simple', label: 'Simple Tenses', icon: 'fa-bolt', type: 'aspect' },
             { id: 'continuous', label: 'Continuous Tenses', icon: 'fa-wave-square', type: 'aspect' },
             { id: 'present', label: 'Present', icon: 'fa-circle-dot', type: 'timePeriod' },
@@ -391,21 +393,21 @@
 
         /**
          * 2. TIME-PERIOD VISUAL GROUPING METADATA
-         * Matches the unified color palettes inside the 6 lesson HTML files.
+         * Matches the unified color palettes inside the lesson HTML files.
          */
         const TIME_PERIOD_META = {
             vocabulary: {
                 id: 'vocabulary',
-                heading: 'Starter Vocabulary & Animals — PetShop & Zoo Hubs (A0)',
-                sublabel: 'Sky-Blue, Jungle-Green & Sunny Amber Theme (A0)',
+                heading: 'Starter Vocabulary Hubs — Pets, Zoo Animals & Art Colors (A0)',
+                sublabel: 'Pets, Wild Animals & Art Studio Colors (A0)',
                 dotClass: 'bg-sky-400 shadow-[0_0_8px_#38bdf8]',
                 borderClass: 'border-sky-500/30',
                 badgeClass: 'bg-sky-500/15 text-sky-300 border-sky-500/35',
             },
             present: {
                 id: 'present',
-                heading: 'Present Tenses — Classic Pizzeria Tablet',
-                sublabel: 'Emerald & Cyan Theme',
+                heading: 'Present Tenses — Pizzeria Security & Minecraft Overworld',
+                sublabel: 'Emerald, Cyan & Overworld Green Theme',
                 dotClass: 'bg-emerald-400 shadow-[0_0_8px_#34d399]',
                 borderClass: 'border-emerald-500/30',
                 badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35',
@@ -433,7 +435,7 @@
          * Ordered by time period (Vocabulary -> Present -> Past -> Future) so pairs sit together cleanly.
          */
         const LESSONS_DATA = [
-            // --- STARTER VOCABULARY & PHONICS (Sky-Blue & Amber) ---
+            // --- STARTER VOCABULARY & PHONICS (Sky-Blue, Amber & Art Colors) ---
             {
                 id: 'petshop-consultant-hub',
                 href: 'petshop_consultant_hub.html',
@@ -458,7 +460,7 @@
             },
             {
                 id: 'zookeeper-adventure',
-                href: 'zookeeper_adventure_v3.html',
+                href: 'zookeeper_adventure.html',
                 theme: 'pets',
                 themeLabel: 'Zookeeper Academy • A0 Mission',
                 timePeriod: 'vocabulary',
@@ -478,8 +480,30 @@
                 imageUrl: '',
                 paletteKey: 'petshop',
             },
+            {
+                id: 'mr-marcels-art-studio',
+                href: 'mr_marcels_art_studio.html',
+                theme: 'art',
+                themeLabel: "Mr. Marcel's Studio • Colors Hub",
+                timePeriod: 'vocabulary',
+                timePeriodLabel: 'VOCABULARY & COLORS',
+                aspect: 'vocabulary',
+                aspectLabel: 'Colors & Listening',
+                nightBadge: 'Art Studio',
+                tenseName: "Mr. Marcel's Art Studio",
+                subtitle: 'English Colors, Mixing & Dash Hub',
+                level: 'Starter (A0)',
+                formula: '11 Colors • Listening • Color Mixing',
+                description: "Explore Mr. Marcel's interactive paint palette, sort items on the color conveyor, catch colored frogs, mix paints, and unlock a full masterpiece painting and diploma!",
+                modules: ['Interactive Palette', 'Color Conveyor', 'Frog Invasion', 'Magic Mixing', 'Splash Shooter', '45s Color Dash'],
+                icon: 'fa-palette',
+                characterName: 'Mr. Marcel',
+                emoji: '🎨',
+                imageUrl: 'https://i.postimg.cc/jSqjQ6pV/Gemini-Generated-Image-9are429are429are-removebg-preview.png',
+                paletteKey: 'art',
+            },
 
-            // --- PRESENT PAIR (Emerald & Cyan) ---
+            // --- PRESENT GROUP (Emerald, Cyan & Overworld Green) ---
             {
                 id: 'present-simple-fnaf',
                 href: 'present-simple-fnaf.html',
@@ -521,6 +545,28 @@
                 characterName: 'Bonnie the Bunny',
                 imageUrl: 'https://i.postimg.cc/8cdc6zbY/Bonnie-removebg-preview.png',
                 paletteKey: 'present',
+            },
+            {
+                id: 'minecraft-present-simple-quest',
+                href: 'minecraft_present_simple_quest.html',
+                theme: 'minecraft',
+                themeLabel: 'Minecraft • Overworld Quest',
+                timePeriod: 'present',
+                timePeriodLabel: 'PRESENT TIME',
+                aspect: 'simple',
+                aspectLabel: 'Simple Tense',
+                nightBadge: 'Overworld',
+                tenseName: 'Minecraft Present Simple',
+                subtitle: 'Basic Materials & Crafting Quest',
+                level: 'Beginner (A1)',
+                formula: "S + V(s/es) | don't / doesn't | Do/Does",
+                description: 'Help Steve and Alex gather 10 basic materials, craft affirmative, negative, and question sentences, smelt orders in the Furnace Lab, and build your Overworld Base!',
+                modules: ['10 Materials Cards', 'Affirmative Crafter', 'Negative Shield', 'Question Bridge', 'Mixed Blitz', 'Furnace Lab', 'Diamond Shop'],
+                icon: 'fa-cubes',
+                characterName: 'Steve & Crafting Table',
+                emoji: '⛏️',
+                imageUrl: 'https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png',
+                paletteKey: 'minecraft',
             },
 
             // --- PAST PAIR (Amber, Rust & Sepia-Olive) ---
@@ -623,6 +669,26 @@
                 btnBg: 'bg-gradient-to-r from-sky-500 to-amber-500 hover:from-sky-400 hover:to-amber-400 text-zinc-950',
                 glowBg: 'from-sky-500/14 via-amber-500/5 to-transparent',
                 iconColor: 'text-sky-400',
+            },
+            art: {
+                cardBorder: 'border-rose-500/30 hover:border-amber-400/75 hover:shadow-[0_0_28px_rgba(244,63,94,0.22)]',
+                topStrip: 'bg-gradient-to-r from-rose-500 via-amber-400 to-sky-400',
+                periodPill: 'bg-rose-500/15 text-rose-300 border-rose-500/40',
+                nightPill: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
+                formulaText: 'text-amber-300',
+                btnBg: 'bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-zinc-950',
+                glowBg: 'from-rose-500/14 via-amber-500/5 to-transparent',
+                iconColor: 'text-rose-400',
+            },
+            minecraft: {
+                cardBorder: 'border-lime-500/30 hover:border-emerald-400/75 hover:shadow-[0_0_28px_rgba(132,204,22,0.22)]',
+                topStrip: 'bg-gradient-to-r from-lime-500 via-emerald-400 to-amber-400',
+                periodPill: 'bg-lime-500/15 text-lime-300 border-lime-500/40',
+                nightPill: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40',
+                formulaText: 'text-lime-300',
+                btnBg: 'bg-gradient-to-r from-lime-500 to-emerald-500 hover:from-lime-400 hover:to-emerald-400 text-zinc-950',
+                glowBg: 'from-lime-500/14 via-emerald-500/5 to-transparent',
+                iconColor: 'text-lime-400',
             },
             present: {
                 cardBorder: 'border-emerald-500/25 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(34,211,238,0.16)]',
@@ -855,6 +921,7 @@
                     const meta = TIME_PERIOD_META[periodKey];
                     const periodLessons = filtered.filter((l) => l.timePeriod === periodKey);
                     const cardsHtml = periodLessons.map(buildLessonCardHtml).join('');
+                    const periodColsClass = periodLessons.length >= 3 ? 'md:grid-cols-2 xl:grid-cols-3' : 'md:grid-cols-2';
 
                     return `
                         <div class="rounded-2xl border ${meta.borderClass} bg-slate-900/35 p-4 sm:p-5 space-y-4">
@@ -867,7 +934,7 @@
                                     ${meta.sublabel}
                                 </span>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="grid grid-cols-1 ${periodColsClass} gap-5">
                                 ${cardsHtml}
                             </div>
                         </div>

@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zookeeper Adventure - Learn English</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Nunito', 'sans-serif']
+                    },
+                    colors: {
+                        zoo: {
+                            green: '#4ade80',
+                            darkGreen: '#166534',
+                            brown: '#854d0e',
+                            lightBrown: '#fef3c7',
+                            yellow: '#facc15',
+                            sky: '#bae6fd'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f0fdf4;
+            background-image: radial-gradient(#bbf7d0 10%, transparent 11%), radial-gradient(#bbf7d0 10%, transparent 11%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        /* Animations */
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        .animate-shake { animation: shake 0.4s ease-in-out; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.5)); }
+            50% { filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.9)); }
+        }
+        .animate-glow { animation: glow 2s ease-in-out infinite; }
+
+        /* Game specific styles */
+        .selected-item {
+            box-shadow: 0 0 0 4px #facc15, 0 0 20px rgba(250, 204, 21, 0.6);
+            transform: scale(1.05);
+        }
+
+        .matched-item {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(100%);
+        }
+
+        .shadow-animal {
+            filter: brightness(0) opacity(0.7);
+        }
+
+        /* Certificate Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #certificate-area, #certificate-area * { visibility: visible; }
+            #certificate-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100vh;
+                margin: 0;
+                padding: 0;
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="font-body text-gray-800 min-h-screen flex flex-col">
+
+    <!-- START OVERLAY (To unlock Audio Context) -->
+    <div id="start-overlay" class="fixed inset-0 bg-zoo-darkGreen/90 z-50 flex flex-col items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-pop border-8 border-zoo-yellow relative overflow-hidden">
+            <div class="text-6xl mb-4 animate-float relative z-10">🤠</div>
+            <h1 class="font-heading text-3xl md:text-4xl font-bold text-zoo-darkGreen mb-4 relative z-10">Welcome to the Zoo!</h1>
+            <p class="text-lg font-bold text-gray-600 mb-6 relative z-10">Are you ready to learn English and help our new Hippo and Tiger?</p>
+            <button onclick="startGame()" class="relative z-10 w-full bg-zoo-yellow hover:bg-yellow-300 text-zoo-brown font-heading font-bold text-2xl py-4 px-6 rounded-2xl shadow-lg border-b-4 border-yellow-600 active:translate-y-1 active:border-b-0 transition-all">
+                START ADVENTURE 🚀
+            </button>
+            <div class="absolute -bottom-10 -left-10 text-8xl opacity-20 transform -rotate-12">🦛</div>
+            <div class="absolute -top-10 -right-10 text-8xl opacity-20 transform rotate-12">🐅</div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="app-content" class="hidden flex-col min-h-screen">
+        
+        <!-- STICKY HEADER -->
+        <header class="sticky top-0 bg-zoo-darkGreen text-white shadow-lg z-40 border-b-4 border-zoo-green no-print">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white text-zoo-darkGreen w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-inner">
+                        🗺️
+                    </div>
+                    <div>
+                        <h1 class="font-heading text-xl md:text-2xl font-bold tracking-wide">Zoo Assistant</h1>
+                        <p class="text-xs md:text-sm text-zoo-green font-bold uppercase tracking-wider">English A0 Mission</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 md:gap-4">
+                    <div class="bg-black/30 px-3 py-1.5 rounded-xl border border-white/20 flex items-center gap-2">
+                        <span class="text-zoo-yellow text-lg">⭐</span>
+                        <span id="star-count" class="font-bold text-lg">0</span>
+                    </div>
+                    <button onclick="switchTab('badges')" class="bg-zoo-yellow hover:bg-yellow-300 text-zoo-brown font-bold px-3 py-1.5 rounded-xl border-b-2 border-yellow-600 active:translate-y-0.5 active:border-b-0 transition flex items-center gap-2">
+                        <i class="fa-solid fa-medal"></i>
+                        <span id="badge-count">0/4</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NAVIGATION TABS -->
+            <nav class="max-w-6xl mx-auto px-4 flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
+                <button onclick="switchTab('hub')" id="tab-hub" class="nav-btn flex-1 min-w-[100px] bg-white text-zoo-darkGreen font-heading font-bold py-2 px-4 rounded-t-xl border-b-4 border-zoo-darkGreen">
+                    🛖 Hub
+                </button>
+                <button onclick="switchTab('games')" id="tab-games" class="nav-btn flex-1 min-w-[100px] bg-zoo-green/40 hover:bg-zoo-green/60 text-white font-heading font-bold py-2 px-4 rounded-t-xl border-b-4 border-transparent transition-colors">
+                    🎮 Games
+                </button>
+                <button onclick="switchTab('badges')" id="tab-badges" class="nav-btn flex-1 min-w-[100px] bg-zoo-green/40 hover:bg-zoo-green/60 text-white font-heading font-bold py-2 px-4 rounded-t-xl border-b-4 border-transparent transition-colors">
+                    🏆 Badges
+                </button>
+                <button onclick="switchTab('prize')" id="tab-prize" class="nav-btn flex-1 min-w-[100px] bg-gray-500 text-gray-300 font-heading font-bold py-2 px-4 rounded-t-xl border-b-4 border-transparent transition-colors flex items-center justify-center gap-2 pointer-events-none">
+                    <i class="fa-solid fa-lock" id="prize-lock"></i> Prize
+                </button>
+            </nav>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-grow max-w-6xl mx-auto w-full p-4 md:p-6 pb-24">
+            
+            <!-- Toast Notification Container -->
+            <div id="toast-container" class="fixed top-24 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+            <!-- ================= TAB 1: STORY HUB ================= -->
+            <section id="view-hub" class="view-section space-y-6">
+                <!-- Intro Card -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-zoo-green flex flex-col md:flex-row items-center gap-6 animate-pop">
+                    <div class="w-32 h-32 bg-zoo-lightBrown rounded-full border-4 border-zoo-yellow flex items-center justify-center text-6xl shrink-0 shadow-inner">
+                        🤠
+                    </div>
+                    <div>
+                        <h2 class="font-heading text-2xl md:text-4xl font-bold text-zoo-brown mb-2">Hello, Zookeeper!</h2>
+                        <p class="text-lg text-gray-600 font-bold mb-4 bg-zoo-lightBrown p-4 rounded-2xl border-2 border-zoo-yellow/50">
+                            "You are a new zookeeper assistant. We have a new Hippo and Tiger today! But all animals are hiding. Help us find and feed them. Let's learn their names!"
+                        </p>
+                        <button onclick="speak('Hello! You are a new zookeeper assistant. We have a new Hippo and Tiger. Let us learn the animals!')" class="bg-zoo-sky hover:bg-blue-300 text-blue-900 font-bold py-2 px-6 rounded-xl border-b-4 border-blue-400 active:border-b-0 active:translate-y-1 transition flex items-center gap-2">
+                            <i class="fa-solid fa-volume-high"></i> Listen to Story
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Vocabulary Dictionary -->
+                <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-zoo-brown">
+                    <h3 class="font-heading text-xl md:text-2xl font-bold text-zoo-darkGreen mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> Animal Dictionary
+                    </h3>
+                    <p class="text-sm font-bold text-gray-500 mb-6">Click on an animal to hear its name in English!</p>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" id="dictionary-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 2: GAMES ================= -->
+            <section id="view-games" class="view-section hidden space-y-6">
+                
+                <div class="bg-zoo-yellow/20 rounded-2xl p-4 border-2 border-zoo-yellow text-center mb-6">
+                    <h2 class="font-heading text-2xl font-bold text-zoo-brown">Zookeeper Training</h2>
+                    <p class="font-bold text-gray-600">Complete all 4 missions to earn your badges!</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- GAME 1: Animal Finder -->
+                    <div class="bg-white rounded-3xl p-6 shadow-lg border-4 border-zoo-sky flex flex-col relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 bg-zoo-sky text-blue-900 font-bold px-3 py-1 rounded-bl-xl z-10 text-sm">Mission 1</div>
+                        <h3 class="font-heading text-xl font-bold text-blue-900 mb-2">Listen & Find</h3>
+                        <p class="text-sm text-gray-600 font-bold mb-4">Listen to the word and click the correct animal.</p>
+                        
+                        <div class="bg-blue-50 rounded-2xl p-4 flex-grow flex flex-col items-center justify-center gap-6 border-2 border-blue-100">
+                            <button onclick="playFinderAudio()" class="w-16 h-16 bg-blue-500 hover:bg-blue-400 text-white rounded-full flex items-center justify-center text-2xl shadow-lg border-b-4 border-blue-700 active:border-b-0 active:translate-y-1 transition">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                            <p class="text-xs font-bold text-blue-400 uppercase tracking-wide">Click to listen</p>
+                            
+                            <div class="flex gap-4 w-full justify-center flex-wrap" id="finder-options">
+                                <!-- Populated by JS -->
+                            </div>
+                            
+                            <div id="finder-feedback" class="h-8 font-bold text-center w-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- GAME 2: Feed Animals (Matching) -->
+                    <div class="bg-white rounded-3xl p-6 shadow-lg border-4 border-zoo-green flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-zoo-green text-white font-bold px-3 py-1 rounded-bl-xl z-10 text-sm">Mission 2</div>
+                        <h3 class="font-heading text-xl font-bold text-zoo-darkGreen mb-2">Feed the Animals</h3>
+                        <p class="text-sm text-gray-600 font-bold mb-4">Click an animal, then click its favorite food.</p>
+                        
+                        <div class="bg-green-50 rounded-2xl p-4 flex-grow flex flex-col justify-between border-2 border-green-100">
+                            <div class="flex justify-around mb-6" id="feed-animals">
+                                <!-- Populated by JS -->
+                            </div>
+                            <div class="h-1 bg-green-200 rounded-full w-full my-2"></div>
+                            <div class="flex justify-around mt-4" id="feed-foods">
+                                <!-- Populated by JS -->
+                            </div>
+                            <div id="feed-feedback" class="h-8 font-bold text-center w-full mt-4 text-sm"></div>
+                        </div>
+                    </div>
+
+                    <!-- GAME 3: Shadow Match -->
+                    <div class="bg-white rounded-3xl p-6 shadow-lg border-4 border-gray-400 flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-gray-400 text-white font-bold px-3 py-1 rounded-bl-xl z-10 text-sm">Mission 3</div>
+                        <h3 class="font-heading text-xl font-bold text-gray-700 mb-2">Shadow Match</h3>
+                        <p class="text-sm text-gray-600 font-bold mb-4">Who is hiding in the dark? Read and match.</p>
+                        
+                        <div class="bg-gray-50 rounded-2xl p-4 flex-grow flex flex-col justify-center gap-6 border-2 border-gray-200 text-center">
+                            <div id="shadow-target" class="text-8xl shadow-animal mx-auto">❓</div>
+                            <p class="text-sm font-bold text-gray-500">Read the name:</p>
+                            
+                            <div class="flex flex-col md:flex-row gap-3 w-full justify-center items-center" id="shadow-options">
+                                <!-- Populated by JS (Text Buttons) -->
+                            </div>
+                            <div id="shadow-feedback" class="h-8 font-bold text-center w-full mt-2 text-sm"></div>
+                        </div>
+                    </div>
+
+                    <!-- GAME 4: Zoo Counter -->
+                    <div class="bg-white rounded-3xl p-6 shadow-lg border-4 border-orange-400 flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-orange-400 text-white font-bold px-3 py-1 rounded-bl-xl z-10 text-sm">Mission 4</div>
+                        <h3 class="font-heading text-xl font-bold text-orange-900 mb-2">Zoo Counter</h3>
+                        <p class="text-sm text-gray-600 font-bold mb-4">Read or listen, then count and pick the right group!</p>
+                        
+                        <div class="bg-orange-50 rounded-2xl p-4 flex-grow flex flex-col justify-center gap-4 border-2 border-orange-100">
+                            <div class="bg-white border-2 border-orange-200 rounded-xl p-4 text-center shadow-sm">
+                                <p id="counter-instruction" class="font-heading text-xl md:text-2xl font-bold text-orange-900">Find three Lions</p>
+                                <button onclick="playCounterAudio()" class="mt-2 text-sm bg-orange-200 hover:bg-orange-300 text-orange-800 px-3 py-1 rounded-lg font-bold transition">
+                                    <i class="fa-solid fa-volume-high"></i> Listen
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-2" id="counter-options">
+                                <!-- Populated by JS -->
+                            </div>
+                            <div id="counter-feedback" class="h-8 font-bold text-center w-full mt-1 text-sm"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ================= TAB 3: BADGES ================= -->
+            <section id="view-badges" class="view-section hidden space-y-6">
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-zoo-yellow text-center">
+                    <h2 class="font-heading text-2xl md:text-4xl font-bold text-zoo-brown mb-2">Achievement Badges</h2>
+                    <p class="text-gray-600 font-bold mb-8">Play the games to unlock all 4 badges. Unlock them all to get a prize!</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        
+                        <!-- Badge 1 -->
+                        <div id="badge-finder" class="bg-gray-100 rounded-2xl p-6 border-4 border-gray-200 flex flex-col items-center gap-3 transition-all">
+                            <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-4xl badge-icon filter grayscale">
+                                👂
+                            </div>
+                            <h3 class="font-bold text-gray-400 badge-title">Explorer Badge</h3>
+                            <p class="text-xs font-bold text-gray-400 text-center">Find 6 animals (Mission 1)</p>
+                        </div>
+
+                        <!-- Badge 2 -->
+                        <div id="badge-feeder" class="bg-gray-100 rounded-2xl p-6 border-4 border-gray-200 flex flex-col items-center gap-3 transition-all">
+                            <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-4xl badge-icon filter grayscale">
+                                🍎
+                            </div>
+                            <h3 class="font-bold text-gray-400 badge-title">Feeder Badge</h3>
+                            <p class="text-xs font-bold text-gray-400 text-center">Feed 6 animals (Mission 2)</p>
+                        </div>
+
+                        <!-- Badge 3 -->
+                        <div id="badge-shadow" class="bg-gray-100 rounded-2xl p-6 border-4 border-gray-200 flex flex-col items-center gap-3 transition-all">
+                            <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-4xl badge-icon filter grayscale">
+                                🕵️
+                            </div>
+                            <h3 class="font-bold text-gray-400 badge-title">Detective Badge</h3>
+                            <p class="text-xs font-bold text-gray-400 text-center">Match 6 shadows (Mission 3)</p>
+                        </div>
+
+                        <!-- Badge 4 -->
+                        <div id="badge-action" class="bg-gray-100 rounded-2xl p-6 border-4 border-gray-200 flex flex-col items-center gap-3 transition-all">
+                            <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-4xl badge-icon filter grayscale">
+                                🔢
+                            </div>
+                            <h3 class="font-bold text-gray-400 badge-title">Counter Badge</h3>
+                            <p class="text-xs font-bold text-gray-400 text-center">Count 6 groups (Mission 4)</p>
+                        </div>
+
+                    </div>
+
+                    <div id="all-badges-msg" class="hidden mt-8 bg-green-100 border-2 border-green-400 text-green-800 font-bold p-4 rounded-xl animate-pop">
+                        🌟 AMAZING! You collected all badges! The Prize Room is now OPEN! 🌟
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 4: GRAND PRIZE ================= -->
+            <section id="view-prize" class="view-section hidden space-y-6">
+                <div class="bg-white rounded-3xl p-6 md:p-10 shadow-2xl border-8 border-zoo-yellow text-center relative overflow-hidden min-h-[500px] flex flex-col items-center justify-center">
+                    
+                    <!-- Pre-Certificate Interaction -->
+                    <div id="prize-interaction" class="flex flex-col items-center animate-pop z-10 w-full">
+                        <h2 class="font-heading text-3xl md:text-5xl font-bold text-zoo-brown mb-4 uppercase tracking-wider">You did it!</h2>
+                        <p class="text-xl font-bold text-gray-600 mb-8">You are a Master Zookeeper!</p>
+                        
+                        <div class="bg-zoo-lightBrown rounded-3xl p-8 border-4 border-zoo-yellow flex flex-col items-center shadow-lg w-full max-w-md mx-auto">
+                            <p class="font-bold text-zoo-darkGreen text-lg mb-6">Click the Golden Key to unlock your reward!</p>
+                            <button onclick="revealCertificate()" class="text-8xl hover:scale-125 transition-transform duration-300 drop-shadow-2xl animate-glow">
+                                🗝️
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- The Actual Certificate Form & Display -->
+                    <div id="certificate-container" class="hidden flex-col items-center z-10 w-full">
+                        <div class="bg-white rounded-2xl p-6 border-4 border-zoo-brown max-w-2xl mx-auto w-full no-print mb-6">
+                            <h3 class="font-heading text-2xl font-bold text-zoo-darkGreen mb-4">Official Zookeeper Certificate</h3>
+                            <p class="font-bold text-gray-700 mb-4">Enter your name below to stamp your certificate:</p>
+                            <input type="text" id="student-name" placeholder="Type your name here..." class="w-full max-w-sm px-4 py-3 rounded-xl border-2 border-gray-300 font-bold text-center text-xl mb-4 focus:outline-none focus:border-zoo-green focus:ring-2 focus:ring-zoo-green/50">
+                            
+                            <button onclick="printCertificate()" class="bg-zoo-darkGreen hover:bg-green-700 text-white font-heading font-bold text-xl py-3 px-8 rounded-xl shadow-lg border-b-4 border-green-900 active:border-b-0 active:translate-y-1 transition-all mx-auto flex items-center gap-2">
+                                <i class="fa-solid fa-print"></i> Print Certificate
+                            </button>
+                        </div>
+
+                        <!-- On-Screen Beautiful Certificate Preview -->
+                        <div class="w-full max-w-3xl mx-auto border-8 border-double border-zoo-darkGreen bg-green-50 p-8 rounded-3xl relative shadow-2xl overflow-hidden" id="cert-preview">
+                            <!-- Background Decor -->
+                            <div class="absolute top-4 left-4 text-5xl opacity-40">🦛</div>
+                            <div class="absolute top-4 right-4 text-5xl opacity-40">🐅</div>
+                            <div class="absolute bottom-4 left-4 text-5xl opacity-40">🐘</div>
+                            <div class="absolute bottom-4 right-4 text-5xl opacity-40">🦁</div>
+                            
+                            <div class="text-center relative z-10 py-10">
+                                <i class="fa-solid fa-award text-zoo-yellow text-7xl drop-shadow-lg mb-4"></i>
+                                <h1 class="font-heading text-4xl md:text-5xl text-zoo-brown uppercase tracking-widest mb-2">Certificate of Achievement</h1>
+                                <h2 class="font-body text-xl text-zoo-darkGreen font-bold mb-8 uppercase tracking-widest">Zookeeper Academy</h2>
+                                
+                                <p class="text-lg text-gray-600 font-bold mb-4">This proudly certifies that</p>
+                                
+                                <div id="cert-name-preview" class="font-heading text-4xl text-zoo-darkGreen border-b-4 border-zoo-yellow inline-block px-10 pb-2 mb-8 font-bold min-w-[200px]">
+                                    Student Name
+                                </div>
+                                
+                                <p class="text-lg text-gray-700 max-w-lg mx-auto font-bold leading-relaxed mb-8">
+                                    Has successfully completed all missions, learned the English names of zoo animals, and proven to be an excellent Zookeeper Assistant!
+                                </p>
+                                
+                                <div class="flex justify-center mt-4">
+                                    <div class="text-center border-t-2 border-zoo-brown pt-2 w-48">
+                                        <p class="font-body font-bold text-zoo-brown text-xl">Master Zookeeper</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decorative background elements for prize room -->
+                    <div class="absolute -top-10 -left-10 text-8xl opacity-10 transform -rotate-12 pointer-events-none">🌿</div>
+                    <div class="absolute -bottom-10 -right-10 text-8xl opacity-10 transform rotate-12 pointer-events-none">🌿</div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= PRINTABLE CERTIFICATE (Hidden unless printing) ================= -->
+    <div id="certificate-area" class="hidden">
+        <div style="border: 15px double #166534; padding: 50px; text-align: center; border-radius: 30px; background-color: #f0fdf4; height: 95vh; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; box-sizing: border-box;">
+            <div style="position: absolute; top: 30px; left: 30px; font-size: 70px;">🦛</div>
+            <div style="position: absolute; top: 30px; right: 30px; font-size: 70px;">🐅</div>
+            <div style="position: absolute; bottom: 30px; left: 30px; font-size: 70px;">🐘</div>
+            <div style="position: absolute; bottom: 30px; right: 30px; font-size: 70px;">🦁</div>
+            
+            <div style="font-size: 80px; margin-bottom: 20px; color: #facc15; text-shadow: 2px 2px 0px #b45309;">🌟</div>
+            <h1 style="font-family: 'Fredoka', sans-serif; color: #854d0e; font-size: 60px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">Certificate of Achievement</h1>
+            <h2 style="font-family: 'Nunito', sans-serif; color: #166534; font-size: 28px; margin-bottom: 40px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px;">Zookeeper Academy</h2>
+            
+            <p style="font-family: 'Nunito', sans-serif; font-size: 24px; color: #4b5563; margin-bottom: 20px; font-weight: bold;">This proudly certifies that</p>
+            
+            <div id="cert-name-print" style="font-family: 'Fredoka', sans-serif; font-size: 56px; color: #166534; border-bottom: 4px solid #facc15; display: inline-block; padding: 0 50px; margin-bottom: 40px; font-weight: bold;">
+                Student Name
+            </div>
+            
+            <p style="font-family: 'Nunito', sans-serif; font-size: 24px; color: #374151; max-width: 700px; margin: 0 auto 50px auto; line-height: 1.6; font-weight: bold;">
+                Has successfully completed all missions, learned the English names of zoo animals, and proven to be an excellent Zookeeper Assistant!
+            </p>
+            
+            <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+                <div style="text-align: center;">
+                    <div style="border-top: 3px solid #854d0e; padding-top: 15px; font-family: 'Nunito', sans-serif; font-weight: 900; color: #854d0e; font-size: 24px; width: 250px;">Master Zookeeper</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // --- Data Definitions ---
+        const animals = [
+            { id: 'lion', name: 'Lion', plural: 'Lions', emoji: '🦁', food: '🥩', foodName: 'Meat' },
+            { id: 'elephant', name: 'Elephant', plural: 'Elephants', emoji: '🐘', food: '🥜', foodName: 'Peanuts' },
+            { id: 'monkey', name: 'Monkey', plural: 'Monkeys', emoji: '🐒', food: '🍌', foodName: 'Banana' },
+            { id: 'zebra', name: 'Zebra', plural: 'Zebras', emoji: '🦓', food: '🌿', foodName: 'Grass' },
+            { id: 'hippo', name: 'Hippo', plural: 'Hippos', emoji: '🦛', food: '🍉', foodName: 'Watermelon' },
+            { id: 'tiger', name: 'Tiger', plural: 'Tigers', emoji: '🐅', food: '🍗', foodName: 'Chicken' },
+            { id: 'giraffe', name: 'Giraffe', plural: 'Giraffes', emoji: '🦒', food: '🍃', foodName: 'Leaves' },
+            { id: 'penguin', name: 'Penguin', plural: 'Penguins', emoji: '🐧', food: '🐟', foodName: 'Fish' },
+            { id: 'bear', name: 'Bear', plural: 'Bears', emoji: '🐻', food: '🍯', foodName: 'Honey' },
+            { id: 'crocodile', name: 'Crocodile', plural: 'Crocodiles', emoji: '🐊', food: '🐸', foodName: 'Frogs' },
+            { id: 'panda', name: 'Panda', plural: 'Pandas', emoji: '🐼', food: '🎍', foodName: 'Bamboo' },
+            { id: 'kangaroo', name: 'Kangaroo', plural: 'Kangaroos', emoji: '🦘', food: '🍎', foodName: 'Apples' },
+            { id: 'koala', name: 'Koala', plural: 'Koalas', emoji: '🐨', food: '🌱', foodName: 'Sprouts' },
+            { id: 'camel', name: 'Camel', plural: 'Camels', emoji: '🐪', food: '🌵', foodName: 'Cactus' },
+            { id: 'gorilla', name: 'Gorilla', plural: 'Gorillas', emoji: '🦍', food: '🫐', foodName: 'Berries' }
+        ];
+
+
+
+        // --- State Management ---
+        const state = {
+            audioContext: null,
+            unlockedBadges: new Set(),
+            gamesCompleted: { finder: false, feeder: false, shadow: false, action: false },
+            stars: 0,
+            
+            // Progress Tracking for Badges
+            progress: { finder: 0, feeder: 0, shadow: 0, action: 0 },
+            requiredAnswers: 6,
+            queues: { finder: [], feeder: [], shadow: [], counter: [] },
+            
+            // Game 1 State
+            finderTarget: null,
+            
+            // Game 2 State
+            feederSelectedAnimal: null,
+            feederSelectedFood: null,
+            feederMatches: 0,
+            
+            // Game 3 State
+            shadowTarget: null,
+            
+            // Game 4 State
+            counterTargetAnimal: null,
+            counterTargetCount: 1
+        };
+
+        // --- Audio System (Web Audio API & Speech Synthesis) ---
+        function initAudio() {
+            if (!state.audioContext) {
+                state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (state.audioContext.state === 'suspended') {
+                state.audioContext.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!state.audioContext) return;
+            const ctx = state.audioContext;
+            const osc = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            const now = ctx.currentTime;
+            
+            if (type === 'success') {
+                // Cheerful ding
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.3, now + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'wrong') {
+                // Soft boop
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.2, now + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'unlock') {
+                // Magical unlock sound
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.3, now + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                osc.start(now);
+                osc.stop(now + 0.8);
+            }
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop current speaking
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85; // Slightly slower for A0
+                utterance.pitch = 1.1; // Friendly pitch
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- Initialization ---
+        function startGame() {
+            initAudio();
+            document.getElementById('start-overlay').classList.add('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
+            document.getElementById('app-content').classList.add('flex');
+            
+            playSuccessSound();
+            speak("Welcome! Help us find and feed the animals!");
+            
+            initDictionary();
+            initFinderGame();
+            initFeederGame();
+            initShadowGame();
+            initCounterGame();
+
+            // Sync certificate name input
+            document.getElementById('student-name').addEventListener('input', function(e) {
+                const val = e.target.value || 'Student Name';
+                document.getElementById('cert-name-preview').innerText = val;
+                document.getElementById('cert-name-print').innerText = val;
+            });
+        }
+
+        // --- Navigation ---
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            
+            // Reset all tab styling
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                if (el.id !== 'tab-prize') { // Don't reset prize tab styling here
+                    el.classList.remove('bg-white', 'text-zoo-darkGreen', 'border-zoo-darkGreen');
+                    el.classList.add('bg-zoo-green/40', 'text-white', 'border-transparent');
+                }
+            });
+            
+            // Show target section
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            
+            // Style active tab (if it's not the prize tab, which has custom locked/unlocked styling)
+            if (tabId !== 'prize') {
+                const activeTab = document.getElementById(`tab-${tabId}`);
+                activeTab.classList.remove('bg-zoo-green/40', 'text-white', 'border-transparent');
+                activeTab.classList.add('bg-white', 'text-zoo-darkGreen', 'border-zoo-darkGreen');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- UI Utilities ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-orange-500';
+            const icon = type === 'success' ? '🌟' : '💡';
+            
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-xl shadow-lg font-bold flex items-center gap-3 animate-pop`;
+            toast.innerHTML = `<span class="text-xl">${icon}</span> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function addStar() {
+            state.stars++;
+            document.getElementById('star-count').innerText = state.stars;
+            document.getElementById('star-count').parentElement.classList.add('animate-pop');
+            setTimeout(() => document.getElementById('star-count').parentElement.classList.remove('animate-pop'), 400);
+        }
+
+        function playSuccessSound() { playSound('success'); }
+        function playWrongSound() { playSound('wrong'); }
+
+        // --- Badge System ---
+        function unlockBadge(badgeId) {
+            if (state.unlockedBadges.has(badgeId)) return;
+            
+            state.unlockedBadges.add(badgeId);
+            state.gamesCompleted[badgeId] = true;
+            
+            document.getElementById('badge-count').innerText = `${state.unlockedBadges.size}/4`;
+            
+            // Update Badge UI
+            const badgeEl = document.getElementById(`badge-${badgeId}`);
+            badgeEl.classList.remove('bg-gray-100', 'border-gray-200');
+            badgeEl.classList.add('bg-yellow-50', 'border-zoo-yellow', 'shadow-lg');
+            
+            const iconEl = badgeEl.querySelector('.badge-icon');
+            iconEl.classList.remove('bg-gray-300', 'filter', 'grayscale');
+            iconEl.classList.add('bg-zoo-yellow', 'text-white');
+            
+            const titleEl = badgeEl.querySelector('.badge-title');
+            titleEl.classList.remove('text-gray-400');
+            titleEl.classList.add('text-zoo-brown');
+            
+            // Celebration
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            
+            showToast(`Unlocked new badge!`, 'success');
+            
+            checkAllBadges();
+        }
+
+        function checkAllBadges() {
+            if (state.unlockedBadges.size === 4) {
+                document.getElementById('all-badges-msg').classList.remove('hidden');
+                
+                // Unlock Prize Tab
+                const prizeTab = document.getElementById('tab-prize');
+                prizeTab.classList.remove('bg-gray-500', 'text-gray-300', 'pointer-events-none');
+                prizeTab.classList.add('bg-zoo-yellow', 'text-zoo-brown', 'hover:bg-yellow-300', 'animate-pulse');
+                
+                document.getElementById('prize-lock').classList.remove('fa-lock');
+                document.getElementById('prize-lock').classList.add('fa-gift');
+                
+                speak("Amazing! You collected all badges! The prize room is open!");
+                
+                // Big confetti
+                setTimeout(() => {
+                    confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+                }, 1000);
+            }
+        }
+
+        // --- Hub (Dictionary) ---
+        function initDictionary() {
+            const grid = document.getElementById('dictionary-grid');
+            grid.innerHTML = '';
+            
+            animals.forEach(animal => {
+                const card = document.createElement('button');
+                card.className = "bg-zoo-lightBrown hover:bg-yellow-200 border-2 border-zoo-yellow/50 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition active:scale-95 shadow-sm";
+                card.onclick = () => {
+                    speak(`It is a ${animal.name}.`);
+                    card.classList.add('animate-pop');
+                    setTimeout(() => card.classList.remove('animate-pop'), 400);
+                };
+                card.innerHTML = `
+                    <span class="text-5xl drop-shadow-md">${animal.emoji}</span>
+                    <span class="font-bold text-zoo-brown">${animal.name}</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function nextFromReserve(queueKey) {
+            if (!state.queues[queueKey] || state.queues[queueKey].length === 0) {
+                state.queues[queueKey] = [...animals].sort(() => 0.5 - Math.random());
+            }
+            return state.queues[queueKey].pop();
+        }
+
+        function drawUniqueFromReserve(queueKey, count) {
+            const picked = [];
+            while (picked.length < count) {
+                const candidate = nextFromReserve(queueKey);
+                if (!picked.some(a => a.id === candidate.id)) {
+                    picked.push(candidate);
+                }
+            }
+            return picked;
+        }
+
+        // --- Game 1: Finder ---
+        function initFinderGame() {
+            const target = nextFromReserve('finder');
+            const distractors = animals
+                .filter(a => a.id !== target.id)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 2);
+            const options = [target, ...distractors].sort(() => 0.5 - Math.random());
+            state.finderTarget = target;
+            
+            const container = document.getElementById('finder-options');
+            container.innerHTML = '';
+            
+            options.forEach(animal => {
+                const btn = document.createElement('button');
+                btn.className = "w-20 h-20 md:w-24 md:h-24 bg-white border-4 border-blue-200 rounded-2xl text-4xl md:text-5xl flex items-center justify-center shadow-md hover:bg-blue-50 transition active:scale-95 m-1";
+                btn.innerHTML = animal.emoji;
+                btn.onclick = () => handleFinderClick(animal, btn);
+                container.appendChild(btn);
+            });
+            
+            document.getElementById('finder-feedback').innerText = '';
+            document.getElementById('finder-feedback').className = 'h-8 font-bold text-center w-full';
+        }
+
+        function playFinderAudio() {
+            if (state.finderTarget) {
+                speak(`Find the ${state.finderTarget.name}.`);
+            }
+        }
+
+        function handleFinderClick(animal, btnEl) {
+            const feedback = document.getElementById('finder-feedback');
+            
+            if (animal.id === state.finderTarget.id) {
+                playSuccessSound();
+                addStar();
+                btnEl.classList.add('ring-4', 'ring-green-400', 'bg-green-50');
+                
+                state.progress.finder++;
+                if (state.progress.finder === state.requiredAnswers) {
+                    feedback.innerText = `Yes! It is a ${animal.name}! 🌟`;
+                    unlockBadge('finder');
+                } else if (state.progress.finder < state.requiredAnswers) {
+                    feedback.innerText = `Yes! ${state.progress.finder}/${state.requiredAnswers} for badge! 🌟`;
+                } else {
+                    feedback.innerText = `Yes! It is a ${animal.name}! 🌟`;
+                }
+                
+                feedback.className = 'h-8 font-bold text-center w-full text-green-600 animate-pop';
+                
+                // Prevent further clicks
+                document.getElementById('finder-options').style.pointerEvents = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('finder-options').style.pointerEvents = 'auto';
+                    initFinderGame();
+                }, 2000);
+            } else {
+                playWrongSound();
+                btnEl.classList.add('animate-shake', 'bg-red-50', 'border-red-300');
+                feedback.innerText = `No, that is a ${animal.name}. Find the ${state.finderTarget.name}!`;
+                feedback.className = 'h-8 font-bold text-center w-full text-red-500';
+                
+                setTimeout(() => {
+                    btnEl.classList.remove('animate-shake', 'bg-red-50', 'border-red-300');
+                }, 500);
+            }
+        }
+
+        // --- Game 2: Feeder (Matching) ---
+        function initFeederGame() {
+            state.feederMatches = 0;
+            state.feederSelectedAnimal = null;
+            state.feederSelectedFood = null;
+            
+            // Pick 3 random distinct animals from reserve
+            const roundAnimals = drawUniqueFromReserve('feeder', 3);
+            
+            // Shuffle animals and foods independently
+            const shuffledAnimals = [...roundAnimals].sort(() => 0.5 - Math.random());
+            const shuffledFoods = [...roundAnimals].sort(() => 0.5 - Math.random());
+            
+            const animalContainer = document.getElementById('feed-animals');
+            const foodContainer = document.getElementById('feed-foods');
+            
+            animalContainer.innerHTML = '';
+            foodContainer.innerHTML = '';
+            
+            shuffledAnimals.forEach(animal => {
+                const btn = document.createElement('button');
+                btn.className = "feed-animal-btn w-16 h-16 md:w-20 md:h-20 bg-white border-4 border-green-200 rounded-2xl text-4xl flex items-center justify-center shadow-sm transition mx-1";
+                btn.innerHTML = animal.emoji;
+                btn.dataset.id = animal.id;
+                btn.onclick = () => selectFeederItem('animal', animal, btn);
+                animalContainer.appendChild(btn);
+            });
+            
+            shuffledFoods.forEach(animal => {
+                const btn = document.createElement('button');
+                btn.className = "feed-food-btn w-16 h-16 md:w-20 md:h-20 bg-white border-4 border-green-200 rounded-2xl text-4xl flex items-center justify-center shadow-sm transition mx-1";
+                btn.innerHTML = animal.food;
+                btn.dataset.id = animal.id;
+                btn.onclick = () => selectFeederItem('food', animal, btn);
+                foodContainer.appendChild(btn);
+            });
+            
+            document.getElementById('feed-feedback').innerText = '';
+        }
+
+        function selectFeederItem(type, item, btnEl) {
+            if (type === 'animal') {
+                if (state.feederSelectedAnimal) state.feederSelectedAnimal.btn.classList.remove('selected-item');
+                state.feederSelectedAnimal = { item, btn: btnEl };
+                btnEl.classList.add('selected-item');
+                speak(item.name);
+            } else {
+                if (state.feederSelectedFood) state.feederSelectedFood.btn.classList.remove('selected-item');
+                state.feederSelectedFood = { item, btn: btnEl };
+                btnEl.classList.add('selected-item');
+                speak(item.foodName);
+            }
+            
+            checkFeederMatch();
+        }
+
+        function checkFeederMatch() {
+            if (state.feederSelectedAnimal && state.feederSelectedFood) {
+                const animalId = state.feederSelectedAnimal.item.id;
+                const foodId = state.feederSelectedFood.item.id;
+                const feedback = document.getElementById('feed-feedback');
+                
+                if (animalId === foodId) {
+                    playSuccessSound();
+                    addStar();
+                    
+                    state.feederSelectedAnimal.btn.classList.remove('selected-item');
+                    state.feederSelectedFood.btn.classList.remove('selected-item');
+                    
+                    state.feederSelectedAnimal.btn.classList.add('matched-item', 'bg-green-100');
+                    state.feederSelectedFood.btn.classList.add('matched-item', 'bg-green-100');
+                    
+                    feedback.innerText = `Yummy! The ${state.feederSelectedAnimal.item.name} is eating ${state.feederSelectedFood.item.foodName}.`;
+                    feedback.className = 'h-8 font-bold text-center w-full mt-4 text-sm text-green-600 animate-pop';
+                    speak(`The ${state.feederSelectedAnimal.item.name} is eating.`);
+                    
+                    state.feederSelectedAnimal = null;
+                    state.feederSelectedFood = null;
+                    state.feederMatches++;
+                    state.progress.feeder++;
+                    
+                    if (state.progress.feeder === state.requiredAnswers) {
+                        unlockBadge('feeder');
+                    } else if (state.progress.feeder < state.requiredAnswers) {
+                        showToast(`${state.progress.feeder}/${state.requiredAnswers} fed for badge!`, 'success');
+                    }
+                    
+                    if (state.feederMatches === 3) {
+                        setTimeout(() => initFeederGame(), 3000);
+                    }
+                } else {
+                    playWrongSound();
+                    state.feederSelectedAnimal.btn.classList.add('animate-shake', 'border-red-400');
+                    state.feederSelectedFood.btn.classList.add('animate-shake', 'border-red-400');
+                    
+                    feedback.innerText = `Oh no! The ${state.feederSelectedAnimal.item.name} does not eat that!`;
+                    feedback.className = 'h-8 font-bold text-center w-full mt-4 text-sm text-red-500';
+                    
+                    setTimeout(() => {
+                        if(state.feederSelectedAnimal) {
+                            state.feederSelectedAnimal.btn.classList.remove('animate-shake', 'selected-item', 'border-red-400');
+                        }
+                        if(state.feederSelectedFood) {
+                            state.feederSelectedFood.btn.classList.remove('animate-shake', 'selected-item', 'border-red-400');
+                        }
+                        state.feederSelectedAnimal = null;
+                        state.feederSelectedFood = null;
+                    }, 800);
+                }
+            }
+        }
+
+        // --- Game 3: Shadow ---
+        function initShadowGame() {
+            const target = nextFromReserve('shadow');
+            const distractors = animals
+                .filter(a => a.id !== target.id)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 2);
+            const options = [target, ...distractors].sort(() => 0.5 - Math.random());
+            state.shadowTarget = target;
+            
+            document.getElementById('shadow-target').innerHTML = state.shadowTarget.emoji;
+            document.getElementById('shadow-target').classList.add('shadow-animal');
+            document.getElementById('shadow-target').classList.remove('animate-pop');
+            
+            const container = document.getElementById('shadow-options');
+            container.innerHTML = '';
+            
+            // Randomize text buttons order just in case
+            const shuffledOptions = [...options].sort(() => 0.5 - Math.random());
+            
+            shuffledOptions.forEach(animal => {
+                const btn = document.createElement('button');
+                // Use text instead of emoji
+                btn.className = "w-full md:w-32 py-3 bg-white border-4 border-gray-300 rounded-2xl text-xl font-bold font-heading flex items-center justify-center shadow-sm hover:bg-gray-100 transition active:scale-95 text-gray-700";
+                btn.innerText = animal.name;
+                btn.onclick = () => handleShadowClick(animal, btn);
+                container.appendChild(btn);
+            });
+            
+            document.getElementById('shadow-feedback').innerText = '';
+            document.getElementById('shadow-feedback').className = 'h-8 font-bold text-center w-full mt-2 text-sm';
+        }
+
+        function handleShadowClick(animal, btnEl) {
+            const feedback = document.getElementById('shadow-feedback');
+            
+            if (animal.id === state.shadowTarget.id) {
+                playSuccessSound();
+                addStar();
+                document.getElementById('shadow-target').classList.remove('shadow-animal');
+                document.getElementById('shadow-target').classList.add('animate-pop');
+                
+                state.progress.shadow++;
+                if (state.progress.shadow === state.requiredAnswers) {
+                    feedback.innerText = `Great! It is a ${animal.name}!`;
+                    unlockBadge('shadow');
+                } else if (state.progress.shadow < state.requiredAnswers) {
+                    feedback.innerText = `Great! ${state.progress.shadow}/${state.requiredAnswers} for badge!`;
+                } else {
+                    feedback.innerText = `Great! It is a ${animal.name}!`;
+                }
+                
+                feedback.className = 'h-8 font-bold text-center w-full mt-2 text-sm text-green-600 animate-pop';
+                btnEl.classList.add('bg-green-100', 'border-green-400', 'text-green-800');
+                speak(`It is a ${animal.name}.`);
+                
+                // Disable clicks
+                document.getElementById('shadow-options').style.pointerEvents = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('shadow-options').style.pointerEvents = 'auto';
+                    initShadowGame();
+                }, 2500);
+            } else {
+                playWrongSound();
+                btnEl.classList.add('animate-shake', 'bg-red-50', 'border-red-300', 'text-red-700');
+                feedback.innerText = `No, try again!`;
+                feedback.className = 'h-8 font-bold text-center w-full mt-2 text-sm text-red-500';
+                speak(animal.name); // Say the wrong word they clicked to help them
+                
+                setTimeout(() => {
+                    btnEl.classList.remove('animate-shake', 'bg-red-50', 'border-red-300', 'text-red-700');
+                }, 500);
+            }
+        }
+
+        // --- Game 4: Zoo Counter ---
+        const numberWords = {
+            1: 'one',
+            2: 'two',
+            3: 'three',
+            4: 'four',
+            5: 'five',
+            6: 'six'
+        };
+
+        function initCounterGame() {
+            const randomAnimal = nextFromReserve('counter');
+            const targetCount = Math.floor(Math.random() * 6) + 1; // 1 to 6
+            
+            state.counterTargetAnimal = randomAnimal;
+            state.counterTargetCount = targetCount;
+            
+            const label = targetCount === 1 ? randomAnimal.name : randomAnimal.plural;
+            const word = numberWords[targetCount];
+            const sentenceStr = `Find ${word} ${label}`;
+            
+            const instructionEl = document.getElementById('counter-instruction');
+            instructionEl.innerText = sentenceStr;
+            instructionEl.dataset.text = sentenceStr + '.';
+            
+            // Generate 3 distinct counts from 1 to 6
+            const allCounts = [1, 2, 3, 4, 5, 6].filter(c => c !== targetCount);
+            const distractors = allCounts.sort(() => 0.5 - Math.random()).slice(0, 2);
+            const optionCounts = [targetCount, ...distractors].sort(() => 0.5 - Math.random());
+            
+            const container = document.getElementById('counter-options');
+            container.innerHTML = '';
+            
+            optionCounts.forEach(count => {
+                const btn = document.createElement('button');
+                btn.className = "min-h-[84px] bg-white border-4 border-orange-200 rounded-2xl p-2 text-2xl md:text-3xl flex flex-wrap items-center justify-center gap-1 shadow-sm hover:bg-orange-50 transition active:scale-95 leading-none";
+                btn.innerHTML = Array(count).fill(`<span>${randomAnimal.emoji}</span>`).join('');
+                btn.onclick = () => handleCounterClick(count, btn);
+                container.appendChild(btn);
+            });
+            
+            const feedback = document.getElementById('counter-feedback');
+            feedback.innerText = '';
+            feedback.className = 'h-8 font-bold text-center w-full mt-1 text-sm';
+        }
+
+        function playCounterAudio() {
+            const text = document.getElementById('counter-instruction').dataset.text;
+            speak(text);
+        }
+
+        function handleCounterClick(count, btnEl) {
+            const feedback = document.getElementById('counter-feedback');
+            const label = count === 1 ? state.counterTargetAnimal.name : state.counterTargetAnimal.plural;
+            const word = numberWords[count];
+            
+            if (count === state.counterTargetCount) {
+                playSuccessSound();
+                addStar();
+                btnEl.classList.add('ring-4', 'ring-green-400', 'bg-green-50');
+                
+                state.progress.action++;
+                if (state.progress.action === state.requiredAnswers) {
+                    feedback.innerText = `Yes! ${word} ${label}! 🌟`;
+                    unlockBadge('action');
+                } else if (state.progress.action < state.requiredAnswers) {
+                    feedback.innerText = `Yes! ${state.progress.action}/${state.requiredAnswers} for badge! 🌟`;
+                } else {
+                    feedback.innerText = `Yes! ${word} ${label}! 🌟`;
+                }
+                
+                feedback.className = 'h-8 font-bold text-center w-full mt-1 text-sm text-green-600 animate-pop';
+                speak(`Yes! ${word} ${label}.`);
+                
+                document.getElementById('counter-options').style.pointerEvents = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('counter-options').style.pointerEvents = 'auto';
+                    initCounterGame();
+                }, 2000);
+            } else {
+                playWrongSound();
+                btnEl.classList.add('animate-shake', 'bg-red-50', 'border-red-300');
+                feedback.innerText = `No, that is ${word} ${label}. Try again!`;
+                feedback.className = 'h-8 font-bold text-center w-full mt-1 text-sm text-red-500';
+                speak(`${word} ${label}`);
+                
+                setTimeout(() => {
+                    btnEl.classList.remove('animate-shake', 'bg-red-50', 'border-red-300');
+                }, 500);
+            }
+        }
+
+        // --- Prize Room Interactions ---
+        function revealCertificate() {
+            playSound('unlock');
+            
+            // Hide the key interaction
+            const interactionDiv = document.getElementById('prize-interaction');
+            interactionDiv.classList.remove('animate-pop');
+            interactionDiv.classList.add('animate-pop', 'hidden');
+            
+            // Show certificate
+            const certDiv = document.getElementById('certificate-container');
+            certDiv.classList.remove('hidden');
+            certDiv.classList.add('flex', 'animate-pop');
+            
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.3 }
+            });
+            
+            speak("Congratulations! Here is your Zookeeper certificate!");
+        }
+
+        function printCertificate() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            if (!nameInput) {
+                showToast('Please type your name first!', 'error');
+                return;
+            }
+            
+            // Update print version just in case
+            document.getElementById('cert-name-print').innerText = nameInput;
+            window.print();
+        }
+
+    </script>
+</body>
+</html>

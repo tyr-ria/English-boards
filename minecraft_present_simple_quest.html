@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft Grammar Quest: Present Simple</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #5b8731;
+      --primary-dark: #3b5a1e;
+      --secondary: #866043;
+      --secondary-dark: #5c402b;
+      --accent: #4deeea;
+      --gold: #fcee21;
+      --background: #1a1817;
+      --panel: #2d2926;
+      --stone: #737373;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--background);
+      background-image: 
+        radial-gradient(#2c2623 15%, transparent 16%),
+        radial-gradient(#2c2623 15%, transparent 16%);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      color: #f3f4f6;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    .pixel-font {
+      font-family: 'Press Start 2P', monospace;
+      line-height: 1.5;
+    }
+
+    /* Minecraft 3D Beveled UI Panel */
+    .mc-panel {
+      background-color: #c6c6c6;
+      border: 4px solid #ffffff;
+      border-right-color: #555555;
+      border-bottom-color: #555555;
+      box-shadow: 0 8px 0 #0f0e0e;
+      color: #1f2937;
+    }
+
+    .mc-panel-dark {
+      background-color: #2b2725;
+      border: 4px solid #57524e;
+      border-right-color: #141211;
+      border-bottom-color: #141211;
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.8);
+      color: #f3f4f6;
+    }
+
+    /* Minecraft 3D Button */
+    .mc-btn {
+      font-family: 'Press Start 2P', monospace;
+      background-color: var(--stone);
+      border: 3px solid #ffffff;
+      border-right-color: #373737;
+      border-bottom-color: #373737;
+      color: #ffffff;
+      text-shadow: 2px 2px #1a1a1a;
+      transition: transform 0.06s, filter 0.1s;
+      cursor: pointer;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mc-btn:hover {
+      filter: brightness(1.12);
+    }
+
+    .mc-btn:active {
+      transform: translateY(2px);
+      border-top-color: #373737;
+      border-left-color: #373737;
+      border-right-color: #ffffff;
+      border-bottom-color: #ffffff;
+    }
+
+    .mc-btn-green {
+      background-color: var(--primary);
+      border-color: #8ce046 var(--primary-dark) var(--primary-dark) #8ce046;
+    }
+
+    .mc-btn-dirt {
+      background-color: var(--secondary);
+      border-color: #b88762 var(--secondary-dark) var(--secondary-dark) #b88762;
+    }
+
+    .mc-btn-diamond {
+      background-color: #0ca678;
+      border-color: var(--accent) #065f46 #065f46 var(--accent);
+    }
+
+    .mc-btn-gold {
+      background-color: #d97706;
+      border-color: #fde047 #78350f #78350f #fde047;
+    }
+
+    /* Inventory Slot */
+    .mc-slot {
+      background-color: #8b8b8b;
+      border: 3px solid #373737;
+      border-right-color: #ffffff;
+      border-bottom-color: #ffffff;
+      box-shadow: inset 2px 2px 5px rgba(0,0,0,0.65);
+    }
+
+    /* 3D Flip Card for Vocabulary */
+    .flip-card {
+      perspective: 1000px;
+      height: 240px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes furnaceFlame {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px #f97316); }
+      50% { transform: scale(1.14); filter: drop-shadow(0 0 18px #facc15); }
+    }
+    .flame-active {
+      animation: furnaceFlame 0.9s infinite ease-in-out;
+    }
+
+    /* Voice Active Indicator */
+    .voice-wave {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .voice-wave span {
+      width: 4px;
+      height: 14px;
+      background-color: var(--accent);
+      animation: waveBounce 0.6s infinite ease-in-out;
+    }
+    .voice-wave span:nth-child(2) { animation-delay: 0.15s; }
+    .voice-wave span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes waveBounce {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.2); }
+    }
+
+    /* Print Media Certificate Isolation */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-certificate-container, #printable-certificate-container * {
+        visibility: visible !important;
+      }
+      #printable-certificate-container, #printable-certificate {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #printable-certificate-container {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-12">
+
+  <!-- TOP STICKY HUD -->
+  <header class="sticky top-0 z-40 bg-[#141210]/95 backdrop-blur-md border-b-4 border-[#5b8731] px-3 py-2.5 shadow-2xl no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchSection('hub')">
+        <img src="https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png" alt="Crafting Table" class="w-11 h-11 object-contain animate-float">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="pixel-font text-xs sm:text-sm md:text-base text-[#8ce046] tracking-wide">MINECRAFT ENGLISH</h1>
+            <span class="bg-[#5b8731] text-white text-[10px] font-bold px-2 py-0.5 rounded border border-lime-300">Beginner</span>
+          </div>
+          <p class="text-xs text-stone-300 font-semibold">Present Simple & Basic Materials Quest</p>
+        </div>
+      </div>
+
+      <!-- Speech Status Indicator + Stats -->
+      <div class="flex items-center gap-3 flex-wrap">
+        
+        <!-- Live Speech Indicator -->
+        <div id="speech-indicator" class="hidden items-center gap-2 bg-cyan-950 border-2 border-cyan-400 px-3 py-1 rounded-lg text-xs font-bold text-cyan-200">
+          <div class="voice-wave"><span></span><span></span><span></span></div>
+          <span>Speaking...</span>
+        </div>
+
+        <!-- Diamonds XP Counter -->
+        <div class="mc-slot px-3 py-1.5 flex items-center gap-2 bg-stone-800">
+          <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-6 h-6 object-contain">
+          <span class="pixel-font text-xs text-cyan-300" id="hud-diamonds">0</span>
+        </div>
+
+        <!-- Badges Progress Counter -->
+        <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-2">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Badge" class="w-5 h-5 object-contain">
+          <span>Badges: <span id="hud-badges">0/8</span></span>
+        </button>
+
+        <!-- Quick Shop Button -->
+        <button onclick="switchSection('shop')" class="mc-btn mc-btn-diamond px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-1.5" title="Spend your Diamonds!">
+          <img src="https://i.postimg.cc/BnBMGGNx/Villager-removebg-preview.png" alt="Shop" class="w-5 h-5 object-contain">
+          <span>Shop</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button onclick="toggleSoundFX()" id="sound-toggle-btn" class="mc-btn px-3 py-1.5 text-xs" title="Toggle Sound Effects">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="max-w-7xl mx-auto mt-2.5 flex gap-2 overflow-x-auto pb-1">
+      <button onclick="switchSection('hub')" id="nav-hub" class="mc-btn mc-btn-green px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/JnvQQ74Z/grass-removebg-preview.png" class="w-5 h-5 object-contain" alt="Hub">
+        <span>1. Story & Materials</span>
+      </button>
+      <button onclick="switchSection('grammar')" id="nav-grammar" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" class="w-5 h-5 object-contain" alt="Rules">
+        <span>2. Grammar Rules</span>
+      </button>
+      <button onclick="switchSection('games')" id="nav-games" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/Y9Zxx2qm/diamond-pickaxe-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+        <span>3. 5 Mini-Games</span>
+      </button>
+      <button onclick="switchSection('shop')" id="nav-shop" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" class="w-5 h-5 object-contain" alt="Shop">
+        <span>4. Diamond Shop</span>
+      </button>
+      <button onclick="switchSection('badges')" id="nav-badges" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+        <span>5. Achievements</span>
+      </button>
+      <button onclick="switchSection('finale')" id="nav-finale" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/6pXYSQVy/Ender-Dragon-removebg-preview.png" class="w-5 h-5 object-contain" alt="Prize">
+        <span>6. Mystery Prize</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 pt-6 flex-1">
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: STORY HUB & 10 BASIC MATERIALS FLASHCARDS     -->
+    <!-- ======================================================== -->
+    <section id="sec-hub" class="space-y-6">
+      
+      <!-- Story Intro Banner -->
+      <div class="mc-panel p-5 sm:p-6 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          
+          <div class="lg:col-span-3 flex justify-center items-center gap-3">
+            <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl">
+            <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl" style="animation-delay: 0.5s;">
+          </div>
+
+          <div class="lg:col-span-9 space-y-3">
+            <div class="inline-flex items-center gap-2 bg-[#5b8731] text-white px-3 py-1 text-xs font-bold border-2 border-black">
+              <span>🌍</span> <span>OVERWORLD MISSION BRIEFING</span>
+            </div>
+            <h2 class="pixel-font text-sm sm:text-lg text-stone-900">Welcome to the Blocky Village!</h2>
+            <p id="story-intro-text" class="text-base sm:text-lg text-stone-800 font-semibold leading-relaxed">
+              Night is coming to the Overworld! Steve and Alex need your help to gather 10 basic materials and build a safe village. Complete the Present Simple grammar quests to protect the villagers from Zombies and Creepers!
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="speakText(GAME_DATA.story.intro)" class="mc-btn mc-btn-green px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-volume-high"></i> <span>Listen to Story</span>
+              </button>
+              <button onclick="switchSection('grammar')" class="mc-btn mc-btn-dirt px-4 py-2 text-xs gap-2">
+                <span>Open Grammar Book</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Visual Support Checklist for Young Learners -->
+      <div class="mc-panel-dark p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Lantern" class="w-9 h-9 object-contain">
+          <div>
+            <h3 class="pixel-font text-xs text-amber-300">YOUR QUEST CHECKLIST:</h3>
+            <p class="text-xs text-stone-300">Tap the cards below to learn all 10 Basic Materials. Flip a card to see its Ukrainian meaning!</p>
+          </div>
+        </div>
+        <div class="bg-stone-800 border-2 border-stone-600 px-4 py-2 text-xs font-bold text-lime-400">
+          Materials Inspected: <span id="materials-explored-count">0 / 10</span>
+        </div>
+      </div>
+
+      <!-- 10 Basic Materials Flip Cards Grid -->
+      <div id="materials-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <!-- Populated from GAME_DATA.vocabulary -->
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: PRESENT SIMPLE GRAMMAR RULES & EXAMPLES       -->
+    <!-- ======================================================== -->
+    <section id="sec-grammar" class="hidden space-y-6">
+      
+      <!-- Part A: When do we use Present Simple? -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" alt="Bookshelf" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-stone-900">WHEN DO WE USE PRESENT SIMPLE?</h2>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">We use Present Simple for habits, world facts, and permanent routines!</p>
+            </div>
+          </div>
+          <button onclick="speakText('We use Present Simple for daily habits, Minecraft world facts, and things that are always true.')" class="mc-btn mc-btn-green px-3 py-2 text-xs gap-2">
+            <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <!-- Usage 1: Daily Habits -->
+          <div class="bg-stone-100 border-4 border-stone-600 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[#5b8731] text-white px-2 py-1">1. DAILY HABITS</span>
+                <img src="https://i.postimg.cc/Y9Zxx2qm/diamond-pickaxe-removebg-preview.png" alt="Pickaxe" class="w-8 h-8 object-contain">
+              </div>
+              <p class="text-sm text-stone-700 font-bold mb-3">Things we do every day or often in Minecraft.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-stone-300">
+                <div class="flex items-center justify-between">
+                  <span>"I <b class="text-green-700">mine</b> stone every day."</span>
+                  <button onclick="speakText('I mine stone every day.')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between border-t pt-1">
+                  <span>"Alex <b class="text-green-700">collects</b> wood every morning."</span>
+                  <button onclick="speakText('Alex collects wood every morning.')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-stone-600">
+              Clue words: <span class="text-amber-700">every day, always, usually, often</span>
+            </div>
+          </div>
+
+          <!-- Usage 2: World Facts -->
+          <div class="bg-stone-100 border-4 border-stone-600 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-amber-600 text-white px-2 py-1">2. WORLD FACTS</span>
+                <img src="https://i.postimg.cc/brjQtcMg/lava-bucket.png" alt="Lava" class="w-8 h-8 object-contain">
+              </div>
+              <p class="text-sm text-stone-700 font-bold mb-3">Rules of nature and Minecraft physics that never change.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-stone-300">
+                <div class="flex items-center justify-between">
+                  <span>"Lava <b class="text-amber-700">burns</b> wood."</span>
+                  <button onclick="speakText('Lava burns wood.')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between border-t pt-1">
+                  <span>"Water <b class="text-amber-700">turns</b> lava into stone."</span>
+                  <button onclick="speakText('Water turns lava into stone.')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-stone-600">
+              Always true in the Overworld!
+            </div>
+          </div>
+
+          <!-- Usage 3: Likes & States -->
+          <div class="bg-stone-100 border-4 border-stone-600 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-sky-700 text-white px-2 py-1">3. LIKES & FEELINGS</span>
+                <img src="https://i.postimg.cc/LX6HpmVQ/Minecraft-Gold-Ingot-removebg-preview.png" alt="Gold" class="w-8 h-8 object-contain">
+              </div>
+              <p class="text-sm text-stone-700 font-bold mb-3">What characters and mobs love, need, or want.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-stone-300">
+                <div class="flex items-center justify-between">
+                  <span>"Villagers <b class="text-sky-700">like</b> gold and iron."</span>
+                  <button onclick="speakText('Villagers like gold and iron.')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between border-t pt-1">
+                  <span>"Steve <b class="text-sky-700">needs</b> coal for torches."</span>
+                  <button onclick="speakText('Steve needs coal for torches.')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-stone-600">
+              Verbs: <span class="text-sky-800">like, love, need, want, have</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Part B: How to Build Sentences (+, -, ?) -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex items-center gap-3 border-b-4 border-stone-400 pb-3">
+          <img src="https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png" alt="Crafting" class="w-11 h-11 object-contain">
+          <div>
+            <h2 class="pixel-font text-sm sm:text-lg text-stone-900">HOW TO CRAFT SENTENCES (+ / - / ?)</h2>
+            <p class="text-xs sm:text-sm text-stone-700 font-semibold">Remember the Golden Rule: He / She / It loves the letter S!</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          
+          <!-- 1. AFFIRMATIVE (+) -->
+          <div class="bg-lime-50 border-4 border-lime-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-lime-700 text-white px-2.5 py-1">➕ AFFIRMATIVE (+)</span>
+              <img src="https://i.postimg.cc/dVj4KKny/Iron-Golem-with-flower-removebg-preview.png" alt="Golem" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-lime-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-stone-800">
+                <span class="inline-block bg-lime-200 px-1.5 py-0.5 rounded">I / You / We / They</span> + <b>Verb</b> (base)
+              </div>
+              <div class="font-bold text-stone-800">
+                <span class="inline-block bg-amber-200 px-1.5 py-0.5 rounded">He / She / It</span> + <b>Verb + S / ES</b>
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-lime-100/80 p-3 border border-lime-500">
+              <p class="font-bold text-lime-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• I <b>build</b> with wood.</span>
+                <button onclick="speakText('I build with wood.')" class="text-lime-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• They <b>dig</b> dirt and sand.</span>
+                <button onclick="speakText('They dig dirt and sand.')" class="text-lime-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Steve (He) <b>mines</b> iron.</span>
+                <button onclick="speakText('Steve mines iron.')" class="text-lime-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Alex (She) <b>makes</b> glass.</span>
+                <button onclick="speakText('Alex makes glass.')" class="text-lime-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. NEGATIVE (-) -->
+          <div class="bg-red-50 border-4 border-red-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-red-700 text-white px-2.5 py-1">➖ NEGATIVE (-)</span>
+              <img src="https://i.postimg.cc/y6DQ3tYD/Creeper-removebg-preview-(1).png" alt="Creeper" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-red-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-stone-800">
+                <span class="inline-block bg-lime-200 px-1.5 py-0.5 rounded">I / You / We / They</span> + <b class="text-red-600">don't</b> + <b>Verb</b>
+              </div>
+              <div class="font-bold text-stone-800">
+                <span class="inline-block bg-amber-200 px-1.5 py-0.5 rounded">He / She / It</span> + <b class="text-red-600">doesn't</b> + <b>Verb</b> (NO -s!)
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-red-100/80 p-3 border border-red-400">
+              <p class="font-bold text-red-950">Examples (Doesn't steals the -S!):</p>
+              <div class="flex items-center justify-between">
+                <span>• I <b>don't touch</b> hot lava.</span>
+                <button onclick="speakText('I do not touch hot lava.')" class="text-red-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• We <b>don't waste</b> gold.</span>
+                <button onclick="speakText('We do not waste gold.')" class="text-red-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Steve <b>doesn't eat</b> dirt.</span>
+                <button onclick="speakText('Steve does not eat dirt.')" class="text-red-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• A Creeper <b>doesn't like</b> cats.</span>
+                <button onclick="speakText('A Creeper does not like cats.')" class="text-red-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. QUESTIONS (?) -->
+          <div class="bg-sky-50 border-4 border-sky-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-sky-700 text-white px-2.5 py-1">❓ QUESTIONS (?)</span>
+              <img src="https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png" alt="Fox" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-sky-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-stone-800">
+                <b class="text-sky-700">Do</b> + <span class="inline-block bg-lime-200 px-1.5 py-0.5 rounded">I/you/we/they</span> + <b>Verb</b>?
+              </div>
+              <div class="font-bold text-stone-800">
+                <b class="text-sky-700">Does</b> + <span class="inline-block bg-amber-200 px-1.5 py-0.5 rounded">he/she/it</span> + <b>Verb</b> (NO -s!)?
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-sky-100/80 p-3 border border-sky-400">
+              <p class="font-bold text-sky-950">Examples (Does jumps to the front!):</p>
+              <div class="flex items-center justify-between">
+                <span>• <b>Do</b> you <b>have</b> coal?</span>
+                <button onclick="speakText('Do you have coal?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Do</b> they <b>build</b> with stone?</span>
+                <button onclick="speakText('Do they build with stone?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Does</b> Alex <b>need</b> water?</span>
+                <button onclick="speakText('Does Alex need water?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Does</b> fire <b>melt</b> sand?</span>
+                <button onclick="speakText('Does fire melt sand?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="flex justify-center pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-green px-6 py-3 text-xs sm:text-sm gap-3">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="Sword">
+            <span>START THE 5 MINI-GAMES!</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 3: 5 MINI-GAMES ARENA                            -->
+    <!-- ======================================================== -->
+    <section id="sec-games" class="hidden space-y-6">
+
+      <!-- Mini-Game Selector Sub-Nav -->
+      <div class="mc-panel-dark p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <span class="pixel-font text-xs text-lime-400">CHOOSE YOUR TRAINING ARENA:</span>
+          <span class="text-xs text-stone-300">Each round selects random tasks from a 50-question pool!</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          <button onclick="selectMiniGame(1)" id="gbtn-1" class="mc-btn mc-btn-green p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/PJkmwsc9/oak-wood.png" class="w-6 h-6 object-contain" alt="G1">
+            <div class="text-left">
+              <div>Game 1: Affirmative</div>
+              <div class="text-[9px] text-lime-200 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(2)" id="gbtn-2" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png" class="w-6 h-6 object-contain" alt="G2">
+            <div class="text-left">
+              <div>Game 2: Negative</div>
+              <div class="text-[9px] text-stone-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(3)" id="gbtn-3" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" class="w-6 h-6 object-contain" alt="G3">
+            <div class="text-left">
+              <div>Game 3: Questions</div>
+              <div class="text-[9px] text-stone-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(4)" id="gbtn-4" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="G4">
+            <div class="text-left">
+              <div>Game 4: Mixed Blitz</div>
+              <div class="text-[9px] text-stone-300 font-sans">15 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(5)" id="gbtn-5" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/MGZt6rrL/Minecraft-furnace-removebg-preview.png" class="w-6 h-6 object-contain" alt="G5">
+            <div class="text-left">
+              <div>Game 5: Furnace Lab</div>
+              <div class="text-[9px] text-amber-200 font-sans">Creative Smelting!</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ACTIVE GAME CONTAINER (Games 1-4 Standard Engine) -->
+      <div id="standard-game-wrapper" class="mc-panel p-5 sm:p-6">
+        
+        <!-- Game Header Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img id="active-game-icon" src="https://i.postimg.cc/PJkmwsc9/oak-wood.png" alt="Icon" class="w-11 h-11 object-contain">
+            <div>
+              <h3 id="active-game-title" class="pixel-font text-xs sm:text-base text-stone-900">Game 1: Affirmative Crafter (+)</h3>
+              <p id="active-game-subtitle" class="text-xs sm:text-sm text-stone-700 font-semibold">Choose the right affirmative verb form!</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="bg-stone-800 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Task <span id="game-q-num" class="text-lime-400">1</span> / <span id="game-q-total">10</span>
+            </div>
+            <div class="bg-stone-800 text-amber-300 px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Score: <span id="game-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Stage -->
+        <div id="question-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+          
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img id="question-mob-img" src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Mob" class="w-16 h-16 sm:w-20 sm:h-20 object-contain animate-float bg-stone-800/90 p-2 border-2 border-stone-600">
+              <div>
+                <span id="question-mode-tag" class="inline-block bg-lime-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1">AFFIRMATIVE (+)</span>
+                <h4 id="question-prompt-text" class="text-lg sm:text-2xl font-bold text-white leading-snug">Steve ___ oak wood every morning.</h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakCurrentQuestion()" class="mc-btn px-3 py-2 text-xs" title="Listen to sentence">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Container (Used for MC questions) -->
+          <div id="mc-options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <!-- Buttons injected dynamically -->
+          </div>
+
+          <!-- Word-Order Click-to-Place Container (Used for Game 3 & scramble tasks) -->
+          <div id="scramble-container" class="hidden space-y-4 pt-2">
+            <div class="text-xs text-cyan-300 font-bold">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Click words below in the correct order to build the sentence! (Click a placed word to remove it)
+            </div>
+
+            <!-- Target Sentence Slots -->
+            <div id="scramble-target-slots" class="min-h-[64px] bg-stone-900 border-4 border-dashed border-amber-400 p-3 flex flex-wrap items-center gap-2">
+              <!-- Placed word blocks go here -->
+            </div>
+
+            <!-- Word Bank -->
+            <div id="scramble-word-bank" class="flex flex-wrap gap-2 pt-1">
+              <!-- Shuffled word blocks go here -->
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="checkScrambleAnswer()" id="scramble-submit-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs gap-2">
+                <i class="fa-solid fa-hammer"></i> <span>CRAFT SENTENCE</span>
+              </button>
+              <button onclick="resetScrambleWords()" class="mc-btn px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-rotate-left"></i> <span>Clear Words</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feedback Alert & Next Button -->
+          <div id="game-feedback-bar" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div id="game-feedback-msg" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextGameQuestion()" id="game-next-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs shrink-0">
+              <span>NEXT TASK</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Round Complete Summary Screen (With Totem of Undying Try Again Button!) -->
+        <div id="round-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Victory" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-lime-400">ROUND COMPLETE!</h3>
+          <p id="round-result-summary" class="text-base sm:text-lg text-stone-200 font-bold">
+            You scored 10 / 10 and earned Diamonds!
+          </p>
+
+          <div class="flex flex-wrap justify-center gap-4 pt-2">
+            <!-- Totem of Undying Try Again Button -->
+            <button onclick="replayCurrentGame()" class="mc-btn mc-btn-gold px-5 py-3 text-xs sm:text-sm flex items-center gap-3">
+              <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem of Undying" class="w-8 h-8 object-contain">
+              <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- GAME 5: CREATIVE FURNACE SMELTER & SURVIVAL LAB          -->
+      <!-- ======================================================== -->
+      <div id="game5-custom-wrapper" class="hidden mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/MGZt6rrL/Minecraft-furnace-removebg-preview.png" alt="Furnace" class="w-12 h-12 object-contain">
+            <div>
+              <h3 class="pixel-font text-xs sm:text-base text-stone-900">Game 5: Furnace Smelter & Crafting Lab</h3>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">Read the Villager's order! Load the right Raw Material, Fuel, and Present Simple Rule to smelt the item!</p>
+            </div>
+          </div>
+          <div class="bg-stone-800 text-amber-300 px-3 py-1.5 border-2 border-black pixel-font text-xs">
+            Orders Crafted: <span id="g5-progress">0 / 10</span>
+          </div>
+        </div>
+
+        <!-- Active Villager Order Box -->
+        <div id="g5-stage" class="mc-panel-dark p-5 sm:p-6 space-y-6">
+          
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            
+            <!-- Villager Request -->
+            <div class="lg:col-span-5 bg-stone-800 border-4 border-stone-600 p-4 space-y-3">
+              <div class="flex items-center gap-3">
+                <img id="g5-requester-img" src="https://i.postimg.cc/BnBMGGNx/Villager-removebg-preview.png" alt="Villager" class="w-16 h-16 object-contain bg-stone-900 p-1.5 border border-stone-500">
+                <div>
+                  <span class="pixel-font text-[10px] text-amber-400">VILLAGER ORDER #<span id="g5-order-num">1</span></span>
+                  <h4 id="g5-order-title" class="text-base sm:text-lg font-bold text-white">Smelt Clear Glass!</h4>
+                </div>
+              </div>
+              <p id="g5-order-desc" class="text-sm text-stone-200 bg-stone-900 p-3 border border-stone-700 leading-relaxed">
+                "I need clear <b>Glass</b> for my house windows! Put the right material and fuel in the furnace, and complete my sentence!"
+              </p>
+              <div class="flex gap-2">
+                <button onclick="speakG5Order()" class="mc-btn px-3 py-1.5 text-xs gap-1.5">
+                  <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Interactive Furnace Interface -->
+            <div class="lg:col-span-7 bg-stone-900 border-4 border-stone-600 p-4 space-y-4">
+              <div class="pixel-font text-xs text-center text-amber-300">SMELTING FURNACE INTERFACE</div>
+
+              <div class="grid grid-cols-3 gap-3 items-center text-center">
+                <!-- Slot 1: Raw Material -->
+                <div class="space-y-1">
+                  <span class="text-[11px] font-bold text-stone-300">1. INPUT MATERIAL</span>
+                  <div id="g5-slot-input" class="mc-slot h-20 flex flex-col items-center justify-center p-2 cursor-pointer" onclick="clearG5Slot('input')">
+                    <span class="text-xs text-stone-400">Tap picture below</span>
+                  </div>
+                </div>
+
+                <!-- Flame & Arrow -->
+                <div class="flex flex-col items-center justify-center space-y-1">
+                  <div id="g5-flame-icon" class="text-3xl text-stone-600 transition-all">🔥</div>
+                  <div class="pixel-font text-[10px] text-stone-400">SMELTS INTO ➔</div>
+                </div>
+
+                <!-- Output Preview -->
+                <div class="space-y-1">
+                  <span class="text-[11px] font-bold text-lime-300">RESULT</span>
+                  <div id="g5-slot-output" class="mc-slot h-20 flex flex-col items-center justify-center p-2 bg-stone-800">
+                    <img id="g5-output-img" src="https://i.postimg.cc/6qNdvJSh/glass.png" class="w-12 h-12 object-contain opacity-40" alt="Output">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Slot 2: Fuel Source (Icons Only, Includes Wood!) -->
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold text-amber-300">2. CHOOSE FUEL PICTURE (What burns in a furnace?):</span>
+                <div id="g5-fuel-options" class="grid grid-cols-4 gap-2">
+                  <!-- Populated by JS with Coal, Lava, Wood, Dirt (No text labels!) -->
+                </div>
+              </div>
+
+              <!-- Slot 3: Grammar Ignition Sentence -->
+              <div class="space-y-2 pt-2 border-t border-stone-700">
+                <span class="text-[11px] font-bold text-cyan-300">3. GRAMMAR IGNITION (Complete the Present Simple rule):</span>
+                <p id="g5-grammar-sentence" class="text-sm sm:text-base font-bold text-white bg-stone-800 p-2.5 border border-stone-600"></p>
+                <div id="g5-grammar-options" class="grid grid-cols-3 gap-2"></div>
+              </div>
+
+              <button onclick="igniteFurnaceOrder()" id="g5-smelt-btn" class="mc-btn mc-btn-green w-full py-3 text-xs sm:text-sm gap-2">
+                <span>🔥 IGNITE FURNACE & CRAFT!</span>
+              </button>
+
+              <div id="g5-feedback" class="hidden p-3 border-2 text-xs sm:text-sm font-bold flex items-center justify-between">
+                <span id="g5-feedback-text"></span>
+                <button onclick="nextG5Order()" id="g5-next-btn" class="mc-btn mc-btn-green px-3 py-1.5 text-xs">NEXT ➔</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 10 Basic Materials Inventory Bar to Pick Input (PICTURES ONLY - NO LABELS!) -->
+          <div class="bg-stone-800 p-3 border-2 border-stone-600">
+            <div class="text-xs font-bold text-stone-300 mb-2">CLICK A PICTURE TO LOAD INTO SLOT 1 (INPUT):</div>
+            <div id="g5-inventory-bar" class="grid grid-cols-5 sm:grid-cols-10 gap-2">
+              <!-- 10 materials picture-only buttons -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Game 5 Complete Screen -->
+        <div id="g5-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="https://i.postimg.cc/0NtnbdT5/Minecraft-game-cake-removebg-preview.png" alt="Cake" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-amber-300">MASTER BLACKSMITH & SMELTER!</h3>
+          <p class="text-base text-stone-200 font-bold">You completed all 10 Furnace Smelting & Crafting orders!</p>
+          <button onclick="startG5FurnaceLab()" class="mc-btn mc-btn-gold px-5 py-3 text-xs sm:text-sm flex items-center gap-3 mx-auto">
+            <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem" class="w-8 h-8 object-contain">
+            <span>TRY AGAIN (NEW SMELTING ORDERS)</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 4: VILLAGER'S DIAMOND SHOP & MY OVERWORLD BASE   -->
+    <!-- ======================================================== -->
+    <section id="sec-shop" class="hidden space-y-6">
+      
+      <!-- Top Shop Banner -->
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-4">
+          <div class="flex items-center gap-4">
+            <img src="https://i.postimg.cc/BnBMGGNx/Villager-removebg-preview.png" alt="Villager Trader" class="w-16 h-16 object-contain bg-stone-800 p-2 border-2 border-stone-600 animate-float">
+            <div>
+              <div class="inline-block bg-cyan-800 text-cyan-200 pixel-font text-[9px] px-2 py-0.5 mb-1">EMERALD & DIAMOND TRADING POST</div>
+              <h2 class="pixel-font text-sm sm:text-lg text-stone-900">VILLAGER'S DIAMOND SHOP & BASE BUILDER</h2>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">Spend your hard-earned Diamonds on loyal pets, guardians, and rare gear for your Overworld Base!</p>
+            </div>
+          </div>
+
+          <div class="mc-slot bg-stone-900 px-5 py-3 flex items-center gap-3 border-4 border-cyan-400">
+            <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-8 h-8 object-contain animate-bounce">
+            <div>
+              <div class="text-[10px] text-cyan-300 font-bold uppercase">Your Wallet</div>
+              <div class="pixel-font text-sm sm:text-base text-white"><span id="shop-diamonds-balance">0</span> Diamonds</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Base Showcase -->
+        <div class="mt-5 mc-panel-dark p-5 relative overflow-hidden border-4 border-[#5b8731]">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2">
+              <img src="https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png" class="w-8 h-8 object-contain" alt="Tree">
+              <span class="pixel-font text-xs text-lime-400">MY OVERWORLD SANCTUARY BASE</span>
+            </div>
+            <span class="text-xs text-stone-300">Click any pet or item in your base to hear what it does in Present Simple!</span>
+          </div>
+
+          <div id="my-base-canvas" class="min-h-[160px] bg-gradient-to-b from-sky-950/80 via-stone-900 to-[#3b5a1e]/70 border-4 border-stone-700 p-4 flex flex-wrap items-center justify-center gap-5 rounded">
+            <!-- Populated with purchased items -->
+          </div>
+        </div>
+
+        <!-- Shop Catalog Grid -->
+        <div class="mt-6">
+          <h3 class="pixel-font text-xs sm:text-sm text-stone-900 mb-3">AVAILABLE PETS, GUARDIANS & GEAR:</h3>
+          <div id="shop-items-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <!-- Populated by JS from GAME_DATA.shopItems -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 5: ACHIEVEMENTS & BADGES                         -->
+    <!-- ======================================================== -->
+    <section id="sec-badges" class="hidden space-y-6">
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" alt="Chest" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-stone-900">OVERWORLD TROPHY CHEST (8 BADGES)</h2>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">Unlock ALL 8 badges to unseal the Mystery Grand Finale Prize!</p>
+            </div>
+          </div>
+          <button onclick="resetAllSavedProgress()" class="mc-btn px-3 py-1.5 text-[10px] bg-red-800">
+            Reset Progress
+          </button>
+        </div>
+
+        <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Populated from GAME_DATA.badges -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 6: GRAND FINALE & MYSTERY PRINTABLE CERTIFICATE  -->
+    <!-- ======================================================== -->
+    <section id="sec-finale" class="hidden space-y-6">
+      
+      <!-- STRICT MYSTERY LOCK SCREEN (Shown until ALL 8/8 badges are unlocked!) -->
+      <div id="finale-locked-banner" class="mc-panel-dark p-8 sm:p-12 text-center space-y-6 border-4 border-amber-500">
+        <div class="relative inline-block">
+          <img src="https://i.postimg.cc/m2Mm89Hm/Warden-removebg-preview.png" alt="Warden Guardian" class="w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain animate-float">
+          <span class="absolute -top-2 -right-2 bg-red-700 text-white pixel-font text-[10px] px-2.5 py-1 border-2 border-white">🔒 SEALED</span>
+        </div>
+
+        <h3 class="pixel-font text-base sm:text-2xl text-amber-300">SHHH! THE GRAND PRIZE IS A SECRET!</h3>
+        <p class="text-sm sm:text-base text-stone-300 max-w-xl mx-auto font-semibold leading-relaxed">
+          The Warden guards the Mystery Vault! You must unlock <b>ALL 8 Achievements</b> before the secret reward is revealed!
+        </p>
+
+        <div class="max-w-md mx-auto bg-stone-900 border-4 border-stone-700 p-4 space-y-2">
+          <div class="flex justify-between text-xs font-bold text-lime-400">
+            <span>BADGES COLLECTED:</span>
+            <span id="finale-lock-progress-text">0 / 8</span>
+          </div>
+          <div class="w-full h-5 bg-stone-800 border-2 border-black overflow-hidden">
+            <div id="finale-lock-bar" class="h-full bg-gradient-to-r from-amber-500 to-lime-500 transition-all duration-500" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-green px-5 py-3 text-xs gap-2">
+            <img src="https://i.postimg.cc/Y9Zxx2qm/diamond-pickaxe-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+            <span>PLAY MINI-GAMES</span>
+          </button>
+          <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-5 py-3 text-xs gap-2">
+            <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+            <span>CHECK MISSING BADGES</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- UNLOCKED MYSTERY CERTIFICATE CONTAINER (Hidden until 8/8 badges!) -->
+      <div id="finale-unlocked-content" class="hidden space-y-6">
+        
+        <!-- Customizer Controls & Wallpaper Selector (Hidden during Print) -->
+        <div class="mc-panel p-5 no-print space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label for="student-name-input" class="pixel-font text-xs text-stone-900">HERO NAME:</label>
+              <input id="student-name-input" type="text" value="Master Builder" oninput="updateCertificateName(this.value)" class="px-3 py-2 border-4 border-stone-700 bg-white text-stone-900 font-bold text-base focus:outline-none">
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="launchVictoryConfetti()" class="mc-btn mc-btn-gold px-4 py-2 text-xs gap-2">
+                <span>🎆</span> <span>Celebrate!</span>
+              </button>
+              <button onclick="window.print()" class="mc-btn mc-btn-green px-5 py-2.5 text-xs sm:text-sm gap-2">
+                <i class="fa-solid fa-print"></i> <span>Print / Save as PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Background Theme Picker (Using your 3 custom backgrounds!) -->
+          <div class="border-t-2 border-stone-400 pt-3 flex flex-wrap items-center justify-between gap-3">
+            <span class="pixel-font text-[10px] sm:text-xs text-stone-800">CHOOSE CERTIFICATE WALLPAPER:</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCertificateTheme('world')" id="theme-btn-world" class="mc-btn mc-btn-green px-3 py-1.5 text-[10px] gap-2">
+                <span>🌍 1. Minecraft World</span>
+              </button>
+              <button onclick="setCertificateTheme('kitty')" id="theme-btn-kitty" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>🐱 2. Singing Kitty</span>
+              </button>
+              <button onclick="setCertificateTheme('flower')" id="theme-btn-flower" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>🌼 3. Flower Meadow</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE PRINTABLE CERTIFICATE WITH CUSTOM WALLPAPER -->
+        <div id="printable-certificate-container" class="w-full flex justify-center">
+          <div id="printable-certificate" class="mc-panel p-6 sm:p-10 border-8 border-[#5b8731] text-stone-900 relative overflow-hidden shadow-2xl bg-cover bg-center w-full max-w-4xl" style="background-image: url('https://i.postimg.cc/Px38G31D/Minecraft-wallpaper.jpg');">
+            
+            <!-- Extra semi-transparent layer for readability -->
+            <div class="absolute inset-0 bg-white/70 backdrop-blur-[2px]"></div>
+
+            <!-- Content Overlay for High Text Contrast -->
+            <div class="bg-[#fdf8e7]/95 border-4 border-dashed border-[#866043] p-6 sm:p-8 text-center space-y-5 relative shadow-xl z-10 w-full">
+              
+              <!-- Corner Companion Decorative Stamps -->
+              <img src="https://i.postimg.cc/HxZ7GZby/kitty-singing.jpg" alt="Kitty Stamp" class="w-12 h-12 object-cover rounded-full border-2 border-amber-600 shadow absolute top-3 left-3 hidden sm:block">
+              <img src="https://i.postimg.cc/B6Y1WY2D/flower.jpg" alt="Flower Stamp" class="w-12 h-12 object-cover rounded-full border-2 border-lime-600 shadow absolute top-3 right-3 hidden sm:block">
+
+              <!-- Top Icons -->
+              <div class="flex items-center justify-between sm:px-10">
+                <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+                <div class="text-center">
+                  <div class="inline-block bg-[#5b8731] text-white pixel-font text-[10px] px-3 py-1 mb-2">OFFICIAL OVERWORLD DIPLOMA</div>
+                  <h2 class="pixel-font text-lg sm:text-2xl md:text-3xl text-[#3b5a1e]">MINECRAFT ENGLISH MASTER</h2>
+                </div>
+                <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+              </div>
+
+              <p class="text-sm sm:text-base font-bold text-stone-600 uppercase tracking-widest">This legendary certificate is proudly awarded to:</p>
+
+              <div id="cert-hero-name" class="pixel-font text-xl sm:text-3xl text-[#866043] border-b-4 border-[#5b8731] inline-block px-8 py-2 bg-white/80">
+                Master Builder
+              </div>
+
+              <p class="text-sm sm:text-base text-stone-800 max-w-2xl mx-auto font-semibold leading-relaxed">
+                For bravery and wisdom in mastering the <b>Present Simple Tense</b> (Affirmative, Negative, and Questions) and collecting all <b>10 Basic Minecraft Materials</b>: Wood, Stone, Dirt, Sand, Glass, Water, Lava, Iron, Gold, and Coal!
+              </p>
+
+              <!-- Material Icons Strip on Certificate -->
+              <div class="flex flex-wrap items-center justify-center gap-3 py-2 bg-stone-900/10 rounded-xl px-4">
+                <img src="https://i.postimg.cc/PJkmwsc9/oak-wood.png" class="w-8 h-8 object-contain" alt="Wood">
+                <img src="https://i.postimg.cc/NMX6FfNC/stone.png" class="w-8 h-8 object-contain" alt="Stone">
+                <img src="https://i.postimg.cc/Xq0wCShQ/dirt.png" class="w-8 h-8 object-contain" alt="Dirt">
+                <img src="https://i.postimg.cc/FzQjL5qw/sand.png" class="w-8 h-8 object-contain" alt="Sand">
+                <img src="https://i.postimg.cc/6qNdvJSh/glass.png" class="w-8 h-8 object-contain" alt="Glass">
+                <img src="https://i.postimg.cc/KjynMSVN/water-bucket.png" class="w-8 h-8 object-contain" alt="Water">
+                <img src="https://i.postimg.cc/brjQtcMg/lava-bucket.png" class="w-8 h-8 object-contain" alt="Lava">
+                <img src="https://i.postimg.cc/mD2bsTSX/Minecraft-Iron-Ingot-removebg-preview.png" class="w-8 h-8 object-contain" alt="Iron">
+                <img src="https://i.postimg.cc/LX6HpmVQ/Minecraft-Gold-Ingot-removebg-preview.png" class="w-8 h-8 object-contain" alt="Gold">
+                <img src="https://i.postimg.cc/LX6HpmVB/How-to-make-torches-in-Minecraft-Tutorial-removebg-preview.png" class="w-8 h-8 object-contain" alt="Coal">
+              </div>
+
+              <div class="grid grid-cols-3 items-center pt-4 border-t-2 border-stone-300 text-xs sm:text-sm font-bold text-stone-700">
+                <div>
+                  <div class="text-stone-900 font-extrabold">Steve & Alex</div>
+                  <div class="text-[11px] text-stone-500">Overworld Mentors</div>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Seal" class="w-12 h-12 object-contain">
+                  <span class="pixel-font text-[8px] text-amber-700 mt-1">GOLDEN SEAL</span>
+                </div>
+                <div>
+                  <div id="cert-date-display" class="text-stone-900 font-extrabold">2026</div>
+                  <div class="text-[11px] text-stone-500">Date of Completion</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT ENGINE & CONFIGURATION -->
+  <script>
+    /* =========================================================================
+       1. GAME_DATA CONFIGURATION (ALL POOLS, VOCABULARY, STORY, AND ASSETS)
+       ========================================================================= */
+    const GAME_DATA = {
+      story: {
+        intro: "Night is coming to the Overworld! Steve and Alex need your help to gather ten basic materials and build a safe village. Complete the Present Simple grammar quests to protect the villagers from Zombies and Creepers!"
+      },
+
+      assets: {
+        totem: "https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png",
+        steve: "https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png",
+        alex: "https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png",
+        villager: "https://i.postimg.cc/BnBMGGNx/Villager-removebg-preview.png",
+        creeper: "https://i.postimg.cc/y6DQ3tYD/Creeper-removebg-preview-(1).png",
+        zombie: "https://i.postimg.cc/QNv6QmHp/Zombie-removebg-preview.png",
+        skeleton: "https://i.postimg.cc/FFwPyp7W/Skeleton-removebg-preview.png",
+        enderman: "https://i.postimg.cc/v8CPrhc2/Enderman-removebg-preview.png",
+        golem: "https://i.postimg.cc/dVj4KKny/Iron-Golem-with-flower-removebg-preview.png",
+        fox: "https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png",
+        bee: "https://i.postimg.cc/Qx5f077M/Bee-removebg-preview.png",
+        axolotl: "https://i.postimg.cc/SN8gD9M1/axolotl-removebg-preview.png",
+        wolf: "https://i.postimg.cc/L8pN7skm/Wolf-removebg-preview.png",
+        cat: "https://i.postimg.cc/zfd7VSsf/Cat-removebg-preview.png",
+        pig: "https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png",
+        cow: "https://i.postimg.cc/28v02WW6/Minecraft-Cow-removebg-preview.png",
+        sheep: "https://i.postimg.cc/8zSt3Cdv/Sheep-removebg-preview.png",
+        chicken: "https://i.postimg.cc/K8DJyyQV/Chicken-removebg-preview.png"
+      },
+
+      certWallpapers: {
+        world: "https://i.postimg.cc/Px38G31D/Minecraft-wallpaper.jpg",
+        kitty: "https://i.postimg.cc/HxZ7GZby/kitty-singing.jpg",
+        flower: "https://i.postimg.cc/B6Y1WY2D/flower.jpg"
+      },
+
+      vocabulary: [
+        { id: "wood", word: "Wood", ua: "дерево", img: "https://i.postimg.cc/PJkmwsc9/oak-wood.png", example: "Steve chops oak wood every morning." },
+        { id: "stone", word: "Stone", ua: "камінь", img: "https://i.postimg.cc/NMX6FfNC/stone.png", example: "Alex mines gray stone with a pickaxe." },
+        { id: "dirt", word: "Dirt", ua: "земля", img: "https://i.postimg.cc/Xq0wCShQ/dirt.png", example: "Grass grows on brown dirt." },
+        { id: "sand", word: "Sand", ua: "пісок", img: "https://i.postimg.cc/FzQjL5qw/sand.png", example: "We find yellow sand near the water." },
+        { id: "glass", word: "Glass", ua: "скло", img: "https://i.postimg.cc/6qNdvJSh/glass.png", example: "Hot fire turns sand into clear glass." },
+        { id: "water", word: "Water", ua: "вода", img: "https://i.postimg.cc/KjynMSVN/water-bucket.png", example: "An axolotl swims in cool water." },
+        { id: "lava", word: "Lava", ua: "лава", img: "https://i.postimg.cc/brjQtcMg/lava-bucket.png", example: "Bright lava is very hot and dangerous." },
+        { id: "iron", word: "Iron", ua: "залізо", img: "https://i.postimg.cc/mD2bsTSX/Minecraft-Iron-Ingot-removebg-preview.png", example: "Steve crafts a strong shield from iron." },
+        { id: "gold", word: "Gold", ua: "золото", img: "https://i.postimg.cc/LX6HpmVQ/Minecraft-Gold-Ingot-removebg-preview.png", example: "Shiny gold glitters deep in the cave." },
+        { id: "coal", word: "Coal", ua: "вугілля", img: "https://i.postimg.cc/LX6HpmVB/How-to-make-torches-in-Minecraft-Tutorial-removebg-preview.png", example: "We use black coal to make torches." }
+      ],
+
+      // Shop prices increased drastically for challenge
+      shopItems: [
+        { id: "pet_puppy", name: "Loyal Puppy", cost: 25, img: "https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png", sentence: "My puppy barks at skeletons and guards our door!" },
+        { id: "pet_kitty", name: "Purring Kitty", cost: 25, img: "https://i.postimg.cc/fLJKXSs8/Kitty-removebg-preview.png", sentence: "My kitty scares Creepers away from our house!" },
+        { id: "pet_axolotl", name: "Pink Axolotl", cost: 35, img: "https://i.postimg.cc/SN8gD9M1/axolotl-removebg-preview.png", sentence: "The cute axolotl swims in cool water every day!" },
+        { id: "pet_parrot", name: "Dancing Parrot", cost: 35, img: "https://i.postimg.cc/CLDcm88Y/Parrot-removebg-preview.png", sentence: "My colorful parrot dances when music plays!" },
+        { id: "pet_fox", name: "Sleeping Fox", cost: 45, img: "https://i.postimg.cc/g2HNPPNp/Fox-sleeping-removebg-preview.png", sentence: "The little fox sleeps under the green oak tree." },
+        { id: "pet_bee", name: "Happy Bee", cost: 45, img: "https://i.postimg.cc/Qx5f077M/Bee-removebg-preview.png", sentence: "The busy bee loves bright yellow flowers!" },
+        { id: "guard_copper", name: "Copper Golem", cost: 60, img: "https://i.postimg.cc/Jz5PWWKq/Coppe-golem-removebg-preview.png", sentence: "The Copper Golem presses buttons in our base!" },
+        { id: "item_cake", name: "Party Cake", cost: 75, img: "https://i.postimg.cc/0NtnbdT5/Minecraft-game-cake-removebg-preview.png", sentence: "We eat delicious cake after our mining quest!" },
+        { id: "gear_bow", name: "Enchanted Bow", cost: 100, img: "https://i.postimg.cc/Px9MMfrs/Enchanted-Bow-removebg-preview.png", sentence: "Alex shoots targets with her enchanted bow!" },
+        { id: "gear_elytra", name: "Elytra Wings", cost: 150, img: "https://i.postimg.cc/wMNQ4K7h/elytras-removebg-preview.png", sentence: "Steve flies high over the mountains with Elytra!" }
+      ],
+
+      // Game Pools...
+      game1Pool: [
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["Steve", "chops", "oak wood", "."], ans: "Steve chops oak wood .", hint: "Steve is 'He', so the verb needs +S: Steve chops oak wood.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["I", "mine", "gray stone", "."], ans: "I mine gray stone .", hint: "With 'I', the verb stays normal: I mine gray stone.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["Alex", "makes", "clear glass", "."], ans: "Alex makes clear glass .", hint: "Alex is 'She', so add +S to make: Alex makes clear glass.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["We", "build", "a safe house", "."], ans: "We build a safe house .", hint: "With 'We', the verb stays normal: We build a safe house.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["Hot lava", "burns", "oak wood", "."], ans: "Hot lava burns oak wood .", hint: "Hot lava is 'It', so add +S: Hot lava burns oak wood.", mob: "creeper" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["The villagers", "love", "shiny gold", "."], ans: "The villagers love shiny gold .", hint: "Villagers are 'They', so no +S needed: The villagers love shiny gold.", mob: "villager" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["The Iron Golem", "protects", "the village", "."], ans: "The Iron Golem protects the village .", hint: "The Golem is 'It', so add +S: The Iron Golem protects the village.", mob: "golem" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["You", "need", "black coal", "."], ans: "You need black coal .", hint: "With 'You', use the base verb: You need black coal.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["Cool water", "cools", "hot lava", "."], ans: "Cool water cools hot lava .", hint: "Water is 'It', so add +S: Cool water cools hot lava.", mob: "axolotl" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["They", "dig", "brown dirt", "."], ans: "They dig brown dirt .", hint: "With 'They', use the base verb: They dig brown dirt.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["My wolf", "sleeps", "near", "the fire", "."], ans: "My wolf sleeps near the fire .", hint: "Wolf is 'It', so add +S: My wolf sleeps near the fire.", mob: "wolf" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["She", "carries", "a water bucket", "."], ans: "She carries a water bucket .", hint: "She + carry = carries! She carries a water bucket.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["A small bee", "flies", "to", "the flower", "."], ans: "A small bee flies to the flower .", hint: "A bee is 'It' and fly changes to flies: A small bee flies to the flower.", mob: "bee" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["We", "keep", "iron ingots", "in", "the chest", "."], ans: "We keep iron ingots in the chest .", hint: "With 'We', keep the verb normal: We keep iron ingots in the chest.", mob: "villager" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["An axolotl", "swims", "in", "cool water", "."], ans: "An axolotl swims in cool water .", hint: "Axolotl is 'It', so add +S: An axolotl swims in cool water.", mob: "axolotl" },
+        { q: "Steve ___ his iron armor after mining.", options: ["washes", "wash", "washing"], ans: "washes", hint: "Wash ends in -SH -> add -ES for He/She/It! Steve washes.", mob: "steve" },
+        { q: "Bees ___ over the green dirt.", options: ["fly", "flies", "flying"], ans: "fly", hint: "Bees are plural ('They') -> use the normal verb 'fly'.", mob: "bee" },
+        { q: "He ___ deep into the stone cave.", options: ["goes", "go", "going"], ans: "goes", hint: "He + go -> add -ES to make 'goes'!", mob: "steve" },
+        { q: "Endermen ___ blocks of dirt at night.", options: ["take", "takes", "taking"], ans: "take", hint: "Endermen is plural ('They') -> use 'take' without S.", mob: "enderman" },
+        { q: "An Enderman ___ a block of sand.", options: ["holds", "hold", "holding"], ans: "holds", hint: "One Enderman ('He/It') needs an S -> holds!", mob: "enderman" },
+        { q: "I ___ coal to make bright torches.", options: ["use", "uses", "using"], ans: "use", hint: "With 'I', use the base verb 'use' (no S).", mob: "steve" },
+        { q: "Alex ___ broken iron tools on the anvil.", options: ["fixes", "fix", "fixing"], ans: "fixes", hint: "Fix ends in -X -> add -ES for She (Alex)! Fixes.", mob: "alex" },
+        { q: "Cats ___ Creepers away from our wood house.", options: ["scare", "scares", "scaring"], ans: "scare", hint: "Cats are plural ('They') -> use 'scare' without S.", mob: "cat" },
+        { q: "My cat ___ on the warm furnace.", options: ["sits", "sit", "sitting"], ans: "sits", hint: "One cat ('It') needs an S -> sits.", mob: "cat" },
+        { q: "You ___ yellow sand on the beach.", options: ["find", "finds", "finding"], ans: "find", hint: "With 'You', use the base verb 'find'.", mob: "alex" },
+        { q: "The furnace ___ coal to smelt gold.", options: ["burns", "burn", "burning"], ans: "burns", hint: "The furnace is 'It' -> burns needs an S.", mob: "villager" },
+        { q: "Pigs ___ sweet carrots in the garden.", options: ["eat", "eats", "eating"], ans: "eat", hint: "Pigs are plural ('They') -> use 'eat'.", mob: "pig" },
+        { q: "A pink pig ___ in the soft dirt.", options: ["plays", "play", "playing"], ans: "plays", hint: "Play has a vowel before Y -> just add -S! Plays.", mob: "pig" },
+        { q: "We ___ through the clear glass window.", options: ["look", "looks", "looking"], ans: "look", hint: "With 'We', use the base verb 'look'.", mob: "steve" },
+        { q: "He ___ a heavy bucket of lava.", options: ["has", "have", "having"], ans: "has", hint: "He / She / It uses 'has', not 'have'!", mob: "steve" },
+        { q: "I ___ ten blocks of oak wood.", options: ["have", "has", "having"], ans: "have", hint: "I / You / We / They uses 'have'!", mob: "alex" },
+        { q: "Spiders ___ up high stone walls.", options: ["climb", "climbs", "climbing"], ans: "climb", hint: "Spiders are plural ('They') -> use 'climb'.", mob: "skeleton" },
+        { q: "A cute axolotl ___ in the water bucket.", options: ["swims", "swim", "swimming"], ans: "swims", hint: "One axolotl ('It') needs an S -> swims.", mob: "axolotl" },
+        { q: "They ___ gold and iron in the mine.", options: ["search", "searches", "searching"], ans: "search", hint: "With 'They', use 'search' (no S).", mob: "steve" },
+        { q: "Alex ___ for gold in the dark cave.", options: ["searches", "search", "searching"], ans: "searches", hint: "Search ends in -CH -> add -ES for She (Alex)! Searches.", mob: "alex" },
+        { q: "Cows ___ us fresh milk in a bucket.", options: ["give", "gives", "giving"], ans: "give", hint: "Cows are plural ('They') -> use 'give'.", mob: "cow" },
+        { q: "A brown cow ___ on the green dirt.", options: ["walks", "walk", "walking"], ans: "walks", hint: "One cow ('It') needs an S -> walks.", mob: "cow" },
+        { q: "You ___ strong walls with gray stone.", options: ["craft", "crafts", "crafting"], ans: "craft", hint: "With 'You', use 'craft'.", mob: "steve" },
+        { q: "Steve ___ a new iron pickaxe.", options: ["crafts", "craft", "crafting"], ans: "crafts", hint: "Steve is 'He' -> adds an S -> crafts.", mob: "steve" },
+        { q: "The red fox ___ under the oak tree.", options: ["sleeps", "sleep", "sleeping"], ans: "sleeps", hint: "One fox ('It') needs an S -> sleeps.", mob: "fox" },
+        { q: "Foxes ___ high in the snowy forest.", options: ["jump", "jumps", "jumping"], ans: "jump", hint: "Foxes are plural ('They') -> use 'jump'.", mob: "fox" },
+        { q: "Water ___ down the high stone mountain.", options: ["flows", "flow", "flowing"], ans: "flows", hint: "Water is uncountable ('It') -> flows needs an S!", mob: "axolotl" },
+        { q: "Sand ___ down when you break the block under it.", options: ["falls", "fall", "falling"], ans: "falls", hint: "Sand is uncountable ('It') -> falls needs an S!", mob: "villager" },
+        { q: "We ___ iron ore with black coal.", options: ["smelt", "smelts", "smelting"], ans: "smelt", hint: "With 'We', use 'smelt' (no S).", mob: "steve" },
+        { q: "The villager ___ bread for gold.", options: ["trades", "trade", "trading"], ans: "trades", hint: "One villager ('He') needs an S -> trades.", mob: "villager" },
+        { q: "I ___ my wood house near the water.", options: ["like", "likes", "liking"], ans: "like", hint: "With 'I', use 'like'.", mob: "alex" },
+        { q: "She ___ shiny gold helmets.", options: ["likes", "like", "liking"], ans: "likes", hint: "With 'She', add -S -> likes.", mob: "alex" },
+        { q: "Zombies ___ loud noises at night.", options: ["make", "makes", "making"], ans: "make", hint: "Zombies are plural ('They') -> use 'make'.", mob: "zombie" },
+        { q: "A green Zombie ___ on the wood door.", options: ["knocks", "knock", "knocking"], ans: "knocks", hint: "One Zombie ('He/It') needs an S -> knocks.", mob: "zombie" },
+        { q: "Glass ___ the cold wind outside.", options: ["keeps", "keep", "keeping"], ans: "keeps", hint: "Glass is uncountable ('It') -> keeps needs an S.", mob: "villager" }
+      ],
+
+      game2Pool: [
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["I", "don't", "touch", "hot lava", "."], ans: "I don't touch hot lava .", hint: "I uses don't + base verb: I don't touch hot lava.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["Steve", "doesn't", "eat", "brown dirt", "."], ans: "Steve doesn't eat brown dirt .", hint: "Steve uses doesn't + base verb: Steve doesn't eat brown dirt.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["Alex", "doesn't", "waste", "shiny gold", "."], ans: "Alex doesn't waste shiny gold .", hint: "Alex uses doesn't + base verb: Alex doesn't waste shiny gold.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["We", "don't", "build", "with", "yellow sand", "."], ans: "We don't build with yellow sand .", hint: "We uses don't + base verb: We don't build with yellow sand.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["A Creeper", "doesn't", "like", "cats", "."], ans: "A Creeper doesn't like cats .", hint: "A Creeper uses doesn't + base verb: A Creeper doesn't like cats.", mob: "creeper" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["The villagers", "don't", "fight", "zombies", "."], ans: "The villagers don't fight zombies .", hint: "Villagers uses don't + base verb: The villagers don't fight zombies.", mob: "villager" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["Cool water", "doesn't", "burn", "oak wood", "."], ans: "Cool water doesn't burn oak wood .", hint: "Water uses doesn't + base verb: Cool water doesn't burn oak wood.", mob: "axolotl" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["You", "don't", "need", "a lava bucket", "."], ans: "You don't need a lava bucket .", hint: "You uses don't + base verb: You don't need a lava bucket.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["He", "doesn't", "break", "clear glass", "."], ans: "He doesn't break clear glass .", hint: "He uses doesn't + base verb: He doesn't break clear glass.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["Zombies", "don't", "like", "the sun", "."], ans: "Zombies don't like the sun .", hint: "Zombies uses don't + base verb: Zombies don't like the sun.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["She", "doesn't", "drop", "the iron pickaxe", "."], ans: "She doesn't drop the iron pickaxe .", hint: "She uses doesn't + base verb: She doesn't drop the iron pickaxe.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["An Enderman", "doesn't", "like", "water", "."], ans: "An Enderman doesn't like water .", hint: "An Enderman uses doesn't + base verb: An Enderman doesn't like water.", mob: "enderman" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["Gray stone", "doesn't", "burn", "in", "fire", "."], ans: "Gray stone doesn't burn in fire .", hint: "Stone uses doesn't + base verb: Gray stone doesn't burn in fire.", mob: "golem" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["The wolf", "doesn't", "attack", "Steve", "."], ans: "The wolf doesn't attack Steve .", hint: "The wolf uses doesn't + base verb: The wolf doesn't attack Steve.", mob: "wolf" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["We", "don't", "keep", "dirt", "in", "the chest", "."], ans: "We don't keep dirt in the chest .", hint: "We uses don't + base verb: We don't keep dirt in the chest.", mob: "villager" },
+        { q: "Sheep ___ eat stone or iron.", options: ["don't", "doesn't", "not"], ans: "don't", hint: "Sheep is plural ('They') -> use DON'T.", mob: "sheep" },
+        { q: "Alex doesn't ___ into dark lava caves alone.", options: ["go", "goes", "going"], ans: "go", hint: "Doesn't steals the -S! Use the base verb 'go'.", mob: "alex" },
+        { q: "I don't ___ glass with an axe.", options: ["break", "breaks", "breaking"], ans: "break", hint: "After DON'T, always use the base verb 'break'.", mob: "steve" },
+        { q: "Endermen don't ___ in the rain.", options: ["stay", "stays", "staying"], ans: "stay", hint: "After DON'T, always use the base verb 'stay'.", mob: "enderman" },
+        { q: "A Skeleton ___ use a diamond pickaxe.", options: ["doesn't", "don't", "aren't"], ans: "doesn't", hint: "One Skeleton ('He/It') uses DOESN'T.", mob: "skeleton" },
+        { q: "Bees ___ fly when it rains at night.", options: ["don't", "doesn't", "isn't"], ans: "don't", hint: "Bees are plural ('They') -> use DON'T.", mob: "bee" },
+        { q: "This furnace doesn't ___ any coal inside.", options: ["have", "has", "having"], ans: "have", hint: "Careful! After DOESN'T, always use the base verb 'have' (never 'has')!", mob: "steve" },
+        { q: "He ___ have enough gold for a helmet.", options: ["doesn't", "don't", "not"], ans: "doesn't", hint: "With 'He', use DOESN'T.", mob: "steve" },
+        { q: "They ___ have a bucket of water.", options: ["don't", "doesn't", "isn't"], ans: "don't", hint: "With 'They', use DON'T.", mob: "alex" },
+        { q: "Sand ___ grow green grass.", options: ["doesn't", "don't", "aren't"], ans: "doesn't", hint: "Sand is uncountable ('It') -> use DOESN'T.", mob: "fox" },
+        { q: "Iron Golems ___ hurt friendly villagers.", options: ["don't", "doesn't", "not"], ans: "don't", hint: "Golems are plural ('They') -> use DON'T.", mob: "golem" },
+        { q: "My cat doesn't ___ in cold water.", options: ["swim", "swims", "swimming"], ans: "swim", hint: "Doesn't steals the -S! Use base verb 'swim'.", mob: "cat" },
+        { q: "You don't ___ stone with bare hands.", options: ["mine", "mines", "mining"], ans: "mine", hint: "Don't + base verb 'mine'.", mob: "steve" },
+        { q: "Lava ___ freeze into ice.", options: ["doesn't", "don't", "isn't"], ans: "doesn't", hint: "Lava is uncountable ('It') -> use DOESN'T.", mob: "creeper" },
+        { q: "Pigs ___ fly in the sky.", options: ["don't", "doesn't", "aren't"], ans: "don't", hint: "Pigs are plural ('They') -> use DON'T.", mob: "pig" },
+        { q: "The baby fox doesn't ___ away from Alex.", options: ["run", "runs", "running"], ans: "run", hint: "Doesn't steals the -S! Use base verb 'run'.", mob: "fox" },
+        { q: "I ___ dig straight down into lava!", options: ["don't", "doesn't", "not"], ans: "don't", hint: "With 'I', use DON'T.", mob: "steve" },
+        { q: "She doesn't ___ wood with a sword.", options: ["chop", "chops", "chopping"], ans: "chop", hint: "Doesn't steals the -S! Use base verb 'chop'.", mob: "alex" },
+        { q: "Gold tools ___ last a very long time.", options: ["don't", "doesn't", "isn't"], ans: "don't", hint: "Tools are plural ('They') -> use DON'T.", mob: "villager" },
+        { q: "A gold pickaxe ___ break obsidian.", options: ["doesn't", "don't", "aren't"], ans: "doesn't", hint: "One pickaxe ('It') -> use DOESN'T.", mob: "steve" },
+        { q: "We ___ sleep in the Nether.", options: ["don't", "doesn't", "not"], ans: "don't", hint: "With 'We', use DON'T.", mob: "alex" },
+        { q: "Steve doesn't ___ his diamond sword.", options: ["drop", "drops", "dropping"], ans: "drop", hint: "Doesn't steals the -S! Use base verb 'drop'.", mob: "steve" },
+        { q: "Cows ___ eat iron or coal.", options: ["don't", "doesn't", "isn't"], ans: "don't", hint: "Cows are plural ('They') -> use DON'T.", mob: "cow" },
+        { q: "Glass doesn't ___ when you walk on it.", options: ["break", "breaks", "breaking"], ans: "break", hint: "Doesn't steals the -S! Use base verb 'break'.", mob: "villager" },
+        { q: "Chickens ___ swim in hot lava.", options: ["don't", "doesn't", "aren't"], ans: "don't", hint: "Chickens are plural ('They') -> use DON'T.", mob: "chicken" },
+        { q: "A chicken ___ lay golden eggs.", options: ["doesn't", "don't", "not"], ans: "doesn't", hint: "One chicken ('It') -> use DOESN'T.", mob: "chicken" },
+        { q: "You ___ craft glass from dirt.", options: ["don't", "doesn't", "isn't"], ans: "don't", hint: "With 'You', use DON'T.", mob: "alex" },
+        { q: "Coal doesn't ___ on oak trees.", options: ["grow", "grows", "growing"], ans: "grow", hint: "Doesn't steals the -S! Use base verb 'grow'.", mob: "steve" },
+        { q: "They don't ___ at night without torches.", options: ["mine", "mines", "mining"], ans: "mine", hint: "Don't + base verb 'mine'.", mob: "steve" },
+        { q: "The villager ___ trade with Zombies.", options: ["doesn't", "don't", "aren't"], ans: "doesn't", hint: "One villager ('He') -> use DOESN'T.", mob: "villager" },
+        { q: "Axolotls ___ live in hot desert sand.", options: ["don't", "doesn't", "not"], ans: "don't", hint: "Axolotls are plural ('They') -> use DON'T.", mob: "axolotl" },
+        { q: "Dirt ___ shine like gold.", options: ["doesn't", "don't", "isn't"], ans: "doesn't", hint: "Dirt is uncountable ('It') -> use DOESN'T.", mob: "pig" },
+        { q: "He doesn't ___ a boat on dry sand.", options: ["use", "uses", "using"], ans: "use", hint: "Doesn't steals the -S! Use base verb 'use'.", mob: "steve" },
+        { q: "I ___ want a Creeper near my house!", options: ["don't", "doesn't", "aren't"], ans: "don't", hint: "With 'I', use DON'T.", mob: "creeper" },
+        { q: "She ___ forget her water bucket.", options: ["doesn't", "don't", "not"], ans: "doesn't", hint: "With 'She', use DOESN'T.", mob: "alex" }
+      ],
+
+      game3Pool: [
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Do", "you", "mine", "stone", "?"], ans: "Do you mine stone ?", hint: "Start with 'Do', then subject 'you', then verb 'mine'!", mob: "steve" },
+        { type: "scramble", prompt: "Build the question about Steve:", words: ["Does", "Steve", "need", "oak wood", "?"], ans: "Does Steve need oak wood ?", hint: "Start with 'Does', then 'Steve', then base verb 'need'!", mob: "steve" },
+        { type: "scramble", prompt: "Build the question about Alex:", words: ["Does", "Alex", "have", "iron", "?"], ans: "Does Alex have iron ?", hint: "Does + Alex + have + iron + ?", mob: "alex" },
+        { type: "scramble", prompt: "Order the words to ask about Villagers:", words: ["Do", "villagers", "like", "gold", "?"], ans: "Do villagers like gold ?", hint: "Do + villagers + like + gold + ?", mob: "villager" },
+        { type: "scramble", prompt: "Order the words to ask about Lava:", words: ["Does", "lava", "burn", "wood", "?"], ans: "Does lava burn wood ?", hint: "Does + lava + burn + wood + ?", mob: "creeper" },
+        { type: "scramble", prompt: "Build the question about Coal:", words: ["Do", "we", "use", "coal", "for", "torches", "?"], ans: "Do we use coal for torches ?", hint: "Do + we + use + coal + for + torches + ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question about Glass:", words: ["Does", "fire", "turn", "sand", "into", "glass", "?"], ans: "Does fire turn sand into glass ?", hint: "Does + fire + turn + sand + into + glass + ?", mob: "alex" },
+        { type: "scramble", prompt: "Order the words to ask about Water:", words: ["Does", "an axolotl", "swim", "in", "water", "?"], ans: "Does an axolotl swim in water ?", hint: "Does + an axolotl + swim + in + water + ?", mob: "axolotl" },
+        { type: "scramble", prompt: "Order the words to ask about Dirt:", words: ["Do", "they", "dig", "brown dirt", "?"], ans: "Do they dig brown dirt ?", hint: "Do + they + dig + brown dirt + ?", mob: "pig" },
+        { type: "scramble", prompt: "Build the question about the Iron Golem:", words: ["Does", "the golem", "protect", "us", "?"], ans: "Does the golem protect us ?", hint: "Does + the golem + protect + us + ?", mob: "golem" },
+        { type: "scramble", prompt: "Order the words:", words: ["Do", "you", "have", "a water bucket", "?"], ans: "Do you have a water bucket ?", hint: "Do + you + have + a water bucket + ?", mob: "alex" },
+        { type: "scramble", prompt: "Order the words:", words: ["Does", "he", "craft", "with", "iron", "?"], ans: "Does he craft with iron ?", hint: "Does + he + craft + with + iron + ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Do", "cats", "scare", "Creepers", "?"], ans: "Do cats scare Creepers ?", hint: "Do + cats + scare + Creepers + ?", mob: "cat" },
+        { type: "scramble", prompt: "Build the question:", words: ["Does", "she", "collect", "yellow sand", "?"], ans: "Does she collect yellow sand ?", hint: "Does + she + collect + yellow sand + ?", mob: "alex" },
+        { type: "scramble", prompt: "Order the words:", words: ["Do", "bees", "like", "flowers", "?"], ans: "Do bees like flowers ?", hint: "Do + bees + like + flowers + ?", mob: "bee" },
+        { type: "mc", q: "___ you have any black coal?", options: ["Do", "Does", "Are"], ans: "Do", hint: "With 'you', start the question with DO!", mob: "steve" },
+        { type: "mc", q: "___ Steve build his house with oak wood?", options: ["Does", "Do", "Is"], ans: "Does", hint: "Steve is 'He' -> start with DOES!", mob: "steve" },
+        { type: "mc", q: "Does Alex ___ clear glass in the furnace?", options: ["make", "makes", "making"], ans: "make", hint: "DOES is at the front, so the verb has NO -S! Use 'make'.", mob: "alex" },
+        { type: "mc", q: "___ villagers trade iron and gold?", options: ["Do", "Does", "Is"], ans: "Do", hint: "Villagers are plural ('They') -> start with DO!", mob: "villager" },
+        { type: "mc", q: "___ hot lava melt stone?", options: ["Does", "Do", "Are"], ans: "Does", hint: "Lava is 'It' -> start with DOES!", mob: "creeper" },
+        { type: "mc", q: "Do we ___ enough stone for a furnace?", options: ["have", "has", "having"], ans: "have", hint: "Do + we + base verb 'have'!", mob: "steve" },
+        { type: "mc", q: "Does he ___ a bucket of cold water?", options: ["need", "needs", "needing"], ans: "need", hint: "After DOES, use base verb 'need' (no -S!).", mob: "steve" },
+        { type: "mc", q: "___ Endermen pick up dirt blocks?", options: ["Do", "Does", "Is"], ans: "Do", hint: "Endermen is plural ('They') -> DO!", mob: "enderman" },
+        { type: "mc", q: "___ an Enderman teleport fast?", options: ["Does", "Do", "Are"], ans: "Does", hint: "One Enderman ('He/It') -> DOES!", mob: "enderman" },
+        { type: "mc", q: "Does a wolf ___ bones?", options: ["like", "likes", "liking"], ans: "like", hint: "Does + wolf + base verb 'like'!", mob: "wolf" },
+        { type: "mc", q: "___ you dig sand with a shovel?", options: ["Do", "Does", "Is"], ans: "Do", hint: "With 'you', use DO!", mob: "alex" },
+        { type: "mc", q: "___ she mine gold deep underground?", options: ["Does", "Do", "Are"], ans: "Does", hint: "With 'she', use DOES!", mob: "alex" },
+        { type: "mc", q: "Do they ___ wood in the chest?", options: ["keep", "keeps", "keeping"], ans: "keep", hint: "Do + they + base verb 'keep'.", mob: "villager" },
+        { type: "mc", q: "___ water put out fire?", options: ["Does", "Do", "Are"], ans: "Does", hint: "Water is 'It' -> DOES!", mob: "axolotl" },
+        { type: "mc", q: "Does the furnace ___ coal?", options: ["burn", "burns", "burning"], ans: "burn", hint: "Does + furnace + base verb 'burn' (no -S!).", mob: "steve" },
+        { type: "mc", q: "___ pigs eat carrots?", options: ["Do", "Does", "Is"], ans: "Do", hint: "Pigs are plural ('They') -> DO!", mob: "pig" },
+        { type: "mc", q: "___ a red fox sleep under the tree?", options: ["Does", "Do", "Are"], ans: "Does", hint: "One fox is 'It' -> DOES!", mob: "fox" },
+        { type: "mc", q: "Do I ___ an iron pickaxe to mine gold?", options: ["need", "needs", "needing"], ans: "need", hint: "Do + I + base verb 'need'.", mob: "steve" },
+        { type: "mc", q: "Does grass ___ on brown dirt?", options: ["grow", "grows", "growing"], ans: "grow", hint: "Does + grass + base verb 'grow'!", mob: "sheep" },
+        { type: "mc", q: "___ Zombies come out at night?", options: ["Do", "Does", "Is"], ans: "Do", hint: "Zombies are plural ('They') -> DO!", mob: "zombie" },
+        { type: "mc", q: "___ a Zombie burn in the morning sun?", options: ["Does", "Do", "Are"], ans: "Does", hint: "One Zombie is 'He/It' -> DOES!", mob: "zombie" },
+        { type: "mc", q: "Does Steve ___ a shield from iron and wood?", options: ["craft", "crafts", "crafting"], ans: "craft", hint: "Does + Steve + base verb 'craft'!", mob: "steve" },
+        { type: "mc", q: "___ we have ten blocks of glass?", options: ["Do", "Does", "Is"], ans: "Do", hint: "With 'we', use DO!", mob: "alex" },
+        { type: "mc", q: "___ sand fall down in Minecraft?", options: ["Does", "Do", "Are"], ans: "Does", hint: "Sand is 'It' -> DOES!", mob: "villager" },
+        { type: "mc", q: "Do cows ___ us milk?", options: ["give", "gives", "giving"], ans: "give", hint: "Do + cows + base verb 'give'.", mob: "cow" },
+        { type: "mc", q: "___ the Iron Golem walk slowly?", options: ["Does", "Do", "Are"], ans: "Does", hint: "The Iron Golem is 'It' -> DOES!", mob: "golem" },
+        { type: "mc", q: "Does Alex ___ a diamond sword?", options: ["have", "has", "having"], ans: "have", hint: "Careful! In a question with DOES, always use 'have'!", mob: "alex" },
+        { type: "mc", q: "___ you see the lava lake?", options: ["Do", "Does", "Is"], ans: "Do", hint: "With 'you', use DO!", mob: "steve" },
+        { type: "mc", q: "Does coal ___ for a long time?", options: ["burn", "burns", "burning"], ans: "burn", hint: "Does + coal + base verb 'burn'.", mob: "steve" },
+        { type: "mc", q: "___ spiders climb stone walls?", options: ["Do", "Does", "Is"], ans: "Do", hint: "Spiders are plural ('They') -> DO!", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the question:", words: ["Do", "we", "need", "more stone", "?"], ans: "Do we need more stone ?", hint: "Do + we + need + more stone + ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Does", "water", "flow", "fast", "?"], ans: "Does water flow fast ?", hint: "Does + water + flow + fast + ?", mob: "axolotl" },
+        { type: "scramble", prompt: "Order the words:", words: ["Do", "they", "make", "clear glass", "?"], ans: "Do they make clear glass ?", hint: "Do + they + make + clear glass + ?", mob: "alex" },
+        { type: "scramble", prompt: "Order the words:", words: ["Does", "gold", "shine", "in", "the cave", "?"], ans: "Does gold shine in the cave ?", hint: "Does + gold + shine + in + the cave + ?", mob: "villager" },
+        { type: "scramble", prompt: "Build the question:", words: ["Do", "you", "build", "with", "oak wood", "?"], ans: "Do you build with oak wood ?", hint: "Do + you + build + with + oak wood + ?", mob: "steve" }
+      ],
+
+      game4Pool: [
+        { type: "mc", q: "Steve ___ stone and iron every day.", options: ["mines", "mine", "mining"], ans: "mines", hint: "Affirmative (+): Steve is 'He' -> mines!", mob: "steve" },
+        { type: "mc", q: "I ___ swim in hot lava!", options: ["don't", "doesn't", "not"], ans: "don't", hint: "Negative (-): With 'I', use don't!", mob: "alex" },
+        { type: "mc", q: "___ Alex have a bucket of water?", options: ["Does", "Do", "Is"], ans: "Does", hint: "Question (?): Alex is 'She' -> Does!", mob: "alex" },
+        { type: "scramble", prompt: "Order the affirmative sentence:", words: ["Steve", "chops", "oak wood", "."], ans: "Steve chops oak wood .", hint: "Steve + chops + oak wood + .", mob: "steve" },
+        { type: "scramble", prompt: "Order the negative sentence:", words: ["We", "don't", "waste", "shiny gold", "."], ans: "We don't waste shiny gold .", hint: "We + don't + waste + shiny gold + .", mob: "villager" },
+        { type: "scramble", prompt: "Order the question:", words: ["Does", "fire", "melt", "yellow sand", "?"], ans: "Does fire melt yellow sand ?", hint: "Does + fire + melt + yellow sand + ?", mob: "creeper" },
+        { type: "mc", q: "Water ___ hot lava into stone.", options: ["turns", "turn", "turning"], ans: "turns", hint: "Water is 'It' -> turns!", mob: "axolotl" },
+        { type: "mc", q: "A Creeper doesn't ___ a sword.", options: ["use", "uses", "using"], ans: "use", hint: "After doesn't, use base verb 'use'!", mob: "creeper" },
+        { type: "mc", q: "Do villagers ___ in wood houses?", options: ["live", "lives", "living"], ans: "live", hint: "Do + villagers + base verb 'live'!", mob: "villager" },
+        { type: "mc", q: "We ___ black coal to smelt iron.", options: ["use", "uses", "using"], ans: "use", hint: "With 'We', use base verb 'use'.", mob: "steve" },
+        { type: "mc", q: "She ___ drop her diamond pickaxe.", options: ["doesn't", "don't", "isn't"], ans: "doesn't", hint: "With 'She', use doesn't!", mob: "alex" },
+        { type: "mc", q: "___ you need clear glass for windows?", options: ["Do", "Does", "Are"], ans: "Do", hint: "With 'you', start with Do!", mob: "alex" },
+        { type: "mc", q: "The furnace ___ sand into glass.", options: ["smelts", "smelt", "smelting"], ans: "smelts", hint: "The furnace ('It') -> smelts!", mob: "villager" },
+        { type: "mc", q: "Zombies ___ like the bright sun.", options: ["don't", "doesn't", "not"], ans: "don't", hint: "Zombies ('They') -> don't!", mob: "zombie" },
+        { type: "mc", q: "Does a wolf ___ meat?", options: ["eat", "eats", "eating"], ans: "eat", hint: "Does + wolf + base verb 'eat'!", mob: "wolf" },
+        { type: "scramble", prompt: "Order the sentence:", words: ["Water", "turns", "lava", "into", "stone", "."], ans: "Water turns lava into stone .", hint: "Water + turns + lava + into + stone + .", mob: "axolotl" },
+        { type: "scramble", prompt: "Order the negative sentence:", words: ["Steve", "doesn't", "eat", "brown dirt", "."], ans: "Steve doesn't eat brown dirt .", hint: "Steve + doesn't + eat + brown dirt + .", mob: "steve" },
+        { type: "scramble", prompt: "Order the question:", words: ["Do", "they", "find", "gold", "here", "?"], ans: "Do they find gold here ?", hint: "Do + they + find + gold + here + ?", mob: "villager" },
+        { type: "mc", q: "An Iron Golem ___ the village safe.", options: ["keeps", "keep", "keeping"], ans: "keeps", hint: "One Golem ('It') -> keeps!", mob: "golem" },
+        { type: "mc", q: "Stone ___ burn in lava.", options: ["doesn't", "don't", "aren't"], ans: "doesn't", hint: "Stone is 'It' -> doesn't!", mob: "golem" },
+        { type: "mc", q: "___ bees make sweet honey?", options: ["Do", "Does", "Is"], ans: "Do", hint: "Bees are 'They' -> Do!", mob: "bee" },
+        { type: "mc", q: "He ___ ten iron ingots in his bag.", options: ["has", "have", "having"], ans: "has", hint: "He / She / It uses 'has'!", mob: "steve" },
+        { type: "mc", q: "He doesn't ___ any gold ingots.", options: ["have", "has", "having"], ans: "have", hint: "In negative with doesn't, use 'have'!", mob: "steve" },
+        { type: "mc", q: "Does she ___ coal for the furnace?", options: ["have", "has", "having"], ans: "have", hint: "In questions with Does, use 'have'!", mob: "alex" },
+        { type: "mc", q: "I ___ brown dirt with an iron shovel.", options: ["dig", "digs", "digging"], ans: "dig", hint: "With 'I', use 'dig'.", mob: "steve" },
+        { type: "mc", q: "Cats ___ sleep on warm chests.", options: ["often", "doesn't", "is"], ans: "often", hint: "Clue word for Present Simple: Cats often sleep!", mob: "cat" },
+        { type: "mc", q: "My cat ___ like cold water.", options: ["doesn't", "don't", "not"], ans: "doesn't", hint: "One cat ('It') -> doesn't!", mob: "cat" },
+        { type: "mc", q: "___ an axolotl live in water?", options: ["Does", "Do", "Are"], ans: "Does", hint: "One axolotl ('It') -> Does!", mob: "axolotl" },
+        { type: "mc", q: "They ___ a strong bridge from stone.", options: ["build", "builds", "building"], ans: "build", hint: "With 'They', use 'build'.", mob: "alex" },
+        { type: "mc", q: "Alex ___ her tools on the crafting table.", options: ["fixes", "fix", "fixing"], ans: "fixes", hint: "Alex ('She') + fix -> fixes!", mob: "alex" },
+        { type: "scramble", prompt: "Order the sentence:", words: ["Alex", "crafts", "an iron shield", "."], ans: "Alex crafts an iron shield .", hint: "Alex + crafts + an iron shield + .", mob: "alex" },
+        { type: "scramble", prompt: "Order the negative sentence:", words: ["I", "don't", "break", "clear glass", "."], ans: "I don't break clear glass .", hint: "I + don't + break + clear glass + .", mob: "steve" },
+        { type: "mc", q: "Yellow sand ___ down if there is no block below.", options: ["falls", "fall", "falling"], ans: "falls", hint: "Sand ('It') -> falls!", mob: "villager" },
+        { type: "mc", q: "We ___ mine diamonds with a wood pickaxe.", options: ["don't", "doesn't", "isn't"], ans: "don't", hint: "With 'We', use don't!", mob: "steve" },
+        { type: "mc", q: "___ coal make a bright fire?", options: ["Does", "Do", "Is"], ans: "Does", hint: "Coal is 'It' -> Does!", mob: "steve" },
+        { type: "mc", q: "A pink pig ___ carrots.", options: ["loves", "love", "loving"], ans: "loves", hint: "One pig ('It') -> loves!", mob: "pig" },
+        { type: "mc", q: "Pigs ___ build houses.", options: ["don't", "doesn't", "aren't"], ans: "don't", hint: "Pigs ('They') -> don't!", mob: "pig" },
+        { type: "mc", q: "___ you play Minecraft every day?", options: ["Do", "Does", "Are"], ans: "Do", hint: "With 'you', use Do!", mob: "alex" },
+        { type: "mc", q: "Endermen ___ like water.", options: ["don't", "doesn't", "isn't"], ans: "don't", hint: "Endermen ('They') -> don't!", mob: "enderman" },
+        { type: "mc", q: "A Skeleton ___ arrows at night.", options: ["shoots", "shoot", "shooting"], ans: "shoots", hint: "One Skeleton ('He/It') -> shoots!", mob: "skeleton" },
+        { type: "mc", q: "Does a Skeleton ___ a sword?", options: ["use", "uses", "using"], ans: "use", hint: "Does + Skeleton + base verb 'use'!", mob: "skeleton" },
+        { type: "mc", q: "Cows ___ on the green grass.", options: ["walk", "walks", "walking"], ans: "walk", hint: "Cows ('They') -> walk!", mob: "cow" },
+        { type: "mc", q: "A red fox ___ very fast.", options: ["runs", "run", "running"], ans: "runs", hint: "One fox ('It') -> runs!", mob: "fox" },
+        { type: "mc", q: "___ glass let light into the house?", options: ["Does", "Do", "Is"], ans: "Does", hint: "Glass is 'It' -> Does glass let light in?", mob: "villager" },
+        { type: "mc", q: "You ___ coal and iron in caves.", options: ["find", "finds", "finding"], ans: "find", hint: "With 'You', use 'find'.", mob: "steve" },
+        { type: "mc", q: "He ___ forget his torches.", options: ["doesn't", "don't", "not"], ans: "doesn't", hint: "With 'He', use doesn't!", mob: "steve" },
+        { type: "mc", q: "She ___ water in a bucket.", options: ["carries", "carry", "carrying"], ans: "carries", hint: "She + carry -> carries!", mob: "alex" },
+        { type: "mc", q: "Do sheep ___ us warm wool?", options: ["give", "gives", "giving"], ans: "give", hint: "Do + sheep + base verb 'give'!", mob: "sheep" },
+        { type: "mc", q: "Lava ___ very brightly in the dark cave.", options: ["glows", "glow", "glowing"], ans: "glows", hint: "Lava ('It') -> glows!", mob: "creeper" },
+        { type: "mc", q: "We ___ our village together!", options: ["protect", "protects", "protecting"], ans: "protect", hint: "With 'We', use 'protect'.", mob: "golem" }
+      ],
+
+      game5Orders: [
+        {
+          title: "Smelt Clear Glass!",
+          requester: "villager",
+          desc: "I need clear Glass for my windows! Load Sand into the furnace, pick a hot fuel, and complete the sentence!",
+          inputId: "sand",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Clear Glass",
+          outputImg: "https://i.postimg.cc/6qNdvJSh/glass.png",
+          sentence: "The hot furnace ___ yellow sand into clear glass.",
+          options: ["melts", "melt", "don't melt"],
+          ans: "melts",
+          hint: "The furnace is 'It' -> melts!"
+        },
+        {
+          title: "Smelt Strong Iron Ingots!",
+          requester: "steve",
+          desc: "I want to craft a shield! Load Iron into the furnace, choose a fuel, and complete the Present Simple sentence!",
+          inputId: "iron",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Pure Iron Ingot",
+          outputImg: "https://i.postimg.cc/mD2bsTSX/Minecraft-Iron-Ingot-removebg-preview.png",
+          sentence: "Steve ___ iron with black coal every day.",
+          options: ["smelts", "smelt", "doesn't smelts"],
+          ans: "smelts",
+          hint: "Steve is 'He' -> smelts!"
+        },
+        {
+          title: "Smelt Shiny Gold!",
+          requester: "alex",
+          desc: "Villagers love shiny Gold! Put Gold into the input slot, pick a fuel, and complete the grammar rule!",
+          inputId: "gold",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Shiny Gold Ingot",
+          outputImg: "https://i.postimg.cc/LX6HpmVQ/Minecraft-Gold-Ingot-removebg-preview.png",
+          sentence: "___ Alex smelt gold in the furnace?",
+          options: ["Does", "Do", "Is"],
+          ans: "Does",
+          hint: "Question with Alex ('She') -> Does!"
+        },
+        {
+          title: "Bake Smooth Stone!",
+          requester: "villager",
+          desc: "We need Smooth Stone for the castle floor! Load Stone into the input slot, add fuel, and finish the sentence!",
+          inputId: "stone",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Smooth Stone",
+          outputImg: "https://i.postimg.cc/NMX6FfNC/stone.png",
+          sentence: "We ___ stone in the furnace to make smooth stone.",
+          options: ["bake", "bakes", "doesn't bake"],
+          ans: "bake",
+          hint: "With 'We', use base verb 'bake'!"
+        },
+        {
+          title: "Make Charcoal from Wood!",
+          requester: "steve",
+          desc: "We don't have coal from the cave! Load Oak Wood into the input slot to burn it into Charcoal!",
+          inputId: "wood",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Charcoal Torch Fuel",
+          outputImg: "https://i.postimg.cc/LX6HpmVB/How-to-make-torches-in-Minecraft-Tutorial-removebg-preview.png",
+          sentence: "Oak wood ___ into charcoal inside the furnace.",
+          options: ["turns", "turn", "don't turn"],
+          ans: "turns",
+          hint: "Wood is 'It' -> turns!"
+        },
+        {
+          title: "Cool Down the Lava!",
+          requester: "alex",
+          desc: "Danger! Hot lava is near our door! Load Water into Slot 1 to turn the lava into safe stone!",
+          inputId: "water",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Safe Obsidian / Stone",
+          outputImg: "https://i.postimg.cc/NMX6FfNC/stone.png",
+          sentence: "Cold water ___ burn; it cools hot lava!",
+          options: ["doesn't", "don't", "isn't"],
+          ans: "doesn't",
+          hint: "Water is uncountable ('It') -> doesn't!"
+        },
+        {
+          title: "Dry the Wet Dirt!",
+          requester: "villager",
+          desc: "The rain made our dirt wet! Put Dirt into Slot 1, warm it with fuel, and complete the sentence!",
+          inputId: "dirt",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Dry Garden Dirt",
+          outputImg: "https://i.postimg.cc/Xq0wCShQ/dirt.png",
+          sentence: "Green grass ___ on brown dirt in the sun.",
+          options: ["grows", "grow", "don't grow"],
+          ans: "grows",
+          hint: "Grass is uncountable ('It') -> grows!"
+        },
+        {
+          title: "Test the Coal Power!",
+          requester: "steve",
+          desc: "Let's test our Coal! Load Coal into Slot 1, pick a fuel, and complete the question!",
+          inputId: "coal",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Bright Lantern",
+          outputImg: "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png",
+          sentence: "___ you use black coal to make torches?",
+          options: ["Do", "Does", "Are"],
+          ans: "Do",
+          hint: "With 'you', start questions with Do!"
+        },
+        {
+          title: "Lava Bucket Super Smelt!",
+          requester: "golem",
+          desc: "I need strong Iron armor! Load Iron into Slot 1, fuel the furnace, and complete the negative sentence!",
+          inputId: "iron",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Iron Golem Armor",
+          outputImg: "https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png",
+          sentence: "An Iron Golem ___ fear Zombies at night.",
+          options: ["doesn't", "don't", "not"],
+          ans: "doesn't",
+          hint: "One Iron Golem is 'It' -> doesn't!"
+        },
+        {
+          title: "Craft Golden Windows!",
+          requester: "alex",
+          desc: "Let's make more Glass for our tower! Load Sand into Slot 1, add fuel, and finish the sentence!",
+          inputId: "sand",
+          validFuels: ["coal", "lava", "wood"],
+          outputName: "Tower Glass",
+          outputImg: "https://i.postimg.cc/6qNdvJSh/glass.png",
+          sentence: "Alex doesn't ___ glass with a hammer.",
+          options: ["break", "breaks", "breaking"],
+          ans: "break",
+          hint: "After doesn't, use base verb 'break' (no -S)!"
+        }
+      ],
+
+      badges: [
+        { id: "b_materials", title: "Material Collector", desc: "Inspect all 10 Basic Materials in the Hub.", img: "https://i.postimg.cc/PJkmwsc9/oak-wood.png" },
+        { id: "b_game1", title: "Affirmative Builder", desc: "Complete a round of Game 1 (Affirmative).", img: "https://i.postimg.cc/Y9Zxx2qm/diamond-pickaxe-removebg-preview.png" },
+        { id: "b_game2", title: "Creeper Defender", desc: "Complete a round of Game 2 (Negative).", img: "https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png" },
+        { id: "b_game3", title: "Question Explorer", desc: "Complete a round of Game 3 (Questions & Order).", img: "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" },
+        { id: "b_game4", title: "Diamond Warrior", desc: "Complete the 15-task Mixed Blitz in Game 4.", img: "https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" },
+        { id: "b_game5", title: "Master Blacksmith", desc: "Smelt recipes in Game 5 (Furnace Lab).", img: "https://i.postimg.cc/MGZt6rrL/Minecraft-furnace-removebg-preview.png" },
+        { id: "b_totem", title: "Undying Hero", desc: "Use the Totem of Undying to replay any round!", img: "https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" },
+        { id: "b_champion", title: "Overworld Legend", desc: "Earn 50 total Diamonds or buy a pet in the Shop!", img: "https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" }
+      ]
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT & LOCAL STORAGE
+       ========================================================================= */
+    let appState = {
+      diamonds: 0,
+      totalDiamondsEarned: 0,
+      exploredMaterials: [],
+      unlockedBadges: [],
+      purchasedItems: [],
+      certTheme: "world",
+      heroName: "Master Builder",
+      soundFX: true
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem("mc_present_simple_state_v3");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState.diamonds = parsed.diamonds || 0;
+          appState.totalDiamondsEarned = parsed.totalDiamondsEarned || appState.diamonds;
+          appState.exploredMaterials = parsed.exploredMaterials || [];
+          appState.unlockedBadges = parsed.unlockedBadges || [];
+          appState.purchasedItems = parsed.purchasedItems || [];
+          appState.certTheme = parsed.certTheme || "world";
+          appState.heroName = parsed.heroName || "Master Builder";
+        }
+      } catch (e) {
+        console.warn("Storage load error:", e);
+      }
+      updateHUD();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("mc_present_simple_state_v3", JSON.stringify(appState));
+      } catch (e) {
+        console.warn("Storage save error:", e);
+      }
+      updateHUD();
+    }
+
+    function resetAllSavedProgress() {
+      localStorage.removeItem("mc_present_simple_state_v3");
+      appState = {
+        diamonds: 0,
+        totalDiamondsEarned: 0,
+        exploredMaterials: [],
+        unlockedBadges: [],
+        purchasedItems: [],
+        certTheme: "world",
+        heroName: "Master Builder",
+        soundFX: true
+      };
+      renderMaterialsGrid();
+      renderShopAndBase();
+      renderBadgesGrid();
+      updateHUD();
+    }
+
+    function addDiamonds(amount) {
+      appState.diamonds += amount;
+      appState.totalDiamondsEarned += amount;
+      if (appState.totalDiamondsEarned >= 50) {
+        unlockBadge("b_champion");
+      }
+      saveState();
+    }
+
+    function unlockBadge(badgeId) {
+      if (!appState.unlockedBadges.includes(badgeId)) {
+        appState.unlockedBadges.push(badgeId);
+        playFanfareSound();
+        saveState();
+        renderBadgesGrid();
+      }
+    }
+
+    function updateHUD() {
+      const unlockedCount = appState.unlockedBadges.length;
+      const totalBadges = GAME_DATA.badges.length;
+
+      document.getElementById("hud-diamonds").textContent = appState.diamonds;
+      const shopBal = document.getElementById("shop-diamonds-balance");
+      if (shopBal) shopBal.textContent = appState.diamonds;
+
+      document.getElementById("hud-badges").textContent = `${unlockedCount}/${totalBadges}`;
+      document.getElementById("materials-explored-count").textContent = `${appState.exploredMaterials.length} / 10`;
+      document.getElementById("student-name-input").value = appState.heroName;
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+
+      // Update Mystery Certificate Lock Progress
+      const lockText = document.getElementById("finale-lock-progress-text");
+      const lockBar = document.getElementById("finale-lock-bar");
+      if (lockText && lockBar) {
+        lockText.textContent = `${unlockedCount} / ${totalBadges}`;
+        lockBar.style.width = `${Math.round((unlockedCount / totalBadges) * 100)}%`;
+      }
+
+      const lockedBanner = document.getElementById("finale-locked-banner");
+      const unlockedContent = document.getElementById("finale-unlocked-content");
+      if (unlockedCount >= totalBadges) {
+        lockedBanner.classList.add("hidden");
+        unlockedContent.classList.remove("hidden");
+      } else {
+        lockedBanner.classList.remove("hidden");
+        unlockedContent.classList.add("hidden");
+      }
+    }
+
+    /* =========================================================================
+       3. WEB AUDIO API & WEB SPEECH API
+       ========================================================================= */
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSoundFX() {
+      appState.soundFX = !appState.soundFX;
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.innerHTML = appState.soundFX ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+      if (appState.soundFX) playClickSound();
+    }
+
+    function playTone(freq, duration = 0.12, type = "square", vol = 0.12) {
+      if (!appState.soundFX) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playClickSound() {
+      playTone(440, 0.06, "square", 0.08);
+    }
+
+    function playSuccessSound() {
+      playTone(523.25, 0.1, "triangle", 0.16);
+      setTimeout(() => playTone(659.25, 0.12, "triangle", 0.16), 90);
+      setTimeout(() => playTone(783.99, 0.2, "triangle", 0.18), 180);
+    }
+
+    function playErrorSound() {
+      playTone(190, 0.16, "sawtooth", 0.14);
+      setTimeout(() => playTone(145, 0.22, "sawtooth", 0.14), 140);
+    }
+
+    function playFanfareSound() {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((n, idx) => {
+        setTimeout(() => playTone(n, 0.18, "triangle", 0.18), idx * 100);
+      });
+    }
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const indicator = document.getElementById("speech-indicator");
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      utter.rate = 0.88;
+      utter.pitch = 1.05;
+
+      utter.onstart = () => {
+        indicator.classList.remove("hidden");
+        indicator.classList.add("flex");
+      };
+      utter.onend = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+      utter.onerror = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* =========================================================================
+       4. UTILITY: FISHER-YATES SHUFFLE
+       ========================================================================= */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /* =========================================================================
+       5. SECTION 1: MATERIALS FLIP CARDS
+       ========================================================================= */
+    function renderMaterialsGrid() {
+      const grid = document.getElementById("materials-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.vocabulary.forEach((item) => {
+        const isExplored = appState.exploredMaterials.includes(item.id);
+        const card = document.createElement("div");
+        card.className = "flip-card cursor-pointer";
+        card.innerHTML = `
+          <div class="flip-card-inner" id="flip-${item.id}">
+            <!-- FRONT: English + Image + Audio -->
+            <div class="flip-card-front mc-panel justify-between">
+              <div class="w-full flex justify-between items-center">
+                <span class="pixel-font text-[9px] bg-stone-800 text-lime-400 px-2 py-0.5">${isExplored ? '✓ INSPECTED' : 'MATERIAL'}</span>
+                <button onclick="event.stopPropagation(); speakText('${item.word}. ${item.example}')" class="mc-btn px-2.5 py-1 text-xs" style="min-height:34px;" title="Listen">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+              <img src="${item.img}" alt="${item.word}" class="w-20 h-20 object-contain my-1 drop-shadow-md">
+              <div class="text-center">
+                <h4 class="pixel-font text-sm text-stone-900">${item.word}</h4>
+                <p class="text-[11px] text-stone-700 font-semibold mt-1 leading-tight">"${item.example}"</p>
+              </div>
+              <div class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
+                <i class="fa-solid fa-rotate mr-1"></i> Click to flip card
+              </div>
+            </div>
+
+            <!-- BACK: Ukrainian Translation -->
+            <div class="flip-card-back mc-panel-dark justify-between border-4 border-amber-400">
+              <span class="pixel-font text-[9px] text-amber-300">UKRAINIAN MEANING</span>
+              <img src="${item.img}" alt="${item.word}" class="w-16 h-16 object-contain">
+              <div class="text-center">
+                <div class="text-xs text-stone-400 uppercase font-bold">${item.word}</div>
+                <div class="text-2xl font-extrabold text-amber-300 mt-1">${item.ua}</div>
+              </div>
+              <div class="text-[10px] text-stone-300">
+                <i class="fa-solid fa-rotate mr-1"></i> Click to flip back
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          playClickSound();
+          card.classList.toggle("flipped");
+          if (!appState.exploredMaterials.includes(item.id)) {
+            appState.exploredMaterials.push(item.id);
+            addDiamonds(2);
+            if (appState.exploredMaterials.length >= 10) {
+              unlockBadge("b_materials");
+            }
+            saveState();
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       6. MINI-GAMES ENGINE (GAMES 1, 2, 3, 4)
+       ========================================================================= */
+    let currentGameNum = 1;
+    let activeRoundQuestions = [];
+    let currentQIndex = 0;
+    let currentRoundScore = 0;
+    let questionMistakeMade = false;
+    let questionResolved = false;
+    let scramblePlacedWords = [];
+    let scrambleBankWords = [];
+
+    function selectMiniGame(gameNum) {
+      playClickSound();
+      currentGameNum = gameNum;
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`gbtn-${i}`);
+        if (i === gameNum) {
+          btn.classList.add("mc-btn-green");
+        } else {
+          btn.classList.remove("mc-btn-green");
+        }
+      }
+
+      if (gameNum === 5) {
+        document.getElementById("standard-game-wrapper").classList.add("hidden");
+        document.getElementById("game5-custom-wrapper").classList.remove("hidden");
+        startG5FurnaceLab();
+      } else {
+        document.getElementById("game5-custom-wrapper").classList.add("hidden");
+        document.getElementById("standard-game-wrapper").classList.remove("hidden");
+        startStandardGameRound(gameNum);
+      }
+    }
+
+    function startStandardGameRound(gameNum) {
+      currentQIndex = 0;
+      currentRoundScore = 0;
+
+      const titleEl = document.getElementById("active-game-title");
+      const subEl = document.getElementById("active-game-subtitle");
+      const iconEl = document.getElementById("active-game-icon");
+
+      if (gameNum === 1) {
+        titleEl.textContent = "Game 1: Affirmative Crafter (+)";
+        subEl.textContent = "10 random questions from a 50-question pool! Remember: He/She/It adds -S!";
+        iconEl.src = "https://i.postimg.cc/PJkmwsc9/oak-wood.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game1Pool).slice(0, 10);
+      } else if (gameNum === 2) {
+        titleEl.textContent = "Game 2: Negative Shield (-)";
+        subEl.textContent = "10 random questions from a 50-question pool! Use don't or doesn't + base verb!";
+        iconEl.src = "https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game2Pool).slice(0, 10);
+      } else if (gameNum === 3) {
+        titleEl.textContent = "Game 3: Question & Word-Order Bridge (?)";
+        subEl.textContent = "10 random questions from a 50-question pool! Put words in order or pick Do/Does!";
+        iconEl.src = "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game3Pool).slice(0, 10);
+      } else if (gameNum === 4) {
+        titleEl.textContent = "Game 4: Overworld Mixed Blitz (+ / - / ?)";
+        subEl.textContent = "15 random questions from a 50-question pool! All rules mixed together!";
+        iconEl.src = "https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game4Pool).slice(0, 15);
+      }
+
+      document.getElementById("round-complete-screen").classList.add("hidden");
+      document.getElementById("question-stage").classList.remove("hidden");
+      document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
+
+      renderCurrentStandardQuestion();
+    }
+
+    function renderCurrentStandardQuestion() {
+      questionMistakeMade = false;
+      questionResolved = false;
+
+      const qObj = activeRoundQuestions[currentQIndex];
+      document.getElementById("game-q-num").textContent = currentQIndex + 1;
+      document.getElementById("game-score-val").textContent = currentRoundScore;
+      
+      // Hidden next button initially
+      document.getElementById("game-next-btn").classList.add("hidden");
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+
+      const mobImg = GAME_DATA.assets[qObj.mob] || GAME_DATA.assets.steve;
+      document.getElementById("question-mob-img").src = mobImg;
+
+      const tagEl = document.getElementById("question-mode-tag");
+      if (currentGameNum === 1) {
+        tagEl.textContent = "AFFIRMATIVE (+)";
+        tagEl.className = "inline-block bg-lime-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 2) {
+        tagEl.textContent = "NEGATIVE (-)";
+        tagEl.className = "inline-block bg-red-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 3) {
+        tagEl.textContent = "QUESTION (?)";
+        tagEl.className = "inline-block bg-sky-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else {
+        tagEl.textContent = "MIXED BLITZ";
+        tagEl.className = "inline-block bg-purple-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      }
+
+      const mcContainer = document.getElementById("mc-options-container");
+      const scrambleContainer = document.getElementById("scramble-container");
+
+      if (qObj.type === "scramble") {
+        mcContainer.classList.add("hidden");
+        scrambleContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.prompt;
+        document.getElementById("scramble-submit-btn").disabled = false;
+        document.getElementById("scramble-submit-btn").classList.remove("opacity-50");
+
+        scramblePlacedWords = [];
+        scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+        renderScrambleUI();
+      } else {
+        scrambleContainer.classList.add("hidden");
+        mcContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.q;
+
+        const shuffledOpts = shuffleArray(qObj.options);
+        mcContainer.innerHTML = "";
+        shuffledOpts.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "mc-btn py-3.5 px-4 text-sm sm:text-base font-bold transition-all";
+          btn.textContent = opt;
+          btn.onclick = () => handleMCChoice(opt, btn);
+          mcContainer.appendChild(btn);
+        });
+      }
+    }
+
+    function handleMCChoice(selectedOpt, btnEl) {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+
+      if (selectedOpt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        btnEl.classList.add("mc-btn-green");
+        
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(2);
+        } else {
+          addDiamonds(1); // Partial reward
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+
+        const fullSentence = qObj.q.replace("___", qObj.ans);
+        showFeedbackBar(true, `✅ Correct! "${fullSentence}"`);
+        speakText(fullSentence);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+      } else {
+        playErrorSound();
+        btnEl.classList.add("opacity-40", "pointer-events-none", "bg-red-950", "text-red-400");
+        questionMistakeMade = true;
+        showFeedbackBar(false, `❌ Think again! ${qObj.hint}`);
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function renderScrambleUI() {
+      const slotsEl = document.getElementById("scramble-target-slots");
+      const bankEl = document.getElementById("scramble-word-bank");
+
+      slotsEl.innerHTML = "";
+      if (scramblePlacedWords.length === 0) {
+        slotsEl.innerHTML = `<span class="text-xs text-stone-500 italic">Click word blocks below to place them here...</span>`;
+      } else {
+        scramblePlacedWords.forEach((wObj, idx) => {
+          const b = document.createElement("button");
+          b.className = "mc-btn mc-btn-gold px-3 py-2 text-xs sm:text-sm";
+          b.textContent = wObj.text;
+          b.onclick = () => {
+            if (questionResolved) return;
+            playClickSound();
+            scramblePlacedWords.splice(idx, 1);
+            scrambleBankWords.push(wObj);
+            renderScrambleUI();
+          };
+          slotsEl.appendChild(b);
+        });
+      }
+
+      bankEl.innerHTML = "";
+      scrambleBankWords.forEach((wObj, idx) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn px-3 py-2 text-xs sm:text-sm";
+        b.textContent = wObj.text;
+        b.onclick = () => {
+          if (questionResolved) return;
+          playClickSound();
+          scrambleBankWords.splice(idx, 1);
+          scramblePlacedWords.push(wObj);
+          renderScrambleUI();
+        };
+        bankEl.appendChild(b);
+      });
+    }
+
+    function resetScrambleWords() {
+      if (questionResolved) return;
+      playClickSound();
+      const qObj = activeRoundQuestions[currentQIndex];
+      scramblePlacedWords = [];
+      scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+      renderScrambleUI();
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+    }
+
+    function checkScrambleAnswer() {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+      const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+
+      if (userAttempt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(3);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+        showFeedbackBar(true, `✅ Perfect Word Order! "${qObj.ans}"`);
+        speakText(qObj.ans);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+        document.getElementById("scramble-submit-btn").classList.add("opacity-50");
+      } else {
+        playErrorSound();
+        questionMistakeMade = true;
+        showFeedbackBar(false, `❌ Not quite! Rule: ${qObj.hint}`);
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function showFeedbackBar(isCorrect, message) {
+      const bar = document.getElementById("game-feedback-bar");
+      const msgEl = document.getElementById("game-feedback-msg");
+      bar.classList.remove("hidden");
+      bar.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 ${
+        isCorrect ? "bg-lime-950 border-lime-400 text-lime-200" : "bg-red-950 border-red-400 text-red-200"
+      }`;
+      msgEl.textContent = message;
+    }
+
+    function nextGameQuestion() {
+      playClickSound();
+      currentQIndex++;
+      if (currentQIndex >= activeRoundQuestions.length) {
+        finishStandardRound();
+      } else {
+        renderCurrentStandardQuestion();
+      }
+    }
+
+    function speakCurrentQuestion() {
+      const qObj = activeRoundQuestions[currentQIndex];
+      if (qObj.type === "scramble") {
+         speakText(qObj.prompt);
+      } else {
+         speakText(qObj.q.replace("___", "blank"));
+      }
+    }
+
+    function finishStandardRound() {
+      document.getElementById("question-stage").classList.add("hidden");
+      const endScreen = document.getElementById("round-complete-screen");
+      endScreen.classList.remove("hidden");
+
+      document.getElementById("round-result-summary").textContent = `You scored ${currentRoundScore} / ${activeRoundQuestions.length} in this round!`;
+
+      if (currentGameNum === 1) unlockBadge("b_game1");
+      if (currentGameNum === 2) unlockBadge("b_game2");
+      if (currentGameNum === 3) unlockBadge("b_game3");
+      if (currentGameNum === 4) unlockBadge("b_game4");
+
+      playFanfareSound();
+    }
+
+    function replayCurrentGame() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startStandardGameRound(currentGameNum);
+    }
+
+    /* =========================================================================
+       7. GAME 5: FURNACE LAB
+       ========================================================================= */
+    let g5RoundOrders = [];
+    let g5Index = 0;
+    let g5SelectedInput = null;
+    let g5SelectedFuel = null;
+    let g5SelectedGrammar = null;
+    let g5OrderResolved = false;
+
+    function startG5FurnaceLab() {
+      g5RoundOrders = shuffleArray(GAME_DATA.game5Orders).slice(0, 10);
+      g5Index = 0;
+      document.getElementById("g5-complete-screen").classList.add("hidden");
+      document.getElementById("g5-stage").classList.remove("hidden");
+      renderG5InventoryBar();
+      loadG5Order();
+    }
+
+    function renderG5InventoryBar() {
+      const bar = document.getElementById("g5-inventory-bar");
+      bar.innerHTML = "";
+      GAME_DATA.vocabulary.forEach((mat) => {
+        const btn = document.createElement("button");
+        btn.className = "mc-slot p-2.5 flex items-center justify-center hover:border-amber-300 transition";
+        btn.title = "Select material";
+        btn.innerHTML = `<img src="${mat.img}" alt="Material" class="w-10 h-10 object-contain">`;
+        btn.onclick = () => {
+          if (g5OrderResolved) return;
+          playClickSound();
+          g5SelectedInput = mat;
+          const slot1 = document.getElementById("g5-slot-input");
+          slot1.innerHTML = `<img src="${mat.img}" class="w-12 h-12 object-contain" alt="Selected">`;
+        };
+        bar.appendChild(btn);
+      });
+    }
+
+    function clearG5Slot(slotType) {
+      if (g5OrderResolved) return;
+      if (slotType === "input") {
+        g5SelectedInput = null;
+        document.getElementById("g5-slot-input").innerHTML = `<span class="text-xs text-stone-400">Tap picture below</span>`;
+      }
+    }
+
+    function loadG5Order() {
+      g5OrderResolved = false;
+      g5SelectedInput = null;
+      g5SelectedFuel = null;
+      g5SelectedGrammar = null;
+
+      const order = g5RoundOrders[g5Index];
+      document.getElementById("g5-progress").textContent = `${g5Index + 1} / ${g5RoundOrders.length}`;
+      document.getElementById("g5-order-num").textContent = g5Index + 1;
+      document.getElementById("g5-order-title").textContent = order.title;
+      document.getElementById("g5-order-desc").textContent = order.desc;
+      document.getElementById("g5-requester-img").src = GAME_DATA.assets[order.requester] || GAME_DATA.assets.villager;
+
+      document.getElementById("g5-slot-input").innerHTML = `<span class="text-xs text-stone-400">Tap picture below</span>`;
+      document.getElementById("g5-flame-icon").className = "text-3xl text-stone-600 transition-all";
+      document.getElementById("g5-output-img").src = order.outputImg;
+      document.getElementById("g5-output-img").classList.add("opacity-40");
+      document.getElementById("g5-feedback").classList.add("hidden");
+
+      const fuelChoices = [
+        { id: "coal", img: "https://i.postimg.cc/LX6HpmVB/How-to-make-torches-in-Minecraft-Tutorial-removebg-preview.png" },
+        { id: "lava", img: "https://i.postimg.cc/brjQtcMg/lava-bucket.png" },
+        { id: "wood", img: "https://i.postimg.cc/PJkmwsc9/oak-wood.png" },
+        { id: "dirt", img: "https://i.postimg.cc/Xq0wCShQ/dirt.png" }
+      ];
+      const fuelEl = document.getElementById("g5-fuel-options");
+      fuelEl.innerHTML = "";
+      fuelChoices.forEach((f) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn py-2 px-2 flex items-center justify-center";
+        b.innerHTML = `<img src="${f.img}" class="w-9 h-9 object-contain" alt="Fuel Choice">`;
+        b.onclick = () => {
+          if (g5OrderResolved) return;
+          playClickSound();
+          g5SelectedFuel = f.id;
+          Array.from(fuelEl.children).forEach(c => c.classList.remove("mc-btn-gold"));
+          b.classList.add("mc-btn-gold");
+        };
+        fuelEl.appendChild(b);
+      });
+
+      document.getElementById("g5-grammar-sentence").textContent = order.sentence;
+      const gramEl = document.getElementById("g5-grammar-options");
+      gramEl.innerHTML = "";
+      shuffleArray(order.options).forEach((opt) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn py-2 px-3 text-xs";
+        b.textContent = opt;
+        b.onclick = () => {
+          if (g5OrderResolved) return;
+          playClickSound();
+          g5SelectedGrammar = opt;
+          Array.from(gramEl.children).forEach(c => c.classList.remove("mc-btn-diamond"));
+          b.classList.add("mc-btn-diamond");
+        };
+        gramEl.appendChild(b);
+      });
+    }
+
+    function igniteFurnaceOrder() {
+      if (g5OrderResolved) return;
+      const order = g5RoundOrders[g5Index];
+      const fbBox = document.getElementById("g5-feedback");
+      const fbText = document.getElementById("g5-feedback-text");
+
+      if (!g5SelectedInput || !g5SelectedFuel || !g5SelectedGrammar) {
+        playErrorSound();
+        fbBox.classList.remove("hidden");
+        fbBox.className = "p-3 border-2 bg-amber-950 border-amber-400 text-amber-200 text-xs font-bold flex items-center justify-between";
+        fbText.textContent = "⚠️ Please select 1) Input Material, 2) Fuel, and 3) Grammar Word first!";
+        document.getElementById("g5-next-btn").classList.add("hidden");
+        return;
+      }
+
+      const inputOK = g5SelectedInput.id === order.inputId;
+      const fuelOK = order.validFuels.includes(g5SelectedFuel);
+      const gramOK = g5SelectedGrammar === order.ans;
+
+      if (inputOK && fuelOK && gramOK) {
+        g5OrderResolved = true;
+        playSuccessSound();
+        addDiamonds(4);
+
+        document.getElementById("g5-flame-icon").className = "text-3xl flame-active";
+        document.getElementById("g5-output-img").classList.remove("opacity-40");
+
+        fbBox.classList.remove("hidden");
+        fbBox.className = "p-3 border-2 bg-lime-950 border-lime-400 text-lime-200 text-xs sm:text-sm font-bold flex items-center justify-between";
+        fbText.textContent = `🔥 SMELTING SUCCESS! Crafted ${order.outputName}!`;
+        document.getElementById("g5-next-btn").classList.remove("hidden");
+
+        const fullSentence = order.sentence.replace("___", order.ans);
+        speakText(fullSentence);
+      } else {
+        playErrorSound();
+        let errReason = "Furnace failed! ";
+        if (!inputOK) errReason += "Wrong Input Material! ";
+        if (!fuelOK) errReason += "Dirt cannot burn as fuel! ";
+        if (!gramOK) errReason += `Check the grammar: ${order.hint}`;
+
+        fbBox.classList.remove("hidden");
+        fbBox.className = "p-3 border-2 bg-red-950 border-red-400 text-red-200 text-xs font-bold flex items-center justify-between";
+        fbText.textContent = `❌ ${errReason}`;
+        document.getElementById("g5-next-btn").classList.add("hidden");
+      }
+    }
+
+    function nextG5Order() {
+      playClickSound();
+      g5Index++;
+      if (g5Index >= g5RoundOrders.length) {
+        document.getElementById("g5-stage").classList.add("hidden");
+        document.getElementById("g5-complete-screen").classList.remove("hidden");
+        unlockBadge("b_game5");
+        playFanfareSound();
+      } else {
+        loadG5Order();
+      }
+    }
+
+    function speakG5Order() {
+      const order = g5RoundOrders[g5Index];
+      speakText(`${order.title}. ${order.desc}`);
+    }
+
+    /* =========================================================================
+       8. SHOP & BADGES
+       ========================================================================= */
+    function renderShopAndBase() {
+      const shopGrid = document.getElementById("shop-items-grid");
+      const baseCanvas = document.getElementById("my-base-canvas");
+      if (!shopGrid || !baseCanvas) return;
+
+      baseCanvas.innerHTML = "";
+      if (appState.purchasedItems.length === 0) {
+        baseCanvas.innerHTML = `
+          <div class="text-center text-stone-400 py-6 space-y-2">
+            <div class="text-2xl">🏡</div>
+            <p class="text-xs sm:text-sm font-bold">Your Overworld Base is empty right now!</p>
+            <p class="text-xs text-stone-400">Earn Diamonds in the Mini-Games and buy pets or gear below!</p>
+          </div>
+        `;
+      } else {
+        appState.purchasedItems.forEach((itemId) => {
+          const itemObj = GAME_DATA.shopItems.find(i => i.id === itemId);
+          if (!itemObj) return;
+          const el = document.createElement("div");
+          el.className = "flex flex-col items-center bg-stone-900/85 border-2 border-lime-500 p-3 rounded-lg cursor-pointer hover:scale-105 transition animate-float";
+          el.innerHTML = `
+            <img src="${itemObj.img}" alt="${itemObj.name}" class="w-16 h-16 object-contain">
+            <span class="pixel-font text-[9px] text-amber-300 mt-1.5">${itemObj.name}</span>
+            <span class="text-[10px] text-lime-300 mt-0.5"><i class="fa-solid fa-volume-high"></i> Tap me!</span>
+          `;
+          el.onclick = () => {
+            playClickSound();
+            speakText(itemObj.sentence);
+          };
+          baseCanvas.appendChild(el);
+        });
+      }
+
+      shopGrid.innerHTML = "";
+      GAME_DATA.shopItems.forEach((item) => {
+        const owned = appState.purchasedItems.includes(item.id);
+        const canAfford = appState.diamonds >= item.cost;
+
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 ${
+          owned ? "border-lime-500 bg-stone-800" : "border-stone-600"
+        }`;
+        card.innerHTML = `
+          <div class="w-20 h-20 mc-slot flex items-center justify-center p-2 mb-2">
+            <img src="${item.img}" alt="${item.name}" class="w-16 h-16 object-contain">
+          </div>
+          <div>
+            <h4 class="pixel-font text-xs text-white">${item.name}</h4>
+            <p class="text-[11px] text-stone-300 mt-1 italic">"${item.sentence}"</p>
+          </div>
+          <div class="w-full mt-3 pt-2 border-t border-stone-700">
+            ${
+              owned
+                ? `<button onclick="speakText('${item.sentence.replace(/'/g, "\\'")}')" class="mc-btn mc-btn-green w-full py-1.5 text-[10px] gap-1.5">
+                     <span>✓ IN BASE</span>
+                   </button>`
+                : `<button onclick="buyShopItem('${item.id}')" class="mc-btn ${canAfford ? "mc-btn-gold" : "opacity-50"} w-full py-1.5 text-[10px] flex items-center justify-center gap-1.5">
+                     <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" class="w-4 h-4 object-contain" alt="D">
+                     <span>BUY (${item.cost})</span>
+                   </button>`
+            }
+          </div>
+        `;
+        shopGrid.appendChild(card);
+      });
+    }
+
+    function buyShopItem(itemId) {
+      const item = GAME_DATA.shopItems.find(i => i.id === itemId);
+      if (!item || appState.purchasedItems.includes(itemId)) return;
+
+      if (appState.diamonds < item.cost) {
+        playErrorSound();
+        speakText("You need more diamonds! Play mini-games to earn diamonds.");
+        return;
+      }
+
+      appState.diamonds -= item.cost;
+      appState.purchasedItems.push(itemId);
+      playSuccessSound();
+      unlockBadge("b_champion");
+      saveState();
+      renderShopAndBase();
+      speakText(`${item.name} added to your base! ${item.sentence}`);
+    }
+
+    function renderBadgesGrid() {
+      const grid = document.getElementById("badges-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.badges.forEach((b) => {
+        const unlocked = appState.unlockedBadges.includes(b.id);
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 ${
+          unlocked ? "border-amber-400 bg-stone-800" : "border-stone-700 opacity-60"
+        }`;
+        card.innerHTML = `
+          <div class="w-16 h-16 mc-slot flex items-center justify-center p-2 mb-2 ${unlocked ? "bg-amber-950" : ""}">
+            <img src="${b.img}" alt="${b.title}" class="w-12 h-12 object-contain ${unlocked ? "" : "grayscale"}">
+          </div>
+          <div>
+            <h4 class="pixel-font text-xs ${unlocked ? "text-amber-300" : "text-stone-400"}">${b.title}</h4>
+            <p class="text-xs text-stone-300 mt-1">${b.desc}</p>
+          </div>
+          <div class="mt-3 pixel-font text-[9px] px-2.5 py-1 ${unlocked ? "bg-lime-700 text-white" : "bg-stone-900 text-stone-500"}">
+            ${unlocked ? "✓ UNLOCKED" : "🔒 LOCKED"}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setCertificateTheme(themeKey) {
+      playClickSound();
+      const url = GAME_DATA.certWallpapers[themeKey] || GAME_DATA.certWallpapers.world;
+      appState.certTheme = themeKey;
+      const certEl = document.getElementById("printable-certificate");
+      if (certEl) {
+        certEl.style.backgroundImage = `url('${url}')`;
+      }
+
+      ["world", "kitty", "flower"].forEach((k) => {
+        const btn = document.getElementById(`theme-btn-${k}`);
+        if (btn) {
+          if (k === themeKey) btn.classList.add("mc-btn-green");
+          else btn.classList.remove("mc-btn-green");
+        }
+      });
+      saveState();
+    }
+
+    function updateCertificateName(val) {
+      appState.heroName = val.trim() || "Master Builder";
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+      saveState();
+    }
+
+    function launchVictoryConfetti() {
+      playFanfareSound();
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 90,
+          spread: 75,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function switchSection(secId) {
+      playClickSound();
+      const sections = ["hub", "grammar", "games", "shop", "badges", "finale"];
+      sections.forEach((s) => {
+        const el = document.getElementById(`sec-${s}`);
+        const navBtn = document.getElementById(`nav-${s}`);
+        if (s === secId) {
+          el.classList.remove("hidden");
+          if (navBtn) navBtn.classList.add("mc-btn-green");
+        } else {
+          el.classList.add("hidden");
+          if (navBtn) navBtn.classList.remove("mc-btn-green");
+        }
+      });
+
+      if (secId === "shop") {
+        renderShopAndBase();
+      }
+      if (secId === "finale" && appState.unlockedBadges.length >= GAME_DATA.badges.length) {
+        launchVictoryConfetti();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      renderMaterialsGrid();
+      renderShopAndBase();
+      renderBadgesGrid();
+      setCertificateTheme(appState.certTheme || "world");
+      startStandardGameRound(1);
+
+      const now = new Date();
+      document.getElementById("cert-date-display").textContent = now.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    });
+  </script>
+</body>
+</html>

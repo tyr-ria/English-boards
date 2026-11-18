@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Marcel's Art Studio - Colors</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Fredoka:wght@400;600;700&family=Great+Vibes&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#FF595E',
+                        secondary: '#1982C4',
+                        accent: '#FFCA3A',
+                        success: '#8AC926',
+                        dark: '#2d3748'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f7fafc;
+            color: #2d3748;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            background-image: radial-gradient(#e2e8f0 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        h1, h2, h3, h4, .font-fun {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .font-art-title {
+            font-family: 'Cinzel Decorative', serif;
+        }
+        .font-art-script {
+            font-family: 'Great Vibes', cursive;
+        }
+        .font-art-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .btn-press {
+            transition: all 0.1s ease;
+        }
+        .btn-press:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 0 rgba(0,0,0,0.2) !important;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        @keyframes conveyorMove {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-150%); }
+        }
+        .conveyor-belt {
+            background: repeating-linear-gradient(45deg, #cbd5e0, #cbd5e0 10px, #a0aec0 10px, #a0aec0 20px);
+            border-bottom: 6px solid #718096;
+        }
+
+        .frog-card {
+            background: white;
+            padding: 8px;
+            border-radius: 16px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            border: 3px solid #e2e8f0;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            cursor: pointer;
+        }
+        .frog-card:hover {
+            transform: scale(1.08) translateY(-4px);
+            border-color: #8AC926;
+        }
+        .frog-card:active {
+            transform: scale(0.95);
+        }
+
+        .splash-target {
+            animation: float 4s ease-in-out infinite alternate;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .splash-target:active { transform: scale(0.9); }
+
+        .timer-bar-fill {
+            transition: width 1s linear;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #screen-certificate, #screen-certificate * { visibility: visible; }
+            #screen-certificate {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 0;
+                background: white;
+                display: flex !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- GAME DATA & ASSETS -->
+    <script>
+        const GAME_DATA = {
+            colors: {
+                red: { hex: '#ef4444', name: 'Red', ua: 'Червоний' },
+                blue: { hex: '#3b82f6', name: 'Blue', ua: 'Синій' },
+                yellow: { hex: '#facc15', name: 'Yellow', ua: 'Жовтий' },
+                green: { hex: '#22c55e', name: 'Green', ua: 'Зелений' },
+                orange: { hex: '#f97316', name: 'Orange', ua: 'Помаранчевий' },
+                purple: { hex: '#a855f7', name: 'Purple', ua: 'Фіолетовий' },
+                pink: { hex: '#ec4899', name: 'Pink', ua: 'Рожевий' },
+                brown: { hex: '#92400e', name: 'Brown', ua: 'Коричневий' },
+                black: { hex: '#1f2937', name: 'Black', ua: 'Чорний' },
+                grey: { hex: '#9ca3af', name: 'Grey', ua: 'Сірий' }
+            },
+            assets: {
+                bgHub: 'https://i.postimg.cc/zfbJXqb6/Background-Art-Studio.jpg',
+                seal: 'https://i.postimg.cc/BZyXxwsG/Ado-s-seal-removebg-preview.png',
+                marcelWelcome: 'https://i.postimg.cc/jSqjQ6pr/Gemini-Generated-Image-9are429are429are.jpg',
+                marcelTrans: 'https://i.postimg.cc/jSqjQ6pV/Gemini-Generated-Image-9are429are429are-removebg-preview.png'
+            },
+            frogs: {
+                brown: 'https://i.postimg.cc/52BxHffv/photo-2026-11-16-21-19-12-removebg-preview.png',
+                blue: 'https://i.postimg.cc/jSHsWRR6/photo-2026-11-16-21-19-13-removebg-preview.png',
+                purple: 'https://i.postimg.cc/K8PZKmmr/photo-2026-11-16-21-19-14-removebg-preview.png',
+                pink: 'https://i.postimg.cc/7Z3xCqqN/photo-2026-11-16-21-19-15-removebg-preview.png',
+                red: 'https://i.postimg.cc/4x6JKXXQ/photo-2026-11-16-21-19-17-removebg-preview.png',
+                orange: 'https://i.postimg.cc/13G9gyyW/photo-2026-11-16-21-19-18-removebg-preview.png',
+                green: 'https://i.postimg.cc/Nj6gyQQ4/photo-2026-11-16-21-19-19-2-removebg-preview.png',
+                yellow: 'https://i.postimg.cc/9QdW4ccb/photo-2026-11-16-21-19-19-removebg-preview.png',
+                grey: 'https://i.postimg.cc/Mp7Wczzd/photo-2026-11-16-21-19-20-removebg-preview.png',
+                black: 'https://i.postimg.cc/Nj6gyQQJ/photo-2026-11-16-21-19-21-removebg-preview.png'
+            },
+            conveyorItems: [
+                // Blue
+                { color: 'blue', url: 'https://i.postimg.cc/zvqZyhsx/blue-anchor-removebg-preview.png' },
+                { color: 'blue', url: 'https://i.postimg.cc/MHz2nBCb/blue-backpack-removebg-preview.png' },
+                { color: 'blue', url: 'https://i.postimg.cc/3RXQr1cb/blue-boat-removebg-preview.png' },
+                { color: 'blue', url: 'https://i.postimg.cc/PJdsCDgM/blue-umbrella-removebg-preview.png' },
+                { color: 'blue', url: 'https://i.postimg.cc/C5wTR83m/blue-whale-removebg-preview.png' },
+                // Brown
+                { color: 'brown', url: 'https://i.postimg.cc/TwVv204P/brown-acorn-removebg-preview-(1).png' },
+                { color: 'brown', url: 'https://i.postimg.cc/763rP9W6/brown-coconut-removebg-preview.png' },
+                { color: 'brown', url: 'https://i.postimg.cc/d1PKKp4d/brown-hat-removebg-preview.png' },
+                { color: 'brown', url: 'https://i.postimg.cc/1thZZ2JN/brown-horse-removebg-preview.png' },
+                { color: 'brown', url: 'https://i.postimg.cc/G2Fn3K5t/brown-teddy-removebg-preview.png' },
+                // Green
+                { color: 'green', url: 'https://i.postimg.cc/Rhv5Wtk8/green-broccoli-removebg-preview.png' },
+                { color: 'green', url: 'https://i.postimg.cc/J0RVsXf2/green-cactus-removebg-preview-(1).png' },
+                { color: 'green', url: 'https://i.postimg.cc/7hq85zFB/green-chameleon-removebg-preview.png' },
+                { color: 'green', url: 'https://i.postimg.cc/C5wTR839/green-frog-removebg-preview.png' },
+                { color: 'green', url: 'https://i.postimg.cc/mkTfP9vn/green-leaf-removebg-preview.png' },
+                // Orange
+                { color: 'orange', url: 'https://i.postimg.cc/zvqZyhss/orange-ball-removebg-preview.png' },
+                { color: 'orange', url: 'https://i.postimg.cc/XqnSrFM6/orange-cone-removebg-preview.png' },
+                { color: 'orange', url: 'https://i.postimg.cc/L5mKJfdd/Orange-fox-removebg-preview-(1).png' },
+                { color: 'orange', url: 'https://i.postimg.cc/HnTDr5Gg/Orange-fruit-removebg-preview-(1).png' },
+                { color: 'orange', url: 'https://i.postimg.cc/gjGFxR9m/Orange-Pumpkin-removebg-preview-(1).png' },
+                // Pink
+                { color: 'pink', url: 'https://i.postimg.cc/vBrw8hN1/mink-cake-removebg-preview.png' },
+                { color: 'pink', url: 'https://i.postimg.cc/1tG1RBjD/pink-baloon-removebg-preview.png' },
+                { color: 'pink', url: 'https://i.postimg.cc/G2Fn3K5G/pink-donut-removebg-preview.png' },
+                { color: 'pink', url: 'https://i.postimg.cc/G2Fn3K5Y/pink-flamingo-removebg-preview.png' },
+                { color: 'pink', url: 'https://i.postimg.cc/qRsHBw56/pink-piggie-removebg-preview-(1).png' },
+                // Purple
+                { color: 'purple', url: 'https://i.postimg.cc/nz4fV2P3/purple-crystal-removebg-preview.png' },
+                { color: 'purple', url: 'https://i.postimg.cc/LXtF4DbC/purple-eggplant-removebg-preview.png' },
+                { color: 'purple', url: 'https://i.postimg.cc/TwVv204Q/purple-grapes-removebg-preview.png' },
+                { color: 'purple', url: 'https://i.postimg.cc/zBCYD7cd/Purple-octopus-removebg-preview-(1).png' },
+                { color: 'purple', url: 'https://i.postimg.cc/26QNjGKx/purple-wizard-hat-removebg-preview.png' },
+                // Red
+                { color: 'red', url: 'https://i.postimg.cc/mkTfPMxb/Red-apple-removebg-preview-(1).png' },
+                { color: 'red', url: 'https://i.postimg.cc/T1TMKm8Y/red-car-removebg-preview-(1).png' },
+                { color: 'red', url: 'https://i.postimg.cc/0j9Rzmg5/red-crab-removebg-preview.png' },
+                { color: 'red', url: 'https://i.postimg.cc/gjGFxR9p/red-mailbox-removebg-preview.png' },
+                { color: 'red', url: 'https://i.postimg.cc/hvMFTjgF/red-strawberry-removebg-preview.png' },
+                // Yellow
+                { color: 'yellow', url: 'https://i.postimg.cc/1XMxwtP5/Yellow-Banana-removebg-preview-(1).png' },
+                { color: 'yellow', url: 'https://i.postimg.cc/wMFKLvH6/Yellow-Cheese-removebg-preview-(1).png' },
+                { color: 'yellow', url: 'https://i.postimg.cc/yxnqcdB8/Yellow-duck-removebg-preview-(1).png' },
+                { color: 'yellow', url: 'https://i.postimg.cc/D05VLZFk/yellow-flower-removebg-preview.png' },
+                { color: 'yellow', url: 'https://i.postimg.cc/brLXkJ8Y/yellow-submarine-removebg-preview.png' }
+            ],
+            paintingStages: [
+                'https://i.postimg.cc/T2K5K5Fn/photo-2026-11-16-21-11-00-removebg-preview.png',
+                'https://i.postimg.cc/W1G2DssY/photo-2026-11-16-21-11-01-removebg-preview.png',
+                'https://i.postimg.cc/L8tHqmm0/photo-2026-11-16-21-11-02-removebg-preview.png',
+                'https://i.postimg.cc/52BxHffR/photo-2026-11-16-21-11-03-removebg-preview.png',
+                'https://i.postimg.cc/Z58T9JJQ/photo-2026-11-16-21-11-04-removebg-preview.png',
+                'https://i.postimg.cc/VNzzn2NB/photo-2026-11-16-21-11-05-removebg-preview.png'
+            ],
+            mixes: [
+                { c1: 'red', c2: 'yellow', target: 'orange' },
+                { c1: 'blue', c2: 'yellow', target: 'green' },
+                { c1: 'red', c2: 'blue', target: 'purple' },
+                { c1: 'red', c2: 'white', target: 'pink' },
+                { c1: 'black', c2: 'white', target: 'grey' },
+                { c1: 'orange', c2: 'blue', target: 'brown' }
+            ]
+        };
+    </script>
+
+    <!-- HEADER -->
+    <header class="bg-white border-b-4 border-gray-200 p-3 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showScreen('hub')">
+                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary shadow-md bg-blue-50">
+                    <img src="https://i.postimg.cc/jSqjQ6pr/Gemini-Generated-Image-9are429are429are.jpg" alt="Mr. Marcel" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold font-fun text-gray-800">Mr. Marcel's Studio</h1>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest bg-gray-100 px-2 py-0.5 rounded">Beginner English</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="bg-yellow-100 border-2 border-yellow-400 text-yellow-800 font-bold px-3 py-1 rounded-xl shadow-inner flex items-center gap-1">
+                    <i class="fa-solid fa-star text-yellow-500"></i> <span id="ui-stars">0</span>
+                </div>
+                <button onclick="showScreen('achievements')" class="btn-press bg-accent hover:bg-yellow-400 text-yellow-900 font-bold px-3 sm:px-4 py-1.5 rounded-xl border-b-4 border-yellow-500 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-palette"></i> <span class="hidden sm:inline">Painting</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 hidden px-6 py-3 rounded-2xl font-bold text-white shadow-xl transition-all font-fun text-lg text-center"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow w-full no-print relative overflow-hidden">
+        
+        <!-- ================= HUB SCREEN ================= -->
+        <section id="screen-hub" class="w-full h-full min-h-[calc(100vh-80px)]" style="background-image: url('https://i.postimg.cc/zfbJXqb6/Background-Art-Studio.jpg'); background-size: cover; background-position: center;">
+            <div class="w-full h-full min-h-[calc(100vh-80px)] bg-white/40 backdrop-blur-[2px] p-4 flex flex-col items-center pt-8 overflow-y-auto pb-12">
+                
+                <div class="bg-white/95 p-4 sm:p-6 rounded-3xl shadow-xl border-4 border-white max-w-4xl w-full text-center mb-8 animate-float">
+                    <h2 class="text-3xl font-bold font-fun text-primary mb-2">Welcome to the Art Studio!</h2>
+                    <p class="text-gray-600 font-bold mb-4">Tap the colors on my palette to hear their names, then choose a game to play!</p>
+                    
+                    <!-- Interactive Vector Palette -->
+                    <div class="relative w-full max-w-2xl mx-auto aspect-[4/3] drop-shadow-2xl flex items-center justify-center">
+                        <svg viewBox="0 0 600 440" class="w-full h-full drop-shadow-lg">
+                            <!-- Wooden Palette Shape -->
+                            <path d="M 300,25 C 470,25 570,130 570,235 C 570,355 445,420 295,420 C 160,420 35,345 35,230 C 35,115 150,25 300,25 Z" fill="#d49651" stroke="#8b5a2b" stroke-width="10"/>
+                            <!-- Thumb Hole -->
+                            <ellipse cx="445" cy="275" rx="40" ry="52" transform="rotate(-15 445 275)" fill="#f7fafc" stroke="#8b5a2b" stroke-width="7"/>
+                            <!-- Inner Wood Grain Highlights -->
+                            <path d="M 140,95 Q 300,45 460,105" fill="none" stroke="#b87d39" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+                            <path d="M 90,220 Q 240,160 375,230" fill="none" stroke="#b87d39" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+                        </svg>
+
+                        <!-- 11 Color Spots Arranged Naturally Along the Rim of the Palette -->
+                        <!-- Top Row -->
+                        <div onclick="speak('Red')" class="absolute w-[13%] aspect-square top-[15%] left-[21%] rounded-full bg-red-500 cursor-pointer flex items-center justify-center font-bold text-white text-sm sm:text-base shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Red</div>
+                        
+                        <div onclick="speak('Blue')" class="absolute w-[13%] aspect-square top-[9%] left-[37%] rounded-full bg-blue-500 cursor-pointer flex items-center justify-center font-bold text-white text-sm sm:text-base shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Blue</div>
+                        
+                        <div onclick="speak('Yellow')" class="absolute w-[13%] aspect-square top-[11%] left-[54%] rounded-full bg-yellow-400 cursor-pointer flex items-center justify-center font-bold text-gray-900 text-sm sm:text-base shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">Yellow</div>
+                        
+                        <div onclick="speak('Green')" class="absolute w-[13%] aspect-square top-[21%] left-[70%] rounded-full bg-green-500 cursor-pointer flex items-center justify-center font-bold text-white text-sm sm:text-base shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Green</div>
+
+                        <!-- Right / Bottom Rim -->
+                        <div onclick="speak('Orange')" class="absolute w-[13%] aspect-square top-[39%] left-[79%] rounded-full bg-orange-500 cursor-pointer flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Orange</div>
+                        
+                        <div onclick="speak('Purple')" class="absolute w-[13%] aspect-square top-[74%] left-[57%] rounded-full bg-purple-500 cursor-pointer flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Purple</div>
+                        
+                        <div onclick="speak('Pink')" class="absolute w-[13%] aspect-square top-[76%] left-[40%] rounded-full bg-pink-400 cursor-pointer flex items-center justify-center font-bold text-white text-sm sm:text-base shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Pink</div>
+
+                        <!-- Left Rim -->
+                        <div onclick="speak('Brown')" class="absolute w-[13%] aspect-square top-[70%] left-[23%] rounded-full bg-amber-800 cursor-pointer flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Brown</div>
+                        
+                        <div onclick="speak('Black')" class="absolute w-[13%] aspect-square top-[53%] left-[11%] rounded-full bg-gray-900 cursor-pointer flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Black</div>
+                        
+                        <div onclick="speak('White')" class="absolute w-[13%] aspect-square top-[33%] left-[11%] rounded-full bg-white cursor-pointer flex items-center justify-center font-bold text-gray-900 text-xs sm:text-sm shadow-md border-2 border-gray-300 transition hover:scale-110" style="text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">White</div>
+
+                        <!-- Center Spot -->
+                        <div onclick="speak('Grey')" class="absolute w-[13%] aspect-square top-[43%] left-[36%] rounded-full bg-gray-400 cursor-pointer flex items-center justify-center font-bold text-gray-900 text-sm sm:text-base shadow-md border-2 border-white transition hover:scale-110" style="text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">Grey</div>
+                    </div>
+                </div>
+
+                <!-- Games Menu (5 Mini-games) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl w-full">
+                    <button onclick="startGame('conveyor')" class="btn-press bg-white p-4 rounded-3xl border-4 border-blue-400 shadow-md flex flex-col items-center gap-2 hover:bg-blue-50">
+                        <div class="text-4xl">📦</div>
+                        <h3 class="font-bold font-fun text-xl text-blue-900">1. Color Conveyor</h3>
+                        <p class="text-xs text-gray-500 font-bold">Sort 10 items by color!</p>
+                    </button>
+                    <button onclick="startGame('frogs')" class="btn-press bg-white p-4 rounded-3xl border-4 border-green-500 shadow-md flex flex-col items-center gap-2 hover:bg-green-50">
+                        <div class="text-4xl">🐸</div>
+                        <h3 class="font-bold font-fun text-xl text-green-900">2. Frog Invasion</h3>
+                        <p class="text-xs text-gray-500 font-bold">Catch the right colored frog!</p>
+                    </button>
+                    <button onclick="startGame('mixing')" class="btn-press bg-white p-4 rounded-3xl border-4 border-purple-400 shadow-md flex flex-col items-center gap-2 hover:bg-purple-50">
+                        <div class="text-4xl">🧪</div>
+                        <h3 class="font-bold font-fun text-xl text-purple-900">3. Magic Mixing</h3>
+                        <p class="text-xs text-gray-500 font-bold">Mix colors together!</p>
+                    </button>
+                    <button onclick="startGame('shooter')" class="btn-press bg-white p-4 rounded-3xl border-4 border-pink-400 shadow-md flex flex-col items-center gap-2 hover:bg-pink-50">
+                        <div class="text-4xl">🎯</div>
+                        <h3 class="font-bold font-fun text-xl text-pink-900">4. Splash Shooter</h3>
+                        <p class="text-xs text-gray-500 font-bold">Listen and pop splashes!</p>
+                    </button>
+                    <button onclick="startGame('dash')" class="btn-press bg-white p-4 rounded-3xl border-4 border-yellow-500 shadow-md flex flex-col items-center gap-2 hover:bg-yellow-50">
+                        <div class="text-4xl">⏱️</div>
+                        <h3 class="font-bold font-fun text-xl text-yellow-900">5. 45s Color Dash</h3>
+                        <p class="text-xs text-gray-500 font-bold">Fast color clicking!</p>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= GAME CONTAINER ================= -->
+        <section id="screen-game" class="hidden w-full h-full min-h-[calc(100vh-80px)] bg-gray-100 flex flex-col relative">
+            <div class="p-3 bg-white border-b border-gray-200 flex justify-between items-center z-20 shadow-sm">
+                <button onclick="showScreen('hub')" class="btn-press text-gray-500 hover:text-gray-800 font-bold flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-lg">
+                    <i class="fa-solid fa-arrow-left"></i> Hub
+                </button>
+                <div class="font-fun font-bold text-lg text-primary" id="game-title">Game Title</div>
+                <div class="w-10"></div>
+            </div>
+            
+            <div id="game-area" class="flex-grow relative overflow-hidden flex flex-col items-center justify-center w-full">
+                <!-- Dynamic Game Content injected here -->
+            </div>
+
+            <div id="game-over-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-30 hidden flex flex-col items-center justify-center p-6 text-center">
+                <div class="text-6xl mb-4 animate-bounce">🏆</div>
+                <h2 class="text-4xl font-bold font-fun text-primary mb-2">Well Done!</h2>
+                <p class="text-xl text-gray-600 font-bold mb-6">You finished the game and earned stars!</p>
+                <div class="flex gap-4">
+                    <button onclick="showScreen('hub')" class="btn-press bg-gray-200 text-gray-800 px-6 py-3 rounded-xl font-bold text-xl border-b-4 border-gray-300">Hub</button>
+                    <button id="btn-play-again" class="btn-press bg-success text-white px-6 py-3 rounded-xl font-bold text-xl border-b-4 border-green-700">Play Again</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ACHIEVEMENTS SCREEN ================= -->
+        <section id="screen-achievements" class="hidden w-full h-full min-h-[calc(100vh-80px)] bg-amber-50 p-4 sm:p-8 overflow-y-auto">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <button onclick="showScreen('hub')" class="btn-press bg-white text-gray-700 font-bold px-4 py-2 rounded-xl shadow border-2 border-gray-200">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <h2 class="text-3xl font-bold font-fun text-amber-900">Your Masterpiece</h2>
+                    <div class="w-20"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-amber-200 text-center relative flex flex-col items-center">
+                    <p class="text-gray-600 font-bold mb-4">Play games to unlock parts of the painting. Unlock all 5 to get your Certificate!</p>
+                    
+                    <!-- Painting (439 x 568 inside 480 x 640 frame, responsive on mobile) -->
+                    <div class="relative mx-auto flex items-center justify-center w-full max-w-[480px] aspect-[3/4] bg-white">
+                        <img id="painting-image" src="" alt="Painting" class="z-0 transition-opacity duration-1000 rounded-sm w-[91.5%] h-[88.75%] object-fill">
+                    </div>
+
+                    <div class="mt-6 w-full max-w-md">
+                        <div class="flex justify-center gap-2 mb-2 font-bold text-amber-700">
+                            Badges: <span id="badge-progress-text">0/5</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div id="badge-progress-bar" class="bg-accent h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div id="cert-unlock-box" class="hidden mt-8 bg-gradient-to-r from-yellow-100 to-amber-100 p-6 rounded-2xl border-2 border-yellow-400 animate-pulse">
+                        <div class="text-4xl mb-2">📜✨</div>
+                        <h3 class="text-2xl font-bold font-fun text-amber-900 mb-2">Masterpiece Complete!</h3>
+                        <button onclick="showScreen('certificate')" class="btn-press bg-primary text-white font-bold text-xl px-8 py-3 rounded-xl border-b-4 border-red-700 shadow-md">
+                            Get Certificate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= CERTIFICATE SCREEN (Printable) ================= -->
+    <section id="screen-certificate" class="hidden min-h-screen bg-gray-200 p-4 flex items-center justify-center relative z-50">
+        <div class="w-full max-w-4xl relative">
+            <div class="mb-4 flex justify-between no-print absolute -top-14 left-0 w-full">
+                <button onclick="showScreen('achievements')" class="bg-white text-gray-700 font-bold px-4 py-2 rounded-xl shadow border-2 border-gray-300">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+                <button onclick="window.print()" class="bg-blue-600 text-white font-bold px-6 py-2 rounded-xl shadow border-b-4 border-blue-800 flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Print PDF
+                </button>
+            </div>
+
+            <!-- Certificate Card with Custom Background & Semi-Transparent White Overlay -->
+            <div class="border-[14px] border-double border-amber-500 rounded-3xl shadow-2xl text-center relative overflow-hidden bg-cover bg-center" style="background-image: url('https://i.postimg.cc/dV73HbR9/Gemini-Generated-Image-44drgh44drgh44dr.jpg');">
+                <!-- Semi-transparent white layer between background and text -->
+                <div class="bg-white/80 backdrop-blur-[2px] p-8 sm:p-12 w-full h-full relative">
+                    <img src="https://i.postimg.cc/jSqjQ6pV/Gemini-Generated-Image-9are429are429are-removebg-preview.png" alt="Marcel" class="absolute -bottom-8 -left-8 w-44 opacity-25 pointer-events-none">
+                    
+                    <h1 class="text-4xl sm:text-6xl font-black text-amber-800 mb-1 tracking-wider font-art-title uppercase drop-shadow-sm">Certificate</h1>
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-6 tracking-[0.25em] font-art-serif uppercase">of Artistic Color Mastery</h2>
+                    
+                    <p class="text-xl sm:text-2xl text-gray-600 mb-2 font-art-serif italic">This diploma is proudly presented to</p>
+                    
+                    <input type="text" value="Super Artist" class="text-center text-5xl sm:text-6xl text-rose-700 border-b-2 border-amber-600/60 outline-none bg-transparent mb-6 pb-1 w-full max-w-lg font-art-script print:border-none print:appearance-none">
+                    
+                    <p class="text-lg sm:text-xl text-gray-800 mb-10 max-w-2xl mx-auto font-art-serif font-semibold leading-relaxed">
+                        For demonstrating extraordinary talent in Mr. Marcel's Art Studio, mastering all English colors, and bringing the studio masterpiece to life!
+                    </p>
+                    
+                    <div class="flex justify-between items-end mt-12 px-4 sm:px-12">
+                        <div class="text-center">
+                            <div class="w-36 border-b-2 border-gray-800 mb-1 pb-1 text-lg font-bold text-gray-800 font-art-serif" id="cert-date"></div>
+                            <p class="text-xs font-bold text-gray-600 uppercase tracking-widest">Date</p>
+                        </div>
+                        
+                        <div class="relative w-32 h-32 translate-y-4">
+                            <img src="https://i.postimg.cc/BZyXxwsG/Ado-s-seal-removebg-preview.png" alt="Seal" class="w-full h-full object-contain drop-shadow-lg -rotate-12">
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-36 border-b-2 border-gray-800 mb-1 pb-1 text-3xl text-amber-800 font-art-script">Mr. Marcel</div>
+                            <p class="text-xs font-bold text-gray-600 uppercase tracking-widest">Master Artist</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        let STATE = {
+            stars: parseInt(localStorage.getItem('mrMarcelStars') || '0'),
+            badges: JSON.parse(localStorage.getItem('mrMarcelBadges') || '[]'),
+            currentGame: null,
+            gameActive: false,
+            timer: null
+        };
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playTone(freq, type, duration) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+        function playSuccess() {
+            playTone(600, 'triangle', 0.1);
+            setTimeout(() => playTone(800, 'triangle', 0.2), 100);
+        }
+        function playError() { playTone(300, 'sawtooth', 0.2); }
+        function playPop() { playTone(400, 'sine', 0.05); }
+
+        function speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'en-US';
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-2xl font-bold text-white shadow-xl transition-all font-fun text-lg text-center ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2000);
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function addStar() {
+            STATE.stars++;
+            localStorage.setItem('mrMarcelStars', STATE.stars);
+            document.getElementById('ui-stars').innerText = STATE.stars;
+        }
+
+        function unlockBadge(gameId) {
+            if (!STATE.badges.includes(gameId)) {
+                STATE.badges.push(gameId);
+                localStorage.setItem('mrMarcelBadges', JSON.stringify(STATE.badges));
+            }
+        }
+
+        function showScreen(id) {
+            ['hub', 'game', 'achievements', 'certificate'].forEach(s => {
+                document.getElementById(`screen-${s}`).classList.add('hidden');
+            });
+            document.getElementById(`screen-${id}`).classList.remove('hidden');
+            if(id === 'achievements') updateAchievements();
+            if(id === 'certificate') {
+                document.getElementById('cert-date').innerText = new Date().toLocaleDateString();
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            }
+            STATE.gameActive = false;
+            if(STATE.timer) clearInterval(STATE.timer);
+        }
+
+        document.getElementById('ui-stars').innerText = STATE.stars;
+        document.getElementById('painting-image').src = GAME_DATA.paintingStages[0];
+
+        /* ================= GAMES ================= */
+        function startGame(gameId) {
+            STATE.currentGame = gameId;
+            document.getElementById('game-over-overlay').classList.add('hidden');
+            document.getElementById('btn-play-again').onclick = () => startGame(gameId);
+            
+            const titles = {
+                'conveyor': 'Color Conveyor (10 Questions)',
+                'frogs': 'Frog Invasion (Catch 6 Frogs)',
+                'mixing': 'Magic Mixing (3 Questions)',
+                'shooter': 'Splash Shooter',
+                'dash': '45s Color Dash'
+            };
+            document.getElementById('game-title').innerText = titles[gameId];
+            showScreen('game');
+
+            const area = document.getElementById('game-area');
+            area.innerHTML = '';
+            STATE.gameActive = true;
+
+            if (gameId === 'conveyor') initConveyor(area);
+            if (gameId === 'frogs') initFrogsGame(area);
+            if (gameId === 'mixing') initMixing(area);
+            if (gameId === 'shooter') initShooter(area);
+            if (gameId === 'dash') initDash(area);
+        }
+
+        function gameOver() {
+            STATE.gameActive = false;
+            playSuccess();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('game-over-overlay').classList.remove('hidden');
+            unlockBadge(STATE.currentGame);
+        }
+
+        /* ----- Game 1: Conveyor (10 questions, 8 colors, enlarged amongus asset) ----- */
+        /* ----- Game 1: Conveyor (10 questions, 8 colors) ----- */
+        let convScore = 0;
+        let convCurrentItem = null;
+
+        function initConveyor(area) {
+            convScore = 0;
+            area.innerHTML = `
+                <div class="w-full flex-grow flex flex-col justify-between py-6">
+                    <div class="text-center">
+                        <span class="inline-block bg-white px-5 py-1.5 rounded-full shadow-sm border-2 border-blue-200 font-bold text-xl text-blue-900" id="conv-score">Sorted: 0/10</span>
+                    </div>
+                    
+                    <div class="w-full h-56 relative overflow-x-clip overflow-y-visible flex items-end my-4">
+                        <div class="conveyor-belt w-full h-12 absolute bottom-0 left-0 z-0"></div>
+                        <div id="conv-item-container" class="absolute bottom-8 w-40 h-40 z-10 transition-transform flex items-end justify-center drop-shadow-lg" style="left: -140px;"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 px-4 w-full max-w-3xl mx-auto" id="conv-buttons"></div>
+                </div>
+            `;
+
+            const btnContainer = document.getElementById('conv-buttons');
+            const colorsToUse = ['blue', 'brown', 'green', 'orange', 'pink', 'purple', 'red', 'yellow'];
+            colorsToUse.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-press h-14 rounded-xl shadow-md border-b-4 border-gray-300 font-bold bg-white text-lg';
+                btn.style.color = GAME_DATA.colors[c].hex;
+                btn.textContent = GAME_DATA.colors[c].name;
+                btn.onclick = () => checkConveyor(c);
+                btnContainer.appendChild(btn);
+            });
+
+            nextConveyorItem();
+        }
+
+        function nextConveyorItem() {
+            if(!STATE.gameActive) return;
+            if(convScore >= 10) return gameOver();
+
+            const randomItem = GAME_DATA.conveyorItems[Math.floor(Math.random() * GAME_DATA.conveyorItems.length)];
+            convCurrentItem = randomItem;
+
+            const container = document.getElementById('conv-item-container');
+            container.innerHTML = `<img src="${randomItem.url}" class="max-w-full max-h-full object-contain object-bottom">`;
+            
+            container.style.transition = 'left 1s ease-out';
+            container.style.left = '50%';
+            container.style.transform = 'translateX(-50%)';
+            speak("What color is this?");
+        }
+
+        function checkConveyor(colorClicked) {
+            if(!convCurrentItem) return;
+            if(colorClicked === convCurrentItem.color) {
+                playSuccess();
+                showToast(GAME_DATA.colors[colorClicked].name + '!', 'success');
+                addStar();
+                convScore++;
+                document.getElementById('conv-score').innerText = `Sorted: ${convScore}/10`;
+                
+                const container = document.getElementById('conv-item-container');
+                container.style.transition = 'left 0.5s ease-in';
+                container.style.left = '120%';
+                
+                convCurrentItem = null;
+                setTimeout(nextConveyorItem, 600);
+            } else {
+                playError();
+                showToast('Try again!', 'error');
+            }
+        }
+
+        /* ----- Game 2: Frog Invasion (All 10 Frogs in Sunlit Studio without overlapping) ----- */
+        let frogScore = 0;
+        let frogTargetColor = '';
+        let frogRoundLocked = false;
+        
+        function initFrogsGame(area) {
+            frogScore = 0;
+            area.innerHTML = `
+                <div class="w-full max-w-5xl flex flex-col items-center justify-center p-2 sm:p-4">
+                    <div class="text-center font-bold text-lg text-gray-600 mb-2" id="frog-score-text">Caught: 0/6</div>
+                    
+                    <div class="bg-white border-4 border-green-500 rounded-2xl px-6 py-2.5 mb-4 shadow-md flex items-center gap-4">
+                        <button onclick="speak('Catch the ' + GAME_DATA.colors[frogTargetColor].name + ' frog!')" class="btn-press bg-green-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl shadow">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <div class="text-2xl sm:text-3xl font-black font-fun text-gray-800" id="frog-prompt">Catch the GREEN frog!</div>
+                    </div>
+
+                    <div class="w-full rounded-3xl overflow-hidden border-4 border-amber-300 shadow-xl p-4 sm:p-6 bg-cover bg-center" style="background-image: url('https://i.postimg.cc/65XhNhbd/Download-Artist-s-sunlit-studio-Image-Art-Studio-Sunlight-Stock-Cake.jpg');">
+                        <div id="frogs-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 w-full place-items-center bg-black/20 backdrop-blur-[1px] p-3 sm:p-4 rounded-2xl">
+                            <!-- All 10 frogs injected here in non-overlapping grid cells -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            nextFrogRound();
+        }
+
+        function nextFrogRound() {
+            if(!STATE.gameActive) return;
+            if(frogScore >= 6) return gameOver();
+
+            frogRoundLocked = false;
+            const allFrogColors = Object.keys(GAME_DATA.frogs);
+            const shuffledFrogs = shuffle(allFrogColors);
+            frogTargetColor = shuffledFrogs[Math.floor(Math.random() * shuffledFrogs.length)];
+
+            const colorName = GAME_DATA.colors[frogTargetColor].name;
+            document.getElementById('frog-prompt').innerHTML = `Catch the <span class="text-green-700 underline decoration-wavy decoration-green-400">${colorName.toUpperCase()}</span> frog!`;
+            speak(`Catch the ${colorName} frog!`);
+
+            const grid = document.getElementById('frogs-grid');
+            grid.innerHTML = '';
+
+            shuffledFrogs.forEach(color => {
+                const card = document.createElement('div');
+                card.className = 'frog-card w-full max-w-[140px] flex flex-col items-center justify-center aspect-square p-2 bg-white/90 hover:bg-white';
+                card.innerHTML = `<img src="${GAME_DATA.frogs[color]}" alt="${color} frog" class="w-full h-full object-contain pointer-events-none drop-shadow">`;
+                
+                card.onclick = () => checkFrogChoice(color, card);
+                grid.appendChild(card);
+            });
+        }
+
+        function checkFrogChoice(selectedColor, cardElement) {
+            if(frogRoundLocked || !STATE.gameActive) return;
+            if(selectedColor === frogTargetColor) {
+                frogRoundLocked = true;
+                playSuccess();
+                addStar();
+                frogScore++;
+                document.getElementById('frog-score-text').innerText = `Caught: ${frogScore}/6`;
+                
+                cardElement.style.borderColor = '#22c55e';
+                cardElement.style.backgroundColor = '#dcfce7';
+                showToast(`Caught the ${GAME_DATA.colors[selectedColor].name} frog! 🐸`, 'success');
+                
+                const cards = document.querySelectorAll('.frog-card');
+                cards.forEach(c => c.style.pointerEvents = 'none');
+
+                setTimeout(nextFrogRound, 600);
+            } else {
+                playError();
+                cardElement.style.borderColor = '#ef4444';
+                cardElement.style.backgroundColor = '#fee2e2';
+                showToast(`Oops! That's the ${GAME_DATA.colors[selectedColor].name} frog!`, 'error');
+                setTimeout(() => {
+                    cardElement.style.borderColor = '#e2e8f0';
+                    cardElement.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                }, 500);
+            }
+        }
+
+        /* ----- Game 3: Magic Mixing (3 Questions) ----- */
+        let mixScore = 0;
+        let currentMix = null;
+        let mixQueue = [];
+        let mixRoundLocked = false;
+
+        function speakCurrentMix() {
+            if (!currentMix) return;
+            const name1 = currentMix.c1 === 'white' ? 'White' : GAME_DATA.colors[currentMix.c1].name;
+            const name2 = currentMix.c2 === 'white' ? 'White' : GAME_DATA.colors[currentMix.c2].name;
+            speak(`${name1} and ${name2} makes... what?`);
+        }
+
+        function initMixing(area) {
+            mixScore = 0;
+            mixQueue = shuffle(GAME_DATA.mixes).slice(0, 3);
+            area.innerHTML = `
+                <div class="w-full max-w-2xl flex flex-col items-center justify-center p-4">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="text-xl font-bold text-gray-500 font-fun" id="mix-score">Mixes: 0/3</div>
+                        <button onclick="speakCurrentMix()" class="btn-press bg-purple-500 hover:bg-purple-600 text-white font-bold px-4 py-1.5 rounded-xl shadow border-b-4 border-purple-700 flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Listen</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-center gap-4 sm:gap-8 mb-12">
+                        <div class="w-20 h-20 rounded-full shadow-inner border-4 border-gray-200" id="mix-c1"></div>
+                        <div class="text-4xl font-black text-gray-400">+</div>
+                        <div class="w-20 h-20 rounded-full shadow-inner border-4 border-gray-200" id="mix-c2"></div>
+                        <div class="text-4xl font-black text-gray-400">=</div>
+                        <div class="w-24 h-24 rounded-3xl border-4 border-dashed border-gray-400 flex items-center justify-center text-4xl text-gray-300" id="mix-target">?</div>
+                    </div>
+
+                    <p class="font-bold text-gray-600 mb-4">Choose the result:</p>
+                    <div class="flex gap-6" id="mix-options"></div>
+                </div>
+            `;
+            nextMix();
+        }
+
+        function nextMix() {
+            if(!STATE.gameActive) return;
+            if(mixScore >= 3) return gameOver();
+
+            mixRoundLocked = false;
+            currentMix = mixQueue[mixScore];
+            
+            const hex1 = currentMix.c1 === 'white' ? '#ffffff' : GAME_DATA.colors[currentMix.c1].hex;
+            const hex2 = currentMix.c2 === 'white' ? '#ffffff' : GAME_DATA.colors[currentMix.c2].hex;
+
+            document.getElementById('mix-c1').style.backgroundColor = hex1;
+            document.getElementById('mix-c2').style.backgroundColor = hex2;
+            document.getElementById('mix-target').style.backgroundColor = 'transparent';
+            document.getElementById('mix-target').innerText = '?';
+
+            speakCurrentMix();
+
+            let options = [currentMix.target];
+            const allColors = Object.keys(GAME_DATA.colors);
+            while(options.length < 3) {
+                const c = allColors[Math.floor(Math.random() * allColors.length)];
+                if(!options.includes(c) && c !== currentMix.c1 && c !== currentMix.c2) {
+                    options.push(c);
+                }
+            }
+            options = shuffle(options);
+
+            const optContainer = document.getElementById('mix-options');
+            optContainer.innerHTML = '';
+            options.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-press w-20 h-20 rounded-2xl shadow-md border-4 border-white';
+                btn.style.backgroundColor = GAME_DATA.colors[c].hex;
+                btn.onclick = () => checkMix(c);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function checkMix(color) {
+            if(mixRoundLocked || !STATE.gameActive || !currentMix) return;
+            if(color === currentMix.target) {
+                mixRoundLocked = true;
+                playSuccess();
+                addStar();
+                mixScore++;
+                document.getElementById('mix-score').innerText = `Mixes: ${mixScore}/3`;
+                document.getElementById('mix-target').innerText = '';
+                document.getElementById('mix-target').style.backgroundColor = GAME_DATA.colors[color].hex;
+                
+                showToast(GAME_DATA.colors[color].name + '!', 'success');
+                speak(GAME_DATA.colors[color].name);
+                
+                setTimeout(nextMix, 1000);
+            } else {
+                playError();
+                showToast('Try again!', 'error');
+            }
+        }
+
+        /* ----- Game 4: Splash Shooter (Audio-only prompt + Listen Again button) ----- */
+        let shootScore = 0;
+        let shootTarget = '';
+        let shootRoundLocked = false;
+
+        function initShooter(area) {
+            shootScore = 0;
+            area.innerHTML = `
+                <div class="w-full flex flex-col items-center pt-4 z-20">
+                    <div class="text-sm font-bold text-gray-500 mb-2" id="shoot-score-text">Splashes popped: 0/5</div>
+                    <button onclick="speak(GAME_DATA.colors[shootTarget].name)" class="btn-press bg-pink-500 hover:bg-pink-600 text-white font-bold px-6 py-3 rounded-2xl shadow-lg border-b-4 border-pink-700 flex items-center gap-3 text-xl">
+                        <i class="fa-solid fa-volume-high text-2xl animate-pulse"></i>
+                        <span>Listen Again</span>
+                    </button>
+                </div>
+                <div id="shoot-canvas" class="w-full flex-grow relative grid grid-cols-2 sm:grid-cols-4 gap-4 p-8 items-center justify-items-center"></div>
+            `;
+            nextShootRound();
+        }
+
+        function nextShootRound() {
+            if(!STATE.gameActive) return;
+            if(shootScore >= 5) return gameOver();
+
+            shootRoundLocked = false;
+            document.getElementById('shoot-score-text').innerText = `Splashes popped: ${shootScore}/5`;
+
+            const canvas = document.getElementById('shoot-canvas');
+            canvas.innerHTML = '';
+
+            const colors = Object.keys(GAME_DATA.colors);
+            const selected = shuffle(colors).slice(0, 4);
+            shootTarget = selected[0];
+            
+            speak(GAME_DATA.colors[shootTarget].name);
+
+            shuffle(selected).forEach(color => {
+                const splat = document.createElement('div');
+                splat.className = 'splash-target w-28 h-28 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] shadow-lg border-2 border-white/50 flex items-center justify-center';
+                splat.style.backgroundColor = GAME_DATA.colors[color].hex;
+
+                splat.onclick = () => checkShoot(color, splat);
+                canvas.appendChild(splat);
+            });
+        }
+
+        function checkShoot(color, element) {
+            if (shootRoundLocked || !STATE.gameActive || element.dataset.popped) return;
+            shootRoundLocked = true;
+            element.dataset.popped = 'true';
+
+            element.innerHTML = '💥';
+            element.style.backgroundColor = 'transparent';
+            element.style.boxShadow = 'none';
+            element.style.border = 'none';
+            element.style.fontSize = '3rem';
+
+            if(color === shootTarget) {
+                playSuccess();
+                addStar();
+                shootScore++;
+                document.getElementById('shoot-score-text').innerText = `Splashes popped: ${shootScore}/5`;
+                setTimeout(nextShootRound, 500);
+            } else {
+                playError();
+                shootScore = 0;
+                document.getElementById('shoot-score-text').innerText = `Splashes popped: 0/5`;
+                showToast('Oops! Score reset to 0!', 'error');
+                setTimeout(nextShootRound, 700);
+            }
+        }
+
+        /* ----- Game 5: 45s Color Dash ----- */
+        let dashScore = 0;
+        let dashTarget = '';
+        let timeLeft = 45;
+
+        function initDash(area) {
+            dashScore = 0;
+            timeLeft = 45;
+            area.innerHTML = `
+                <div class="w-full flex-grow flex flex-col items-center p-4">
+                    <div class="w-full max-w-md bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
+                        <div id="dash-timer-bar" class="timer-bar-fill h-4 rounded-full bg-red-500" style="width: 100%"></div>
+                    </div>
+                    <div class="flex justify-between w-full max-w-md px-4 font-bold text-gray-600 mb-6">
+                        <span id="dash-time-text">45s</span>
+                        <span id="dash-score-text">Score: 0/5</span>
+                    </div>
+
+                    <div class="text-3xl font-black font-fun mb-8" id="dash-prompt">Find Blue</div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full max-w-md" id="dash-grid"></div>
+                </div>
+            `;
+            
+            STATE.timer = setInterval(() => {
+                if(!STATE.gameActive) return;
+                timeLeft--;
+                document.getElementById('dash-time-text').innerText = `${timeLeft}s`;
+                document.getElementById('dash-timer-bar').style.width = `${(timeLeft/45)*100}%`;
+                
+                if(timeLeft <= 0) {
+                    clearInterval(STATE.timer);
+                    if(dashScore >= 5) {
+                        gameOver();
+                    } else {
+                        playError();
+                        showToast('Time is up! Try again.', 'error');
+                        setTimeout(() => showScreen('hub'), 2000);
+                    }
+                }
+            }, 1000);
+
+            nextDashRound();
+        }
+
+        function nextDashRound() {
+            if(!STATE.gameActive || timeLeft <= 0) return;
+            if(dashScore >= 5) {
+                clearInterval(STATE.timer);
+                return gameOver();
+            }
+
+            const colors = Object.keys(GAME_DATA.colors);
+            const selected = shuffle(colors).slice(0, 6);
+            dashTarget = selected[0];
+
+            document.getElementById('dash-prompt').innerText = `Find ${GAME_DATA.colors[dashTarget].name}`;
+            speak(GAME_DATA.colors[dashTarget].name);
+
+            const grid = document.getElementById('dash-grid');
+            grid.innerHTML = '';
+            shuffle(selected).forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-press w-full aspect-square rounded-2xl shadow-sm border-4 border-gray-100';
+                btn.style.backgroundColor = GAME_DATA.colors[color].hex;
+                btn.onclick = () => checkDash(color);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkDash(color) {
+            if(color === dashTarget) {
+                playPop();
+                dashScore++;
+                addStar();
+                document.getElementById('dash-score-text').innerText = `Score: ${dashScore}/5`;
+                nextDashRound();
+            } else {
+                playError();
+            }
+        }
+
+        /* ================= ACHIEVEMENTS LOGIC ================= */
+        function updateAchievements() {
+            const count = STATE.badges.length;
+            document.getElementById('badge-progress-text').innerText = `${count}/5`;
+            document.getElementById('badge-progress-bar').style.width = `${(count/5)*100}%`;
+            
+            const stageIndex = Math.min(count, 5);
+            document.getElementById('painting-image').src = GAME_DATA.paintingStages[stageIndex];
+
+            if(count >= 5) {
+                document.getElementById('cert-unlock-box').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
