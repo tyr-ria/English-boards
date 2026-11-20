@@ -1,0 +1,2711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft English Quest: Past Continuous — Moonlight Animal Patrol</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts: Fredoka & Press Start 2P -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* =====================================================================
+       THEME VARIABLES (:root) — Moonlight Meadow (Sapphire, Emerald, Copper)
+       ===================================================================== */
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #38bdf8;
+      --secondary: #16a34a;
+      --secondary-dark: #15803d;
+      --secondary-light: #4ade80;
+      --accent: #ea580c;
+      --accent-dark: #9a3412;
+      --accent-light: #fb923c;
+      --background: #0f172a;
+      --panel: #1e293b;
+      --stone: #64748b;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--background);
+      background-image:
+        radial-gradient(#1e293b 15%, transparent 16%),
+        radial-gradient(#1e3a5f 15%, transparent 16%);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      color: #f8fafc;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    .pixel-font {
+      font-family: 'Press Start 2P', monospace;
+      line-height: 1.5;
+    }
+
+    /* Minecraft 3D Beveled UI Panels */
+    .mc-panel {
+      background-color: #d1d5db;
+      border: 4px solid #ffffff;
+      border-right-color: #4b5563;
+      border-bottom-color: #4b5563;
+      box-shadow: 0 8px 0 #090d16;
+      color: #111827;
+      border-radius: 6px;
+    }
+
+    .mc-panel-dark {
+      background-color: #1e293b;
+      border: 4px solid #475569;
+      border-right-color: #0f172a;
+      border-bottom-color: #0f172a;
+      box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.75);
+      color: #f8fafc;
+      border-radius: 6px;
+    }
+
+    /* Minecraft 3D Tactile Buttons */
+    .mc-btn {
+      font-family: 'Press Start 2P', monospace;
+      background-color: var(--stone);
+      border: 3px solid #ffffff;
+      border-right-color: #334155;
+      border-bottom-color: #334155;
+      color: #ffffff;
+      text-shadow: 2px 2px #0f172a;
+      transition: transform 0.06s, filter 0.1s;
+      cursor: pointer;
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .mc-btn:hover {
+      filter: brightness(1.12);
+    }
+
+    .mc-btn:active {
+      transform: translateY(2px);
+      border-top-color: #334155;
+      border-left-color: #334155;
+      border-right-color: #ffffff;
+      border-bottom-color: #ffffff;
+    }
+
+    .mc-btn-blue {
+      background-color: var(--primary);
+      border-color: var(--primary-light) var(--primary-dark) var(--primary-dark) var(--primary-light);
+    }
+
+    .mc-btn-green {
+      background-color: var(--secondary);
+      border-color: var(--secondary-light) var(--secondary-dark) var(--secondary-dark) var(--secondary-light);
+    }
+
+    .mc-btn-copper {
+      background-color: var(--accent);
+      border-color: var(--accent-light) var(--accent-dark) var(--accent-dark) var(--accent-light);
+    }
+
+    .mc-btn-danger {
+      background-color: #dc2626;
+      border-color: #fca5a5 #7f1d1d #7f1d1d #fca5a5;
+    }
+
+    /* Inventory Slot */
+    .mc-slot {
+      background-color: #64748b;
+      border: 3px solid #1e293b;
+      border-right-color: #e2e8f0;
+      border-bottom-color: #e2e8f0;
+      box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.65);
+      border-radius: 4px;
+    }
+
+    /* 3D Flip Card for Vocabulary */
+    .flip-card {
+      perspective: 1000px;
+      height: 255px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(56, 189, 248, 0.45); }
+      50% { box-shadow: 0 0 22px rgba(74, 222, 128, 0.85); }
+    }
+    .animate-glow {
+      animation: pulseGlow 2.2s infinite ease-in-out;
+    }
+
+    /* Live Voice Active Indicator */
+    .voice-wave {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .voice-wave span {
+      width: 4px;
+      height: 14px;
+      background-color: var(--primary-light);
+      animation: waveBounce 0.6s infinite ease-in-out;
+    }
+    .voice-wave span:nth-child(2) { animation-delay: 0.15s; }
+    .voice-wave span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes waveBounce {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.25); }
+    }
+
+    /* Game 5: River Bridge Water & Splash Animations */
+    @keyframes waterFlow {
+      0% { background-position: 0 0; }
+      100% { background-position: 64px 0; }
+    }
+    .river-water {
+      background: repeating-linear-gradient(
+        90deg,
+        #0284c7 0px,
+        #0284c7 18px,
+        #0369a1 18px,
+        #0369a1 32px,
+        #0ea5e9 32px,
+        #0ea5e9 48px,
+        #0284c7 48px,
+        #0284c7 64px
+      );
+      background-size: 64px 100%;
+      animation: waterFlow 2.4s linear infinite;
+    }
+
+    @keyframes plankBreak {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      40% { transform: translateY(10px) rotate(-12deg); opacity: 0.9; }
+      100% { transform: translateY(45px) rotate(24deg); opacity: 0; }
+    }
+    .plank-broken {
+      animation: plankBreak 0.65s ease-in forwards;
+    }
+
+    @keyframes heroSplash {
+      0% { transform: translateY(0) rotate(0deg); }
+      45% { transform: translateY(38px) rotate(-18deg); }
+      75% { transform: translateY(44px) rotate(10deg); }
+      100% { transform: translateY(38px) rotate(0deg); }
+    }
+    .hero-splashed {
+      animation: heroSplash 0.6s ease-out forwards;
+    }
+
+    /* Photo Album Card Hover Lift */
+    .album-card-unlocked {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .album-card-unlocked:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.55);
+    }
+
+    /* Print Media: Isolate ONLY the Certificate */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-certificate-container, #printable-certificate-container * {
+        visibility: visible !important;
+      }
+      #printable-certificate-container, #printable-certificate {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #printable-certificate-container {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-12">
+
+  <!-- ======================================================================= -->
+  <!-- TOP STICKY HUD                                                          -->
+  <!-- ======================================================================= -->
+  <header class="sticky top-0 z-40 bg-[#0b1120]/95 backdrop-blur-md border-b-4 border-[var(--primary)] px-3 py-2.5 shadow-2xl no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+
+      <!-- Brand & Quest Info -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchSection('hub')">
+        <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Moonlight Lantern" class="w-10 h-10 object-contain animate-float">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="pixel-font text-xs sm:text-sm md:text-base text-[var(--primary-light)] tracking-wide">MINECRAFT ENGLISH</h1>
+            <span class="bg-[var(--secondary)] text-white text-[10px] font-bold px-2 py-0.5 rounded border border-[var(--secondary-light)]">Beginner</span>
+          </div>
+          <p class="text-xs text-slate-300 font-semibold">Past Continuous & Moonlight Animal Patrol</p>
+        </div>
+      </div>
+
+      <!-- HUD Right Controls -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+
+        <!-- Live TTS Speech Indicator -->
+        <div id="speech-indicator" class="hidden items-center gap-2 bg-blue-950 border-2 border-[var(--primary-light)] px-3 py-1.5 rounded-lg text-xs font-bold text-sky-200">
+          <div class="voice-wave"><span></span><span></span><span></span></div>
+          <span>Speaking...</span>
+        </div>
+
+        <!-- Diamonds Counter -->
+        <div class="mc-slot px-3 py-1.5 flex items-center gap-2 bg-slate-800">
+          <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-6 h-6 object-contain">
+          <span class="pixel-font text-xs text-sky-300" id="hud-diamonds">0</span>
+        </div>
+
+        <!-- Badges Progress -->
+        <button onclick="switchSection('badges')" class="mc-btn mc-btn-copper px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-2">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Badge" class="w-5 h-5 object-contain">
+          <span>Badges: <span id="hud-badges">0/8</span></span>
+        </button>
+
+        <!-- Quick Photo Album Button -->
+        <button onclick="switchSection('album')" class="mc-btn mc-btn-green px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-1.5" title="Open Ranger's Magic Photo Album">
+          <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" alt="Album" class="w-5 h-5 object-contain">
+          <span>Album</span>
+        </button>
+
+        <!-- Sound FX Toggle -->
+        <button onclick="toggleSoundFX()" id="sound-toggle-btn" class="mc-btn px-3 py-1.5 text-xs" title="Toggle Sound Effects">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 6 Navigation Tabs -->
+    <nav class="max-w-7xl mx-auto mt-2.5 flex gap-2 overflow-x-auto pb-1">
+      <button onclick="switchSection('hub')" id="nav-hub" class="mc-btn mc-btn-blue px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" class="w-5 h-5 object-contain" alt="Hub">
+        <span>1. Story & Animals</span>
+      </button>
+      <button onclick="switchSection('grammar')" id="nav-grammar" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" class="w-5 h-5 object-contain" alt="Grammar">
+        <span>2. Grammar Rules</span>
+      </button>
+      <button onclick="switchSection('games')" id="nav-games" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+        <span>3. 5 Mini-Games</span>
+      </button>
+      <button onclick="switchSection('album')" id="nav-album" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" class="w-5 h-5 object-contain" alt="Album">
+        <span>4. Photo Album</span>
+      </button>
+      <button onclick="switchSection('badges')" id="nav-badges" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+        <span>5. Trophy Chest</span>
+      </button>
+      <button onclick="switchSection('finale')" id="nav-finale" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/6pXYSQVy/Ender-Dragon-removebg-preview.png" class="w-5 h-5 object-contain" alt="Finale">
+        <span>6. Ranger License</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- MAIN WORKSPACE                                                          -->
+  <!-- ======================================================================= -->
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 pt-6 flex-1">
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 1: STORY & 10 ANIMAL VOCABULARY CARDS                         -->
+    <!-- ===================================================================== -->
+    <section id="sec-hub" class="space-y-6">
+
+      <!-- Story Intro Banner -->
+      <div class="mc-panel p-5 sm:p-6 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+          <div class="lg:col-span-3 flex justify-center items-center gap-3">
+            <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl">
+            <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl" style="animation-delay: 0.45s;">
+          </div>
+
+          <div class="lg:col-span-9 space-y-3">
+            <div class="inline-flex items-center gap-2 bg-[var(--primary)] text-white px-3 py-1 text-xs font-bold border-2 border-black">
+              <span>🌙</span> <span>MOONLIGHT ANIMAL PATROL</span>
+            </div>
+            <h2 class="pixel-font text-sm sm:text-lg text-slate-900">What Were the Animals Doing at 8 O'clock?</h2>
+            <p id="story-intro-text" class="text-base sm:text-lg text-slate-800 font-semibold leading-relaxed">
+              Yesterday evening at 8 o'clock, a magical moonlight flash lit up Steve and Alex's farm! When Steve walked outside with his lantern, all the animals were busy: the pig was eating a carrot, the fish was swimming in the river, and a zombie was hiding near the cave! Become an Animal Ranger and report what was happening!
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="speakText(GAME_DATA.story.intro)" class="mc-btn mc-btn-blue px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-volume-high"></i> <span>Listen to Story</span>
+              </button>
+              <button onclick="switchSection('grammar')" class="mc-btn mc-btn-green px-4 py-2 text-xs gap-2">
+                <span>Open Grammar Rules</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Visual Support Checklist -->
+      <div class="mc-panel-dark p-4 flex flex-wrap items-center justify-between gap-4 border-4 border-[var(--primary)]">
+        <div class="flex items-center gap-3">
+          <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Lantern" class="w-9 h-9 object-contain">
+          <div>
+            <h3 class="pixel-font text-xs text-[var(--primary-light)]">RANGER CHECKLIST:</h3>
+            <p class="text-xs text-slate-300">Tap all 10 Animal cards below! Flip each card to see the Ukrainian translation and earn +2 Diamonds!</p>
+          </div>
+        </div>
+        <div class="bg-slate-900 border-2 border-slate-600 px-4 py-2 text-xs font-bold text-[var(--secondary-light)]">
+          Words Inspected: <span id="words-explored-count">0 / 10</span>
+        </div>
+      </div>
+
+      <!-- 10 Animal Flip Cards Grid -->
+      <div id="vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <!-- Populated from GAME_DATA.vocabulary -->
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 2: PAST CONTINUOUS GRAMMAR RULES                              -->
+    <!-- ===================================================================== -->
+    <section id="sec-grammar" class="hidden space-y-6">
+
+      <!-- PART A: When do we use Past Continuous? -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" alt="Bookshelf" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">WHEN DO WE USE PAST CONTINUOUS?</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">We use Past Continuous for actions that were IN PROGRESS at a specific time in the past!</p>
+            </div>
+          </div>
+          <button onclick="speakText('We use Past Continuous to say what someone was doing at a specific time in the past, like at 7 o clock yesterday!')" class="mc-btn mc-btn-blue px-3 py-2 text-xs gap-2">
+            <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <!-- Usage 1 -->
+          <div class="bg-slate-100 border-4 border-slate-600 p-4 flex flex-col justify-between rounded">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--primary)] text-white px-2 py-1">1. EXACT PAST TIME</span>
+                <img src="https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" alt="Pig" class="w-10 h-10 object-contain">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">An action happening right at a specific hour yesterday.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-slate-300 rounded">
+                <div class="flex items-center justify-between gap-2">
+                  <span>"At 5 o'clock, the pig <b class="text-blue-700">was eating</b> a carrot."</span>
+                  <button onclick="speakText('At 5 o clock, the pig was eating a carrot.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>"At 8 o'clock, the cows <b class="text-blue-700">were sleeping</b>."</span>
+                  <button onclick="speakText('At 8 o clock, the cows were sleeping.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-blue-800">
+              Think of a photo frozen in the past!
+            </div>
+          </div>
+
+          <!-- Usage 2 -->
+          <div class="bg-slate-100 border-4 border-slate-600 p-4 flex flex-col justify-between rounded">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--secondary)] text-white px-2 py-1">2. LONG PAST ACTIONS</span>
+                <img src="https://i.postimg.cc/mDcRv6q5/𓆟-Orange-white-Kob-Minecraft-Tropical-Fish-removebg-preview.png" alt="Fish" class="w-10 h-10 object-contain">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">Describing what was going on all evening or all day.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-slate-300 rounded">
+                <div class="flex items-center justify-between gap-2">
+                  <span>"The fish <b class="text-green-700">was swimming</b> all evening."</span>
+                  <button onclick="speakText('The fish was swimming all evening.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>"Steve and Alex <b class="text-green-700">were walking</b> all day."</span>
+                  <button onclick="speakText('Steve and Alex were walking all day.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-green-800">
+              Ongoing action in the background!
+            </div>
+          </div>
+
+          <!-- Usage 3 -->
+          <div class="bg-slate-100 border-4 border-slate-600 p-4 flex flex-col justify-between rounded">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--accent)] text-white px-2 py-1">3. CLUE WORDS</span>
+                <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Lantern" class="w-10 h-10 object-contain">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">Time markers that signal Past Continuous:</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-slate-300 rounded">
+                <div class="flex items-center justify-between gap-2">
+                  <span>• <b class="text-orange-700">at 7 o'clock yesterday</b></span>
+                  <button onclick="speakText('at 7 o clock yesterday')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>• <b class="text-orange-700">yesterday evening / at midnight</b></span>
+                  <button onclick="speakText('yesterday evening, at midnight')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>• <b class="text-orange-700">all day / while</b></span>
+                  <button onclick="speakText('all day, while')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-orange-800">
+              Spot these clues in the mini-games!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PART B: How to Build Sentences (+, -, ?) -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex items-center gap-3 border-b-4 border-slate-400 pb-3">
+          <img src="https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png" alt="Crafting Table" class="w-11 h-11 object-contain">
+          <div>
+            <h2 class="pixel-font text-sm sm:text-lg text-slate-900">HOW TO BUILD SENTENCES (+ / - / ?)</h2>
+            <p class="text-xs sm:text-sm text-slate-700 font-semibold">Remember the golden rule: <b>1 Hero (I/He/She/It) ➔ WAS</b> | <b>2+ Heroes (You/We/They) ➔ WERE</b> + <b>Verb-ing</b>!</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+          <!-- 1. AFFIRMATIVE (+) -->
+          <div class="bg-blue-50 border-4 border-blue-700 p-4 space-y-3 rounded">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-blue-700 text-white px-2.5 py-1">➕ AFFIRMATIVE (+)</span>
+              <img src="https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png" alt="Dog" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-blue-600 space-y-2 text-xs sm:text-sm rounded">
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-blue-200 px-1.5 py-0.5 rounded">I / He / She / It</span> + <b class="text-blue-700">was</b> + <b>V-ing</b>
+              </div>
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-green-200 px-1.5 py-0.5 rounded">You / We / They</span> + <b class="text-green-700">were</b> + <b>V-ing</b>
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-blue-100/80 p-3 border border-blue-400 rounded">
+              <p class="font-bold text-blue-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• The dog <b class="text-blue-800">was playing</b>.</span>
+                <button onclick="speakText('The dog was playing.')" class="text-blue-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• The horse <b class="text-blue-800">was jumping</b>.</span>
+                <button onclick="speakText('The horse was jumping.')" class="text-blue-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Two cows <b class="text-green-800">were eating</b> grass.</span>
+                <button onclick="speakText('Two cows were eating grass.')" class="text-blue-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• We <b class="text-green-800">were watching</b> the cat.</span>
+                <button onclick="speakText('We were watching the cat.')" class="text-blue-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. NEGATIVE (-) -->
+          <div class="bg-rose-50 border-4 border-rose-700 p-4 space-y-3 rounded">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-rose-700 text-white px-2.5 py-1">➖ NEGATIVE (-)</span>
+              <img src="https://i.postimg.cc/QNv6QmHp/Zombie-removebg-preview.png" alt="Zombie" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-rose-600 space-y-2 text-xs sm:text-sm rounded">
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-rose-200 px-1.5 py-0.5 rounded">I / He / She / It</span> + <b class="text-rose-700">wasn't</b> + <b>V-ing</b>
+              </div>
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-amber-200 px-1.5 py-0.5 rounded">You / We / They</span> + <b class="text-orange-700">weren't</b> + <b>V-ing</b>
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-rose-100/80 p-3 border border-rose-400 rounded">
+              <p class="font-bold text-rose-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• The zombie <b class="text-rose-800">wasn't sleeping</b>.</span>
+                <button onclick="speakText('The zombie was not sleeping.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• The cat <b class="text-rose-800">wasn't swimming</b>.</span>
+                <button onclick="speakText('The cat was not swimming.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• The chickens <b class="text-rose-800">weren't running</b>.</span>
+                <button onclick="speakText('The chickens were not running.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• They <b class="text-rose-800">weren't hiding</b>.</span>
+                <button onclick="speakText('They were not hiding.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. QUESTIONS (?) -->
+          <div class="bg-emerald-50 border-4 border-emerald-700 p-4 space-y-3 rounded">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-emerald-700 text-white px-2.5 py-1">❓ QUESTIONS (?)</span>
+              <img src="https://i.postimg.cc/KcC9PfRW/Spider-removebg-preview.png" alt="Spider" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-emerald-600 space-y-2 text-xs sm:text-sm rounded">
+              <div class="font-bold text-slate-800">
+                <b class="text-blue-700">Was</b> + I/He/She/It + <b>V-ing</b>?
+              </div>
+              <div class="font-bold text-slate-800">
+                <b class="text-emerald-700">Were</b> + You/We/They + <b>V-ing</b>?
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-emerald-100/80 p-3 border border-emerald-400 rounded">
+              <p class="font-bold text-emerald-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• <b class="text-emerald-800">Was</b> the spider <b>climbing</b>?</span>
+                <button onclick="speakText('Was the spider climbing?')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b class="text-emerald-800">Was</b> the sheep <b>eating</b>?</span>
+                <button onclick="speakText('Was the sheep eating?')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b class="text-emerald-800">Were</b> the pigs <b>running</b>?</span>
+                <button onclick="speakText('Were the pigs running?')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b class="text-emerald-800">Were</b> you <b>helping</b> Steve?</span>
+                <button onclick="speakText('Were you helping Steve?')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PART C: 3 EASY -ING SPELLING RULES -->
+      <div class="mc-panel p-5 sm:p-6 space-y-4 border-4 border-[var(--accent)]">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/26Mxxj8V/minecraft-carrot-removebg-preview.png" alt="Carrot" class="w-10 h-10 object-contain">
+            <div>
+              <h2 class="pixel-font text-xs sm:text-base text-orange-900">3 EASY -ING SPELLING TIPS</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Look how verbs change when we add <b>-ing</b>! Click any card to listen.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div onclick="speakText('Play, playing. Eat, eating. Jump, jumping.')" class="bg-blue-50 border-4 border-blue-600 p-4 cursor-pointer hover:brightness-95 transition rounded">
+            <div class="pixel-font text-[10px] text-blue-800 mb-2">1. JUST ADD -ING</div>
+            <p class="text-sm font-bold text-slate-800">play ➔ <span class="text-blue-700">playing</span></p>
+            <p class="text-sm font-bold text-slate-800">eat ➔ <span class="text-blue-700">eating</span></p>
+            <p class="text-sm font-bold text-slate-800">jump ➔ <span class="text-blue-700">jumping</span></p>
+          </div>
+          <div onclick="speakText('Hide, hiding. Ride, riding. Dance, dancing.')" class="bg-orange-50 border-4 border-orange-600 p-4 cursor-pointer hover:brightness-95 transition rounded">
+            <div class="pixel-font text-[10px] text-orange-800 mb-2">2. DROP SILENT -E</div>
+            <p class="text-sm font-bold text-slate-800">hid<s>e</s> ➔ <span class="text-orange-700">hiding</span></p>
+            <p class="text-sm font-bold text-slate-800">rid<s>e</s> ➔ <span class="text-orange-700">riding</span></p>
+            <p class="text-sm font-bold text-slate-800">danc<s>e</s> ➔ <span class="text-orange-700">dancing</span></p>
+          </div>
+          <div onclick="speakText('Run, running. Swim, swimming. Sit, sitting.')" class="bg-green-50 border-4 border-green-600 p-4 cursor-pointer hover:brightness-95 transition rounded">
+            <div class="pixel-font text-[10px] text-green-800 mb-2">3. DOUBLE LAST LETTER</div>
+            <p class="text-sm font-bold text-slate-800">run ➔ <span class="text-green-700">running</span></p>
+            <p class="text-sm font-bold text-slate-800">swim ➔ <span class="text-green-700">swimming</span></p>
+            <p class="text-sm font-bold text-slate-800">sit ➔ <span class="text-green-700">sitting</span></p>
+          </div>
+        </div>
+
+        <div class="flex justify-center pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-blue px-6 py-3 text-xs sm:text-sm gap-3">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="Sword">
+            <span>ENTER THE 5 MINI-GAMES ARENA!</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 3: 5 MINI-GAMES ARENA                                         -->
+    <!-- ===================================================================== -->
+    <section id="sec-games" class="hidden space-y-6">
+
+      <!-- Mini-Game Selector Sub-Nav -->
+      <div class="mc-panel-dark p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <span class="pixel-font text-xs text-[var(--primary-light)]">CHOOSE YOUR PATROL TRAINING GAME:</span>
+          <span class="text-xs text-slate-300">Fresh random questions every round!</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          <button onclick="selectMiniGame(1)" id="gbtn-1" class="mc-btn mc-btn-blue p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" class="w-6 h-6 object-contain" alt="G1">
+            <div class="text-left">
+              <div>Game 1: Affirmative</div>
+              <div class="text-[9px] text-sky-200 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(2)" id="gbtn-2" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png" class="w-6 h-6 object-contain" alt="G2">
+            <div class="text-left">
+              <div>Game 2: Negative</div>
+              <div class="text-[9px] text-slate-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(3)" id="gbtn-3" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" class="w-6 h-6 object-contain" alt="G3">
+            <div class="text-left">
+              <div>Game 3: Questions</div>
+              <div class="text-[9px] text-slate-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(4)" id="gbtn-4" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="G4">
+            <div class="text-left">
+              <div>Game 4: Mixed Blitz</div>
+              <div class="text-[9px] text-slate-300 font-sans">15 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(5)" id="gbtn-5" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/KzKF6sVp/Minecraft-Horse-removebg-preview.png" class="w-6 h-6 object-contain" alt="G5">
+            <div class="text-left">
+              <div>Game 5: River Bridge</div>
+              <div class="text-[9px] text-orange-200 font-sans">Was / Were! (40)</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- GAMES 1–4 STANDARD ENGINE -->
+      <div id="standard-game-wrapper" class="mc-panel p-5 sm:p-6">
+
+        <!-- Header Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img id="active-game-icon" src="https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" alt="Icon" class="w-11 h-11 object-contain">
+            <div>
+              <h3 id="active-game-title" class="pixel-font text-xs sm:text-base text-slate-900">Game 1: Affirmative Patrol (+)</h3>
+              <p id="active-game-subtitle" class="text-xs sm:text-sm text-slate-700 font-semibold">Choose was / were + Verb-ing or build the sentence!</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-900 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Task <span id="game-q-num" class="text-[var(--primary-light)]">1</span> / <span id="game-q-total">10</span>
+            </div>
+            <div class="bg-slate-900 text-[var(--accent-light)] px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Score: <span id="game-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Stage -->
+        <div id="question-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img id="question-mob-img" src="https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" alt="Mob" class="w-16 h-16 sm:w-20 sm:h-20 object-contain animate-float bg-slate-900/90 p-2 border-2 border-slate-600 rounded">
+              <div>
+                <span id="question-mode-tag" class="inline-block bg-blue-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded">AFFIRMATIVE (+)</span>
+                <h4 id="question-prompt-text" class="text-lg sm:text-2xl font-bold text-white leading-snug">Loading task...</h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakCurrentQuestion()" class="mc-btn px-3 py-2 text-xs" title="Listen">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Options -->
+          <div id="mc-options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <!-- Buttons injected dynamically -->
+          </div>
+
+          <!-- Click-to-Place Word Order (Scramble) -->
+          <div id="scramble-container" class="hidden space-y-4 pt-2">
+            <div class="text-xs text-sky-300 font-bold">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Tap blocks below in order to build the sentence! (Tap a placed block to remove it)
+            </div>
+
+            <div id="scramble-target-slots" class="min-h-[64px] bg-slate-900 border-4 border-dashed border-sky-400 p-3 flex flex-wrap items-center gap-2 rounded"></div>
+            <div id="scramble-word-bank" class="flex flex-wrap gap-2 pt-1"></div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="checkScrambleAnswer()" id="scramble-submit-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs gap-2">
+                <i class="fa-solid fa-hammer"></i> <span>CRAFT SENTENCE</span>
+              </button>
+              <button onclick="resetScrambleWords()" class="mc-btn px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-rotate-left"></i> <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feedback Alert & Next Button -->
+          <div id="game-feedback-bar" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded">
+            <div id="game-feedback-msg" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextGameQuestion()" id="game-next-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs shrink-0">
+              <span>NEXT TASK</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Round Complete Summary Screen -->
+        <div id="round-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Victory" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-[var(--secondary-light)]">PATROL ROUND COMPLETE!</h3>
+          <p id="round-result-summary" class="text-base sm:text-lg text-slate-200 font-bold"></p>
+
+          <div class="flex flex-wrap justify-center gap-4 pt-2">
+            <button onclick="replayCurrentGame()" class="mc-btn mc-btn-copper px-5 py-3 text-xs sm:text-sm flex items-center gap-3">
+              <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem of Undying" class="w-8 h-8 object-contain">
+              <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- GAME 5 (VARIANT B): WAS or WERE? RIVER BRIDGE                       -->
+      <!-- =================================================================== -->
+      <div id="game5-custom-wrapper" class="hidden mc-panel p-5 sm:p-6 space-y-5">
+
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/KzKF6sVp/Minecraft-Horse-removebg-preview.png" alt="Horse" class="w-12 h-12 object-contain">
+            <div>
+              <h3 class="pixel-font text-xs sm:text-base text-slate-900">Game 5: WAS or WERE? River Bridge</h3>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Pick the right wooden plank (<b>was / were / wasn't / weren't</b>) so Steve crosses the river safely! A wrong plank breaks and Steve splashes in!</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-900 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Plank <span id="g5-progress" class="text-sky-300">1 / 10</span>
+            </div>
+            <div class="bg-slate-900 text-[var(--accent-light)] px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Safe: <span id="g5-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- River Bridge Stage -->
+        <div id="g5-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+
+          <!-- Animated Pixel River & Bridge Scene -->
+          <div class="relative w-full h-44 sm:h-48 rounded-lg overflow-hidden border-4 border-slate-900 bg-gradient-to-b from-indigo-950 via-blue-950 to-slate-900 flex flex-col justify-between">
+
+            <!-- Night Sky Stars & Moon -->
+            <div class="flex justify-between items-center px-4 pt-2 text-xs text-sky-200/80">
+              <span>✨ 🌙 Moonlight River Crossing</span>
+              <span id="g5-bridge-status" class="pixel-font text-[9px] bg-slate-900/80 px-2 py-1 text-emerald-300 border border-emerald-500">BRIDGE READY</span>
+            </div>
+
+            <!-- Middle: Hero + 10-Step Bridge Planks -->
+            <div class="relative flex items-end justify-between px-3 sm:px-6 z-10 mb-1">
+              <!-- Left Grass Bank -->
+              <div class="w-10 sm:w-14 h-12 bg-emerald-700 border-t-4 border-emerald-400 shrink-0 rounded-tr"></div>
+
+              <!-- 10 Bridge Planks Container -->
+              <div id="g5-bridge-planks" class="flex-1 flex items-end justify-between gap-1 px-1 relative h-16">
+                <!-- Planks + Moving Steve injected by JS -->
+              </div>
+
+              <!-- Right Grass Bank (Goal!) -->
+              <div class="w-12 sm:w-16 h-12 bg-emerald-700 border-t-4 border-emerald-400 shrink-0 rounded-tl flex items-center justify-center relative">
+                <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" alt="Goal Chest" class="w-9 h-9 object-contain -mt-10">
+              </div>
+            </div>
+
+            <!-- Animated River Water at Bottom -->
+            <div class="river-water w-full h-11 border-t-2 border-sky-300/60 flex items-center justify-center">
+              <span id="g5-splash-text" class="hidden pixel-font text-[10px] sm:text-xs text-white bg-sky-900/90 px-3 py-1 rounded border border-white">💦 SPLASH! Steve fell into the river! Try another plank!</span>
+            </div>
+          </div>
+
+          <!-- Subject & Sentence Prompt -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 border-4 border-slate-700 p-4 rounded">
+            <div class="flex items-center gap-4">
+              <img id="g5-mob-img" src="https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" alt="Subject Mob" class="w-16 h-16 object-contain bg-slate-800 p-2 border-2 border-sky-500 rounded animate-float">
+              <div>
+                <div class="flex items-center gap-2 flex-wrap mb-1">
+                  <span id="g5-polarity-badge" class="inline-block bg-blue-700 text-white pixel-font text-[9px] px-2 py-0.5 rounded">➕ POSITIVE</span>
+                  <span id="g5-subject-count" class="inline-block bg-slate-700 text-sky-200 text-[10px] font-bold px-2 py-0.5 rounded">Count the heroes!</span>
+                </div>
+                <h4 id="g5-prompt-text" class="text-lg sm:text-2xl font-bold text-white">Loading bridge challenge...</h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakG5Prompt()" class="mc-btn px-3 py-2 text-xs" title="Listen">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 Bridge Plank Choices -->
+          <div id="g5-choices-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <!-- Buttons: was, were, wasn't, weren't -->
+          </div>
+
+          <!-- Feedback & Next -->
+          <div id="g5-feedback" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded">
+            <div id="g5-feedback-text" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextG5Question()" id="g5-next-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs shrink-0">
+              <span>NEXT PLANK</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Game 5 Complete Screen -->
+        <div id="g5-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Victory" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-sky-300">RIVER CROSSED SAFELY!</h3>
+          <p id="g5-final-summary" class="text-base text-slate-200 font-bold">You guided Steve across all 10 planks!</p>
+          <button onclick="replayGame5()" class="mc-btn mc-btn-copper px-5 py-3 text-xs sm:text-sm flex items-center gap-3 mx-auto">
+            <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem" class="w-8 h-8 object-contain">
+            <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 4 (VARIANT 2): RANGER'S MAGIC PHOTO ALBUM                     -->
+    <!-- ===================================================================== -->
+    <section id="sec-album" class="hidden space-y-6">
+
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-4">
+          <div class="flex items-center gap-4">
+            <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Lantern" class="w-14 h-14 object-contain bg-slate-800 p-2 border-2 border-slate-600 animate-float rounded">
+            <div>
+              <div class="inline-block bg-[var(--primary)] text-white pixel-font text-[9px] px-2 py-0.5 mb-1">COLLECTIBLE NIGHT MEMORIES</div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">RANGER'S MAGIC PHOTO ALBUM</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Spend Diamonds to develop all 8 magical photos from last night! Tap any unlocked photo to hear its Past Continuous story!</p>
+            </div>
+          </div>
+
+          <div class="mc-slot bg-slate-900 px-5 py-3 flex items-center gap-3 border-4 border-[var(--primary-light)]">
+            <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-8 h-8 object-contain animate-bounce">
+            <div>
+              <div class="text-[10px] text-sky-300 font-bold uppercase">Your Diamonds</div>
+              <div class="pixel-font text-sm sm:text-base text-white"><span id="album-diamonds-balance">0</span> 💎</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Album Progress Bar -->
+        <div class="mt-4 mc-panel-dark p-4 border-4 border-[var(--secondary)] flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📸</span>
+            <span class="pixel-font text-xs text-[var(--secondary-light)]">PHOTOS DEVELOPED: <span id="album-count-label">0 / 8</span></span>
+          </div>
+          <span class="text-xs text-slate-300">Unlock at least 2 photos to earn the <b>Album Keeper</b> badge!</span>
+        </div>
+
+        <!-- 8 Collectible Photo Album Cards Grid -->
+        <div id="photo-album-grid" class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Populated from GAME_DATA.photoAlbum -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 5: ACHIEVEMENTS / TROPHY CHEST (8 BADGES)                     -->
+    <!-- ===================================================================== -->
+    <section id="sec-badges" class="hidden space-y-6">
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" alt="Chest" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">RANGER TROPHY CHEST (8 BADGES)</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Collect ALL 8 badges to unlock the Warden's Official Animal Ranger License!</p>
+            </div>
+          </div>
+
+          <!-- Inline Reset Progress Controls (No browser confirm()) -->
+          <div class="flex items-center gap-2">
+            <button id="reset-init-btn" onclick="showResetConfirm()" class="mc-btn mc-btn-danger px-3 py-1.5 text-[10px]">
+              Reset Progress
+            </button>
+            <div id="reset-confirm-box" class="hidden items-center gap-2 bg-red-950 border-2 border-red-400 px-3 py-1.5 rounded">
+              <span class="text-xs font-bold text-red-200">Reset all?</span>
+              <button onclick="confirmResetProgress()" class="mc-btn mc-btn-danger px-2.5 py-1 text-[10px]" style="min-height:34px;">Yes</button>
+              <button onclick="cancelResetConfirm()" class="mc-btn px-2.5 py-1 text-[10px]" style="min-height:34px;">No</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Populated from GAME_DATA.badges -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 6: GRAND FINALE (WARDEN LOCK + PRINTABLE RANGER LICENSE)      -->
+    <!-- ===================================================================== -->
+    <section id="sec-finale" class="hidden space-y-6">
+
+      <!-- WARDEN LOCKED SCREEN (Shown until 8/8 badges) -->
+      <div id="finale-locked-banner" class="mc-panel-dark p-8 sm:p-12 text-center space-y-6 border-4 border-[var(--accent)]">
+        <div class="relative inline-block">
+          <img src="https://i.postimg.cc/m2Mm89Hm/Warden-removebg-preview.png" alt="Warden" class="w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain animate-float">
+          <span class="absolute -top-2 -right-2 bg-rose-700 text-white pixel-font text-[10px] px-2.5 py-1 border-2 border-white">🔒 SEALED</span>
+        </div>
+
+        <h3 class="pixel-font text-base sm:text-2xl text-[var(--accent-light)]">THE WARDEN GUARDS YOUR RANGER LICENSE!</h3>
+        <p class="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-semibold leading-relaxed">
+          Unlock <b>ALL 8 Achievements</b> in the Trophy Chest to unseal your official printable <b>Past Continuous Animal Ranger License</b>!
+        </p>
+
+        <div class="max-w-md mx-auto bg-slate-900 border-4 border-slate-700 p-4 space-y-2 rounded">
+          <div class="flex justify-between text-xs font-bold text-[var(--primary-light)]">
+            <span>BADGES COLLECTED:</span>
+            <span id="finale-lock-progress-text">0 / 8</span>
+          </div>
+          <div class="w-full h-5 bg-slate-800 border-2 border-black overflow-hidden rounded">
+            <div id="finale-lock-bar" class="h-full bg-gradient-to-r from-[var(--primary)] via-[var(--secondary)] to-[var(--accent)] transition-all duration-500" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-blue px-5 py-3 text-xs gap-2">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+            <span>PLAY MINI-GAMES</span>
+          </button>
+          <button onclick="switchSection('badges')" class="mc-btn mc-btn-copper px-5 py-3 text-xs gap-2">
+            <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+            <span>CHECK BADGES</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- UNLOCKED CERTIFICATE SECTION -->
+      <div id="finale-unlocked-content" class="hidden space-y-6">
+
+        <!-- Customizer Bar (Hidden on print) -->
+        <div class="mc-panel p-5 no-print space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label for="student-name-input" class="pixel-font text-xs text-slate-900">RANGER NAME:</label>
+              <input id="student-name-input" type="text" value="Animal Ranger" oninput="updateCertificateName(this.value)" class="px-3 py-2 border-4 border-slate-700 bg-white text-slate-900 font-bold text-base focus:outline-none rounded">
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="launchVictoryConfetti()" class="mc-btn mc-btn-copper px-4 py-2 text-xs gap-2">
+                <span>🎆</span> <span>Celebrate!</span>
+              </button>
+              <button onclick="window.print()" class="mc-btn mc-btn-blue px-5 py-2.5 text-xs sm:text-sm gap-2">
+                <i class="fa-solid fa-print"></i> <span>Print / Save as PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3 Custom Background Pickers -->
+          <div class="border-t-2 border-slate-400 pt-3 flex flex-wrap items-center justify-between gap-3">
+            <span class="pixel-font text-[10px] sm:text-xs text-slate-800">CHOOSE LICENSE BACKGROUND:</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCertificateTheme('bg1')" id="theme-btn-bg1" class="mc-btn mc-btn-blue px-3 py-1.5 text-[10px] gap-2">
+                <span>🌄 1. World Vista</span>
+              </button>
+              <button onclick="setCertificateTheme('bg2')" id="theme-btn-bg2" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>🌌 2. Ender Night</span>
+              </button>
+              <button onclick="setCertificateTheme('bg3')" id="theme-btn-bg3" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>🌸 3. Moonlit Field</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRINTABLE CERTIFICATE -->
+        <div id="printable-certificate-container" class="w-full flex justify-center">
+          <div id="printable-certificate" class="mc-panel p-6 sm:p-10 border-8 border-[var(--primary)] text-slate-900 relative overflow-hidden shadow-2xl bg-cover bg-center w-full max-w-4xl" style="background-image: url('https://i.postimg.cc/JnBV6HD2/1107955945847626090.jpg');">
+
+            <div class="absolute inset-0 bg-white/60 backdrop-blur-[2px]"></div>
+
+            <div class="bg-[#fdfcf7]/95 border-4 border-dashed border-[var(--secondary)] p-6 sm:p-8 text-center space-y-5 relative shadow-xl z-10 w-full rounded">
+
+              <!-- Top Row -->
+              <div class="flex items-center justify-between sm:px-6">
+                <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+                <div class="text-center">
+                  <div class="inline-block bg-[var(--primary)] text-white pixel-font text-[9px] sm:text-[10px] px-3 py-1 mb-2 rounded">OFFICIAL MOONLIGHT PATROL LICENSE</div>
+                  <h2 class="pixel-font text-base sm:text-2xl md:text-3xl text-blue-900">PAST CONTINUOUS ANIMAL RANGER</h2>
+                </div>
+                <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+              </div>
+
+              <p class="text-xs sm:text-base font-bold text-slate-600 uppercase tracking-widest">This official license is proudly awarded to:</p>
+
+              <div id="cert-hero-name" class="pixel-font text-xl sm:text-3xl text-emerald-900 border-b-4 border-[var(--primary)] inline-block px-8 py-2 bg-white/90 rounded">
+                Animal Ranger
+              </div>
+
+              <p class="text-sm sm:text-base text-slate-800 max-w-2xl mx-auto font-semibold leading-relaxed">
+                For mastering the <b>Past Continuous Tense</b> (<b>was / were + Verb-ing</b> in +, -, and ?), crossing the Moonlight River Bridge safely, and patrolling all <b>10 Animals & Creatures</b>!
+              </p>
+
+              <!-- 10 Animal Icons Strip -->
+              <div class="flex flex-wrap items-center justify-center gap-2.5 py-2.5 bg-slate-900/10 rounded-xl px-4">
+                <img src="https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" class="w-8 h-8 object-contain" alt="Pig">
+                <img src="https://i.postimg.cc/28v02WW6/Minecraft-Cow-removebg-preview.png" class="w-8 h-8 object-contain" alt="Cow">
+                <img src="https://i.postimg.cc/8zSt3Cdv/Sheep-removebg-preview.png" class="w-8 h-8 object-contain" alt="Sheep">
+                <img src="https://i.postimg.cc/K8DJyyQV/Chicken-removebg-preview.png" class="w-8 h-8 object-contain" alt="Chicken">
+                <img src="https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png" class="w-8 h-8 object-contain" alt="Dog">
+                <img src="https://i.postimg.cc/fLJKXSs8/Kitty-removebg-preview.png" class="w-8 h-8 object-contain" alt="Cat">
+                <img src="https://i.postimg.cc/KzKF6sVp/Minecraft-Horse-removebg-preview.png" class="w-8 h-8 object-contain" alt="Horse">
+                <img src="https://i.postimg.cc/mDcRv6q5/𓆟-Orange-white-Kob-Minecraft-Tropical-Fish-removebg-preview.png" class="w-8 h-8 object-contain" alt="Fish">
+                <img src="https://i.postimg.cc/KcC9PfRW/Spider-removebg-preview.png" class="w-8 h-8 object-contain" alt="Spider">
+                <img src="https://i.postimg.cc/QNv6QmHp/Zombie-removebg-preview.png" class="w-8 h-8 object-contain" alt="Zombie">
+              </div>
+
+              <div class="grid grid-cols-3 items-center pt-4 border-t-2 border-slate-300 text-xs sm:text-sm font-bold text-slate-700">
+                <div>
+                  <div class="text-slate-900 font-extrabold">Steve & Alex</div>
+                  <div class="text-[11px] text-slate-500">Patrol Captains</div>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Seal" class="w-11 h-11 object-contain">
+                  <span class="pixel-font text-[8px] text-blue-800 mt-1">RANGER SEAL</span>
+                </div>
+                <div>
+                  <div id="cert-date-display" class="text-slate-900 font-extrabold">2026</div>
+                  <div class="text-[11px] text-slate-500">Date of Completion</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================================= -->
+  <!-- FULLSCREEN PHOTO ALBUM LIGHTBOX MODAL                                   -->
+  <!-- ======================================================================= -->
+  <div id="photo-lightbox-modal" onclick="closePhotoLightbox()" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center no-print">
+    <div onclick="event.stopPropagation()" class="mc-panel-dark border-4 border-[var(--primary-light)] max-w-4xl w-full p-4 sm:p-6 space-y-4 shadow-2xl relative">
+      <div class="flex items-center justify-between gap-3 border-b-2 border-slate-700 pb-3">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span id="lightbox-time-tag" class="bg-blue-700 text-white text-xs font-bold px-2.5 py-1 rounded"></span>
+          <h3 id="lightbox-title" class="pixel-font text-xs sm:text-base text-[var(--primary-light)]"></h3>
+        </div>
+        <button onclick="closePhotoLightbox()" class="mc-btn mc-btn-danger px-3 py-1.5 text-xs shrink-0" style="min-height:38px;" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="w-full bg-slate-950 border-4 border-slate-700 rounded overflow-hidden flex items-center justify-center">
+        <img id="lightbox-img" src="" alt="Collectible Photo" class="max-h-[65vh] w-auto max-w-full object-contain">
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/90 border-2 border-slate-700 p-3.5 rounded">
+        <p id="lightbox-story" class="text-sm sm:text-base text-slate-100 font-semibold text-center sm:text-left"></p>
+        <button id="lightbox-speak-btn" class="mc-btn mc-btn-blue px-4 py-2 text-xs gap-2 shrink-0">
+          <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- JAVASCRIPT ENGINE & CENTRALIZED GAME_DATA                               -->
+  <!-- ======================================================================= -->
+  <script>
+    /* =========================================================================
+       1. CENTRALIZED GAME_DATA CONFIGURATION
+       ========================================================================= */
+    const STORAGE_KEY = "mc_past_continuous_animals_v1";
+
+    const GAME_DATA = {
+      story: {
+        intro: "Yesterday evening at 8 o'clock, a magical moonlight flash lit up Steve and Alex's farm! When Steve walked outside with his lantern, all the animals were busy: the pig was eating a carrot, the fish was swimming in the river, and a zombie was hiding near the cave! Become an Animal Ranger and report what was happening!"
+      },
+
+      assets: {
+        totem: "https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png",
+        steve: "https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png",
+        alex: "https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png",
+        villager: "https://i.postimg.cc/BnBMGGNx/Villager-removebg-preview.png",
+        golem: "https://i.postimg.cc/dVj4KKny/Iron-Golem-with-flower-removebg-preview.png",
+        pig: "https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png",
+        cow: "https://i.postimg.cc/28v02WW6/Minecraft-Cow-removebg-preview.png",
+        sheep: "https://i.postimg.cc/8zSt3Cdv/Sheep-removebg-preview.png",
+        chicken: "https://i.postimg.cc/K8DJyyQV/Chicken-removebg-preview.png",
+        dog: "https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png",
+        cat: "https://i.postimg.cc/fLJKXSs8/Kitty-removebg-preview.png",
+        horse: "https://i.postimg.cc/KzKF6sVp/Minecraft-Horse-removebg-preview.png",
+        fish: "https://i.postimg.cc/mDcRv6q5/𓆟-Orange-white-Kob-Minecraft-Tropical-Fish-removebg-preview.png",
+        spider: "https://i.postimg.cc/KcC9PfRW/Spider-removebg-preview.png",
+        zombie: "https://i.postimg.cc/QNv6QmHp/Zombie-removebg-preview.png",
+        wolf: "https://i.postimg.cc/L8pN7skm/Wolf-removebg-preview.png",
+        creeper: "https://i.postimg.cc/y6DQ3tYD/Creeper-removebg-preview-(1).png"
+      },
+
+      certWallpapers: {
+        bg1: "https://i.postimg.cc/JnBV6HD2/1107955945847626090.jpg",
+        bg2: "https://i.postimg.cc/TwWM75LB/Emder-Minecraft.jpg",
+        bg3: "https://i.postimg.cc/G2sw7TT1/Minecraft-Moonlit-Flower-Field-Wallpaper-Aesthetic-Laptop-Wallpaper.jpg"
+      },
+
+      // 10 Animals & Creatures Vocabulary Flashcards
+      vocabulary: [
+        { id: "pig", word: "Pig", ua: "свиня", img: "https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png", example: "The pig was eating a carrot at 5 o'clock." },
+        { id: "cow", word: "Cow", ua: "корова", img: "https://i.postimg.cc/28v02WW6/Minecraft-Cow-removebg-preview.png", example: "The cow was walking on the green grass." },
+        { id: "sheep", word: "Sheep", ua: "вівця", img: "https://i.postimg.cc/8zSt3Cdv/Sheep-removebg-preview.png", example: "The sheep was sleeping under a tree." },
+        { id: "chicken", word: "Chicken", ua: "курка", img: "https://i.postimg.cc/K8DJyyQV/Chicken-removebg-preview.png", example: "The chicken was running near the farm." },
+        { id: "dog", word: "Dog", ua: "собака", img: "https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png", example: "The dog was playing with Steve yesterday." },
+        { id: "cat", word: "Cat", ua: "кіт", img: "https://i.postimg.cc/fLJKXSs8/Kitty-removebg-preview.png", example: "The cat was sitting near the warm lantern." },
+        { id: "horse", word: "Horse", ua: "кінь", img: "https://i.postimg.cc/KzKF6sVp/Minecraft-Horse-removebg-preview.png", example: "The horse was jumping over the fence." },
+        { id: "fish", word: "Fish", ua: "риба", img: "https://i.postimg.cc/mDcRv6q5/𓆟-Orange-white-Kob-Minecraft-Tropical-Fish-removebg-preview.png", example: "The fish was swimming in the river." },
+        { id: "spider", word: "Spider", ua: "павук", img: "https://i.postimg.cc/KcC9PfRW/Spider-removebg-preview.png", example: "The spider was climbing a tall tree." },
+        { id: "zombie", word: "Zombie", ua: "зомбі", img: "https://i.postimg.cc/QNv6QmHp/Zombie-removebg-preview.png", example: "The zombie was hiding in a dark cave." }
+      ],
+
+      // Section 4: 8 Collectible Cards for Ranger's Magic Photo Album
+      photoAlbum: [
+        {
+          id: "photo_chicken",
+          title: "Farmyard Chicken",
+          timeTag: "At 5:00 PM",
+          cost: 15,
+          img: "https://i.postimg.cc/SNq19D82/Chicken-(2).jpg",
+          story: "At 5 o'clock yesterday, the little chicken was running around the farm and looking for seeds!"
+        },
+        {
+          id: "photo_cow",
+          title: "Meadow Cow",
+          timeTag: "At 6:00 PM",
+          cost: 20,
+          img: "https://i.postimg.cc/sDyHWwSM/Cow.jpg",
+          story: "At 6 o'clock, the friendly cow was eating green grass and watching the sunset!"
+        },
+        {
+          id: "photo_sheep",
+          title: "Sleepy Sheep",
+          timeTag: "At 7:00 PM",
+          cost: 20,
+          img: "https://i.postimg.cc/fTZqdBXk/Sheep-(2).jpg",
+          story: "At 7 o'clock, the fluffy sheep was resting under the big oak tree!"
+        },
+        {
+          id: "photo_wolf",
+          title: "Loyal Tamed Dog",
+          timeTag: "At 7:30 PM",
+          cost: 25,
+          img: "https://i.postimg.cc/TYGNbCmp/Tamed-Wolf.jpg",
+          story: "Yesterday evening, the tamed dog was sitting near Steve and guarding the warm camp!"
+        },
+        {
+          id: "photo_magic1",
+          title: "Moonlight Patrol #1",
+          timeTag: "At 8:00 PM",
+          cost: 30,
+          img: "https://i.postimg.cc/wTH4N0JR/Gemini-Generated-Image-4do7tl4do7tl4do7.jpg",
+          story: "At 8 o'clock, our animal friends were enjoying the magical moonlight evening together!"
+        },
+        {
+          id: "photo_magic2",
+          title: "Moonlight Patrol #2",
+          timeTag: "At 8:30 PM",
+          cost: 30,
+          img: "https://i.postimg.cc/BQs7FMD4/Gemini-Generated-Image-e5175pe5175pe517.jpg",
+          story: "All evening long, the creatures were exploring the glowing Minecraft world under the stars!"
+        },
+        {
+          id: "photo_spider",
+          title: "Tree-Climbing Spider",
+          timeTag: "At 9:00 PM",
+          cost: 35,
+          img: "https://i.postimg.cc/PrhVD2Zt/Spider-(1).jpg",
+          story: "At 9 o'clock, the sneaky spider was climbing a tall dark tree in the forest!"
+        },
+        {
+          id: "photo_zombie",
+          title: "Midnight Zombie",
+          timeTag: "At Midnight",
+          cost: 40,
+          img: "https://i.postimg.cc/DyFpGBsz/Zombie-(1).jpg",
+          story: "At midnight, the green zombie was walking slowly near the cave, so Steve turned on his lantern!"
+        }
+      ],
+
+      // =======================================================================
+      // GAME 1 POOL: AFFIRMATIVE (+) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game1Pool: [
+        // 15 Scramble Tasks (No split articles/possessives from nouns!)
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The pig", "was", "eating", "a carrot", "."], ans: "The pig was eating a carrot .", hint: "1 pig = was + eating: The pig was eating a carrot.", mob: "pig" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The cow", "was", "walking", "on", "the grass", "."], ans: "The cow was walking on the grass .", hint: "1 cow = was + walking: The cow was walking on the grass.", mob: "cow" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["Two sheep", "were", "sleeping", "under", "a tree", "."], ans: "Two sheep were sleeping under a tree .", hint: "2 sheep = were + sleeping: Two sheep were sleeping under a tree.", mob: "sheep" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The chicken", "was", "running", "near", "the farm", "."], ans: "The chicken was running near the farm .", hint: "1 chicken = was + running: The chicken was running near the farm.", mob: "chicken" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["My dog", "was", "playing", "with", "Steve", "."], ans: "My dog was playing with Steve .", hint: "My dog = was + playing: My dog was playing with Steve.", mob: "dog" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The cat", "was", "sitting", "near", "the lantern", "."], ans: "The cat was sitting near the lantern .", hint: "The cat = was + sitting: The cat was sitting near the lantern.", mob: "cat" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The horse", "was", "jumping", "over", "the fence", "."], ans: "The horse was jumping over the fence .", hint: "The horse = was + jumping: The horse was jumping over the fence.", mob: "horse" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The fish", "was", "swimming", "in", "the river", "."], ans: "The fish was swimming in the river .", hint: "The fish = was + swimming: The fish was swimming in the river.", mob: "fish" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The spider", "was", "climbing", "a tall tree", "."], ans: "The spider was climbing a tall tree .", hint: "The spider = was + climbing: The spider was climbing a tall tree.", mob: "spider" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["The zombie", "was", "hiding", "in", "a cave", "."], ans: "The zombie was hiding in a cave .", hint: "The zombie = was + hiding: The zombie was hiding in a cave.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["Steve and Alex", "were", "watching", "the animals", "."], ans: "Steve and Alex were watching the animals .", hint: "2 people = were + watching: Steve and Alex were watching the animals.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["We", "were", "feeding", "the pigs", "yesterday", "."], ans: "We were feeding the pigs yesterday .", hint: "We = were + feeding: We were feeding the pigs yesterday.", mob: "pig" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["They", "were", "riding", "horses", "at 5 o'clock", "."], ans: "They were riding horses at 5 o'clock .", hint: "They = were + riding: They were riding horses at 5 o'clock.", mob: "horse" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["I", "was", "looking", "at", "the fish", "."], ans: "I was looking at the fish .", hint: "I = was + looking: I was looking at the fish.", mob: "fish" },
+        { type: "scramble", prompt: "Build the Past Continuous sentence:", words: ["Two cats", "were", "sleeping", "on", "the bed", "."], ans: "Two cats were sleeping on the bed .", hint: "2 cats = were + sleeping: Two cats were sleeping on the bed.", mob: "cat" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "At 5 o'clock, the pig ___ eating a sweet carrot.", options: ["was", "were", "is"], ans: "was", hint: "The pig = 1 animal (It) ➔ use WAS!", mob: "pig" },
+        { type: "mc", q: "Yesterday evening, two cows ___ walking on the grass.", options: ["were", "was", "are"], ans: "were", hint: "Two cows = plural (They) ➔ use WERE!", mob: "cow" },
+        { type: "mc", q: "At 8 o'clock, the sheep was ___ under a tree.", options: ["sleeping", "sleep", "slept"], ans: "sleeping", hint: "Past Continuous always needs Verb + ing: was sleeping!", mob: "sheep" },
+        { type: "mc", q: "The little chicken ___ running near the wooden fence.", options: ["was", "were", "am"], ans: "was", hint: "The chicken = 1 animal ➔ WAS!", mob: "chicken" },
+        { type: "mc", q: "At 6 o'clock, Steve and Alex ___ playing with the dog.", options: ["were", "was", "is"], ans: "were", hint: "Steve and Alex = 2 people (They) ➔ WERE!", mob: "dog" },
+        { type: "mc", q: "The cute cat was ___ near the warm lantern.", options: ["sitting", "sit", "sits"], ans: "sitting", hint: "Sit doubles the 't': sitting!", mob: "cat" },
+        { type: "mc", q: "Yesterday afternoon, the brown horse ___ jumping high.", options: ["was", "were", "are"], ans: "was", hint: "The brown horse = 1 animal ➔ WAS!", mob: "horse" },
+        { type: "mc", q: "All evening, three fish ___ swimming in the river.", options: ["were", "was", "is"], ans: "were", hint: "Three fish = plural (They) ➔ WERE!", mob: "fish" },
+        { type: "mc", q: "At 9 o'clock, the spider was ___ a tall oak tree.", options: ["climbing", "climb", "climbed"], ans: "climbing", hint: "Was + Verb-ing ➔ was climbing!", mob: "spider" },
+        { type: "mc", q: "At midnight, the green zombie ___ hiding in a cave.", options: ["was", "were", "are"], ans: "was", hint: "The green zombie = 1 creature ➔ WAS!", mob: "zombie" },
+        { type: "mc", q: "I ___ feeding the sheep at 4 o'clock yesterday.", options: ["was", "were", "are"], ans: "was", hint: "With I, always use WAS!", mob: "sheep" },
+        { type: "mc", q: "You ___ watching the chickens yesterday evening.", options: ["were", "was", "is"], ans: "were", hint: "With You, always use WERE!", mob: "chicken" },
+        { type: "mc", q: "We ___ looking at the bright moon at 8 o'clock.", options: ["were", "was", "am"], ans: "were", hint: "With We, always use WERE!", mob: "steve" },
+        { type: "mc", q: "Alex ___ riding her fast horse all afternoon.", options: ["was", "were", "are"], ans: "was", hint: "Alex (She) = 1 person ➔ WAS!", mob: "horse" },
+        { type: "mc", q: "The orange fish was ___ fast in the blue water.", options: ["swimming", "swim", "swam"], ans: "swimming", hint: "Swim doubles the 'm': swimming!", mob: "fish" },
+        { type: "mc", q: "Two dogs ___ barking at the spider last night.", options: ["were", "was", "is"], ans: "were", hint: "Two dogs = plural ➔ WERE!", mob: "dog" },
+        { type: "mc", q: "The pig was ___ in the mud yesterday.", options: ["playing", "play", "played"], ans: "playing", hint: "Was + Verb-ing ➔ was playing!", mob: "pig" },
+        { type: "mc", q: "At 7 o'clock, the villagers ___ walking home.", options: ["were", "was", "is"], ans: "were", hint: "The villagers = plural (They) ➔ WERE!", mob: "villager" },
+        { type: "mc", q: "The zombie was ___ behind a big rock.", options: ["hiding", "hide", "hid"], ans: "hiding", hint: "Hide drops the silent -e: hiding!", mob: "zombie" },
+        { type: "mc", q: "My cat ___ drinking milk at 6 o'clock.", options: ["was", "were", "are"], ans: "was", hint: "My cat = 1 animal ➔ WAS!", mob: "cat" },
+        { type: "mc", q: "The horses ___ running across the green field.", options: ["were", "was", "is"], ans: "were", hint: "The horses = plural ➔ WERE!", mob: "horse" },
+        { type: "mc", q: "Steve ___ carrying a lantern at 8 o'clock.", options: ["was", "were", "are"], ans: "was", hint: "Steve (He) = 1 person ➔ WAS!", mob: "steve" },
+        { type: "mc", q: "The cow was ___ fresh grass all morning.", options: ["eating", "eat", "ate"], ans: "eating", hint: "Was + Verb-ing ➔ was eating!", mob: "cow" },
+        { type: "mc", q: "Five chickens ___ jumping near the barn.", options: ["were", "was", "is"], ans: "were", hint: "Five chickens = plural ➔ WERE!", mob: "chicken" },
+        { type: "mc", q: "The dog was ___ after a red ball.", options: ["running", "run", "ran"], ans: "running", hint: "Run doubles the 'n': running!", mob: "dog" },
+        { type: "mc", q: "Two spiders ___ making a web in the dark cave.", options: ["were", "was", "is"], ans: "were", hint: "Two spiders = plural ➔ WERE!", mob: "spider" },
+        { type: "mc", q: "At 10 o'clock, the zombies ___ walking near the village.", options: ["were", "was", "is"], ans: "were", hint: "The zombies = plural ➔ WERE!", mob: "zombie" },
+        { type: "mc", q: "The white sheep ___ eating flowers yesterday evening.", options: ["was", "were", "are"], ans: "was", hint: "The white sheep = 1 animal ➔ WAS!", mob: "sheep" },
+        { type: "mc", q: "Alex was ___ a picture of the cute cat.", options: ["drawing", "draw", "drew"], ans: "drawing", hint: "Was + Verb-ing ➔ was drawing!", mob: "alex" },
+        { type: "mc", q: "The Iron Golem ___ protecting the cows last night.", options: ["was", "were", "are"], ans: "was", hint: "The Iron Golem = 1 hero ➔ WAS!", mob: "golem" },
+        { type: "mc", q: "They ___ listening to the birds yesterday morning.", options: ["were", "was", "is"], ans: "were", hint: "They ➔ WERE!", mob: "alex" },
+        { type: "mc", q: "My dog and cat ___ sleeping near the fire.", options: ["were", "was", "is"], ans: "were", hint: "My dog AND cat = 2 animals ➔ WERE!", mob: "cat" },
+        { type: "mc", q: "He ___ brushing his brown horse at 5 o'clock.", options: ["was", "were", "are"], ans: "was", hint: "He ➔ WAS!", mob: "horse" },
+        { type: "mc", q: "The fish ___ splashing in the shiny river.", options: ["was", "were", "are"], ans: "was", hint: "Here 'The fish' is 1 fish ➔ WAS!", mob: "fish" },
+        { type: "mc", q: "She was ___ to the music with her dog.", options: ["dancing", "dance", "danced"], ans: "dancing", hint: "Dance drops -e: dancing!", mob: "dog" }
+      ],
+
+      // =======================================================================
+      // GAME 2 POOL: NEGATIVE (-) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game2Pool: [
+        // 15 Scramble Tasks
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The pig", "wasn't", "sleeping", "at 5 o'clock", "."], ans: "The pig wasn't sleeping at 5 o'clock .", hint: "1 pig = wasn't + sleeping: The pig wasn't sleeping at 5 o'clock.", mob: "pig" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The cows", "weren't", "running", "yesterday", "."], ans: "The cows weren't running yesterday .", hint: "The cows (plural) = weren't + running.", mob: "cow" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The cat", "wasn't", "swimming", "in", "the river", "."], ans: "The cat wasn't swimming in the river .", hint: "1 cat = wasn't + swimming.", mob: "cat" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The zombie", "wasn't", "eating", "a carrot", "."], ans: "The zombie wasn't eating a carrot .", hint: "1 zombie = wasn't + eating.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["We", "weren't", "hiding", "in", "the cave", "."], ans: "We weren't hiding in the cave .", hint: "We = weren't + hiding.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The dog", "wasn't", "climbing", "the tree", "."], ans: "The dog wasn't climbing the tree .", hint: "1 dog = wasn't + climbing.", mob: "dog" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The sheep", "wasn't", "jumping", "over", "the fence", "."], ans: "The sheep wasn't jumping over the fence .", hint: "1 sheep = wasn't + jumping.", mob: "sheep" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["Two horses", "weren't", "sleeping", "at 6 o'clock", "."], ans: "Two horses weren't sleeping at 6 o'clock .", hint: "2 horses = weren't + sleeping.", mob: "horse" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The fish", "wasn't", "walking", "on", "the grass", "."], ans: "The fish wasn't walking on the grass .", hint: "1 fish = wasn't + walking.", mob: "fish" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["They", "weren't", "playing", "at midnight", "."], ans: "They weren't playing at midnight .", hint: "They = weren't + playing.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The spider", "wasn't", "eating", "grass", "."], ans: "The spider wasn't eating grass .", hint: "1 spider = wasn't + eating.", mob: "spider" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["I", "wasn't", "watching", "the zombie", "."], ans: "I wasn't watching the zombie .", hint: "I = wasn't + watching.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The chickens", "weren't", "swimming", "yesterday", "."], ans: "The chickens weren't swimming yesterday .", hint: "The chickens (plural) = weren't + swimming.", mob: "chicken" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["Alex", "wasn't", "sitting", "inside", "."], ans: "Alex wasn't sitting inside .", hint: "Alex = wasn't + sitting.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["Steve and Alex", "weren't", "sleeping", "at 8 o'clock", "."], ans: "Steve and Alex weren't sleeping at 8 o'clock .", hint: "2 people = weren't + sleeping.", mob: "steve" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "At 8 o'clock, the cat ___ swimming in the cold river.", options: ["wasn't", "weren't", "isn't"], ans: "wasn't", hint: "The cat = 1 animal ➔ WASN'T!", mob: "cat" },
+        { type: "mc", q: "The cows ___ climbing the tall tree yesterday!", options: ["weren't", "wasn't", "aren't"], ans: "weren't", hint: "The cows = plural ➔ WEREN'T!", mob: "cow" },
+        { type: "mc", q: "The zombie wasn't ___ in the sunny meadow.", options: ["playing", "play", "played"], ans: "playing", hint: "Negative Past Continuous still needs Verb-ing: wasn't playing!", mob: "zombie" },
+        { type: "mc", q: "Yesterday evening, I ___ sleeping at 7 o'clock.", options: ["wasn't", "weren't", "not"], ans: "wasn't", hint: "With I, use WASN'T!", mob: "steve" },
+        { type: "mc", q: "We ___ riding horses at midnight.", options: ["weren't", "wasn't", "aren't"], ans: "weren't", hint: "With We, use WEREN'T!", mob: "horse" },
+        { type: "mc", q: "The pig wasn't ___ over the high fence.", options: ["jumping", "jump", "jumped"], ans: "jumping", hint: "Wasn't + Verb-ing ➔ wasn't jumping!", mob: "pig" },
+        { type: "mc", q: "Two dogs ___ hiding in the dark cave.", options: ["weren't", "wasn't", "didn't"], ans: "weren't", hint: "Two dogs = plural ➔ WEREN'T!", mob: "dog" },
+        { type: "mc", q: "The fish ___ walking on the farm yesterday.", options: ["wasn't", "weren't", "don't"], ans: "wasn't", hint: "The fish = 1 animal ➔ WASN'T!", mob: "fish" },
+        { type: "mc", q: "The spider wasn't ___ a carrot at 9 o'clock.", options: ["eating", "eat", "ate"], ans: "eating", hint: "Wasn't + Verb-ing ➔ wasn't eating!", mob: "spider" },
+        { type: "mc", q: "You ___ watching the sheep yesterday morning.", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "With You, always use WEREN'T!", mob: "sheep" },
+        { type: "mc", q: "The chicken ___ sleeping at 5 o'clock.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "The chicken = 1 animal ➔ WASN'T!", mob: "chicken" },
+        { type: "mc", q: "Steve and Alex ___ running away from the puppy.", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "Steve and Alex = 2 people ➔ WEREN'T!", mob: "dog" },
+        { type: "mc", q: "The horse wasn't ___ in the river.", options: ["swimming", "swim", "swam"], ans: "swimming", hint: "Swim doubles the 'm': swimming!", mob: "horse" },
+        { type: "mc", q: "They ___ feeding the scary spider!", options: ["weren't", "wasn't", "didn't"], ans: "weren't", hint: "They + feeding ➔ WEREN'T!", mob: "spider" },
+        { type: "mc", q: "The sheep ___ running fast at 8 o'clock.", options: ["wasn't", "weren't", "don't"], ans: "wasn't", hint: "1 sheep ➔ WASN'T!", mob: "sheep" },
+        { type: "mc", q: "The zombies weren't ___ in the bright sun.", options: ["dancing", "dance", "danced"], ans: "dancing", hint: "Weren't + Verb-ing ➔ weren't dancing!", mob: "zombie" },
+        { type: "mc", q: "Alex ___ hiding behind the fence.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "Alex (She) ➔ WASN'T!", mob: "alex" },
+        { type: "mc", q: "My dog wasn't ___ on the bed.", options: ["sitting", "sit", "sat"], ans: "sitting", hint: "Sit doubles the 't': sitting!", mob: "dog" },
+        { type: "mc", q: "Three pigs ___ climbing the mountain.", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "Three pigs = plural ➔ WEREN'T!", mob: "pig" },
+        { type: "mc", q: "The cow ___ playing with a ball.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "The cow = 1 animal ➔ WASN'T!", mob: "cow" },
+        { type: "mc", q: "Steve wasn't ___ at 8 o'clock yesterday.", options: ["sleeping", "sleep", "slept"], ans: "sleeping", hint: "Wasn't + Verb-ing ➔ wasn't sleeping!", mob: "steve" },
+        { type: "mc", q: "The cats ___ barking at the moon.", options: ["weren't", "wasn't", "didn't"], ans: "weren't", hint: "The cats = plural ➔ WEREN'T!", mob: "cat" },
+        { type: "mc", q: "He ___ feeding the zombie last night!", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "He ➔ WASN'T!", mob: "zombie" },
+        { type: "mc", q: "The chickens weren't ___ in the dark cave.", options: ["hiding", "hide", "hid"], ans: "hiding", hint: "Hide drops -e: hiding!", mob: "chicken" },
+        { type: "mc", q: "She ___ carrying a spider!", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "She ➔ WASN'T!", mob: "spider" },
+        { type: "mc", q: "Two fish ___ jumping on the grass.", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "Two fish = plural ➔ WEREN'T!", mob: "fish" },
+        { type: "mc", q: "The Iron Golem ___ sleeping at midnight.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "1 Iron Golem ➔ WASN'T!", mob: "golem" },
+        { type: "mc", q: "We weren't ___ the villagers yesterday.", options: ["scaring", "scare", "scared"], ans: "scaring", hint: "Scare drops -e: scaring!", mob: "villager" },
+        { type: "mc", q: "The horse ___ eating fish.", options: ["wasn't", "weren't", "didn't"], ans: "wasn't", hint: "The horse = 1 animal ➔ WASN'T!", mob: "horse" },
+        { type: "mc", q: "My dog and cat ___ fighting yesterday.", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "Dog AND cat = 2 animals ➔ WEREN'T!", mob: "cat" },
+        { type: "mc", q: "The pig wasn't ___ a tree!", options: ["climbing", "climb", "climbed"], ans: "climbing", hint: "Wasn't + Verb-ing ➔ wasn't climbing!", mob: "pig" },
+        { type: "mc", q: "I ___ running in the dark forest.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "I ➔ WASN'T!", mob: "alex" },
+        { type: "mc", q: "The villagers ___ swimming at night.", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "The villagers = plural ➔ WEREN'T!", mob: "villager" },
+        { type: "mc", q: "The zombie ___ helping Steve on the farm.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "1 zombie ➔ WASN'T!", mob: "zombie" },
+        { type: "mc", q: "The sheep weren't ___ in the river.", options: ["swimming", "swim", "swam"], ans: "swimming", hint: "Weren't + swimming!", mob: "sheep" }
+      ],
+
+      // =======================================================================
+      // GAME 3 POOL: QUESTIONS (?) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game3Pool: [
+        // 15 Scramble Tasks
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "the pig", "eating", "a carrot", "?"], ans: "Was the pig eating a carrot ?", hint: "Start with Was + the pig + eating + a carrot ?", mob: "pig" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Were", "the cows", "walking", "on", "the grass", "?"], ans: "Were the cows walking on the grass ?", hint: "Plural cows ➔ Were + the cows + walking...", mob: "cow" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "the sheep", "sleeping", "under", "the tree", "?"], ans: "Was the sheep sleeping under the tree ?", hint: "1 sheep ➔ Was + the sheep + sleeping...", mob: "sheep" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "the chicken", "running", "fast", "?"], ans: "Was the chicken running fast ?", hint: "1 chicken ➔ Was + the chicken + running + fast ?", mob: "chicken" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "your dog", "playing", "outside", "?"], ans: "Was your dog playing outside ?", hint: "1 dog ➔ Was + your dog + playing + outside ?", mob: "dog" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "the cat", "sitting", "near", "the lantern", "?"], ans: "Was the cat sitting near the lantern ?", hint: "1 cat ➔ Was + the cat + sitting...", mob: "cat" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "the horse", "jumping", "over", "the fence", "?"], ans: "Was the horse jumping over the fence ?", hint: "1 horse ➔ Was + the horse + jumping...", mob: "horse" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Were", "the fish", "swimming", "in", "the river", "?"], ans: "Were the fish swimming in the river ?", hint: "Were + the fish + swimming + in + the river ?", mob: "fish" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "the spider", "climbing", "a tree", "?"], ans: "Was the spider climbing a tree ?", hint: "1 spider ➔ Was + the spider + climbing + a tree ?", mob: "spider" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "the zombie", "hiding", "in", "the cave", "?"], ans: "Was the zombie hiding in the cave ?", hint: "1 zombie ➔ Was + the zombie + hiding...", mob: "zombie" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Were", "you", "feeding", "the pigs", "?"], ans: "Were you feeding the pigs ?", hint: "With you ➔ Were + you + feeding + the pigs ?", mob: "pig" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Were", "Steve and Alex", "watching", "the animals", "?"], ans: "Were Steve and Alex watching the animals ?", hint: "2 people ➔ Were + Steve and Alex + watching...", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Were", "they", "riding", "horses", "?"], ans: "Were they riding horses ?", hint: "They ➔ Were + they + riding + horses ?", mob: "horse" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Was", "Alex", "helping", "the cow", "?"], ans: "Was Alex helping the cow ?", hint: "Alex ➔ Was + Alex + helping + the cow ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Continuous question:", words: ["Were", "two dogs", "barking", "last night", "?"], ans: "Were two dogs barking last night ?", hint: "2 dogs ➔ Were + two dogs + barking + last night ?", mob: "dog" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "___ the pig eating a carrot at 5 o'clock?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 pig + eating (-ing) ➔ WAS!", mob: "pig" },
+        { type: "mc", q: "___ the two cows sleeping yesterday evening?", options: ["Were", "Was", "Do"], ans: "Were", hint: "Two cows (plural) + sleeping ➔ WERE!", mob: "cow" },
+        { type: "mc", q: "Was the sheep ___ under the oak tree?", options: ["resting", "rest", "rested"], ans: "resting", hint: "Past Continuous question needs Verb-ing: resting!", mob: "sheep" },
+        { type: "mc", q: "___ you playing with the dog at 6 o'clock?", options: ["Were", "Was", "Are"], ans: "Were", hint: "With YOU, always start with WERE!", mob: "dog" },
+        { type: "mc", q: "___ the cat sitting on the warm roof?", options: ["Was", "Were", "Is"], ans: "Was", hint: "The cat = 1 animal ➔ WAS!", mob: "cat" },
+        { type: "mc", q: "Was the brown horse ___ over the fence?", options: ["jumping", "jump", "jumped"], ans: "jumping", hint: "Was + subject + Verb-ing ➔ jumping!", mob: "horse" },
+        { type: "mc", q: "___ three fish swimming in the river?", options: ["Were", "Was", "Did"], ans: "Were", hint: "Three fish = plural ➔ WERE!", mob: "fish" },
+        { type: "mc", q: "___ the spider climbing the wooden wall?", options: ["Was", "Were", "Does"], ans: "Was", hint: "The spider = 1 creature ➔ WAS!", mob: "spider" },
+        { type: "mc", q: "Was the zombie ___ behind the tree?", options: ["hiding", "hide", "hid"], ans: "hiding", hint: "Hide drops -e: hiding!", mob: "zombie" },
+        { type: "mc", q: "___ Steve and Alex carrying lanterns at 8 o'clock?", options: ["Were", "Was", "Are"], ans: "Were", hint: "Steve and Alex = 2 people ➔ WERE!", mob: "steve" },
+        { type: "mc", q: "___ the little chicken running near the farm?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 chicken + running ➔ WAS!", mob: "chicken" },
+        { type: "mc", q: "Were the pigs ___ in the mud yesterday?", options: ["playing", "play", "played"], ans: "playing", hint: "Were + subject + Verb-ing ➔ playing!", mob: "pig" },
+        { type: "mc", q: "___ they watching the horses at 5 o'clock?", options: ["Were", "Was", "Do"], ans: "Were", hint: "They + watching ➔ WERE!", mob: "horse" },
+        { type: "mc", q: "___ Alex feeding the white sheep?", options: ["Was", "Were", "Did"], ans: "Was", hint: "Alex (She) + feeding ➔ WAS!", mob: "alex" },
+        { type: "mc", q: "Was the orange fish ___ fast?", options: ["swimming", "swim", "swam"], ans: "swimming", hint: "Swim doubles 'm': swimming!", mob: "fish" },
+        { type: "mc", q: "___ your dog and cat sleeping together?", options: ["Were", "Was", "Is"], ans: "Were", hint: "Dog AND cat = 2 animals ➔ WERE!", mob: "cat" },
+        { type: "mc", q: "___ the villagers walking home at 7 o'clock?", options: ["Were", "Was", "Did"], ans: "Were", hint: "The villagers = plural ➔ WERE!", mob: "villager" },
+        { type: "mc", q: "Was the cow ___ green grass all morning?", options: ["eating", "eat", "ate"], ans: "eating", hint: "Was + subject + Verb-ing ➔ eating!", mob: "cow" },
+        { type: "mc", q: "___ he riding the horse yesterday afternoon?", options: ["Was", "Were", "Did"], ans: "Was", hint: "He + riding ➔ WAS!", mob: "horse" },
+        { type: "mc", q: "___ two spiders climbing the dark cave?", options: ["Were", "Was", "Are"], ans: "Were", hint: "Two spiders = plural ➔ WERE!", mob: "spider" },
+        { type: "mc", q: "Were you ___ at the moon last night?", options: ["looking", "look", "looked"], ans: "looking", hint: "Were + you + Verb-ing ➔ looking!", mob: "steve" },
+        { type: "mc", q: "___ she drawing a cute puppy?", options: ["Was", "Were", "Did"], ans: "Was", hint: "She + drawing ➔ WAS!", mob: "dog" },
+        { type: "mc", q: "___ the zombies walking near the village?", options: ["Were", "Was", "Are"], ans: "Were", hint: "The zombies = plural ➔ WERE!", mob: "zombie" },
+        { type: "mc", q: "Was the dog ___ after the chicken?", options: ["running", "run", "ran"], ans: "running", hint: "Run doubles 'n': running!", mob: "chicken" },
+        { type: "mc", q: "___ the Iron Golem guarding the farm?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 Iron Golem + guarding ➔ WAS!", mob: "golem" },
+        { type: "mc", q: "Were the cats ___ near the warm fire?", options: ["sitting", "sit", "sat"], ans: "sitting", hint: "Sit doubles 't': sitting!", mob: "cat" },
+        { type: "mc", q: "___ we helping the sheep yesterday?", options: ["Were", "Was", "Are"], ans: "Were", hint: "We + helping ➔ WERE!", mob: "sheep" },
+        { type: "mc", q: "___ the horse drinking water from the river?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 horse + drinking ➔ WAS!", mob: "horse" },
+        { type: "mc", q: "Was Steve ___ his lantern at 8 o'clock?", options: ["holding", "hold", "held"], ans: "holding", hint: "Was + subject + Verb-ing ➔ holding!", mob: "steve" },
+        { type: "mc", q: "___ the chickens eating seeds all morning?", options: ["Were", "Was", "Did"], ans: "Were", hint: "The chickens = plural ➔ WERE!", mob: "chicken" },
+        { type: "mc", q: "Were they ___ in the river yesterday?", options: ["swimming", "swim", "swam"], ans: "swimming", hint: "Swim doubles 'm': swimming!", mob: "fish" },
+        { type: "mc", q: "___ I talking too loud?", options: ["Was", "Were", "Are"], ans: "Was", hint: "With I ➔ WAS!", mob: "alex" },
+        { type: "mc", q: "___ the pig sleeping next to the cow?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 pig + sleeping ➔ WAS!", mob: "pig" },
+        { type: "mc", q: "Were the horses ___ across the field?", options: ["galloping", "gallop", "galloped"], ans: "galloping", hint: "Were + horses + Verb-ing ➔ galloping!", mob: "horse" },
+        { type: "mc", q: "___ the spider waiting in the dark?", options: ["Was", "Were", "Does"], ans: "Was", hint: "1 spider + waiting ➔ WAS!", mob: "spider" }
+      ],
+
+      // =======================================================================
+      // GAME 4 POOL: MIXED BLITZ (+ / - / ?) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game4Pool: [
+        // 15 Scramble Tasks
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["The pig", "was", "eating", "a carrot", "."], ans: "The pig was eating a carrot .", hint: "The pig + was + eating + a carrot .", mob: "pig" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["The cat", "wasn't", "swimming", "yesterday", "."], ans: "The cat wasn't swimming yesterday .", hint: "The cat + wasn't + swimming + yesterday .", mob: "cat" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Was", "the spider", "climbing", "the tree", "?"], ans: "Was the spider climbing the tree ?", hint: "Was + the spider + climbing + the tree ?", mob: "spider" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["Two cows", "were", "walking", "on", "the grass", "."], ans: "Two cows were walking on the grass .", hint: "Two cows + were + walking + on + the grass .", mob: "cow" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["We", "weren't", "sleeping", "at 8 o'clock", "."], ans: "We weren't sleeping at 8 o'clock .", hint: "We + weren't + sleeping + at 8 o'clock .", mob: "steve" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Were", "the pigs", "running", "fast", "?"], ans: "Were the pigs running fast ?", hint: "Were + the pigs + running + fast ?", mob: "pig" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["The fish", "was", "swimming", "in", "the river", "."], ans: "The fish was swimming in the river .", hint: "The fish + was + swimming + in + the river .", mob: "fish" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["The zombie", "wasn't", "playing", "with", "the dog", "."], ans: "The zombie wasn't playing with the dog .", hint: "The zombie + wasn't + playing + with + the dog .", mob: "zombie" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Was", "the horse", "jumping", "high", "?"], ans: "Was the horse jumping high ?", hint: "Was + the horse + jumping + high ?", mob: "horse" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["Steve and Alex", "were", "helping", "the sheep", "."], ans: "Steve and Alex were helping the sheep .", hint: "Steve and Alex + were + helping + the sheep .", mob: "sheep" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["The chickens", "weren't", "hiding", "in", "the cave", "."], ans: "The chickens weren't hiding in the cave .", hint: "The chickens + weren't + hiding + in + the cave .", mob: "chicken" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Were", "you", "watching", "the cat", "?"], ans: "Were you watching the cat ?", hint: "Were + you + watching + the cat ?", mob: "cat" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["My dog", "was", "sitting", "near", "Steve", "."], ans: "My dog was sitting near Steve .", hint: "My dog + was + sitting + near + Steve .", mob: "dog" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["The horse", "wasn't", "eating", "fish", "."], ans: "The horse wasn't eating fish .", hint: "The horse + wasn't + eating + fish .", mob: "horse" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Was", "Alex", "feeding", "the cow", "?"], ans: "Was Alex feeding the cow ?", hint: "Was + Alex + feeding + the cow ?", mob: "cow" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "At 8 o'clock, the sheep ___ sleeping under a tree.", options: ["was", "were", "are"], ans: "was", hint: "1 sheep ➔ WAS!", mob: "sheep" },
+        { type: "mc", q: "The dogs ___ climbing the tall tree yesterday!", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "The dogs (plural, negative) ➔ WEREN'T!", mob: "dog" },
+        { type: "mc", q: "___ the fish swimming in the river at 6 o'clock?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 fish + swimming ➔ WAS!", mob: "fish" },
+        { type: "mc", q: "Steve and Alex ___ walking with lanterns last night.", options: ["were", "was", "is"], ans: "were", hint: "2 people ➔ WERE!", mob: "steve" },
+        { type: "mc", q: "The zombie wasn't ___ a sweet carrot.", options: ["eating", "eat", "ate"], ans: "eating", hint: "Wasn't + Verb-ing ➔ eating!", mob: "zombie" },
+        { type: "mc", q: "___ you feeding the chickens yesterday morning?", options: ["Were", "Was", "Are"], ans: "Were", hint: "With YOU ➔ WERE!", mob: "chicken" },
+        { type: "mc", q: "The brown horse was ___ across the green field.", options: ["running", "run", "ran"], ans: "running", hint: "Run doubles 'n': running!", mob: "horse" },
+        { type: "mc", q: "The cat ___ swimming in the cold water.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "1 cat (negative) ➔ WASN'T!", mob: "cat" },
+        { type: "mc", q: "Were the spiders ___ in the dark cave?", options: ["hiding", "hide", "hid"], ans: "hiding", hint: "Hide drops -e: hiding!", mob: "spider" },
+        { type: "mc", q: "At 5 o'clock, I ___ playing with my puppy.", options: ["was", "were", "am"], ans: "was", hint: "With I ➔ WAS!", mob: "dog" },
+        { type: "mc", q: "Two pigs ___ eating apples yesterday evening.", options: ["were", "was", "is"], ans: "were", hint: "Two pigs = plural ➔ WERE!", mob: "pig" },
+        { type: "mc", q: "___ the cow walking near the wooden fence?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 cow + walking ➔ WAS!", mob: "cow" },
+        { type: "mc", q: "We ___ watching the zombies at midnight!", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "We (negative) ➔ WEREN'T!", mob: "zombie" },
+        { type: "mc", q: "The chicken was ___ on the soft grass.", options: ["sitting", "sit", "sat"], ans: "sitting", hint: "Sit doubles 't': sitting!", mob: "chicken" },
+        { type: "mc", q: "___ Steve and Alex riding horses at 4 o'clock?", options: ["Were", "Was", "Did"], ans: "Were", hint: "2 people + riding ➔ WERE!", mob: "horse" },
+        { type: "mc", q: "The spider ___ climbing the oak tree at 9 o'clock.", options: ["was", "were", "are"], ans: "was", hint: "1 spider ➔ WAS!", mob: "spider" },
+        { type: "mc", q: "My fish ___ walking on the path!", options: ["wasn't", "weren't", "don't"], ans: "wasn't", hint: "1 fish (negative) ➔ WASN'T!", mob: "fish" },
+        { type: "mc", q: "Was Alex ___ her lantern in the forest?", options: ["carrying", "carry", "carried"], ans: "carrying", hint: "Was + Alex + Verb-ing ➔ carrying!", mob: "alex" },
+        { type: "mc", q: "They ___ playing with the cute kitty all evening.", options: ["were", "was", "is"], ans: "were", hint: "They ➔ WERE!", mob: "cat" },
+        { type: "mc", q: "___ the sheep eating green grass?", options: ["Was", "Were", "Does"], ans: "Was", hint: "1 sheep + eating ➔ WAS!", mob: "sheep" },
+        { type: "mc", q: "The cows weren't ___ in the river.", options: ["swimming", "swim", "swam"], ans: "swimming", hint: "Swim doubles 'm': swimming!", mob: "cow" },
+        { type: "mc", q: "He ___ brushing the horse yesterday afternoon.", options: ["was", "were", "are"], ans: "was", hint: "He ➔ WAS!", mob: "horse" },
+        { type: "mc", q: "The villagers ___ sleeping at 5 o'clock in the afternoon.", options: ["weren't", "wasn't", "isn't"], ans: "weren't", hint: "The villagers (plural, negative) ➔ WEREN'T!", mob: "villager" },
+        { type: "mc", q: "___ the dog barking at the zombie?", options: ["Was", "Were", "Did"], ans: "Was", hint: "1 dog + barking ➔ WAS!", mob: "dog" },
+        { type: "mc", q: "The Iron Golem was ___ the farm all night.", options: ["guarding", "guard", "guarded"], ans: "guarding", hint: "Was + Verb-ing ➔ guarding!", mob: "golem" },
+        { type: "mc", q: "Three cats ___ sleeping near the warm furnace.", options: ["were", "was", "is"], ans: "were", hint: "Three cats = plural ➔ WERE!", mob: "cat" },
+        { type: "mc", q: "She ___ hiding from the spider.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "She (negative) ➔ WASN'T!", mob: "spider" },
+        { type: "mc", q: "Were the pigs ___ over the fence?", options: ["jumping", "jump", "jumped"], ans: "jumping", hint: "Were + pigs + Verb-ing ➔ jumping!", mob: "pig" },
+        { type: "mc", q: "At 7 o'clock, the chickens ___ looking for seeds.", options: ["were", "was", "is"], ans: "were", hint: "The chickens = plural ➔ WERE!", mob: "chicken" },
+        { type: "mc", q: "___ you sleeping at 9 o'clock last night?", options: ["Were", "Was", "Did"], ans: "Were", hint: "With YOU ➔ WERE!", mob: "steve" },
+        { type: "mc", q: "The zombie was ___ slowly toward the cave.", options: ["walking", "walk", "walked"], ans: "walking", hint: "Was + Verb-ing ➔ walking!", mob: "zombie" },
+        { type: "mc", q: "My dog and horse ___ running together.", options: ["were", "was", "is"], ans: "were", hint: "Dog AND horse = 2 animals ➔ WERE!", mob: "horse" },
+        { type: "mc", q: "I ___ eating fish yesterday evening.", options: ["wasn't", "weren't", "aren't"], ans: "wasn't", hint: "With I (negative) ➔ WASN'T!", mob: "fish" },
+        { type: "mc", q: "___ two sheep resting near the barn?", options: ["Were", "Was", "Are"], ans: "Were", hint: "Two sheep = plural ➔ WERE!", mob: "sheep" },
+        { type: "mc", q: "The cat was ___ after a green leaf.", options: ["chasing", "chase", "chased"], ans: "chasing", hint: "Chase drops -e: chasing!", mob: "cat" }
+      ],
+
+      // =======================================================================
+      // GAME 5 POOL (VARIANT B): WAS OR WERE? RIVER BRIDGE — 40 UNIQUE TASKS
+      // =======================================================================
+      game5Pool: [
+        { q: "The pig ___ eating a carrot at 5 o'clock.", ans: "was", polarity: "+", countTip: "1 animal (It)", hint: "The pig = 1 animal, positive (+) ➔ WAS!", mob: "pig" },
+        { q: "Two cows ___ walking on the green grass.", ans: "were", polarity: "+", countTip: "2 animals (They)", hint: "Two cows = plural, positive (+) ➔ WERE!", mob: "cow" },
+        { q: "The cat ___ swimming in the cold river. (NOT)", ans: "wasn't", polarity: "-", countTip: "1 animal (It) — Negative", hint: "1 cat + NOT ➔ WASN'T!", mob: "cat" },
+        { q: "Steve and Alex ___ sleeping at 8 o'clock. (NOT)", ans: "weren't", polarity: "-", countTip: "2 heroes (They) — Negative", hint: "Steve and Alex = 2 people + NOT ➔ WEREN'T!", mob: "steve" },
+        { q: "The sheep ___ sleeping under the oak tree.", ans: "was", polarity: "+", countTip: "1 animal (It)", hint: "The sheep = 1 animal, positive (+) ➔ WAS!", mob: "sheep" },
+        { q: "Three chickens ___ running near the farm.", ans: "were", polarity: "+", countTip: "3 animals (They)", hint: "Three chickens = plural, positive (+) ➔ WERE!", mob: "chicken" },
+        { q: "My dog ___ playing with a ball yesterday.", ans: "was", polarity: "+", countTip: "1 animal (It)", hint: "My dog = 1 animal, positive (+) ➔ WAS!", mob: "dog" },
+        { q: "The zombies ___ dancing in the sun! (NOT)", ans: "weren't", polarity: "-", countTip: "Plural (They) — Negative", hint: "The zombies = plural + NOT ➔ WEREN'T!", mob: "zombie" },
+        { q: "The brown horse ___ jumping over the fence.", ans: "was", polarity: "+", countTip: "1 animal (It)", hint: "The brown horse = 1 animal, positive (+) ➔ WAS!", mob: "horse" },
+        { q: "Five fish ___ swimming in the shiny river.", ans: "were", polarity: "+", countTip: "5 animals (They)", hint: "Five fish = plural, positive (+) ➔ WERE!", mob: "fish" },
+        { q: "The spider ___ eating a carrot. (NOT)", ans: "wasn't", polarity: "-", countTip: "1 creature (It) — Negative", hint: "1 spider + NOT ➔ WASN'T!", mob: "spider" },
+        { q: "We ___ watching the bright moon at 8 o'clock.", ans: "were", polarity: "+", countTip: "We (Plural)", hint: "With WE, positive (+) ➔ WERE!", mob: "alex" },
+        { q: "I ___ feeding the pig yesterday evening.", ans: "was", polarity: "+", countTip: "I (Singular)", hint: "With I, positive (+) ➔ WAS!", mob: "pig" },
+        { q: "You ___ riding the horse at 6 o'clock.", ans: "were", polarity: "+", countTip: "You", hint: "With YOU, always use WERE!", mob: "horse" },
+        { q: "The zombie ___ hiding in a dark cave.", ans: "was", polarity: "+", countTip: "1 creature (It)", hint: "The zombie = 1 creature, positive (+) ➔ WAS!", mob: "zombie" },
+        { q: "My dog and cat ___ fighting yesterday. (NOT)", ans: "weren't", polarity: "-", countTip: "2 animals (They) — Negative", hint: "Dog AND cat = 2 animals + NOT ➔ WEREN'T!", mob: "cat" },
+        { q: "The cow ___ climbing the tall tree! (NOT)", ans: "wasn't", polarity: "-", countTip: "1 animal (It) — Negative", hint: "The cow = 1 animal + NOT ➔ WASN'T!", mob: "cow" },
+        { q: "They ___ looking for the lost sheep.", ans: "were", polarity: "+", countTip: "They (Plural)", hint: "With THEY, positive (+) ➔ WERE!", mob: "sheep" },
+        { q: "Alex ___ carrying a warm lantern.", ans: "was", polarity: "+", countTip: "1 hero (She)", hint: "Alex = 1 person, positive (+) ➔ WAS!", mob: "alex" },
+        { q: "The pigs ___ sleeping in the river. (NOT)", ans: "weren't", polarity: "-", countTip: "Plural (They) — Negative", hint: "The pigs = plural + NOT ➔ WEREN'T!", mob: "pig" },
+        { q: "The orange fish ___ splashing in the water.", ans: "was", polarity: "+", countTip: "1 fish (It)", hint: "1 orange fish, positive (+) ➔ WAS!", mob: "fish" },
+        { q: "Two spiders ___ climbing the dark wall.", ans: "were", polarity: "+", countTip: "2 creatures (They)", hint: "Two spiders = plural, positive (+) ➔ WERE!", mob: "spider" },
+        { q: "I ___ hiding from the friendly puppy. (NOT)", ans: "wasn't", polarity: "-", countTip: "I — Negative", hint: "With I + NOT ➔ WASN'T!", mob: "dog" },
+        { q: "We ___ scaring the chickens. (NOT)", ans: "weren't", polarity: "-", countTip: "We — Negative", hint: "With WE + NOT ➔ WEREN'T!", mob: "chicken" },
+        { q: "Steve ___ brushing his fast horse.", ans: "was", polarity: "+", countTip: "1 hero (He)", hint: "Steve = 1 person, positive (+) ➔ WAS!", mob: "horse" },
+        { q: "The villagers ___ walking home at 7 o'clock.", ans: "were", polarity: "+", countTip: "Plural (They)", hint: "The villagers = plural, positive (+) ➔ WERE!", mob: "villager" },
+        { q: "The chicken ___ swimming in the lake. (NOT)", ans: "wasn't", polarity: "-", countTip: "1 animal (It) — Negative", hint: "1 chicken + NOT ➔ WASN'T!", mob: "chicken" },
+        { q: "Two dogs ___ barking at the spider.", ans: "were", polarity: "+", countTip: "2 animals (They)", hint: "Two dogs = plural, positive (+) ➔ WERE!", mob: "dog" },
+        { q: "The cute cat ___ sitting near the fire.", ans: "was", polarity: "+", countTip: "1 animal (It)", hint: "1 cat, positive (+) ➔ WAS!", mob: "cat" },
+        { q: "The horses ___ eating fish. (NOT)", ans: "weren't", polarity: "-", countTip: "Plural (They) — Negative", hint: "The horses = plural + NOT ➔ WEREN'T!", mob: "horse" },
+        { q: "The Iron Golem ___ guarding the village.", ans: "was", polarity: "+", countTip: "1 hero (He/It)", hint: "1 Iron Golem, positive (+) ➔ WAS!", mob: "golem" },
+        { q: "You ___ sleeping at 5 o'clock. (NOT)", ans: "weren't", polarity: "-", countTip: "You — Negative", hint: "With YOU + NOT ➔ WEREN'T!", mob: "steve" },
+        { q: "The fish ___ walking on the farm! (NOT)", ans: "wasn't", polarity: "-", countTip: "1 fish (It) — Negative", hint: "1 fish + NOT ➔ WASN'T!", mob: "fish" },
+        { q: "Two sheep ___ eating fresh grass.", ans: "were", polarity: "+", countTip: "2 animals (They)", hint: "Two sheep = plural, positive (+) ➔ WERE!", mob: "sheep" },
+        { q: "She ___ drawing a picture of a cow.", ans: "was", polarity: "+", countTip: "1 hero (She)", hint: "With SHE, positive (+) ➔ WAS!", mob: "cow" },
+        { q: "He ___ feeding the zombie! (NOT)", ans: "wasn't", polarity: "-", countTip: "1 hero (He) — Negative", hint: "With HE + NOT ➔ WASN'T!", mob: "zombie" },
+        { q: "Steve and his dog ___ running on the path.", ans: "were", polarity: "+", countTip: "2 heroes (They)", hint: "Steve AND his dog = 2 ➔ WERE!", mob: "dog" },
+        { q: "The spider ___ climbing the tall tree.", ans: "was", polarity: "+", countTip: "1 creature (It)", hint: "1 spider, positive (+) ➔ WAS!", mob: "spider" },
+        { q: "They ___ swimming at midnight. (NOT)", ans: "weren't", polarity: "-", countTip: "They — Negative", hint: "With THEY + NOT ➔ WEREN'T!", mob: "fish" },
+        { q: "My cat and the pig ___ sleeping near the barn.", ans: "were", polarity: "+", countTip: "2 animals (They)", hint: "My cat AND the pig = 2 animals ➔ WERE!", mob: "pig" }
+      ],
+
+      // 8 Achievements (Unlocking all 8 opens the Warden's Ranger License)
+      badges: [
+        { id: "b_vocab", title: "Animal Spotter", desc: "Inspect all 10 Animal & Creature cards in Section 1.", img: "https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png" },
+        { id: "b_game1", title: "Was/Were Builder", desc: "Complete a round of Game 1 (Affirmative).", img: "https://i.postimg.cc/28v02WW6/Minecraft-Cow-removebg-preview.png" },
+        { id: "b_game2", title: "Night Shield", desc: "Complete a round of Game 2 (Negative).", img: "https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png" },
+        { id: "b_game3", title: "Curious Ranger", desc: "Complete a round of Game 3 (Questions).", img: "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" },
+        { id: "b_game4", title: "Moonlight Blitz", desc: "Complete all 15 tasks in Game 4 (Mixed Blitz).", img: "https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" },
+        { id: "b_game5", title: "Bridge Crosser", desc: "Guide Steve across all 10 planks in Game 5!", img: "https://i.postimg.cc/KzKF6sVp/Minecraft-Horse-removebg-preview.png" },
+        { id: "b_totem", title: "Undying Explorer", desc: "Use the Totem of Undying to replay any game!", img: "https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" },
+        { id: "b_album", title: "Album Keeper", desc: "Unlock 2 photos in Section 4 (or earn 50 Diamonds)!", img: "https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" }
+      ]
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT & LOCAL STORAGE
+       ========================================================================= */
+    let appState = {
+      diamonds: 0,
+      totalDiamondsEarned: 0,
+      exploredWords: [],
+      unlockedBadges: [],
+      unlockedPhotos: [],
+      certTheme: "bg1",
+      heroName: "Animal Ranger",
+      soundFX: true
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState.diamonds = parsed.diamonds || 0;
+          appState.totalDiamondsEarned = parsed.totalDiamondsEarned || appState.diamonds;
+          appState.exploredWords = parsed.exploredWords || [];
+          appState.unlockedBadges = parsed.unlockedBadges || [];
+          appState.unlockedPhotos = parsed.unlockedPhotos || [];
+          appState.certTheme = parsed.certTheme || "bg1";
+          appState.heroName = parsed.heroName || "Animal Ranger";
+        }
+      } catch (e) {
+        console.warn("Storage load error:", e);
+      }
+      updateHUD();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.warn("Storage save error:", e);
+      }
+      updateHUD();
+    }
+
+    function showResetConfirm() {
+      playClickSound();
+      document.getElementById("reset-init-btn").classList.add("hidden");
+      const box = document.getElementById("reset-confirm-box");
+      box.classList.remove("hidden");
+      box.classList.add("flex");
+    }
+
+    function cancelResetConfirm() {
+      playClickSound();
+      const box = document.getElementById("reset-confirm-box");
+      box.classList.add("hidden");
+      box.classList.remove("flex");
+      document.getElementById("reset-init-btn").classList.remove("hidden");
+    }
+
+    function confirmResetProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      appState = {
+        diamonds: 0,
+        totalDiamondsEarned: 0,
+        exploredWords: [],
+        unlockedBadges: [],
+        unlockedPhotos: [],
+        certTheme: "bg1",
+        heroName: "Animal Ranger",
+        soundFX: true
+      };
+      cancelResetConfirm();
+      renderVocabGrid();
+      renderPhotoAlbum();
+      renderBadgesGrid();
+      setCertificateTheme("bg1");
+      updateHUD();
+      playClickSound();
+    }
+
+    function addDiamonds(amount) {
+      appState.diamonds += amount;
+      appState.totalDiamondsEarned += amount;
+      if (appState.totalDiamondsEarned >= 50) {
+        unlockBadge("b_album");
+      }
+      saveState();
+    }
+
+    function unlockBadge(badgeId) {
+      if (!appState.unlockedBadges.includes(badgeId)) {
+        appState.unlockedBadges.push(badgeId);
+        playFanfareSound();
+        saveState();
+        renderBadgesGrid();
+      }
+    }
+
+    function updateHUD() {
+      const unlockedCount = appState.unlockedBadges.length;
+      const totalBadges = GAME_DATA.badges.length;
+
+      document.getElementById("hud-diamonds").textContent = appState.diamonds;
+      const albumBal = document.getElementById("album-diamonds-balance");
+      if (albumBal) albumBal.textContent = appState.diamonds;
+
+      document.getElementById("hud-badges").textContent = `${unlockedCount}/${totalBadges}`;
+      document.getElementById("words-explored-count").textContent = `${appState.exploredWords.length} / 10`;
+      document.getElementById("student-name-input").value = appState.heroName;
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+
+      // Update Warden Lock Progress
+      const lockText = document.getElementById("finale-lock-progress-text");
+      const lockBar = document.getElementById("finale-lock-bar");
+      if (lockText && lockBar) {
+        lockText.textContent = `${unlockedCount} / ${totalBadges}`;
+        lockBar.style.width = `${Math.round((unlockedCount / totalBadges) * 100)}%`;
+      }
+
+      const lockedBanner = document.getElementById("finale-locked-banner");
+      const unlockedContent = document.getElementById("finale-unlocked-content");
+      if (unlockedCount >= totalBadges) {
+        lockedBanner.classList.add("hidden");
+        unlockedContent.classList.remove("hidden");
+      } else {
+        lockedBanner.classList.remove("hidden");
+        unlockedContent.classList.add("hidden");
+      }
+    }
+
+    /* =========================================================================
+       3. WEB AUDIO API (8-BIT FX) & WEB SPEECH API (en-US, CLICK ONLY)
+       ========================================================================= */
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSoundFX() {
+      appState.soundFX = !appState.soundFX;
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.innerHTML = appState.soundFX
+        ? '<i class="fa-solid fa-volume-high"></i>'
+        : '<i class="fa-solid fa-volume-xmark"></i>';
+      if (appState.soundFX) playClickSound();
+    }
+
+    function playTone(freq, duration = 0.12, type = "square", vol = 0.12) {
+      if (!appState.soundFX) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playClickSound() {
+      playTone(460, 0.06, "square", 0.08);
+    }
+
+    function playSuccessSound() {
+      playTone(523.25, 0.1, "triangle", 0.16);
+      setTimeout(() => playTone(659.25, 0.12, "triangle", 0.16), 90);
+      setTimeout(() => playTone(783.99, 0.2, "triangle", 0.18), 180);
+    }
+
+    function playErrorSound() {
+      playTone(185, 0.16, "sawtooth", 0.14);
+      setTimeout(() => playTone(135, 0.22, "sawtooth", 0.14), 140);
+    }
+
+    function playSplashSound() {
+      playTone(260, 0.09, "sawtooth", 0.13);
+      setTimeout(() => playTone(160, 0.14, "triangle", 0.14), 80);
+      setTimeout(() => playTone(110, 0.22, "sine", 0.15), 170);
+    }
+
+    function playFanfareSound() {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((n, idx) => {
+        setTimeout(() => playTone(n, 0.18, "triangle", 0.18), idx * 100);
+      });
+    }
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const indicator = document.getElementById("speech-indicator");
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      utter.rate = 0.88;
+      utter.pitch = 1.05;
+
+      utter.onstart = () => {
+        indicator.classList.remove("hidden");
+        indicator.classList.add("flex");
+      };
+      utter.onend = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+      utter.onerror = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* =========================================================================
+       4. UTILITY: FISHER-YATES SHUFFLE
+       ========================================================================= */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /* =========================================================================
+       5. SECTION 1 RENDERER (10 ANIMAL FLASHCARDS)
+       ========================================================================= */
+    function renderVocabGrid() {
+      const grid = document.getElementById("vocab-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.vocabulary.forEach((item) => {
+        const isExplored = appState.exploredWords.includes(item.id);
+        const card = document.createElement("div");
+        card.className = "flip-card cursor-pointer";
+        const safeSpeak = `${item.word}. ${item.example}`.replace(/'/g, "\\'");
+
+        card.innerHTML = `
+          <div class="flip-card-inner" id="flip-${item.id}">
+            <!-- FRONT: Image, English word, Past Continuous example, Audio -->
+            <div class="flip-card-front mc-panel justify-between">
+              <div class="w-full flex justify-between items-center">
+                <span class="pixel-font text-[8px] bg-slate-900 text-[var(--primary-light)] px-2 py-0.5 rounded">${isExplored ? '✓ SPOTTED' : 'ANIMAL'}</span>
+                <button onclick="event.stopPropagation(); speakText('${safeSpeak}')" class="mc-btn px-2.5 py-1 text-xs" style="min-height:34px;" title="Listen">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+              <img src="${item.img}" alt="${item.word}" class="w-20 h-20 object-contain my-1 drop-shadow-md">
+              <div class="text-center">
+                <h4 class="pixel-font text-xs sm:text-sm text-slate-900">${item.word}</h4>
+                <p class="text-[11px] text-slate-700 font-semibold mt-1 leading-tight">"${item.example}"</p>
+              </div>
+              <div class="text-[10px] font-bold text-blue-800 uppercase tracking-wider">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip
+              </div>
+            </div>
+
+            <!-- BACK: Ukrainian Translation -->
+            <div class="flip-card-back mc-panel-dark justify-between border-4 border-[var(--accent)]">
+              <span class="pixel-font text-[9px] text-[var(--accent-light)]">UKRAINIAN</span>
+              <img src="${item.img}" alt="${item.word}" class="w-16 h-16 object-contain">
+              <div class="text-center">
+                <div class="text-xs text-slate-400 uppercase font-bold">${item.word}</div>
+                <div class="text-2xl font-extrabold text-[var(--accent-light)] mt-1">${item.ua}</div>
+              </div>
+              <div class="text-[10px] text-slate-300">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip back
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          playClickSound();
+          card.classList.toggle("flipped");
+          if (!appState.exploredWords.includes(item.id)) {
+            appState.exploredWords.push(item.id);
+            addDiamonds(2);
+            if (appState.exploredWords.length >= 10) {
+              unlockBadge("b_vocab");
+            }
+            saveState();
+            const badgeTag = card.querySelector(".flip-card-front span.pixel-font");
+            if (badgeTag) badgeTag.textContent = "✓ SPOTTED";
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       6. MINI-GAMES ENGINE (GAMES 1–4)
+       ========================================================================= */
+    let currentGameNum = 1;
+    let activeRoundQuestions = [];
+    let currentQIndex = 0;
+    let currentRoundScore = 0;
+    let questionMistakeMade = false;
+    let questionResolved = false;
+    let scramblePlacedWords = [];
+    let scrambleBankWords = [];
+
+    function selectMiniGame(gameNum) {
+      playClickSound();
+      currentGameNum = gameNum;
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`gbtn-${i}`);
+        if (i === gameNum) {
+          btn.classList.add("mc-btn-blue");
+        } else {
+          btn.classList.remove("mc-btn-blue");
+        }
+      }
+
+      if (gameNum === 5) {
+        document.getElementById("standard-game-wrapper").classList.add("hidden");
+        document.getElementById("game5-custom-wrapper").classList.remove("hidden");
+        startGame5Bridge();
+      } else {
+        document.getElementById("game5-custom-wrapper").classList.add("hidden");
+        document.getElementById("standard-game-wrapper").classList.remove("hidden");
+        startStandardGameRound(gameNum);
+      }
+    }
+
+    function startStandardGameRound(gameNum) {
+      currentQIndex = 0;
+      currentRoundScore = 0;
+
+      const titleEl = document.getElementById("active-game-title");
+      const subEl = document.getElementById("active-game-subtitle");
+      const iconEl = document.getElementById("active-game-icon");
+
+      if (gameNum === 1) {
+        titleEl.textContent = "Game 1: Affirmative Patrol (+)";
+        subEl.textContent = "10 random questions from a 50-question pool! Use was / were + Verb-ing!";
+        iconEl.src = GAME_DATA.assets.pig;
+        activeRoundQuestions = shuffleArray(GAME_DATA.game1Pool).slice(0, 10);
+      } else if (gameNum === 2) {
+        titleEl.textContent = "Game 2: Negative Shield (-)";
+        subEl.textContent = "10 random questions from a 50-question pool! Use wasn't / weren't + Verb-ing!";
+        iconEl.src = "https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game2Pool).slice(0, 10);
+      } else if (gameNum === 3) {
+        titleEl.textContent = "Game 3: Lantern Questions (?)";
+        subEl.textContent = "10 random questions from a 50-question pool! Start with Was / Were + Subject + Verb-ing!";
+        iconEl.src = "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game3Pool).slice(0, 10);
+      } else if (gameNum === 4) {
+        titleEl.textContent = "Game 4: Moonlight Mixed Blitz (+ / - / ?)";
+        subEl.textContent = "15 random questions from a 50-question pool! All Past Continuous rules mixed!";
+        iconEl.src = "https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game4Pool).slice(0, 15);
+      }
+
+      document.getElementById("round-complete-screen").classList.add("hidden");
+      document.getElementById("question-stage").classList.remove("hidden");
+      document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
+
+      renderCurrentStandardQuestion();
+    }
+
+    function renderCurrentStandardQuestion() {
+      questionMistakeMade = false;
+      questionResolved = false;
+
+      const qObj = activeRoundQuestions[currentQIndex];
+      document.getElementById("game-q-num").textContent = currentQIndex + 1;
+      document.getElementById("game-score-val").textContent = currentRoundScore;
+
+      document.getElementById("game-next-btn").classList.add("hidden");
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+
+      const mobImg = GAME_DATA.assets[qObj.mob] || GAME_DATA.assets.steve;
+      document.getElementById("question-mob-img").src = mobImg;
+
+      const tagEl = document.getElementById("question-mode-tag");
+      if (currentGameNum === 1) {
+        tagEl.textContent = "AFFIRMATIVE (+)";
+        tagEl.className = "inline-block bg-blue-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      } else if (currentGameNum === 2) {
+        tagEl.textContent = "NEGATIVE (-)";
+        tagEl.className = "inline-block bg-rose-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      } else if (currentGameNum === 3) {
+        tagEl.textContent = "QUESTION (?)";
+        tagEl.className = "inline-block bg-emerald-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      } else {
+        tagEl.textContent = "MIXED BLITZ";
+        tagEl.className = "inline-block bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      }
+
+      const mcContainer = document.getElementById("mc-options-container");
+      const scrambleContainer = document.getElementById("scramble-container");
+
+      if (qObj.type === "scramble") {
+        mcContainer.classList.add("hidden");
+        scrambleContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.prompt;
+        document.getElementById("scramble-submit-btn").classList.remove("opacity-50");
+
+        scramblePlacedWords = [];
+        scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+        renderScrambleUI();
+      } else {
+        scrambleContainer.classList.add("hidden");
+        mcContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.q;
+
+        const shuffledOpts = shuffleArray(qObj.options);
+        mcContainer.innerHTML = "";
+        shuffledOpts.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "mc-btn py-3.5 px-4 text-sm sm:text-base font-bold transition-all";
+          btn.textContent = opt;
+          btn.onclick = () => handleMCChoice(opt, btn);
+          mcContainer.appendChild(btn);
+        });
+      }
+    }
+
+    // Simple Ukrainian explanations of WHY a chosen answer is WRONG (Games 1–4)
+    function explainWrongChoiceUA(qObj, selectedOpt) {
+      const sel = selectedOpt.toLowerCase();
+      const ans = qObj.ans.toLowerCase();
+
+      if (ans === "was") {
+        if (sel === "were") {
+          return `❌ «${selectedOpt}» не підходить, бо «were» вживається для множини (2+ герої або you/we/they), а тут лише 1 герой (або I)!`;
+        }
+        if (["is", "am", "are"].includes(sel)) {
+          return `❌ «${selectedOpt}» — це теперішній час (зараз), а ми розповідаємо про минуле (Past Continuous)!`;
+        }
+        return `❌ «${selectedOpt}» не дружить із дієсловом на -ing! У Past Continuous нам потрібен помічник was або were.`;
+      }
+
+      if (ans === "were") {
+        if (sel === "was") {
+          return `❌ «${selectedOpt}» не підходить, бо «was» вживається лише для 1 героя (I / he / she / it), а тут множина (або you / we / they)!`;
+        }
+        if (["is", "am", "are"].includes(sel)) {
+          return `❌ «${selectedOpt}» — це теперішній час (зараз), а дія відбувалася в минулому (Past Continuous)!`;
+        }
+        return `❌ «${selectedOpt}» не вживається разом із дієсловом на -ing! У Past Continuous потрібен помічник was або were.`;
+      }
+
+      if (ans === "wasn't") {
+        if (sel === "weren't") {
+          return `❌ «weren't» не підходить, бо вживається для множини (2+ герої або you/we/they), а тут лише 1 герой (або I)!`;
+        }
+        if (["isn't", "aren't", "don't", "doesn't"].includes(sel)) {
+          return `❌ «${selectedOpt}» — це заперечення для теперішнього часу, а нам потрібен минулий час (Past Continuous)!`;
+        }
+        return `❌ «${selectedOpt}» не ставиться перед дієсловом із -ing у Past Continuous! Тут потрібне wasn't або weren't.`;
+      }
+
+      if (ans === "weren't") {
+        if (sel === "wasn't") {
+          return `❌ «wasn't» не підходить, бо вживається лише для 1 героя (I / he / she / it), а тут множина (або you / we / they)!`;
+        }
+        if (["isn't", "aren't", "don't", "doesn't"].includes(sel)) {
+          return `❌ «${selectedOpt}» — це заперечення для теперішнього часу, а нам потрібен минулий час (Past Continuous)!`;
+        }
+        return `❌ «${selectedOpt}» не ставиться перед дієсловом із -ing у Past Continuous! Тут потрібне wasn't або weren't.`;
+      }
+
+      if (ans.endsWith("ing")) {
+        return `❌ Слово «${selectedOpt}» не має закінчення -ing! У Past Continuous після was / were (або wasn't / weren't) дієслово завжди має закінчення -ing.`;
+      }
+
+      return `❌ Варіант «${selectedOpt}» тут не підходить за правилами Past Continuous. Спробуй інший варіант!`;
+    }
+
+    function explainScrambleMistakeUA(qObj) {
+      if (qObj.ans.includes("?")) {
+        return "❌ Неправильний порядок слів! У питанні Past Continuous спочатку ставимо «Was» або «Were», потім ХТО (герой), далі дію з -ing і знак «?».";
+      }
+      if (qObj.ans.includes("wasn't") || qObj.ans.includes("weren't")) {
+        return "❌ Неправильний порядок слів! У запереченні спочатку йде ХТО (герой), потім «wasn't» або «weren't», далі дія з -ing і крапка.";
+      }
+      return "❌ Неправильний порядок слів! У ствердженні спочатку ставимо ХТО (герой), потім «was» або «were», далі дію з -ing і крапку.";
+    }
+
+    function handleMCChoice(selectedOpt, btnEl) {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+
+      if (selectedOpt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        btnEl.classList.add("mc-btn-green");
+
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(2);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+
+        const fullSentence = qObj.q.replace("___", qObj.ans);
+        showFeedbackBar(true, `✅ Awesome! "${fullSentence}"`);
+        speakText(fullSentence);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+      } else {
+        playErrorSound();
+        btnEl.classList.add("opacity-40", "pointer-events-none", "bg-rose-950", "text-rose-400");
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainWrongChoiceUA(qObj, selectedOpt));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function renderScrambleUI() {
+      const slotsEl = document.getElementById("scramble-target-slots");
+      const bankEl = document.getElementById("scramble-word-bank");
+
+      slotsEl.innerHTML = "";
+      if (scramblePlacedWords.length === 0) {
+        slotsEl.innerHTML = `<span class="text-xs text-slate-400 italic">Tap word blocks below to place them here...</span>`;
+      } else {
+        scramblePlacedWords.forEach((wObj, idx) => {
+          const b = document.createElement("button");
+          b.className = "mc-btn mc-btn-copper px-3 py-2 text-xs sm:text-sm";
+          b.textContent = wObj.text;
+          b.onclick = () => {
+            if (questionResolved) return;
+            playClickSound();
+            scramblePlacedWords.splice(idx, 1);
+            scrambleBankWords.push(wObj);
+            renderScrambleUI();
+          };
+          slotsEl.appendChild(b);
+        });
+      }
+
+      bankEl.innerHTML = "";
+      scrambleBankWords.forEach((wObj, idx) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn px-3 py-2 text-xs sm:text-sm";
+        b.textContent = wObj.text;
+        b.onclick = () => {
+          if (questionResolved) return;
+          playClickSound();
+          scrambleBankWords.splice(idx, 1);
+          scramblePlacedWords.push(wObj);
+          renderScrambleUI();
+        };
+        bankEl.appendChild(b);
+      });
+    }
+
+    function resetScrambleWords() {
+      if (questionResolved) return;
+      playClickSound();
+      const qObj = activeRoundQuestions[currentQIndex];
+      scramblePlacedWords = [];
+      scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+      renderScrambleUI();
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+    }
+
+    function checkScrambleAnswer() {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+      const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+
+      if (userAttempt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(3);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+        const cleanSpoken = qObj.ans.replace(" .", ".").replace(" ?", "?");
+        showFeedbackBar(true, `✅ Perfect Order! "${cleanSpoken}"`);
+        speakText(cleanSpoken);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+        document.getElementById("scramble-submit-btn").classList.add("opacity-50");
+      } else {
+        playErrorSound();
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainScrambleMistakeUA(qObj));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function showFeedbackBar(isCorrect, message) {
+      const bar = document.getElementById("game-feedback-bar");
+      const msgEl = document.getElementById("game-feedback-msg");
+      bar.classList.remove("hidden");
+      bar.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded ${
+        isCorrect ? "bg-emerald-950 border-emerald-400 text-emerald-200" : "bg-rose-950 border-rose-400 text-rose-200"
+      }`;
+      msgEl.textContent = message;
+    }
+
+    function nextGameQuestion() {
+      playClickSound();
+      currentQIndex++;
+      if (currentQIndex >= activeRoundQuestions.length) {
+        finishStandardRound();
+      } else {
+        renderCurrentStandardQuestion();
+      }
+    }
+
+    function speakCurrentQuestion() {
+      const qObj = activeRoundQuestions[currentQIndex];
+      if (qObj.type === "scramble") {
+        speakText(qObj.prompt);
+      } else {
+        speakText(qObj.q.replace("___", "blank"));
+      }
+    }
+
+    function finishStandardRound() {
+      document.getElementById("question-stage").classList.add("hidden");
+      document.getElementById("round-complete-screen").classList.remove("hidden");
+      document.getElementById("round-result-summary").textContent =
+        `You scored ${currentRoundScore} / ${activeRoundQuestions.length} on the first try and earned Diamonds!`;
+
+      if (currentGameNum === 1) unlockBadge("b_game1");
+      if (currentGameNum === 2) unlockBadge("b_game2");
+      if (currentGameNum === 3) unlockBadge("b_game3");
+      if (currentGameNum === 4) unlockBadge("b_game4");
+
+      playFanfareSound();
+    }
+
+    function replayCurrentGame() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startStandardGameRound(currentGameNum);
+    }
+
+    /* =========================================================================
+       7. GAME 5 (VARIANT B): WAS OR WERE? RIVER BRIDGE
+       ========================================================================= */
+    let g5Questions = [];
+    let g5Index = 0;
+    let g5Score = 0;
+    let g5MistakeMade = false;
+    let g5Resolved = false;
+
+    function startGame5Bridge() {
+      g5Questions = shuffleArray(GAME_DATA.game5Pool).slice(0, 10);
+      g5Index = 0;
+      g5Score = 0;
+      document.getElementById("g5-complete-screen").classList.add("hidden");
+      document.getElementById("g5-stage").classList.remove("hidden");
+      renderG5Question();
+    }
+
+    function replayGame5() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startGame5Bridge();
+    }
+
+    function renderBridgeVisual(isSplashed = false) {
+      const planksEl = document.getElementById("g5-bridge-planks");
+      planksEl.innerHTML = "";
+
+      for (let i = 0; i < 10; i++) {
+        const slot = document.createElement("div");
+        slot.className = "flex-1 flex flex-col items-center justify-end h-full relative";
+
+        // Place Steve on current plank (g5Index)
+        if (i === g5Index) {
+          const hero = document.createElement("img");
+          hero.src = GAME_DATA.assets.steve;
+          hero.alt = "Steve";
+          hero.className = `w-10 h-10 sm:w-12 sm:h-12 object-contain mb-0.5 z-20 transition-all ${isSplashed ? "hero-splashed" : "animate-float"}`;
+          slot.appendChild(hero);
+        }
+
+        const plank = document.createElement("div");
+        if (i < g5Index) {
+          // Safe crossed plank
+          plank.className = "w-full h-3.5 bg-amber-600 border-2 border-amber-300 rounded-sm shadow";
+        } else if (i === g5Index) {
+          if (isSplashed) {
+            plank.className = "w-full h-3.5 bg-rose-700 border-2 border-rose-300 rounded-sm plank-broken";
+          } else if (g5Resolved) {
+            plank.className = "w-full h-3.5 bg-emerald-500 border-2 border-emerald-200 rounded-sm shadow-lg";
+          } else {
+            plank.className = "w-full h-3.5 bg-amber-800/80 border-2 border-dashed border-sky-300 rounded-sm";
+          }
+        } else {
+          // Future unbuilt plank
+          plank.className = "w-full h-3 bg-slate-700/40 border border-dashed border-slate-500 rounded-sm";
+        }
+
+        slot.appendChild(plank);
+        planksEl.appendChild(slot);
+      }
+    }
+
+    function renderG5Question() {
+      g5MistakeMade = false;
+      g5Resolved = false;
+
+      const q = g5Questions[g5Index];
+      document.getElementById("g5-progress").textContent = `${g5Index + 1} / ${g5Questions.length}`;
+      document.getElementById("g5-score-val").textContent = g5Score;
+      document.getElementById("g5-mob-img").src = GAME_DATA.assets[q.mob] || GAME_DATA.assets.pig;
+      document.getElementById("g5-prompt-text").textContent = q.q;
+      document.getElementById("g5-subject-count").textContent = q.countTip;
+
+      const polBadge = document.getElementById("g5-polarity-badge");
+      if (q.polarity === "+") {
+        polBadge.textContent = "➕ POSITIVE";
+        polBadge.className = "inline-block bg-blue-700 text-white pixel-font text-[9px] px-2 py-0.5 rounded";
+      } else {
+        polBadge.textContent = "➖ NEGATIVE (NOT)";
+        polBadge.className = "inline-block bg-rose-700 text-white pixel-font text-[9px] px-2 py-0.5 rounded";
+      }
+
+      document.getElementById("g5-feedback").classList.add("hidden");
+      document.getElementById("g5-next-btn").classList.add("hidden");
+      document.getElementById("g5-splash-text").classList.add("hidden");
+
+      const statusBadge = document.getElementById("g5-bridge-status");
+      statusBadge.textContent = "CHOOSE A PLANK!";
+      statusBadge.className = "pixel-font text-[9px] bg-slate-900/80 px-2 py-1 text-sky-300 border border-sky-400 rounded";
+
+      renderBridgeVisual(false);
+
+      const choicesBox = document.getElementById("g5-choices-container");
+      choicesBox.innerHTML = "";
+      ["was", "were", "wasn't", "weren't"].forEach((word) => {
+        const btn = document.createElement("button");
+        btn.className = "mc-btn mc-btn-blue py-3.5 px-4 text-sm sm:text-base font-bold";
+        btn.innerHTML = `🪵 ${word}`;
+        btn.onclick = () => handleG5Choice(word, btn);
+        choicesBox.appendChild(btn);
+      });
+    }
+
+    // Simple Ukrainian explanation of WHY a chosen plank broke (Game 5)
+    function explainG5WrongPlankUA(qObj, chosen) {
+      const isNegativeChoice = chosen.includes("n't");
+
+      if (qObj.polarity === "-" && !isNegativeChoice) {
+        return `💦 Плюх! «${chosen}» не підходить, бо в реченні є (NOT) — це заперечення! Потрібна дошка з часткою not (wasn't або weren't).`;
+      }
+      if (qObj.polarity === "+" && isNegativeChoice) {
+        return `💦 Плюх! «${chosen}» — це заперечна дошка, а речення стверджувальне (+)! Обирай was або were.`;
+      }
+      if (chosen === "was" || chosen === "wasn't") {
+        return `💦 Плюх! Дошка «${chosen}» витримує лише 1 героя (I / he / she / it), а тут множина (або you / we / they)!`;
+      }
+      return `💦 Плюх! Дошка «${chosen}» вживається для множини (2+ герої або you / we / they), а тут лише 1 герой (або I)!`;
+    }
+
+    function handleG5Choice(chosen, btnEl) {
+      if (g5Resolved) return;
+      const q = g5Questions[g5Index];
+
+      if (chosen === q.ans) {
+        g5Resolved = true;
+        playSuccessSound();
+        btnEl.classList.remove("mc-btn-blue");
+        btnEl.classList.add("mc-btn-green");
+
+        document.getElementById("g5-splash-text").classList.add("hidden");
+        const statusBadge = document.getElementById("g5-bridge-status");
+        statusBadge.textContent = "SAFE PLANK! ✓";
+        statusBadge.className = "pixel-font text-[9px] bg-emerald-950 px-2 py-1 text-emerald-300 border border-emerald-400 rounded";
+
+        renderBridgeVisual(false);
+
+        if (!g5MistakeMade) {
+          g5Score++;
+          addDiamonds(4);
+        } else {
+          addDiamonds(2);
+        }
+        document.getElementById("g5-score-val").textContent = g5Score;
+
+        const cleanSentence = q.q.replace(" (NOT)", "").replace("___", q.ans);
+        showG5Feedback(true, `✅ Safe Crossing! "${cleanSentence}"`);
+        document.getElementById("g5-next-btn").classList.remove("hidden");
+        speakText(cleanSentence);
+      } else {
+        playSplashSound();
+        g5MistakeMade = true;
+        btnEl.classList.add("opacity-40", "pointer-events-none", "mc-btn-danger");
+        btnEl.classList.remove("mc-btn-blue");
+
+        renderBridgeVisual(true);
+        document.getElementById("g5-splash-text").classList.remove("hidden");
+
+        const statusBadge = document.getElementById("g5-bridge-status");
+        statusBadge.textContent = "PLANK BROKE! 💦";
+        statusBadge.className = "pixel-font text-[9px] bg-rose-950 px-2 py-1 text-rose-300 border border-rose-400 rounded";
+
+        showG5Feedback(false, explainG5WrongPlankUA(q, chosen));
+      }
+    }
+
+    function showG5Feedback(isCorrect, text) {
+      const box = document.getElementById("g5-feedback");
+      box.classList.remove("hidden");
+      box.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded ${
+        isCorrect ? "bg-emerald-950 border-emerald-400 text-emerald-200" : "bg-rose-950 border-rose-400 text-rose-200"
+      }`;
+      document.getElementById("g5-feedback-text").textContent = text;
+    }
+
+    function speakG5Prompt() {
+      const q = g5Questions[g5Index];
+      if (g5Resolved) {
+        speakText(q.q.replace(" (NOT)", "").replace("___", q.ans));
+      } else {
+        speakText(q.q.replace(" (NOT)", "").replace("___", "blank"));
+      }
+    }
+
+    function nextG5Question() {
+      playClickSound();
+      g5Index++;
+      if (g5Index >= g5Questions.length) {
+        document.getElementById("g5-stage").classList.add("hidden");
+        document.getElementById("g5-complete-screen").classList.remove("hidden");
+        document.getElementById("g5-final-summary").textContent =
+          `You crossed the entire river! (${g5Score} / 10 planks on the first try without splashing!)`;
+        unlockBadge("b_game5");
+        playFanfareSound();
+      } else {
+        renderG5Question();
+      }
+    }
+
+    /* =========================================================================
+       8. SECTION 4 (VARIANT 2): RANGER'S MAGIC PHOTO ALBUM
+       ========================================================================= */
+    function renderPhotoAlbum() {
+      const grid = document.getElementById("photo-album-grid");
+      const countLabel = document.getElementById("album-count-label");
+      if (!grid) return;
+
+      countLabel.textContent = `${appState.unlockedPhotos.length} / ${GAME_DATA.photoAlbum.length}`;
+      grid.innerHTML = "";
+
+      GAME_DATA.photoAlbum.forEach((photo) => {
+        const isUnlocked = appState.unlockedPhotos.includes(photo.id);
+        const canAfford = appState.diamonds >= photo.cost;
+        const safeStory = photo.story.replace(/'/g, "\\'");
+
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-3.5 flex flex-col justify-between border-4 rounded-lg ${
+          isUnlocked
+            ? "border-[var(--primary-light)] bg-slate-800 album-card-unlocked cursor-pointer"
+            : "border-slate-600 bg-slate-900/90"
+        }`;
+
+        if (isUnlocked) {
+          card.onclick = () => {
+            playClickSound();
+            openPhotoLightbox(photo.id);
+          };
+        }
+
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between text-[10px] font-bold">
+              <span class="px-2 py-0.5 rounded ${isUnlocked ? "bg-blue-700 text-white" : "bg-slate-800 text-slate-400"}">
+                ${photo.timeTag}
+              </span>
+              <span class="${isUnlocked ? "text-emerald-300" : "text-amber-300"}">
+                ${isUnlocked ? "✨ DEVELOPED" : "🔒 LOCKED"}
+              </span>
+            </div>
+
+            <!-- Collectible Photo Frame -->
+            <div class="relative w-full h-44 bg-slate-950 border-4 ${isUnlocked ? "border-white" : "border-slate-700"} rounded overflow-hidden">
+              <img src="${photo.img}" alt="${photo.title}" class="w-full h-full object-cover transition-all duration-500 ${isUnlocked ? "" : "grayscale brightness-50 blur-[1px]"}">
+              ${
+                isUnlocked
+                  ? `<div class="absolute bottom-1.5 right-1.5 bg-blue-900/90 text-sky-200 text-[10px] font-bold px-2 py-0.5 rounded border border-sky-400">
+                       <i class="fa-solid fa-expand mr-1"></i> Fullscreen
+                     </div>`
+                  : `<div class="absolute inset-0 flex flex-col items-center justify-center bg-black/35">
+                       <span class="text-3xl">📸</span>
+                       <span class="pixel-font text-[8px] text-amber-300 mt-1">MYSTERY PHOTO</span>
+                     </div>`
+              }
+            </div>
+
+            <div>
+              <h4 class="pixel-font text-xs ${isUnlocked ? "text-[var(--primary-light)]" : "text-slate-300"}">${photo.title}</h4>
+              <p class="text-xs mt-1 leading-snug ${isUnlocked ? "text-slate-200" : "text-slate-400 italic"}">
+                ${isUnlocked ? `"${photo.story}"` : "Develop this photo with Diamonds to see the color memory & hear its story!"}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-2.5 border-t border-slate-700">
+            ${
+              isUnlocked
+                ? `<div class="grid grid-cols-2 gap-2">
+                     <button onclick="event.stopPropagation(); openPhotoLightbox('${photo.id}')" class="mc-btn mc-btn-green py-1.5 text-[9px] gap-1">
+                       <i class="fa-solid fa-expand"></i> <span>VIEW</span>
+                     </button>
+                     <button onclick="event.stopPropagation(); speakText('${safeStory}')" class="mc-btn mc-btn-blue py-1.5 text-[9px] gap-1">
+                       <i class="fa-solid fa-volume-high"></i> <span>LISTEN</span>
+                     </button>
+                   </div>`
+                : `<button onclick="unlockAlbumPhoto('${photo.id}')" class="mc-btn ${canAfford ? "mc-btn-copper" : "opacity-50"} w-full py-1.5 text-[10px] flex items-center justify-center gap-1.5">
+                     <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" class="w-4 h-4 object-contain" alt="D">
+                     <span>DEVELOP (${photo.cost})</span>
+                   </button>`
+            }
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openPhotoLightbox(photoId) {
+      const photo = GAME_DATA.photoAlbum.find(p => p.id === photoId);
+      if (!photo) return;
+
+      document.getElementById("lightbox-time-tag").textContent = photo.timeTag;
+      document.getElementById("lightbox-title").textContent = photo.title;
+      document.getElementById("lightbox-img").src = photo.img;
+      document.getElementById("lightbox-story").textContent = `"${photo.story}"`;
+      document.getElementById("lightbox-speak-btn").onclick = () => {
+        playClickSound();
+        speakText(photo.story);
+      };
+
+      const modal = document.getElementById("photo-lightbox-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closePhotoLightbox() {
+      const modal = document.getElementById("photo-lightbox-modal");
+      if (!modal || modal.classList.contains("hidden")) return;
+      playClickSound();
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePhotoLightbox();
+    });
+
+    function unlockAlbumPhoto(photoId) {
+      const photo = GAME_DATA.photoAlbum.find(p => p.id === photoId);
+      if (!photo || appState.unlockedPhotos.includes(photoId)) return;
+
+      if (appState.diamonds < photo.cost) {
+        playErrorSound();
+        speakText("You need more diamonds! Play mini-games to earn diamonds.");
+        return;
+      }
+
+      appState.diamonds -= photo.cost;
+      appState.unlockedPhotos.push(photoId);
+      playSuccessSound();
+      if (appState.unlockedPhotos.length >= 2) {
+        unlockBadge("b_album");
+      }
+      saveState();
+      renderPhotoAlbum();
+      speakText(photo.story);
+    }
+
+    /* =========================================================================
+       9. BADGES, CERTIFICATE & NAVIGATION
+       ========================================================================= */
+    function renderBadgesGrid() {
+      const grid = document.getElementById("badges-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.badges.forEach((b) => {
+        const unlocked = appState.unlockedBadges.includes(b.id);
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 rounded ${
+          unlocked ? "border-[var(--accent-light)] bg-slate-800 animate-glow" : "border-slate-700 opacity-60"
+        }`;
+        card.innerHTML = `
+          <div class="w-16 h-16 mc-slot flex items-center justify-center p-2 mb-2 ${unlocked ? "bg-blue-950" : ""}">
+            <img src="${b.img}" alt="${b.title}" class="w-12 h-12 object-contain ${unlocked ? "" : "grayscale"}">
+          </div>
+          <div>
+            <h4 class="pixel-font text-xs ${unlocked ? "text-[var(--accent-light)]" : "text-slate-400"}">${b.title}</h4>
+            <p class="text-xs text-slate-300 mt-1">${b.desc}</p>
+          </div>
+          <div class="mt-3 pixel-font text-[9px] px-2.5 py-1 rounded ${unlocked ? "bg-[var(--secondary)] text-white" : "bg-slate-900 text-slate-500"}">
+            ${unlocked ? "✓ UNLOCKED" : "🔒 LOCKED"}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setCertificateTheme(themeKey) {
+      playClickSound();
+      const url = GAME_DATA.certWallpapers[themeKey] || GAME_DATA.certWallpapers.bg1;
+      appState.certTheme = themeKey;
+      const certEl = document.getElementById("printable-certificate");
+      if (certEl) {
+        certEl.style.backgroundImage = `url('${url}')`;
+      }
+
+      ["bg1", "bg2", "bg3"].forEach((k) => {
+        const btn = document.getElementById(`theme-btn-${k}`);
+        if (btn) {
+          if (k === themeKey) btn.classList.add("mc-btn-blue");
+          else btn.classList.remove("mc-btn-blue");
+        }
+      });
+      saveState();
+    }
+
+    function updateCertificateName(val) {
+      appState.heroName = val.trim() || "Animal Ranger";
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+      saveState();
+    }
+
+    function launchVictoryConfetti() {
+      playFanfareSound();
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 110,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function switchSection(secId) {
+      playClickSound();
+      const sections = ["hub", "grammar", "games", "album", "badges", "finale"];
+      sections.forEach((s) => {
+        const el = document.getElementById(`sec-${s}`);
+        const navBtn = document.getElementById(`nav-${s}`);
+        if (s === secId) {
+          el.classList.remove("hidden");
+          if (navBtn) navBtn.classList.add("mc-btn-blue");
+        } else {
+          el.classList.add("hidden");
+          if (navBtn) navBtn.classList.remove("mc-btn-blue");
+        }
+      });
+
+      if (secId === "album") {
+        renderPhotoAlbum();
+      }
+      if (secId === "finale" && appState.unlockedBadges.length >= GAME_DATA.badges.length) {
+        launchVictoryConfetti();
+      }
+    }
+
+    /* =========================================================================
+       10. INITIALIZATION (ZERO AUTOPLAY)
+       ========================================================================= */
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      renderVocabGrid();
+      renderPhotoAlbum();
+      renderBadgesGrid();
+      setCertificateTheme(appState.certTheme || "bg1");
+      startStandardGameRound(1);
+
+      const now = new Date();
+      document.getElementById("cert-date-display").textContent = now.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    });
+  </script>
+</body>
+</html>

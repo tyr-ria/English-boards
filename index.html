@@ -177,7 +177,7 @@
                     <!-- Tabs injected by JS; see THEME_CATEGORIES below to add future themes -->
                 </div>
                 <div class="text-xs text-slate-400 shrink-0">
-                    Showing <span id="visible-count" class="text-white font-semibold">10</span> of <span id="total-count" class="text-slate-300">10</span> lessons
+                    Showing <span id="visible-count" class="text-white font-semibold">13</span> of <span id="total-count" class="text-slate-300">13</span> lessons
                 </div>
             </div>
         </section>
@@ -414,8 +414,8 @@
             },
             past: {
                 id: 'past',
-                heading: "Past Tenses — Fazbear's Fright Archive",
-                sublabel: 'Amber, Rust & Sepia-Olive Theme',
+                heading: "Past Tenses — Fazbear's Fright & Minecraft Expeditions",
+                sublabel: 'Archive Amber, Nature Teal & Moonlight Blue Theme',
                 dotClass: 'bg-amber-400 shadow-[0_0_8px_#fbbf24]',
                 borderClass: 'border-amber-500/30',
                 badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/35',
@@ -477,7 +477,7 @@
                 icon: 'fa-hippo',
                 characterName: 'Zookeeper & Lion',
                 emoji: '🦁',
-                imageUrl: '',
+                imageUrl: 'https://i.postimg.cc/R0yQSkWX/Gemini-Generated-Image-kiclcxkiclcxkicl-removebg-preview.png',
                 paletteKey: 'petshop',
             },
             {
@@ -568,8 +568,30 @@
                 imageUrl: 'https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png',
                 paletteKey: 'minecraft',
             },
+            {
+                id: 'minecraft-present-continuous-quest',
+                href: 'minecraft_present_continuous_quest.html',
+                theme: 'minecraft',
+                themeLabel: "Minecraft • Defender's Base",
+                timePeriod: 'present',
+                timePeriodLabel: 'PRESENT TIME',
+                aspect: 'continuous',
+                aspectLabel: 'Continuous Tense',
+                nightBadge: 'Base Defense',
+                tenseName: 'Minecraft Present Continuous',
+                subtitle: "Defender's Base & Tools Quest",
+                level: 'Beginner (A1)',
+                formula: 'am / is / are + V-ing',
+                description: 'Defend the base right now! Equip 10 tools & weapons, master am/is/are + V-ing across 5 battle simulators, enchant tools in the -ING Spelling Lab, and decorate your custom room!',
+                modules: ['10 Tools & Weapons', 'Affirmative (+)', 'Negative (-)', 'Questions (?)', 'Mixed Blitz', 'Enchanting Table', 'Room Builder'],
+                icon: 'fa-wand-magic-sparkles',
+                characterName: 'Alex & Enchanting Table',
+                emoji: '⚔️',
+                imageUrl: 'https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png',
+                paletteKey: 'minecraft_enchant',
+            },
 
-            // --- PAST PAIR (Amber, Rust & Sepia-Olive) ---
+            // --- PAST GROUP (Archive Amber, Nature Teal & Moonlight Blue) ---
             {
                 id: 'past-simple-fnaf',
                 href: 'past-simple-fnaf.html',
@@ -611,6 +633,50 @@
                 characterName: 'Springtrap',
                 imageUrl: 'https://i.postimg.cc/NjsrkxsS/Springtrap-removebg-preview.png',
                 paletteKey: 'past',
+            },
+            {
+                id: 'minecraft-past-simple-quest',
+                href: 'minecraft_english_quest_past_simple.html',
+                theme: 'minecraft',
+                themeLabel: 'Minecraft • Nature Expedition',
+                timePeriod: 'past',
+                timePeriodLabel: 'PAST TIME',
+                aspect: 'simple',
+                aspectLabel: 'Simple Tense',
+                nightBadge: 'Nature Journal',
+                tenseName: 'Minecraft Past Simple',
+                subtitle: 'The Lost Nature Journal & 6 Magic Verbs',
+                level: 'Beginner (A1–A2)',
+                formula: "V-ed / 6 Magic V2 | did / didn't + V1",
+                description: "Explore mountains, caves, and rivers with Steve and Alex! Learn 10 nature words and 6 magic irregular verbs, repair the Enderman's broken journal as a Cave Detective, and rescue 8 lost mobs!",
+                modules: ['10 Nature Cards', '6 Magic Verbs', 'Affirmative Explorer', 'Negative Shield', 'Cave Questions', 'Cave Detective', 'Rescue Mobs'],
+                icon: 'fa-compass',
+                characterName: 'Steve & Nether Star',
+                emoji: '🧭',
+                imageUrl: 'https://i.postimg.cc/VvZbghx8/nether-star.png',
+                paletteKey: 'minecraft_nature',
+            },
+            {
+                id: 'minecraft-past-continuous-quest',
+                href: 'minecraft_english_quest_past_continuous.html',
+                theme: 'minecraft',
+                themeLabel: 'Minecraft • Moonlight Patrol',
+                timePeriod: 'past',
+                timePeriodLabel: 'PAST TIME',
+                aspect: 'continuous',
+                aspectLabel: 'Continuous Tense',
+                nightBadge: 'Moonlight Patrol',
+                tenseName: 'Minecraft Past Continuous',
+                subtitle: 'Moonlight Animal Patrol & River Bridge',
+                level: 'Beginner+ (A2)',
+                formula: "was / were + V-ing | wasn't / weren't",
+                description: "Patrol the farm at 8 o'clock last night! Learn 10 animals, master was/were + V-ing across 5 patrol training games, cross the Was/Were River Bridge without splashing, and develop photos in the Ranger Album!",
+                modules: ['10 Farm Animals', 'Affirmative Patrol', 'Negative Shield', 'Lantern Questions', 'Mixed Blitz', 'River Bridge', 'Photo Album'],
+                icon: 'fa-moon',
+                characterName: 'Moonlight Lantern & Pig',
+                emoji: '🌙',
+                imageUrl: 'https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png',
+                paletteKey: 'minecraft_moonlight',
             },
 
             // --- FUTURE PAIR (Violet, Indigo & Cyber-Blue) ---
@@ -689,6 +755,36 @@
                 btnBg: 'bg-gradient-to-r from-lime-500 to-emerald-500 hover:from-lime-400 hover:to-emerald-400 text-zinc-950',
                 glowBg: 'from-lime-500/14 via-emerald-500/5 to-transparent',
                 iconColor: 'text-lime-400',
+            },
+            minecraft_enchant: {
+                cardBorder: 'border-purple-500/30 hover:border-cyan-400/75 hover:shadow-[0_0_28px_rgba(168,85,247,0.22)]',
+                topStrip: 'bg-gradient-to-r from-purple-500 via-emerald-400 to-cyan-400',
+                periodPill: 'bg-purple-500/15 text-purple-300 border-purple-500/40',
+                nightPill: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40',
+                formulaText: 'text-cyan-300',
+                btnBg: 'bg-gradient-to-r from-purple-500 to-emerald-500 hover:from-purple-400 hover:to-emerald-400 text-white',
+                glowBg: 'from-purple-500/14 via-emerald-500/5 to-transparent',
+                iconColor: 'text-purple-400',
+            },
+            minecraft_nature: {
+                cardBorder: 'border-teal-500/30 hover:border-amber-400/75 hover:shadow-[0_0_28px_rgba(20,184,166,0.22)]',
+                topStrip: 'bg-gradient-to-r from-teal-400 via-purple-400 to-amber-400',
+                periodPill: 'bg-teal-500/15 text-teal-300 border-teal-500/40',
+                nightPill: 'bg-purple-500/15 text-purple-300 border-purple-500/40',
+                formulaText: 'text-teal-300',
+                btnBg: 'bg-gradient-to-r from-teal-500 to-purple-500 hover:from-teal-400 hover:to-purple-400 text-white',
+                glowBg: 'from-teal-500/14 via-purple-500/5 to-transparent',
+                iconColor: 'text-teal-400',
+            },
+            minecraft_moonlight: {
+                cardBorder: 'border-blue-500/30 hover:border-emerald-400/75 hover:shadow-[0_0_28px_rgba(59,130,246,0.22)]',
+                topStrip: 'bg-gradient-to-r from-blue-500 via-emerald-400 to-orange-400',
+                periodPill: 'bg-blue-500/15 text-sky-300 border-blue-500/40',
+                nightPill: 'bg-orange-500/15 text-orange-300 border-orange-500/40',
+                formulaText: 'text-sky-300',
+                btnBg: 'bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-400 hover:to-emerald-400 text-white',
+                glowBg: 'from-blue-500/14 via-emerald-500/5 to-transparent',
+                iconColor: 'text-sky-400',
             },
             present: {
                 cardBorder: 'border-emerald-500/25 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(34,211,238,0.16)]',
@@ -921,7 +1017,7 @@
                     const meta = TIME_PERIOD_META[periodKey];
                     const periodLessons = filtered.filter((l) => l.timePeriod === periodKey);
                     const cardsHtml = periodLessons.map(buildLessonCardHtml).join('');
-                    const periodColsClass = periodLessons.length >= 3 ? 'md:grid-cols-2 xl:grid-cols-3' : 'md:grid-cols-2';
+                    const periodColsClass = periodLessons.length === 3 ? 'md:grid-cols-2 xl:grid-cols-3' : 'md:grid-cols-2';
 
                     return `
                         <div class="rounded-2xl border ${meta.borderClass} bg-slate-900/35 p-4 sm:p-5 space-y-4">
@@ -944,7 +1040,7 @@
             }
 
             // Single-row grid when filtered to Simple, Continuous, a single Time Period, or narrow search
-            const colsClass = filtered.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 xl:grid-cols-3';
+            const colsClass = (filtered.length === 2 || filtered.length === 4) ? 'md:grid-cols-2' : 'md:grid-cols-2 xl:grid-cols-3';
             container.innerHTML = `
                 <div class="grid grid-cols-1 ${colsClass} gap-6">
                     ${filtered.map(buildLessonCardHtml).join('')}

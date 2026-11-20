@@ -1923,6 +1923,118 @@
       }
     }
 
+    // Ukrainian grammar error explainer for beginner learners
+    function explainWrongChoiceUA(qObj, selectedOpt) {
+      const sel = selectedOpt.toLowerCase();
+      const ans = qObj.ans.toLowerCase();
+      const sent = (qObj.q || "").toLowerCase();
+
+      // 1. Choosing Do / Does at start of question
+      if (ans === "do") {
+        if (sel === "does") {
+          return `❌ «Does» вживається лише для 1 героя (he / she / it), а тут «I / you / we / they» або множина — тому питання починається з «Do»!`;
+        }
+        return `❌ «Is / Are» не ставляться перед звичайною дією у Present Simple! Тут питання починається з помічника «Do».`;
+      }
+      if (ans === "does") {
+        if (sel === "do") {
+          return `❌ «Do» вживається для «I / you / we / they» або множини, а тут 1 герой (he / she / it) — тому потрібне «Does»!`;
+        }
+        return `❌ «Is / Are» не ставляться перед звичайною дією у Present Simple! Для 1 героя (he / she / it) починаємо питання з «Does».`;
+      }
+
+      // 2. Choosing don't / doesn't
+      if (ans === "don't") {
+        if (sel === "doesn't") {
+          return `❌ «doesn't» вживається лише для 1 героя (he / she / it), а тут «I / you / we / they» або множина — тому потрібне «don't»!`;
+        }
+        if (sel === "not") {
+          return `❌ У Present Simple слово «not» не може стояти саме перед дієсловом — потрібен помічник «don't»!`;
+        }
+        return `❌ «${selectedOpt}» не ставиться перед звичайним дієсловом у Present Simple — для заперечення тут потрібне «don't»!`;
+      }
+      if (ans === "doesn't") {
+        if (sel === "don't") {
+          return `❌ «don't» вживається для «I / you / we / they» або множини, а тут 1 герой чи предмет (he / she / it) — тому потрібне «doesn't»!`;
+        }
+        if (sel === "not") {
+          return `❌ У Present Simple слово «not» не може стояти саме без помічника — для 1 героя (he / she / it) беремо «doesn't»!`;
+        }
+        return `❌ «${selectedOpt}» не ставиться перед звичайним дієсловом у Present Simple — для заперечення тут потрібне «doesn't»!`;
+      }
+
+      // 3. Verb after doesn't / don't
+      if (sent.includes("doesn't")) {
+        if (sel.endsWith("ing")) {
+          return `❌ Після «doesn't» закінчення -ing не вживається — потрібна звичайна початкова форма дієслова (без -s і без -ing)!`;
+        }
+        if (sel === "has") {
+          return `❌ Помічник «doesn't» уже забрав закінчення -s, тому після нього завжди ставимо початкову форму «have» (а не «has»)!`;
+        }
+        return `❌ Помічник «doesn't» уже забрав закінчення -s на себе! Після «doesn't» дієслово завжди без -s.`;
+      }
+      if (sent.includes("don't")) {
+        if (sel.endsWith("ing")) {
+          return `❌ Після «don't» закінчення -ing не вживається — потрібна звичайна початкова форма дієслова!`;
+        }
+        return `❌ Після «don't» до дієслова ніколи не додаємо -s — потрібна звичайна початкова форма!`;
+      }
+
+      // 4. Verb in question after Does / Do
+      if (sent.startsWith("does ") || sent.includes(" does ")) {
+        if (sel.endsWith("ing")) {
+          return `❌ У питанні з «Does» закінчення -ing не вживається — потрібна звичайна початкова форма дієслова!`;
+        }
+        if (sel === "has") {
+          return `❌ Слово «Does» на початку уже забрало -s на себе, тому в питанні завжди вживаємо «have» (а не «has»)!`;
+        }
+        return `❌ Слово «Does» на початку уже забрало закінчення -s на себе! Тому дієслово залишається без -s.`;
+      }
+      if (sent.startsWith("do ") || sent.includes(" do ")) {
+        if (sel.endsWith("ing")) {
+          return `❌ У питанні з «Do» закінчення -ing не вживається — потрібна початкова форма дієслова!`;
+        }
+        return `❌ У питанні з «Do» до дієслова ніколи не додаємо -s — потрібна початкова форма!`;
+      }
+
+      // 5. Special frequency adverb case ("Cats ___ sleep on warm chests.")
+      if (ans === "often") {
+        return `❌ «${selectedOpt}» тут не підходить, бо вживається лише для однини (he / she / it), а «Cats» — це множина (вони)! Тут підходить слово-підказка частоти.`;
+      }
+
+      // 6. Affirmative verb forms (V vs V-s/es, have vs has, -ing, or accidental negative)
+      if (sel.includes("don't") || sel.includes("doesn't")) {
+        return `❌ Тут не потрібне заперечення — у реченні йдеться про стверджувальну дію (і пам'ятай: після doesn't не буває -s)!`;
+      }
+      if (sel.endsWith("ing")) {
+        return `❌ Закінчення -ing тут зайве — у Present Simple (звичайні факти й звички) ми не додаємо -ing до дієслова!`;
+      }
+      if (ans === "has" && sel === "have") {
+        return `❌ «have» вживається для «I / you / we / they», а коли герой один (he / she / it), слово змінюється на «has»!`;
+      }
+      if (ans === "have" && sel === "has") {
+        return `❌ «has» буває лише для 1 героя (he / she / it), а з «I / you / we / they» або множиною завжди вживаємо «have»!`;
+      }
+      if (ans.endsWith("s") && !sel.endsWith("s")) {
+        return `❌ Коли дію виконує 1 герой чи предмет (he / she / it), у Present Simple до дієслова потрібно додати закінчення -s або -es!`;
+      }
+      if (!ans.endsWith("s") && sel.endsWith("s")) {
+        return `❌ Закінчення -s тут зайве! Коли герой — «I / you / we / they» або множина, дієслово залишається без -s.`;
+      }
+
+      return `❌ Варіант «${selectedOpt}» тут не підходить за правилами Present Simple. Спробуй інший варіант!`;
+    }
+
+    function explainScrambleMistakeUA(qObj) {
+      if (qObj.ans.includes("?")) {
+        return `❌ Неправильний порядок слів! У питанні Present Simple спочатку ставимо «Do» або «Does», потім ХТО (герой), далі звичайну дію і знак «?».`;
+      }
+      if (qObj.ans.includes("don't") || qObj.ans.includes("doesn't")) {
+        return `❌ Неправильний порядок слів! У запереченні спочатку йде ХТО (герой), потім «don't» або «doesn't», далі звичайна дія і решта речення.`;
+      }
+      return `❌ Неправильний порядок слів! У ствердженні спочатку ставимо ХТО або ЩО (герой), потім ДІЮ (дієслово), а далі решту слів і крапку.`;
+    }
+
     function handleMCChoice(selectedOpt, btnEl) {
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
@@ -1948,7 +2060,7 @@
         playErrorSound();
         btnEl.classList.add("opacity-40", "pointer-events-none", "bg-red-950", "text-red-400");
         questionMistakeMade = true;
-        showFeedbackBar(false, `❌ Think again! ${qObj.hint}`);
+        showFeedbackBar(false, explainWrongChoiceUA(qObj, selectedOpt));
         document.getElementById("game-next-btn").classList.add("hidden");
       }
     }
@@ -2024,7 +2136,7 @@
       } else {
         playErrorSound();
         questionMistakeMade = true;
-        showFeedbackBar(false, `❌ Not quite! Rule: ${qObj.hint}`);
+        showFeedbackBar(false, explainScrambleMistakeUA(qObj));
         document.getElementById("game-next-btn").classList.add("hidden");
       }
     }
@@ -2194,7 +2306,7 @@
         playErrorSound();
         fbBox.classList.remove("hidden");
         fbBox.className = "p-3 border-2 bg-amber-950 border-amber-400 text-amber-200 text-xs font-bold flex items-center justify-between";
-        fbText.textContent = "⚠️ Please select 1) Input Material, 2) Fuel, and 3) Grammar Word first!";
+        fbText.textContent = "⚠️ Спочатку обери: 1) Вхідний матеріал, 2) Паливо і 3) Правильне слово у реченні!";
         document.getElementById("g5-next-btn").classList.add("hidden");
         return;
       }
@@ -2220,14 +2332,16 @@
         speakText(fullSentence);
       } else {
         playErrorSound();
-        let errReason = "Furnace failed! ";
-        if (!inputOK) errReason += "Wrong Input Material! ";
-        if (!fuelOK) errReason += "Dirt cannot burn as fuel! ";
-        if (!gramOK) errReason += `Check the grammar: ${order.hint}`;
+        const reasons = [];
+        if (!inputOK) reasons.push("Неправильний матеріал у Слоті 1 — подивися на замовлення жителя!");
+        if (!fuelOK) reasons.push("Земля (Dirt) не горить як паливо — обери вугілля, лаву або дерево!");
+        if (!gramOK) {
+          reasons.push(explainWrongChoiceUA({ q: order.sentence, ans: order.ans }, g5SelectedGrammar).replace(/^❌\s*/, ""));
+        }
 
         fbBox.classList.remove("hidden");
         fbBox.className = "p-3 border-2 bg-red-950 border-red-400 text-red-200 text-xs font-bold flex items-center justify-between";
-        fbText.textContent = `❌ ${errReason}`;
+        fbText.textContent = `❌ ${reasons.join(" ")}`;
         document.getElementById("g5-next-btn").classList.add("hidden");
       }
     }

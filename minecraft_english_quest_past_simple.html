@@ -1,0 +1,2613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft English Quest: Past Simple & Nature</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts: Fredoka & Press Start 2P -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* =====================================================================
+       THEME VARIABLES (:root) — Emerald-Teal, Amethyst-Lavender & Gold
+       ===================================================================== */
+    :root {
+      --primary: #0d9488;
+      --primary-dark: #0f766e;
+      --primary-light: #2dd4bf;
+      --secondary: #7c3aed;
+      --secondary-dark: #5b21b6;
+      --secondary-light: #a78bfa;
+      --accent: #f59e0b;
+      --accent-dark: #b45309;
+      --accent-light: #fcd34d;
+      --background: #111827;
+      --panel: #1f2937;
+      --stone: #64748b;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--background);
+      background-image:
+        radial-gradient(#1e293b 15%, transparent 16%),
+        radial-gradient(#1e293b 15%, transparent 16%);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      color: #f8fafc;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    .pixel-font {
+      font-family: 'Press Start 2P', monospace;
+      line-height: 1.5;
+    }
+
+    /* Minecraft 3D Beveled UI Panels */
+    .mc-panel {
+      background-color: #d1d5db;
+      border: 4px solid #ffffff;
+      border-right-color: #4b5563;
+      border-bottom-color: #4b5563;
+      box-shadow: 0 8px 0 #090d16;
+      color: #111827;
+    }
+
+    .mc-panel-dark {
+      background-color: #1e293b;
+      border: 4px solid #475569;
+      border-right-color: #0f172a;
+      border-bottom-color: #0f172a;
+      box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.75);
+      color: #f8fafc;
+    }
+
+    /* Minecraft 3D Tactile Buttons */
+    .mc-btn {
+      font-family: 'Press Start 2P', monospace;
+      background-color: var(--stone);
+      border: 3px solid #ffffff;
+      border-right-color: #334155;
+      border-bottom-color: #334155;
+      color: #ffffff;
+      text-shadow: 2px 2px #0f172a;
+      transition: transform 0.06s, filter 0.1s;
+      cursor: pointer;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mc-btn:hover {
+      filter: brightness(1.12);
+    }
+
+    .mc-btn:active {
+      transform: translateY(2px);
+      border-top-color: #334155;
+      border-left-color: #334155;
+      border-right-color: #ffffff;
+      border-bottom-color: #ffffff;
+    }
+
+    .mc-btn-teal {
+      background-color: var(--primary);
+      border-color: var(--primary-light) var(--primary-dark) var(--primary-dark) var(--primary-light);
+    }
+
+    .mc-btn-purple {
+      background-color: var(--secondary);
+      border-color: var(--secondary-light) var(--secondary-dark) var(--secondary-dark) var(--secondary-light);
+    }
+
+    .mc-btn-gold {
+      background-color: var(--accent);
+      border-color: var(--accent-light) var(--accent-dark) var(--accent-dark) var(--accent-light);
+    }
+
+    .mc-btn-danger {
+      background-color: #dc2626;
+      border-color: #fca5a5 #7f1d1d #7f1d1d #fca5a5;
+    }
+
+    /* Inventory Slot */
+    .mc-slot {
+      background-color: #64748b;
+      border: 3px solid #1e293b;
+      border-right-color: #e2e8f0;
+      border-bottom-color: #e2e8f0;
+      box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.65);
+    }
+
+    /* 3D Flip Card for Vocabulary */
+    .flip-card {
+      perspective: 1000px;
+      height: 250px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(45, 212, 191, 0.85); }
+    }
+    .animate-glow {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    /* Live Voice Active Indicator */
+    .voice-wave {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .voice-wave span {
+      width: 4px;
+      height: 14px;
+      background-color: var(--primary-light);
+      animation: waveBounce 0.6s infinite ease-in-out;
+    }
+    .voice-wave span:nth-child(2) { animation-delay: 0.15s; }
+    .voice-wave span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes waveBounce {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.2); }
+    }
+
+    /* Print Media: Isolate ONLY the Certificate */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-certificate-container, #printable-certificate-container * {
+        visibility: visible !important;
+      }
+      #printable-certificate-container, #printable-certificate {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #printable-certificate-container {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-12">
+
+  <!-- ======================================================================= -->
+  <!-- TOP STICKY HUD                                                          -->
+  <!-- ======================================================================= -->
+  <header class="sticky top-0 z-40 bg-[#0b1120]/95 backdrop-blur-md border-b-4 border-[var(--primary)] px-3 py-2.5 shadow-2xl no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+
+      <!-- Brand & Quest Info (Strictly neutral Beginner badge, no age/CEFR) -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchSection('hub')">
+        <img src="https://i.postimg.cc/VvZbghx8/nether-star.png" alt="Nether Star" class="w-11 h-11 object-contain animate-float">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="pixel-font text-xs sm:text-sm md:text-base text-[var(--primary-light)] tracking-wide">MINECRAFT ENGLISH</h1>
+            <span class="bg-[var(--secondary)] text-white text-[10px] font-bold px-2 py-0.5 rounded border border-[var(--secondary-light)]">Beginner</span>
+          </div>
+          <p class="text-xs text-slate-300 font-semibold">Past Simple & Nature Expedition</p>
+        </div>
+      </div>
+
+      <!-- HUD Right Controls -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+
+        <!-- Live TTS Speech Indicator -->
+        <div id="speech-indicator" class="hidden items-center gap-2 bg-teal-950 border-2 border-[var(--primary-light)] px-3 py-1.5 rounded-lg text-xs font-bold text-teal-200">
+          <div class="voice-wave"><span></span><span></span><span></span></div>
+          <span>Speaking...</span>
+        </div>
+
+        <!-- Diamonds Counter -->
+        <div class="mc-slot px-3 py-1.5 flex items-center gap-2 bg-slate-800">
+          <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-6 h-6 object-contain">
+          <span class="pixel-font text-xs text-cyan-300" id="hud-diamonds">0</span>
+        </div>
+
+        <!-- Badges Progress -->
+        <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-2">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Badge" class="w-5 h-5 object-contain">
+          <span>Badges: <span id="hud-badges">0/8</span></span>
+        </button>
+
+        <!-- Quick Rescue Camp Button -->
+        <button onclick="switchSection('rescue')" class="mc-btn mc-btn-purple px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-1.5" title="Rescue Lost Mobs!">
+          <img src="https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png" alt="Rescue" class="w-5 h-5 object-contain">
+          <span>Rescue</span>
+        </button>
+
+        <!-- Sound FX Toggle -->
+        <button onclick="toggleSoundFX()" id="sound-toggle-btn" class="mc-btn px-3 py-1.5 text-xs" title="Toggle Sound Effects">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 6 Navigation Tabs -->
+    <nav class="max-w-7xl mx-auto mt-2.5 flex gap-2 overflow-x-auto pb-1">
+      <button onclick="switchSection('hub')" id="nav-hub" class="mc-btn mc-btn-teal px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png" class="w-5 h-5 object-contain" alt="Hub">
+        <span>1. Story & Nature</span>
+      </button>
+      <button onclick="switchSection('grammar')" id="nav-grammar" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" class="w-5 h-5 object-contain" alt="Grammar">
+        <span>2. Grammar Rules</span>
+      </button>
+      <button onclick="switchSection('games')" id="nav-games" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+        <span>3. 5 Mini-Games</span>
+      </button>
+      <button onclick="switchSection('rescue')" id="nav-rescue" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/26Mxxj8V/minecraft-carrot-removebg-preview.png" class="w-5 h-5 object-contain" alt="Rescue">
+        <span>4. Rescue Mobs</span>
+      </button>
+      <button onclick="switchSection('badges')" id="nav-badges" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+        <span>5. Trophy Chest</span>
+      </button>
+      <button onclick="switchSection('finale')" id="nav-finale" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/6pXYSQVy/Ender-Dragon-removebg-preview.png" class="w-5 h-5 object-contain" alt="Finale">
+        <span>6. Mystery Prize</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- MAIN WORKSPACE                                                          -->
+  <!-- ======================================================================= -->
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 pt-6 flex-1">
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 1: STORY & 10 NATURE VOCABULARY CARDS                         -->
+    <!-- ===================================================================== -->
+    <section id="sec-hub" class="space-y-6">
+
+      <!-- Story Intro Banner -->
+      <div class="mc-panel p-5 sm:p-6 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+          <div class="lg:col-span-3 flex justify-center items-center gap-3">
+            <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl">
+            <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl" style="animation-delay: 0.45s;">
+          </div>
+
+          <div class="lg:col-span-9 space-y-3">
+            <div class="inline-flex items-center gap-2 bg-[var(--secondary)] text-white px-3 py-1 text-xs font-bold border-2 border-black">
+              <span>🧭</span> <span>THE LOST NATURE JOURNAL</span>
+            </div>
+            <h2 class="pixel-font text-sm sm:text-lg text-slate-900">What Happened Yesterday?</h2>
+            <p id="story-intro-text" class="text-base sm:text-lg text-slate-800 font-semibold leading-relaxed">
+              Yesterday, Steve and Alex walked through the wild Minecraft world! They climbed a high mountain, explored a huge cave, and watched the bright moon. Last night, a sneaky Enderman mixed up their Nature Journal — help them fix the past stories and rescue the lost mobs!
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="speakText(GAME_DATA.story.intro)" class="mc-btn mc-btn-teal px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-volume-high"></i> <span>Listen to Story</span>
+              </button>
+              <button onclick="switchSection('grammar')" class="mc-btn mc-btn-purple px-4 py-2 text-xs gap-2">
+                <span>Open Grammar Book</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Visual Support Checklist -->
+      <div class="mc-panel-dark p-4 flex flex-wrap items-center justify-between gap-4 border-4 border-[var(--primary)]">
+        <div class="flex items-center gap-3">
+          <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Lantern" class="w-9 h-9 object-contain">
+          <div>
+            <h3 class="pixel-font text-xs text-[var(--accent-light)]">EXPLORER CHECKLIST:</h3>
+            <p class="text-xs text-slate-300">Tap all 10 Nature cards below! Flip each card to see its Ukrainian translation and earn Diamonds!</p>
+          </div>
+        </div>
+        <div class="bg-slate-900 border-2 border-slate-600 px-4 py-2 text-xs font-bold text-[var(--primary-light)]">
+          Words Inspected: <span id="words-explored-count">0 / 10</span>
+        </div>
+      </div>
+
+      <!-- 10 Nature Flip Cards Grid -->
+      <div id="vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <!-- Populated from GAME_DATA.vocabulary -->
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 2: PAST SIMPLE GRAMMAR RULES + 6 MAGIC IRREGULAR VERBS        -->
+    <!-- ===================================================================== -->
+    <section id="sec-grammar" class="hidden space-y-6">
+
+      <!-- PART A: When do we use Past Simple? -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" alt="Bookshelf" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">WHEN DO WE USE PAST SIMPLE?</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">We use Past Simple for finished actions that happened in the past!</p>
+            </div>
+          </div>
+          <button onclick="speakText('We use Past Simple for finished actions in the past, like yesterday or last night.')" class="mc-btn mc-btn-teal px-3 py-2 text-xs gap-2">
+            <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <!-- Usage 1 -->
+          <div class="bg-slate-100 border-4 border-slate-600 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--primary)] text-white px-2 py-1">1. FINISHED ACTIONS</span>
+                <img src="https://i.postimg.cc/g0prVdxR/mountain.jpg" alt="Mountain" class="w-9 h-9 object-cover rounded border border-slate-500">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">Things that started and finished in the past.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-slate-300">
+                <div class="flex items-center justify-between gap-2">
+                  <span>"Steve <b class="text-teal-700">climbed</b> a mountain yesterday."</span>
+                  <button onclick="speakText('Steve climbed a mountain yesterday.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>"Alex <b class="text-teal-700">picked</b> a blue flower."</span>
+                  <button onclick="speakText('Alex picked a blue flower.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-slate-600">
+              It is over now!
+            </div>
+          </div>
+
+          <!-- Usage 2 -->
+          <div class="bg-slate-100 border-4 border-slate-600 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--secondary)] text-white px-2 py-1">2. PAST STORIES</span>
+                <img src="https://i.postimg.cc/CK0dGYR8/Huge-Cave.jpg" alt="Cave" class="w-9 h-9 object-cover rounded border border-slate-500">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">Steps in an adventure story from yesterday.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-slate-300">
+                <div class="flex items-center justify-between gap-2">
+                  <span>"We <b class="text-purple-700">went</b> to the cave and <b class="text-purple-700">saw</b> a bat."</span>
+                  <button onclick="speakText('We went to the cave and saw a bat.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>"The fox <b class="text-purple-700">ate</b> a steak and <b class="text-purple-700">slept</b>."</span>
+                  <button onclick="speakText('The fox ate a steak and slept.')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-slate-600">
+              Action 1, then Action 2!
+            </div>
+          </div>
+
+          <!-- Usage 3 -->
+          <div class="bg-slate-100 border-4 border-slate-600 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-amber-600 text-white px-2 py-1">3. TIME CLUE WORDS</span>
+                <img src="https://i.postimg.cc/rpTz1cDK/moon.jpg" alt="Moon" class="w-9 h-9 object-cover rounded border border-slate-500">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">Magic time words that tell us it is Past Simple:</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-slate-300">
+                <div class="flex items-center justify-between gap-2">
+                  <span>• <b class="text-amber-700">yesterday</b> (вчора)</span>
+                  <button onclick="speakText('yesterday')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>• <b class="text-amber-700">last night / last week</b></span>
+                  <button onclick="speakText('last night, last week')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>• <b class="text-amber-700">two days ago</b> (тому)</span>
+                  <button onclick="speakText('two days ago')" class="text-slate-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-slate-600">
+              Spot these clues in every game!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PART B: How to Build Sentences (+, -, ?) -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex items-center gap-3 border-b-4 border-slate-400 pb-3">
+          <img src="https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png" alt="Crafting Table" class="w-11 h-11 object-contain">
+          <div>
+            <h2 class="pixel-font text-sm sm:text-lg text-slate-900">HOW TO CRAFT SENTENCES (+ / - / ?)</h2>
+            <p class="text-xs sm:text-sm text-slate-700 font-semibold">Good news! In Past Simple, the rule is the SAME for I, You, We, They, He, She, and It!</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+          <!-- 1. AFFIRMATIVE (+) -->
+          <div class="bg-teal-50 border-4 border-teal-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-teal-700 text-white px-2.5 py-1">➕ AFFIRMATIVE (+)</span>
+              <img src="https://i.postimg.cc/dVj4KKny/Iron-Golem-with-flower-removebg-preview.png" alt="Golem" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-teal-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-teal-200 px-1.5 py-0.5 rounded">Regular:</span> Subject + <b>Verb + -ed</b>
+              </div>
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-purple-200 px-1.5 py-0.5 rounded">Irregular:</span> Subject + <b>Magic Form 2 (V2)</b>
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-teal-100/80 p-3 border border-teal-500">
+              <p class="font-bold text-teal-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• Steve <b>walked</b> to the river.</span>
+                <button onclick="speakText('Steve walked to the river.')" class="text-teal-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• We <b>watched</b> the bright star.</span>
+                <button onclick="speakText('We watched the bright star.')" class="text-teal-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Alex <b>saw</b> a green leaf.</span>
+                <button onclick="speakText('Alex saw a green leaf.')" class="text-teal-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• The axolotl <b>swam</b> fast.</span>
+                <button onclick="speakText('The axolotl swam fast.')" class="text-teal-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. NEGATIVE (-) -->
+          <div class="bg-rose-50 border-4 border-rose-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-rose-700 text-white px-2.5 py-1">➖ NEGATIVE (-)</span>
+              <img src="https://i.postimg.cc/y6DQ3tYD/Creeper-removebg-preview-(1).png" alt="Creeper" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-rose-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-slate-800">
+                Subject + <b class="text-rose-600">didn't</b> + <b>Base Verb (V1)</b>
+              </div>
+              <div class="text-xs font-bold text-rose-700">
+                ⚠️ DIDN'T steals the past! NO -ed and NO V2!
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-rose-100/80 p-3 border border-rose-400">
+              <p class="font-bold text-rose-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• I <b>didn't climb</b> the tall tree.</span>
+                <button onclick="speakText('I did not climb the tall tree.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Steve <b>didn't go</b> into the cave.</span>
+                <button onclick="speakText('Steve did not go into the cave.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Alex <b>didn't see</b> the moon.</span>
+                <button onclick="speakText('Alex did not see the moon.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• The wolf <b>didn't eat</b> the leaf.</span>
+                <button onclick="speakText('The wolf did not eat the leaf.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. QUESTIONS (?) -->
+          <div class="bg-violet-50 border-4 border-violet-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-violet-700 text-white px-2.5 py-1">❓ QUESTIONS (?)</span>
+              <img src="https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png" alt="Fox" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-violet-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-slate-800">
+                <b class="text-violet-700">Did</b> + Subject + <b>Base Verb (V1)</b>?
+              </div>
+              <div class="text-xs font-bold text-violet-700">
+                ⚠️ DID jumps to the front! Verb stays V1!
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-violet-100/80 p-3 border border-violet-400">
+              <p class="font-bold text-violet-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• <b>Did</b> you <b>explore</b> the cave?</span>
+                <button onclick="speakText('Did you explore the cave?')" class="text-violet-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Did</b> Steve <b>find</b> a flower?</span>
+                <button onclick="speakText('Did Steve find a flower?')" class="text-violet-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Did</b> the fox <b>sleep</b> here?</span>
+                <button onclick="speakText('Did the fox sleep here?')" class="text-violet-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Did</b> they <b>swim</b> in the river?</span>
+                <button onclick="speakText('Did they swim in the river?')" class="text-violet-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PART C: 6 MAGIC IRREGULAR VERBS (ONLY THESE 6 USED IN ALL GAMES!) -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5 border-4 border-[var(--secondary)]">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/VvZbghx8/nether-star.png" alt="Magic Star" class="w-11 h-11 object-contain animate-float">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-purple-900">6 MAGIC IRREGULAR VERBS (V1 ➔ V2)</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">These 6 special verbs do NOT use -ed! They transform magically in Affirmative (+) sentences. Click each card to listen!</p>
+            </div>
+          </div>
+          <button onclick="speakText('Go, went. See, saw. Find, found. Swim, swam. Eat, ate. Sleep, slept.')" class="mc-btn mc-btn-purple px-3 py-2 text-xs gap-2">
+            <i class="fa-solid fa-volume-high"></i> <span>Listen to All 6</span>
+          </button>
+        </div>
+
+        <div id="irregular-verbs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated from GAME_DATA.irregularVerbs -->
+        </div>
+
+        <div class="flex justify-center pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-teal px-6 py-3 text-xs sm:text-sm gap-3">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="Sword">
+            <span>ENTER THE 5 MINI-GAMES ARENA!</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 3: 5 MINI-GAMES ARENA                                         -->
+    <!-- ===================================================================== -->
+    <section id="sec-games" class="hidden space-y-6">
+
+      <!-- Mini-Game Selector Sub-Nav -->
+      <div class="mc-panel-dark p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <span class="pixel-font text-xs text-[var(--primary-light)]">CHOOSE YOUR TRAINING ARENA:</span>
+          <span class="text-xs text-slate-300">Every round shuffles fresh random tasks from a huge pool!</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          <button onclick="selectMiniGame(1)" id="gbtn-1" class="mc-btn mc-btn-teal p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png" class="w-6 h-6 object-contain" alt="G1">
+            <div class="text-left">
+              <div>Game 1: Affirmative</div>
+              <div class="text-[9px] text-teal-200 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(2)" id="gbtn-2" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png" class="w-6 h-6 object-contain" alt="G2">
+            <div class="text-left">
+              <div>Game 2: Negative</div>
+              <div class="text-[9px] text-slate-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(3)" id="gbtn-3" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" class="w-6 h-6 object-contain" alt="G3">
+            <div class="text-left">
+              <div>Game 3: Questions</div>
+              <div class="text-[9px] text-slate-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(4)" id="gbtn-4" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="G4">
+            <div class="text-left">
+              <div>Game 4: Mixed Blitz</div>
+              <div class="text-[9px] text-slate-300 font-sans">15 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(5)" id="gbtn-5" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/v8CPrhc2/Enderman-removebg-preview.png" class="w-6 h-6 object-contain" alt="G5">
+            <div class="text-left">
+              <div>Game 5: Detective</div>
+              <div class="text-[9px] text-purple-200 font-sans">Fix Mistakes! (40)</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- GAMES 1–4 STANDARD ENGINE -->
+      <div id="standard-game-wrapper" class="mc-panel p-5 sm:p-6">
+
+        <!-- Header Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img id="active-game-icon" src="https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png" alt="Icon" class="w-11 h-11 object-contain">
+            <div>
+              <h3 id="active-game-title" class="pixel-font text-xs sm:text-base text-slate-900">Game 1: Affirmative Explorer (+)</h3>
+              <p id="active-game-subtitle" class="text-xs sm:text-sm text-slate-700 font-semibold">Choose the right Past Simple verb or build the sentence!</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-900 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Task <span id="game-q-num" class="text-[var(--primary-light)]">1</span> / <span id="game-q-total">10</span>
+            </div>
+            <div class="bg-slate-900 text-[var(--accent-light)] px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Score: <span id="game-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Stage -->
+        <div id="question-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img id="question-mob-img" src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Character" class="w-16 h-16 sm:w-20 sm:h-20 object-contain animate-float bg-slate-900/90 p-2 border-2 border-slate-600">
+              <div>
+                <span id="question-mode-tag" class="inline-block bg-teal-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1">AFFIRMATIVE (+)</span>
+                <h4 id="question-prompt-text" class="text-lg sm:text-2xl font-bold text-white leading-snug">Loading task...</h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakCurrentQuestion()" class="mc-btn px-3 py-2 text-xs" title="Listen">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Options -->
+          <div id="mc-options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <!-- Buttons injected dynamically -->
+          </div>
+
+          <!-- Click-to-Place Word Order (Scramble) -->
+          <div id="scramble-container" class="hidden space-y-4 pt-2">
+            <div class="text-xs text-teal-300 font-bold">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Tap blocks below in order to build the sentence! (Tap a placed block to remove it)
+            </div>
+
+            <div id="scramble-target-slots" class="min-h-[64px] bg-slate-900 border-4 border-dashed border-amber-400 p-3 flex flex-wrap items-center gap-2"></div>
+            <div id="scramble-word-bank" class="flex flex-wrap gap-2 pt-1"></div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="checkScrambleAnswer()" id="scramble-submit-btn" class="mc-btn mc-btn-teal px-5 py-2 text-xs gap-2">
+                <i class="fa-solid fa-hammer"></i> <span>CRAFT SENTENCE</span>
+              </button>
+              <button onclick="resetScrambleWords()" class="mc-btn px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-rotate-left"></i> <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feedback Alert & Next Button -->
+          <div id="game-feedback-bar" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div id="game-feedback-msg" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextGameQuestion()" id="game-next-btn" class="mc-btn mc-btn-teal px-5 py-2 text-xs shrink-0">
+              <span>NEXT TASK</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Round Complete Summary Screen -->
+        <div id="round-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Victory" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-[var(--primary-light)]">ROUND COMPLETE!</h3>
+          <p id="round-result-summary" class="text-base sm:text-lg text-slate-200 font-bold"></p>
+
+          <div class="flex flex-wrap justify-center gap-4 pt-2">
+            <button onclick="replayCurrentGame()" class="mc-btn mc-btn-gold px-5 py-3 text-xs sm:text-sm flex items-center gap-3">
+              <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem of Undying" class="w-8 h-8 object-contain">
+              <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- GAME 5 (VARIANT B): CAVE DETECTIVE — FIX THE ENDERMAN'S MISTAKES!   -->
+      <!-- =================================================================== -->
+      <div id="game5-custom-wrapper" class="hidden mc-panel p-5 sm:p-6 space-y-5">
+
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/v8CPrhc2/Enderman-removebg-preview.png" alt="Enderman" class="w-12 h-12 object-contain">
+            <div>
+              <h3 class="pixel-font text-xs sm:text-base text-slate-900">Game 5: Cave Detective — Fix the Enderman's Mistakes!</h3>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Step 1: Tap the WRONG word block! Step 2: Pick the right word to repair Steve's Journal!</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-900 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Page <span id="g5-progress" class="text-purple-300">1 / 10</span>
+            </div>
+            <div class="bg-slate-900 text-[var(--accent-light)] px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Fixed: <span id="g5-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detective Stage -->
+        <div id="g5-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img id="g5-mob-img" src="https://i.postimg.cc/v8CPrhc2/Enderman-removebg-preview.png" alt="Mob" class="w-16 h-16 object-contain bg-slate-900 p-2 border-2 border-purple-500 animate-float">
+              <div>
+                <span id="g5-step-badge" class="inline-block bg-[var(--secondary)] text-white pixel-font text-[9px] px-2.5 py-1 mb-1">STEP 1: SPOT THE MISTAKE</span>
+                <p id="g5-instruction" class="text-sm sm:text-base text-slate-200 font-bold">The Enderman broke this Past Simple sentence! Click the WRONG word block:</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakG5Sentence()" class="mc-btn px-3 py-2 text-xs" title="Listen">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Clickable Broken Sentence Word Blocks -->
+          <div class="bg-slate-900 border-4 border-slate-600 p-4 sm:p-5">
+            <div class="text-[11px] uppercase font-bold text-slate-400 mb-3">BROKEN JOURNAL PAGE:</div>
+            <div id="g5-words-container" class="flex flex-wrap items-center gap-2.5">
+              <!-- Clickable word buttons injected by JS -->
+            </div>
+          </div>
+
+          <!-- Step 2: Correction Picker (Revealed after tapping the wrong word) -->
+          <div id="g5-fix-container" class="hidden bg-purple-950/50 border-4 border-[var(--secondary-light)] p-4 space-y-3">
+            <div class="pixel-font text-[10px] sm:text-xs text-purple-200">
+              🔧 STEP 2: REPLACE "<span id="g5-bad-word-label" class="text-rose-400 underline"></span>" WITH THE RIGHT WORD:
+            </div>
+            <div id="g5-fix-options" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <!-- 3 shuffled correction options -->
+            </div>
+          </div>
+
+          <!-- Feedback & Next -->
+          <div id="g5-feedback" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div id="g5-feedback-text" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextG5Question()" id="g5-next-btn" class="mc-btn mc-btn-teal px-5 py-2 text-xs shrink-0">
+              <span>NEXT PAGE</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Game 5 Complete Screen -->
+        <div id="g5-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="https://i.postimg.cc/VvZbghx8/nether-star.png" alt="Star" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-purple-300">JOURNAL REPAIRED!</h3>
+          <p id="g5-final-summary" class="text-base text-slate-200 font-bold">You fixed all 10 broken pages as a Cave Detective!</p>
+          <button onclick="replayGame5()" class="mc-btn mc-btn-gold px-5 py-3 text-xs sm:text-sm flex items-center gap-3 mx-auto">
+            <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem" class="w-8 h-8 object-contain">
+            <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 4 (VARIANT 4): RESCUE & FEED THE LOST MOBS                    -->
+    <!-- ===================================================================== -->
+    <section id="sec-rescue" class="hidden space-y-6">
+
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-4">
+          <div class="flex items-center gap-4">
+            <img src="https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png" alt="Fox" class="w-16 h-16 object-contain bg-slate-800 p-2 border-2 border-slate-600 animate-float">
+            <div>
+              <div class="inline-block bg-[var(--secondary)] text-white pixel-font text-[9px] px-2 py-0.5 mb-1">WILDERNESS RESCUE CAMP</div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">RESCUE & FEED THE LOST MOBS</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">8 friendly mobs got lost in the mountains, caves, and river! Spend Diamonds on food & gear to rescue them!</p>
+            </div>
+          </div>
+
+          <div class="mc-slot bg-slate-900 px-5 py-3 flex items-center gap-3 border-4 border-[var(--primary-light)]">
+            <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-8 h-8 object-contain animate-bounce">
+            <div>
+              <div class="text-[10px] text-teal-300 font-bold uppercase">Your Diamonds</div>
+              <div class="pixel-font text-sm sm:text-base text-white"><span id="rescue-diamonds-balance">0</span> 💎</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rescued Sanctuary Showcase -->
+        <div class="mt-5 mc-panel-dark p-5 border-4 border-[var(--primary)]">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2">
+              <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" class="w-8 h-8 object-contain" alt="Camp Lantern">
+              <span class="pixel-font text-xs text-[var(--primary-light)]">SAFE CAMPFIRE SANCTUARY (<span id="rescued-count-label">0 / 8</span> SAVED)</span>
+            </div>
+            <span class="text-xs text-slate-300">Tap any rescued mob to hear its Past Simple thank-you story!</span>
+          </div>
+
+          <div id="saved-mobs-canvas" class="min-h-[155px] bg-gradient-to-b from-indigo-950/90 via-slate-900 to-teal-950/80 border-4 border-slate-700 p-4 flex flex-wrap items-center justify-center gap-4 rounded">
+            <!-- Populated with rescued mobs -->
+          </div>
+        </div>
+
+        <!-- 8 Lost Mobs Rescue Cards -->
+        <div class="mt-6">
+          <h3 class="pixel-font text-xs sm:text-sm text-slate-900 mb-3">LOST MOBS WAITING FOR HELP:</h3>
+          <div id="rescue-mobs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Populated by JS from GAME_DATA.lostMobs -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 5: ACHIEVEMENTS / TROPHY CHEST (8 BADGES)                     -->
+    <!-- ===================================================================== -->
+    <section id="sec-badges" class="hidden space-y-6">
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" alt="Chest" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">EXPEDITION TROPHY CHEST (8 BADGES)</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Collect ALL 8 badges to unlock the Warden's Mystery Vault!</p>
+            </div>
+          </div>
+
+          <!-- Inline Reset Progress Controls (No browser confirm()) -->
+          <div class="flex items-center gap-2">
+            <button id="reset-init-btn" onclick="showResetConfirm()" class="mc-btn mc-btn-danger px-3 py-1.5 text-[10px]">
+              Reset Progress
+            </button>
+            <div id="reset-confirm-box" class="hidden items-center gap-2 bg-red-950 border-2 border-red-400 px-3 py-1.5">
+              <span class="text-xs font-bold text-red-200">Reset all?</span>
+              <button onclick="confirmResetProgress()" class="mc-btn mc-btn-danger px-2.5 py-1 text-[10px]" style="min-height:36px;">Yes</button>
+              <button onclick="cancelResetConfirm()" class="mc-btn px-2.5 py-1 text-[10px]" style="min-height:36px;">No</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Populated from GAME_DATA.badges -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 6: GRAND FINALE (WARDEN LOCK + PRINTABLE CERTIFICATE)         -->
+    <!-- ===================================================================== -->
+    <section id="sec-finale" class="hidden space-y-6">
+
+      <!-- WARDEN LOCKED SCREEN (Shown until 8/8 badges) -->
+      <div id="finale-locked-banner" class="mc-panel-dark p-8 sm:p-12 text-center space-y-6 border-4 border-[var(--accent)]">
+        <div class="relative inline-block">
+          <img src="https://i.postimg.cc/m2Mm89Hm/Warden-removebg-preview.png" alt="Warden" class="w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain animate-float">
+          <span class="absolute -top-2 -right-2 bg-rose-700 text-white pixel-font text-[10px] px-2.5 py-1 border-2 border-white">🔒 SEALED</span>
+        </div>
+
+        <h3 class="pixel-font text-base sm:text-2xl text-[var(--accent-light)]">THE WARDEN GUARDS THE MYSTERY PRIZE!</h3>
+        <p class="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-semibold leading-relaxed">
+          Unlock <b>ALL 8 Achievements</b> in the Trophy Chest to unseal your Legendary Past Simple Nature Diploma!
+        </p>
+
+        <div class="max-w-md mx-auto bg-slate-900 border-4 border-slate-700 p-4 space-y-2">
+          <div class="flex justify-between text-xs font-bold text-[var(--primary-light)]">
+            <span>BADGES COLLECTED:</span>
+            <span id="finale-lock-progress-text">0 / 8</span>
+          </div>
+          <div class="w-full h-5 bg-slate-800 border-2 border-black overflow-hidden">
+            <div id="finale-lock-bar" class="h-full bg-gradient-to-r from-[var(--secondary)] via-[var(--primary)] to-[var(--accent)] transition-all duration-500" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-teal px-5 py-3 text-xs gap-2">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+            <span>PLAY MINI-GAMES</span>
+          </button>
+          <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-5 py-3 text-xs gap-2">
+            <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+            <span>CHECK BADGES</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- UNLOCKED CERTIFICATE SECTION -->
+      <div id="finale-unlocked-content" class="hidden space-y-6">
+
+        <!-- Customizer Bar (Hidden on print) -->
+        <div class="mc-panel p-5 no-print space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label for="student-name-input" class="pixel-font text-xs text-slate-900">EXPLORER NAME:</label>
+              <input id="student-name-input" type="text" value="Nature Explorer" oninput="updateCertificateName(this.value)" class="px-3 py-2 border-4 border-slate-700 bg-white text-slate-900 font-bold text-base focus:outline-none">
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="launchVictoryConfetti()" class="mc-btn mc-btn-gold px-4 py-2 text-xs gap-2">
+                <span>🎆</span> <span>Celebrate!</span>
+              </button>
+              <button onclick="window.print()" class="mc-btn mc-btn-teal px-5 py-2.5 text-xs sm:text-sm gap-2">
+                <i class="fa-solid fa-print"></i> <span>Print / Save as PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3 Custom Background Pickers -->
+          <div class="border-t-2 border-slate-400 pt-3 flex flex-wrap items-center justify-between gap-3">
+            <span class="pixel-font text-[10px] sm:text-xs text-slate-800">CHOOSE CERTIFICATE BACKGROUND:</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCertificateTheme('bg1')" id="theme-btn-bg1" class="mc-btn mc-btn-teal px-3 py-1.5 text-[10px] gap-2">
+                <span>🌄 1. Nature Vista</span>
+              </button>
+              <button onclick="setCertificateTheme('bg2')" id="theme-btn-bg2" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>🌌 2. Starlight World</span>
+              </button>
+              <button onclick="setCertificateTheme('bg3')" id="theme-btn-bg3" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>💜 3. Lavender Field</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRINTABLE CERTIFICATE -->
+        <div id="printable-certificate-container" class="w-full flex justify-center">
+          <div id="printable-certificate" class="mc-panel p-6 sm:p-10 border-8 border-[var(--primary)] text-slate-900 relative overflow-hidden shadow-2xl bg-cover bg-center w-full max-w-4xl" style="background-image: url('https://i.postimg.cc/Kc3kh9hN/1102607921304935153.jpg');">
+
+            <div class="absolute inset-0 bg-white/65 backdrop-blur-[2px]"></div>
+
+            <div class="bg-[#fdfcf5]/95 border-4 border-dashed border-[var(--secondary)] p-6 sm:p-8 text-center space-y-5 relative shadow-xl z-10 w-full">
+
+              <!-- Top Row -->
+              <div class="flex items-center justify-between sm:px-8">
+                <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+                <div class="text-center">
+                  <div class="inline-block bg-[var(--primary)] text-white pixel-font text-[9px] sm:text-[10px] px-3 py-1 mb-2">OFFICIAL EXPEDITION DIPLOMA</div>
+                  <h2 class="pixel-font text-base sm:text-2xl md:text-3xl text-teal-900">PAST SIMPLE NATURE MASTER</h2>
+                </div>
+                <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+              </div>
+
+              <p class="text-xs sm:text-base font-bold text-slate-600 uppercase tracking-widest">This legendary certificate is proudly awarded to:</p>
+
+              <div id="cert-hero-name" class="pixel-font text-xl sm:text-3xl text-purple-900 border-b-4 border-[var(--primary)] inline-block px-8 py-2 bg-white/85">
+                Nature Explorer
+              </div>
+
+              <p class="text-sm sm:text-base text-slate-800 max-w-2xl mx-auto font-semibold leading-relaxed">
+                For bravery and skill in mastering the <b>Past Simple Tense</b> (+ / - / ? and the 6 Magic Irregular Verbs), repairing Steve & Alex's Nature Journal, and exploring all <b>10 Nature & World</b> treasures!
+              </p>
+
+              <!-- 10 Nature Icons Strip -->
+              <div class="flex flex-wrap items-center justify-center gap-2.5 py-2.5 bg-slate-900/10 rounded-xl px-4">
+                <img src="https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png" class="w-8 h-8 object-contain" alt="Tree">
+                <img src="https://i.postimg.cc/qMpm56W5/oak-leaves.png" class="w-8 h-8 object-contain" alt="Leaf">
+                <img src="https://i.postimg.cc/tC9rMn8B/cornflower.png" class="w-8 h-8 object-contain" alt="Flower">
+                <img src="https://i.postimg.cc/cJW6RZvK/sun.jpg" class="w-8 h-8 object-cover rounded" alt="Sun">
+                <img src="https://i.postimg.cc/rpTz1cDK/moon.jpg" class="w-8 h-8 object-cover rounded" alt="Moon">
+                <img src="https://i.postimg.cc/VvZbghx8/nether-star.png" class="w-8 h-8 object-contain" alt="Star">
+                <img src="https://i.postimg.cc/CK0dGYR8/Huge-Cave.jpg" class="w-8 h-8 object-cover rounded" alt="Cave">
+                <img src="https://i.postimg.cc/g0prVdxR/mountain.jpg" class="w-8 h-8 object-cover rounded" alt="Mountain">
+                <img src="https://i.postimg.cc/d0FD2vhy/river.jpg" class="w-8 h-8 object-cover rounded" alt="River">
+                <img src="https://i.postimg.cc/25Y3Qm11/sky.jpg" class="w-8 h-8 object-cover rounded" alt="Sky">
+              </div>
+
+              <div class="grid grid-cols-3 items-center pt-4 border-t-2 border-slate-300 text-xs sm:text-sm font-bold text-slate-700">
+                <div>
+                  <div class="text-slate-900 font-extrabold">Steve & Alex</div>
+                  <div class="text-[11px] text-slate-500">Expedition Guides</div>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="https://i.postimg.cc/VvZbghx8/nether-star.png" alt="Seal" class="w-12 h-12 object-contain">
+                  <span class="pixel-font text-[8px] text-purple-800 mt-1">STAR SEAL</span>
+                </div>
+                <div>
+                  <div id="cert-date-display" class="text-slate-900 font-extrabold">2026</div>
+                  <div class="text-[11px] text-slate-500">Date of Completion</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================================= -->
+  <!-- JAVASCRIPT ENGINE & CENTRALIZED GAME_DATA                               -->
+  <!-- ======================================================================= -->
+  <script>
+    /* =========================================================================
+       1. CENTRALIZED GAME_DATA CONFIGURATION
+       STRICT VERB RULE: Regular verbs + ONLY 6 Irregular Verbs:
+       (go->went, see->saw, find->found, swim->swam, eat->ate, sleep->slept)
+       ========================================================================= */
+    const STORAGE_KEY = "mc_past_simple_nature_v1";
+
+    const GAME_DATA = {
+      story: {
+        intro: "Yesterday, Steve and Alex walked through the wild Minecraft world! They climbed a high mountain, explored a huge cave, and watched the bright moon. Last night, a sneaky Enderman mixed up their Nature Journal. Help them fix the past stories and rescue the lost mobs!"
+      },
+
+      assets: {
+        totem: "https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png",
+        steve: "https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png",
+        alex: "https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png",
+        villager: "https://i.postimg.cc/BnBMGGNx/Villager-removebg-preview.png",
+        golem: "https://i.postimg.cc/dVj4KKny/Iron-Golem-with-flower-removebg-preview.png",
+        creeper: "https://i.postimg.cc/y6DQ3tYD/Creeper-removebg-preview-(1).png",
+        zombie: "https://i.postimg.cc/QNv6QmHp/Zombie-removebg-preview.png",
+        skeleton: "https://i.postimg.cc/FFwPyp7W/Skeleton-removebg-preview.png",
+        spider: "https://i.postimg.cc/KcC9PfRW/Spider-removebg-preview.png",
+        enderman: "https://i.postimg.cc/v8CPrhc2/Enderman-removebg-preview.png",
+        fox: "https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png",
+        foxSleeping: "https://i.postimg.cc/g2HNPPNp/Fox-sleeping-removebg-preview.png",
+        bee: "https://i.postimg.cc/Qx5f077M/Bee-removebg-preview.png",
+        axolotl: "https://i.postimg.cc/SN8gD9M1/axolotl-removebg-preview.png",
+        wolf: "https://i.postimg.cc/L8pN7skm/Wolf-removebg-preview.png",
+        puppy: "https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png",
+        cat: "https://i.postimg.cc/zfd7VSsf/Cat-removebg-preview.png",
+        kitty: "https://i.postimg.cc/fLJKXSs8/Kitty-removebg-preview.png",
+        parrot: "https://i.postimg.cc/CLDcm88Y/Parrot-removebg-preview.png",
+        pig: "https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png",
+        cow: "https://i.postimg.cc/28v02WW6/Minecraft-Cow-removebg-preview.png",
+        sheep: "https://i.postimg.cc/8zSt3Cdv/Sheep-removebg-preview.png",
+        chicken: "https://i.postimg.cc/K8DJyyQV/Chicken-removebg-preview.png",
+        squid: "https://i.postimg.cc/x12t7dGC/squid-removebg-preview.png"
+      },
+
+      certWallpapers: {
+        bg1: "https://i.postimg.cc/Kc3kh9hN/1102607921304935153.jpg",
+        bg2: "https://i.postimg.cc/Kc3kh9h7/image.jpg",
+        bg3: "https://i.postimg.cc/y63gCfCy/Lavander.jpg"
+      },
+
+      // 10 Nature & World Vocabulary Flashcards
+      vocabulary: [
+        { id: "tree", word: "Tree", ua: "дерево", img: "https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png", example: "Steve climbed a tall tree yesterday." },
+        { id: "leaf", word: "Leaf", ua: "листок", img: "https://i.postimg.cc/qMpm56W5/oak-leaves.png", example: "Alex found a green leaf on the path." },
+        { id: "flower", word: "Flower", ua: "квітка", img: "https://i.postimg.cc/tC9rMn8B/cornflower.png", example: "She picked a blue flower yesterday." },
+        { id: "sun", word: "Sun", ua: "сонце", img: "https://i.postimg.cc/cJW6RZvK/sun.jpg", example: "The bright sun warmed the forest." },
+        { id: "moon", word: "Moon", ua: "місяць", img: "https://i.postimg.cc/rpTz1cDK/moon.jpg", example: "We watched the silver moon last night." },
+        { id: "star", word: "Star", ua: "зірка", img: "https://i.postimg.cc/VvZbghx8/nether-star.png", example: "Alex saw a bright star in the sky." },
+        { id: "cave", word: "Cave", ua: "печера", img: "https://i.postimg.cc/CK0dGYR8/Huge-Cave.jpg", example: "Steve explored a huge cave yesterday." },
+        { id: "mountain", word: "Mountain", ua: "гора", img: "https://i.postimg.cc/g0prVdxR/mountain.jpg", example: "They walked up a high mountain." },
+        { id: "river", word: "River", ua: "річка", img: "https://i.postimg.cc/d0FD2vhy/river.jpg", example: "The pink axolotl swam in the river." },
+        { id: "sky", word: "Sky", ua: "небо", img: "https://i.postimg.cc/25Y3Qm11/sky.jpg", example: "We looked at the blue sky yesterday." }
+      ],
+
+      // 6 Magic Irregular Verbs (Displayed in Section 2 & ONLY irregulars used in all games)
+      irregularVerbs: [
+        { v1: "go", v2: "went", ua: "йти / ходити", example: "Steve went to the cave yesterday.", icon: "https://i.postimg.cc/CK0dGYR8/Huge-Cave.jpg" },
+        { v1: "see", v2: "saw", ua: "бачити", example: "Alex saw a bright star last night.", icon: "https://i.postimg.cc/VvZbghx8/nether-star.png" },
+        { v1: "find", v2: "found", ua: "знаходити", example: "We found a blue flower near the tree.", icon: "https://i.postimg.cc/tC9rMn8B/cornflower.png" },
+        { v1: "swim", v2: "swam", ua: "плавати", example: "The axolotl swam in the river.", icon: "https://i.postimg.cc/SN8gD9M1/axolotl-removebg-preview.png" },
+        { v1: "eat", v2: "ate", ua: "їсти", example: "The pig ate a sweet carrot yesterday.", icon: "https://i.postimg.cc/26Mxxj8V/minecraft-carrot-removebg-preview.png" },
+        { v1: "sleep", v2: "slept", ua: "спати", example: "The fox slept under the oak tree.", icon: "https://i.postimg.cc/g2HNPPNp/Fox-sleeping-removebg-preview.png" }
+      ],
+
+      // Section 4 (Variant 4): 8 Lost Mobs to Rescue & Feed
+      lostMobs: [
+        {
+          id: "mob_fox",
+          name: "Lost Fox",
+          location: "Under a Dark Tree",
+          cost: 15,
+          treatName: "Sweet Berries",
+          treatImg: "https://i.postimg.cc/BZwwzncT/sweet-berries.png",
+          img: "https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/g2HNPPNp/Fox-sleeping-removebg-preview.png",
+          story: "Thank you! Yesterday I ate sweet berries and slept under the tree!"
+        },
+        {
+          id: "mob_puppy",
+          name: "Lost Puppy",
+          location: "On the High Mountain",
+          cost: 20,
+          treatName: "Warm Steak",
+          treatImg: "https://i.postimg.cc/XJp8FB3j/Steak-removebg-preview.png",
+          img: "https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/7LB9fMF3/Puppy-removebg-preview.png",
+          story: "Woof! I walked down the mountain and followed Steve to the camp!"
+        },
+        {
+          id: "mob_kitty",
+          name: "Lost Kitty",
+          location: "In the Flower Field",
+          cost: 20,
+          treatName: "Fresh Salmon",
+          treatImg: "https://i.postimg.cc/dQSSfVm5/salmon.png",
+          img: "https://i.postimg.cc/fLJKXSs8/Kitty-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/fLJKXSs8/Kitty-removebg-preview.png",
+          story: "Meow! I played near the blue flowers and ate fresh salmon!"
+        },
+        {
+          id: "mob_bee",
+          name: "Lost Bee",
+          location: "In the Windy Sky",
+          cost: 25,
+          treatName: "Blue Flower",
+          treatImg: "https://i.postimg.cc/tC9rMn8B/cornflower.png",
+          img: "https://i.postimg.cc/Qx5f077M/Bee-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/Qx5f077M/Bee-removebg-preview.png",
+          story: "Buzz! I found a pretty flower and rested in the warm sun!"
+        },
+        {
+          id: "mob_axolotl",
+          name: "Lost Axolotl",
+          location: "In the Cold River",
+          cost: 30,
+          treatName: "Bright Lantern",
+          treatImg: "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png",
+          img: "https://i.postimg.cc/SN8gD9M1/axolotl-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/SN8gD9M1/axolotl-removebg-preview.png",
+          story: "Splash! I swam across the river and saw your bright lantern!"
+        },
+        {
+          id: "mob_parrot",
+          name: "Lost Parrot",
+          location: "On a Tall Tree",
+          cost: 30,
+          treatName: "Beetroot Seeds",
+          treatImg: "https://i.postimg.cc/8knnYzBm/beetroot-seeds.png",
+          img: "https://i.postimg.cc/CLDcm88Y/Parrot-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/CLDcm88Y/Parrot-removebg-preview.png",
+          story: "Chirp! Yesterday I ate beetroot seeds and watched the moon from the tall tree!"
+        },
+        {
+          id: "mob_sheep",
+          name: "Lost Sheep",
+          location: "Near the River",
+          cost: 35,
+          treatName: "Golden Wheat",
+          treatImg: "https://i.postimg.cc/kMhhHgFs/wheat.png",
+          img: "https://i.postimg.cc/8zSt3Cdv/Sheep-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/8zSt3Cdv/Sheep-removebg-preview.png",
+          story: "Baa! Yesterday I went to the river and ate golden wheat!"
+        },
+        {
+          id: "mob_pig",
+          name: "Lost Pig",
+          location: "Inside the Huge Cave",
+          cost: 40,
+          treatName: "Crunchy Carrot",
+          treatImg: "https://i.postimg.cc/26Mxxj8V/minecraft-carrot-removebg-preview.png",
+          img: "https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png",
+          savedImg: "https://i.postimg.cc/sgrw82Ph/Minecraft-Pig-removebg-preview.png",
+          story: "Oink! You explored the dark cave and saved me! I ate a crunchy carrot yesterday!"
+        }
+      ],
+
+      // =======================================================================
+      // GAME 1 POOL: AFFIRMATIVE (+) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game1Pool: [
+        // 15 Scramble Tasks (No split articles/nouns!)
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["Steve", "climbed", "a tall tree", "yesterday", "."], ans: "Steve climbed a tall tree yesterday .", hint: "Subject + verb-ed + object + time: Steve climbed a tall tree yesterday.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["Alex", "picked", "a blue flower", "."], ans: "Alex picked a blue flower .", hint: "Pick is regular (+ed): Alex picked a blue flower.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["We", "watched", "the silver moon", "last night", "."], ans: "We watched the silver moon last night .", hint: "Watch + ed = watched: We watched the silver moon last night.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["They", "explored", "a huge cave", "yesterday", "."], ans: "They explored a huge cave yesterday .", hint: "Explore + d = explored: They explored a huge cave yesterday.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["The axolotl", "swam", "in", "the river", "."], ans: "The axolotl swam in the river .", hint: "Magic verb swim -> swam! The axolotl swam in the river.", mob: "axolotl" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["I", "saw", "a bright star", "last night", "."], ans: "I saw a bright star last night .", hint: "Magic verb see -> saw! I saw a bright star last night.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["The fox", "slept", "under", "the tree", "."], ans: "The fox slept under the tree .", hint: "Magic verb sleep -> slept! The fox slept under the tree.", mob: "fox" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["Steve", "went", "to", "the mountain", "yesterday", "."], ans: "Steve went to the mountain yesterday .", hint: "Magic verb go -> went! Steve went to the mountain yesterday.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["Alex", "found", "a green leaf", "."], ans: "Alex found a green leaf .", hint: "Magic verb find -> found! Alex found a green leaf.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["The pig", "ate", "a sweet carrot", "."], ans: "The pig ate a sweet carrot .", hint: "Magic verb eat -> ate! The pig ate a sweet carrot.", mob: "pig" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["We", "walked", "near", "the river", "yesterday", "."], ans: "We walked near the river yesterday .", hint: "Walk + ed = walked: We walked near the river yesterday.", mob: "villager" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["The bright sun", "warmed", "the forest", "."], ans: "The bright sun warmed the forest .", hint: "Warm + ed = warmed: The bright sun warmed the forest.", mob: "bee" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["My puppy", "jumped", "over", "a leaf", "."], ans: "My puppy jumped over a leaf .", hint: "Jump + ed = jumped: My puppy jumped over a leaf.", mob: "puppy" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["They", "looked", "at", "the blue sky", "."], ans: "They looked at the blue sky .", hint: "Look + ed = looked: They looked at the blue sky.", mob: "parrot" },
+        { type: "scramble", prompt: "Build the Past Simple sentence:", words: ["The villager", "planted", "a flower", "yesterday", "."], ans: "The villager planted a flower yesterday .", hint: "Plant + ed = planted: The villager planted a flower yesterday.", mob: "villager" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "Yesterday, Steve ___ up the high mountain.", options: ["walked", "walk", "walks"], ans: "walked", hint: "Yesterday = Past Simple! Regular verb walk + ed = walked.", mob: "steve" },
+        { type: "mc", q: "Alex ___ a bright star in the night sky.", options: ["saw", "see", "seed"], ans: "saw", hint: "See is one of our 6 magic verbs: see -> saw!", mob: "alex" },
+        { type: "mc", q: "We ___ to the huge cave two days ago.", options: ["went", "go", "goed"], ans: "went", hint: "Go is one of our 6 magic verbs: go -> went!", mob: "steve" },
+        { type: "mc", q: "The pink axolotl ___ in the cool river.", options: ["swam", "swim", "swimmed"], ans: "swam", hint: "Swim is one of our 6 magic verbs: swim -> swam!", mob: "axolotl" },
+        { type: "mc", q: "Last night, the little fox ___ under the tree.", options: ["slept", "sleep", "sleeped"], ans: "slept", hint: "Sleep is one of our 6 magic verbs: sleep -> slept!", mob: "fox" },
+        { type: "mc", q: "The hungry pig ___ a carrot yesterday.", options: ["ate", "eat", "eated"], ans: "ate", hint: "Eat is one of our 6 magic verbs: eat -> ate!", mob: "pig" },
+        { type: "mc", q: "Steve ___ a rare blue flower near the river.", options: ["found", "find", "finded"], ans: "found", hint: "Find is one of our 6 magic verbs: find -> found!", mob: "steve" },
+        { type: "mc", q: "Alex ___ a tall oak tree yesterday.", options: ["climbed", "climb", "climbs"], ans: "climbed", hint: "Climb is a regular verb: climb + ed = climbed.", mob: "alex" },
+        { type: "mc", q: "We ___ the full moon last night.", options: ["watched", "watch", "watches"], ans: "watched", hint: "Watch + ed = watched!", mob: "wolf" },
+        { type: "mc", q: "They ___ a dark cave last week.", options: ["explored", "explore", "explores"], ans: "explored", hint: "Explore ends in -e, so just add -d: explored!", mob: "steve" },
+        { type: "mc", q: "I ___ ten green leaves in the forest.", options: ["collected", "collect", "collects"], ans: "collected", hint: "Collect + ed = collected!", mob: "alex" },
+        { type: "mc", q: "The busy bee ___ on the blue flower.", options: ["rested", "rest", "rests"], ans: "rested", hint: "Rest + ed = rested!", mob: "bee" },
+        { type: "mc", q: "Yesterday, the Iron Golem ___ the village.", options: ["protected", "protect", "protects"], ans: "protected", hint: "Protect + ed = protected!", mob: "golem" },
+        { type: "mc", q: "The happy puppy ___ near the river.", options: ["played", "play", "plays"], ans: "played", hint: "Play + ed = played!", mob: "puppy" },
+        { type: "mc", q: "Alex ___ at the bright sun.", options: ["smiled", "smile", "smiles"], ans: "smiled", hint: "Smile + d = smiled!", mob: "alex" },
+        { type: "mc", q: "Last week, we ___ the high mountain.", options: ["visited", "visit", "visits"], ans: "visited", hint: "Visit + ed = visited!", mob: "villager" },
+        { type: "mc", q: "The cat ___ to the river yesterday.", options: ["went", "go", "goed"], ans: "went", hint: "Magic verb: go -> went!", mob: "cat" },
+        { type: "mc", q: "Steve ___ a scary spider in the cave.", options: ["saw", "see", "seed"], ans: "saw", hint: "Magic verb: see -> saw!", mob: "spider" },
+        { type: "mc", q: "The cow ___ green grass near the tree.", options: ["ate", "eat", "eated"], ans: "ate", hint: "Magic verb: eat -> ate!", mob: "cow" },
+        { type: "mc", q: "My parrot ___ on a tall tree last night.", options: ["slept", "sleep", "sleeped"], ans: "slept", hint: "Magic verb: sleep -> slept!", mob: "parrot" },
+        { type: "mc", q: "The squid ___ deep in the river.", options: ["swam", "swim", "swimmed"], ans: "swam", hint: "Magic verb: swim -> swam!", mob: "squid" },
+        { type: "mc", q: "We ___ a secret path up the mountain.", options: ["found", "find", "finded"], ans: "found", hint: "Magic verb: find -> found!", mob: "steve" },
+        { type: "mc", q: "Alex ___ a blue flower for the villager.", options: ["picked", "pick", "picks"], ans: "picked", hint: "Pick + ed = picked!", mob: "alex" },
+        { type: "mc", q: "They ___ the river on a wooden bridge.", options: ["crossed", "cross", "crosses"], ans: "crossed", hint: "Cross + ed = crossed!", mob: "villager" },
+        { type: "mc", q: "Yesterday, I ___ the stars in the sky.", options: ["counted", "count", "counts"], ans: "counted", hint: "Count + ed = counted!", mob: "alex" },
+        { type: "mc", q: "The sheep ___ Steve down the mountain.", options: ["followed", "follow", "follows"], ans: "followed", hint: "Follow + ed = followed!", mob: "sheep" },
+        { type: "mc", q: "Steve ___ a lantern inside the cave.", options: ["carried", "carry", "carrys"], ans: "carried", hint: "Carry changes y to i + ed: carried!", mob: "steve" },
+        { type: "mc", q: "We ___ to the birds in the trees.", options: ["listened", "listen", "listens"], ans: "listened", hint: "Listen + ed = listened!", mob: "parrot" },
+        { type: "mc", q: "The kitty ___ the green leaf.", options: ["touched", "touch", "touches"], ans: "touched", hint: "Touch + ed = touched!", mob: "kitty" },
+        { type: "mc", q: "Alex ___ the lost fox yesterday.", options: ["helped", "help", "helps"], ans: "helped", hint: "Help + ed = helped!", mob: "fox" },
+        { type: "mc", q: "Steve ___ dinner near the river.", options: ["cooked", "cook", "cooks"], ans: "cooked", hint: "Cook + ed = cooked!", mob: "steve" },
+        { type: "mc", q: "Last night, the stars ___ bright in the sky.", options: ["looked", "look", "looks"], ans: "looked", hint: "Look + ed = looked!", mob: "alex" },
+        { type: "mc", q: "The villager ___ his door before night.", options: ["closed", "close", "closes"], ans: "closed", hint: "Close + d = closed!", mob: "villager" },
+        { type: "mc", q: "They ___ a new tree near the river.", options: ["planted", "plant", "plants"], ans: "planted", hint: "Plant + ed = planted!", mob: "golem" },
+        { type: "mc", q: "Yesterday, the chicken ___ over a flower.", options: ["jumped", "jump", "jumps"], ans: "jumped", hint: "Jump + ed = jumped!", mob: "chicken" }
+      ],
+
+      // =======================================================================
+      // GAME 2 POOL: NEGATIVE (-) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game2Pool: [
+        // 15 Scramble Tasks
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["Steve", "didn't", "climb", "the mountain", "."], ans: "Steve didn't climb the mountain .", hint: "Subject + didn't + base verb (NO -ed): Steve didn't climb the mountain.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["Alex", "didn't", "see", "a Creeper", "."], ans: "Alex didn't see a Creeper .", hint: "After didn't, use base verb 'see': Alex didn't see a Creeper.", mob: "creeper" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["We", "didn't", "go", "into", "the cave", "."], ans: "We didn't go into the cave .", hint: "After didn't, use base verb 'go': We didn't go into the cave.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The cat", "didn't", "swim", "in", "the river", "."], ans: "The cat didn't swim in the river .", hint: "After didn't, use base verb 'swim': The cat didn't swim in the river.", mob: "cat" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["I", "didn't", "pick", "the flower", "."], ans: "I didn't pick the flower .", hint: "I + didn't + base verb 'pick': I didn't pick the flower.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The wolf", "didn't", "eat", "a leaf", "."], ans: "The wolf didn't eat a leaf .", hint: "After didn't, use base verb 'eat': The wolf didn't eat a leaf.", mob: "wolf" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["They", "didn't", "sleep", "in", "the cave", "."], ans: "They didn't sleep in the cave .", hint: "After didn't, use base verb 'sleep': They didn't sleep in the cave.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["She", "didn't", "find", "a star", "."], ans: "She didn't find a star .", hint: "After didn't, use base verb 'find': She didn't find a star.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The zombie", "didn't", "like", "the sun", "."], ans: "The zombie didn't like the sun .", hint: "The zombie + didn't + like + the sun.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["We", "didn't", "watch", "the moon", "yesterday", "."], ans: "We didn't watch the moon yesterday .", hint: "We + didn't + watch + the moon + yesterday.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["He", "didn't", "walk", "near", "the river", "."], ans: "He didn't walk near the river .", hint: "He + didn't + walk + near + the river.", mob: "steve" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The pig", "didn't", "climb", "the tree", "."], ans: "The pig didn't climb the tree .", hint: "The pig + didn't + climb + the tree.", mob: "pig" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["You", "didn't", "explore", "the forest", "."], ans: "You didn't explore the forest .", hint: "You + didn't + explore + the forest.", mob: "alex" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["The fox", "didn't", "jump", "into", "the river", "."], ans: "The fox didn't jump into the river .", hint: "The fox + didn't + jump + into + the river.", mob: "fox" },
+        { type: "scramble", prompt: "Build the Negative sentence:", words: ["They", "didn't", "touch", "the spider", "."], ans: "They didn't touch the spider .", hint: "They + didn't + touch + the spider.", mob: "spider" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "Yesterday, Steve didn't ___ the tall tree.", options: ["climb", "climbed", "climbs"], ans: "climb", hint: "Didn't steals the past! Use base verb 'climb' (NO -ed).", mob: "steve" },
+        { type: "mc", q: "Alex didn't ___ a skeleton in the cave.", options: ["see", "saw", "seen"], ans: "see", hint: "After didn't, use V1 'see' (NOT 'saw')!", mob: "skeleton" },
+        { type: "mc", q: "We didn't ___ to the mountain last week.", options: ["go", "went", "goed"], ans: "go", hint: "After didn't, use V1 'go' (NOT 'went')!", mob: "alex" },
+        { type: "mc", q: "The kitty didn't ___ in the cold river.", options: ["swim", "swam", "swimmed"], ans: "swim", hint: "After didn't, use V1 'swim' (NOT 'swam')!", mob: "kitty" },
+        { type: "mc", q: "The sheep didn't ___ the blue flower.", options: ["eat", "ate", "eated"], ans: "eat", hint: "After didn't, use V1 'eat' (NOT 'ate')!", mob: "sheep" },
+        { type: "mc", q: "Steve didn't ___ in the dark cave last night.", options: ["sleep", "slept", "sleeped"], ans: "sleep", hint: "After didn't, use V1 'sleep' (NOT 'slept')!", mob: "steve" },
+        { type: "mc", q: "They didn't ___ any stars in the cloudy sky.", options: ["find", "found", "finded"], ans: "find", hint: "After didn't, use V1 'find' (NOT 'found')!", mob: "alex" },
+        { type: "mc", q: "I ___ walk to the cave yesterday.", options: ["didn't", "don't", "not"], ans: "didn't", hint: "Yesterday = Past Simple Negative! Use DIDN'T.", mob: "steve" },
+        { type: "mc", q: "The Enderman ___ like the river water.", options: ["didn't", "doesn't", "not"], ans: "didn't", hint: "Past Simple Negative uses DIDN'T for everyone!", mob: "enderman" },
+        { type: "mc", q: "We didn't ___ the moon because of clouds.", options: ["watch", "watched", "watches"], ans: "watch", hint: "After didn't, use base verb 'watch'.", mob: "villager" },
+        { type: "mc", q: "Alex didn't ___ the yellow leaf.", options: ["pick", "picked", "picks"], ans: "pick", hint: "After didn't, use base verb 'pick'.", mob: "alex" },
+        { type: "mc", q: "The villagers didn't ___ the huge cave.", options: ["explore", "explored", "explores"], ans: "explore", hint: "After didn't, use base verb 'explore'.", mob: "villager" },
+        { type: "mc", q: "The cow ___ climb the high mountain.", options: ["didn't", "don't", "isn't"], ans: "didn't", hint: "Use DIDN'T for Past Simple negative!", mob: "cow" },
+        { type: "mc", q: "Steve didn't ___ near the Creeper.", options: ["stay", "stayed", "stays"], ans: "stay", hint: "After didn't, use base verb 'stay'.", mob: "creeper" },
+        { type: "mc", q: "The bee didn't ___ at night.", options: ["play", "played", "plays"], ans: "play", hint: "After didn't, use base verb 'play'.", mob: "bee" },
+        { type: "mc", q: "They didn't ___ across the deep river.", options: ["swim", "swam", "swims"], ans: "swim", hint: "After didn't, use V1 'swim'!", mob: "axolotl" },
+        { type: "mc", q: "He didn't ___ dinner on the mountain.", options: ["cook", "cooked", "cooks"], ans: "cook", hint: "After didn't, use base verb 'cook'.", mob: "steve" },
+        { type: "mc", q: "She didn't ___ the green leaves.", options: ["count", "counted", "counts"], ans: "count", hint: "After didn't, use base verb 'count'.", mob: "alex" },
+        { type: "mc", q: "The puppy ___ go into the dark cave.", options: ["didn't", "doesn't", "aren't"], ans: "didn't", hint: "Past Simple negative = DIDN'T!", mob: "puppy" },
+        { type: "mc", q: "We didn't ___ at the bright sun.", options: ["look", "looked", "looks"], ans: "look", hint: "After didn't, use base verb 'look'.", mob: "steve" },
+        { type: "mc", q: "The parrot didn't ___ a steak yesterday.", options: ["eat", "ate", "eats"], ans: "eat", hint: "After didn't, use V1 'eat'!", mob: "parrot" },
+        { type: "mc", q: "Alex didn't ___ her lantern in the forest.", options: ["drop", "dropped", "drops"], ans: "drop", hint: "After didn't, use base verb 'drop'.", mob: "alex" },
+        { type: "mc", q: "The wolf didn't ___ on the cold stone.", options: ["sleep", "slept", "sleeps"], ans: "sleep", hint: "After didn't, use V1 'sleep'!", mob: "wolf" },
+        { type: "mc", q: "You didn't ___ the villager yesterday.", options: ["visit", "visited", "visits"], ans: "visit", hint: "After didn't, use base verb 'visit'.", mob: "villager" },
+        { type: "mc", q: "The fox didn't ___ the skeleton.", options: ["follow", "followed", "follows"], ans: "follow", hint: "After didn't, use base verb 'follow'.", mob: "fox" },
+        { type: "mc", q: "I didn't ___ the moon in the daytime sky.", options: ["see", "saw", "sees"], ans: "see", hint: "After didn't, use V1 'see'!", mob: "alex" },
+        { type: "mc", q: "Steve didn't ___ the wooden door open.", options: ["push", "pushed", "pushes"], ans: "push", hint: "After didn't, use base verb 'push'.", mob: "steve" },
+        { type: "mc", q: "The squid ___ walk on the mountain.", options: ["didn't", "doesn't", "not"], ans: "didn't", hint: "Past Simple negative = DIDN'T!", mob: "squid" },
+        { type: "mc", q: "They didn't ___ a flower in the dark cave.", options: ["find", "found", "finds"], ans: "find", hint: "After didn't, use V1 'find'!", mob: "steve" },
+        { type: "mc", q: "The Iron Golem didn't ___ the friendly sheep.", options: ["scare", "scared", "scares"], ans: "scare", hint: "After didn't, use base verb 'scare'.", mob: "golem" },
+        { type: "mc", q: "We didn't ___ up the tree last night.", options: ["jump", "jumped", "jumps"], ans: "jump", hint: "After didn't, use base verb 'jump'.", mob: "alex" },
+        { type: "mc", q: "The chicken didn't ___ to the river.", options: ["go", "went", "goes"], ans: "go", hint: "After didn't, use V1 'go'!", mob: "chicken" },
+        { type: "mc", q: "Alex didn't ___ a tree yesterday.", options: ["plant", "planted", "plants"], ans: "plant", hint: "After didn't, use base verb 'plant'.", mob: "alex" },
+        { type: "mc", q: "Steve didn't ___ for the zombie.", options: ["wait", "waited", "waits"], ans: "wait", hint: "After didn't, use base verb 'wait'.", mob: "zombie" },
+        { type: "mc", q: "They ___ rest on the mountain top.", options: ["didn't", "don't", "isn't"], ans: "didn't", hint: "Past Simple negative = DIDN'T!", mob: "steve" }
+      ],
+
+      // =======================================================================
+      // GAME 3 POOL: QUESTIONS (?) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game3Pool: [
+        // 15 Scramble Tasks
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "Steve", "climb", "the tall tree", "?"], ans: "Did Steve climb the tall tree ?", hint: "Start with Did + subject + base verb: Did Steve climb the tall tree ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "Alex", "see", "a bright star", "?"], ans: "Did Alex see a bright star ?", hint: "Did + Alex + V1 'see' + a bright star ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "you", "go", "to", "the river", "?"], ans: "Did you go to the river ?", hint: "Did + you + V1 'go' + to + the river ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "they", "explore", "the huge cave", "?"], ans: "Did they explore the huge cave ?", hint: "Did + they + base verb 'explore' + the huge cave ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "the axolotl", "swim", "fast", "?"], ans: "Did the axolotl swim fast ?", hint: "Did + the axolotl + V1 'swim' + fast ?", mob: "axolotl" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "the fox", "sleep", "under", "the tree", "?"], ans: "Did the fox sleep under the tree ?", hint: "Did + the fox + V1 'sleep' + under + the tree ?", mob: "fox" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "she", "find", "a blue flower", "?"], ans: "Did she find a blue flower ?", hint: "Did + she + V1 'find' + a blue flower ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "the pig", "eat", "a carrot", "?"], ans: "Did the pig eat a carrot ?", hint: "Did + the pig + V1 'eat' + a carrot ?", mob: "pig" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "we", "watch", "the moon", "last night", "?"], ans: "Did we watch the moon last night ?", hint: "Did + we + watch + the moon + last night ?", mob: "wolf" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "he", "walk", "up", "the mountain", "?"], ans: "Did he walk up the mountain ?", hint: "Did + he + walk + up + the mountain ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "you", "pick", "a green leaf", "?"], ans: "Did you pick a green leaf ?", hint: "Did + you + pick + a green leaf ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "the puppy", "play", "near", "the river", "?"], ans: "Did the puppy play near the river ?", hint: "Did + the puppy + play + near + the river ?", mob: "puppy" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "they", "look", "at", "the sky", "?"], ans: "Did they look at the sky ?", hint: "Did + they + look + at + the sky ?", mob: "parrot" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "Steve", "help", "the villager", "?"], ans: "Did Steve help the villager ?", hint: "Did + Steve + help + the villager ?", mob: "villager" },
+        { type: "scramble", prompt: "Build the Past Simple question:", words: ["Did", "Alex", "save", "the sheep", "?"], ans: "Did Alex save the sheep ?", hint: "Did + Alex + save + the sheep ?", mob: "sheep" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "___ you climb the mountain yesterday?", options: ["Did", "Do", "Does"], ans: "Did", hint: "Yesterday = Past Simple question! Always start with DID.", mob: "steve" },
+        { type: "mc", q: "Did Alex ___ a bright star last night?", options: ["see", "saw", "sees"], ans: "see", hint: "DID is at the front, so use V1 'see'!", mob: "alex" },
+        { type: "mc", q: "Did Steve ___ into the huge cave?", options: ["go", "went", "goed"], ans: "go", hint: "DID is at the front, so use V1 'go'!", mob: "steve" },
+        { type: "mc", q: "Did the axolotl ___ in the river?", options: ["swim", "swam", "swimmed"], ans: "swim", hint: "After DID, use V1 'swim'!", mob: "axolotl" },
+        { type: "mc", q: "Did the fox ___ under the oak tree?", options: ["sleep", "slept", "sleeped"], ans: "sleep", hint: "After DID, use V1 'sleep'!", mob: "fox" },
+        { type: "mc", q: "Did the pig ___ the sweet carrot?", options: ["eat", "ate", "eated"], ans: "eat", hint: "After DID, use V1 'eat'!", mob: "pig" },
+        { type: "mc", q: "Did they ___ a blue flower yesterday?", options: ["find", "found", "finded"], ans: "find", hint: "After DID, use V1 'find'!", mob: "alex" },
+        { type: "mc", q: "___ Steve explore the cave yesterday?", options: ["Did", "Does", "Is"], ans: "Did", hint: "Past Simple questions start with DID!", mob: "steve" },
+        { type: "mc", q: "___ the sun warm the forest yesterday?", options: ["Did", "Do", "Are"], ans: "Did", hint: "Yesterday = Past Simple -> DID!", mob: "bee" },
+        { type: "mc", q: "Did you ___ the silver moon last night?", options: ["watch", "watched", "watches"], ans: "watch", hint: "After DID, use base verb 'watch' (NO -ed)!", mob: "wolf" },
+        { type: "mc", q: "Did she ___ a green leaf?", options: ["pick", "picked", "picks"], ans: "pick", hint: "After DID, use base verb 'pick'!", mob: "alex" },
+        { type: "mc", q: "Did we ___ near the river yesterday?", options: ["walk", "walked", "walks"], ans: "walk", hint: "After DID, use base verb 'walk'!", mob: "villager" },
+        { type: "mc", q: "___ the villagers plant a new tree?", options: ["Did", "Do", "Are"], ans: "Did", hint: "Past Simple question -> DID!", mob: "villager" },
+        { type: "mc", q: "Did the kitty ___ with the leaf?", options: ["play", "played", "plays"], ans: "play", hint: "After DID, use base verb 'play'!", mob: "kitty" },
+        { type: "mc", q: "Did Alex ___ the stars in the sky?", options: ["count", "counted", "counts"], ans: "count", hint: "After DID, use base verb 'count'!", mob: "alex" },
+        { type: "mc", q: "___ the Iron Golem protect the village?", options: ["Did", "Does", "Is"], ans: "Did", hint: "Past Simple question -> DID!", mob: "golem" },
+        { type: "mc", q: "Did Steve ___ dinner near the mountain?", options: ["cook", "cooked", "cooks"], ans: "cook", hint: "After DID, use base verb 'cook'!", mob: "steve" },
+        { type: "mc", q: "Did the bee ___ on the flower?", options: ["rest", "rested", "rests"], ans: "rest", hint: "After DID, use base verb 'rest'!", mob: "bee" },
+        { type: "mc", q: "___ you see the huge cave two days ago?", options: ["Did", "Do", "Does"], ans: "Did", hint: "Two days ago = Past Simple -> DID!", mob: "steve" },
+        { type: "mc", q: "Did the sheep ___ you up the mountain?", options: ["follow", "followed", "follows"], ans: "follow", hint: "After DID, use base verb 'follow'!", mob: "sheep" },
+        { type: "mc", q: "Did the squid ___ in the deep river?", options: ["swim", "swam", "swims"], ans: "swim", hint: "After DID, use V1 'swim'!", mob: "squid" },
+        { type: "mc", q: "Did the puppy ___ over the flower?", options: ["jump", "jumped", "jumps"], ans: "jump", hint: "After DID, use base verb 'jump'!", mob: "puppy" },
+        { type: "mc", q: "___ Alex go to the forest yesterday?", options: ["Did", "Does", "Was"], ans: "Did", hint: "Yesterday + go -> DID!", mob: "alex" },
+        { type: "mc", q: "Did they ___ the river safely?", options: ["cross", "crossed", "crosses"], ans: "cross", hint: "After DID, use base verb 'cross'!", mob: "steve" },
+        { type: "mc", q: "Did the cow ___ grass near the tree?", options: ["eat", "ate", "eats"], ans: "eat", hint: "After DID, use V1 'eat'!", mob: "cow" },
+        { type: "mc", q: "Did you ___ to the parrot in the tree?", options: ["listen", "listened", "listens"], ans: "listen", hint: "After DID, use base verb 'listen'!", mob: "parrot" },
+        { type: "mc", q: "Did Steve ___ a lantern in the cave?", options: ["carry", "carried", "carries"], ans: "carry", hint: "After DID, use base verb 'carry'!", mob: "steve" },
+        { type: "mc", q: "___ the wolf sleep near the camp?", options: ["Did", "Does", "Is"], ans: "Did", hint: "Past Simple question -> DID!", mob: "wolf" },
+        { type: "mc", q: "Did Alex ___ the lost fox?", options: ["save", "saved", "saves"], ans: "save", hint: "After DID, use base verb 'save'!", mob: "fox" },
+        { type: "mc", q: "Did they ___ at the blue sky?", options: ["look", "looked", "looks"], ans: "look", hint: "After DID, use base verb 'look'!", mob: "alex" },
+        { type: "mc", q: "___ you find a green leaf yesterday?", options: ["Did", "Do", "Are"], ans: "Did", hint: "Yesterday = Past Simple -> DID!", mob: "steve" },
+        { type: "mc", q: "Did the villager ___ the wooden door?", options: ["open", "opened", "opens"], ans: "open", hint: "After DID, use base verb 'open'!", mob: "villager" },
+        { type: "mc", q: "Did the chicken ___ near the tree?", options: ["stay", "stayed", "stays"], ans: "stay", hint: "After DID, use base verb 'stay'!", mob: "chicken" },
+        { type: "mc", q: "Did we ___ the bright sun yesterday?", options: ["see", "saw", "sees"], ans: "see", hint: "After DID, use V1 'see'!", mob: "steve" },
+        { type: "mc", q: "___ the parrot dance on the tree?", options: ["Did", "Does", "Is"], ans: "Did", hint: "Past Simple question -> DID!", mob: "parrot" }
+      ],
+
+      // =======================================================================
+      // GAME 4 POOL: MIXED BLITZ (+ / - / ?) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =======================================================================
+      game4Pool: [
+        // 15 Scramble Tasks
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["Steve", "explored", "a huge cave", "yesterday", "."], ans: "Steve explored a huge cave yesterday .", hint: "Steve + explored + a huge cave + yesterday .", mob: "steve" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["Alex", "didn't", "climb", "the mountain", "."], ans: "Alex didn't climb the mountain .", hint: "Alex + didn't + climb + the mountain .", mob: "alex" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Did", "you", "see", "the moon", "?"], ans: "Did you see the moon ?", hint: "Did + you + see + the moon ?", mob: "wolf" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["The axolotl", "swam", "in", "the river", "."], ans: "The axolotl swam in the river .", hint: "The axolotl + swam + in + the river .", mob: "axolotl" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["We", "didn't", "go", "to", "the cave", "."], ans: "We didn't go to the cave .", hint: "We + didn't + go + to + the cave .", mob: "steve" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Did", "the fox", "eat", "a steak", "?"], ans: "Did the fox eat a steak ?", hint: "Did + the fox + eat + a steak ?", mob: "fox" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["Alex", "found", "a blue flower", "."], ans: "Alex found a blue flower .", hint: "Alex + found + a blue flower .", mob: "alex" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["The puppy", "didn't", "sleep", "outside", "."], ans: "The puppy didn't sleep outside .", hint: "The puppy + didn't + sleep + outside .", mob: "puppy" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Did", "they", "watch", "the stars", "?"], ans: "Did they watch the stars ?", hint: "Did + they + watch + the stars ?", mob: "parrot" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["We", "went", "up", "the mountain", "."], ans: "We went up the mountain .", hint: "We + went + up + the mountain .", mob: "steve" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["I", "didn't", "pick", "the leaf", "."], ans: "I didn't pick the leaf .", hint: "I + didn't + pick + the leaf .", mob: "alex" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Did", "Steve", "find", "the river", "?"], ans: "Did Steve find the river ?", hint: "Did + Steve + find + the river ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the Affirmative (+) sentence:", words: ["The pig", "ate", "a carrot", "yesterday", "."], ans: "The pig ate a carrot yesterday .", hint: "The pig + ate + a carrot + yesterday .", mob: "pig" },
+        { type: "scramble", prompt: "Build the Negative (-) sentence:", words: ["She", "didn't", "swim", "yesterday", "."], ans: "She didn't swim yesterday .", hint: "She + didn't + swim + yesterday .", mob: "alex" },
+        { type: "scramble", prompt: "Build the Question (?):", words: ["Did", "he", "help", "the villager", "?"], ans: "Did he help the villager ?", hint: "Did + he + help + the villager ?", mob: "villager" },
+
+        // 35 Multiple Choice Tasks
+        { type: "mc", q: "Yesterday, Steve ___ a tall tree.", options: ["climbed", "climb", "climbs"], ans: "climbed", hint: "Affirmative (+) regular verb: climb + ed = climbed.", mob: "steve" },
+        { type: "mc", q: "Alex didn't ___ into the dark cave.", options: ["go", "went", "goed"], ans: "go", hint: "Negative (-) with didn't -> use base verb 'go'!", mob: "alex" },
+        { type: "mc", q: "___ you see the bright star last night?", options: ["Did", "Do", "Does"], ans: "Did", hint: "Question (?) about last night -> start with DID!", mob: "wolf" },
+        { type: "mc", q: "The fox ___ under the tree yesterday.", options: ["slept", "sleep", "sleeped"], ans: "slept", hint: "Affirmative (+) magic verb: sleep -> slept!", mob: "fox" },
+        { type: "mc", q: "We didn't ___ the moon because of clouds.", options: ["see", "saw", "sees"], ans: "see", hint: "Negative (-) with didn't -> use V1 'see'!", mob: "steve" },
+        { type: "mc", q: "Did the axolotl ___ in the river?", options: ["swim", "swam", "swimmed"], ans: "swim", hint: "Question (?) with Did -> use V1 'swim'!", mob: "axolotl" },
+        { type: "mc", q: "Last week, they ___ a secret cave.", options: ["found", "find", "finded"], ans: "found", hint: "Affirmative (+) magic verb: find -> found!", mob: "alex" },
+        { type: "mc", q: "The cat ___ swim in the cold river.", options: ["didn't", "don't", "isn't"], ans: "didn't", hint: "Past Simple negative = DIDN'T!", mob: "cat" },
+        { type: "mc", q: "The hungry pig ___ two carrots yesterday.", options: ["ate", "eat", "eated"], ans: "ate", hint: "Affirmative (+) magic verb: eat -> ate!", mob: "pig" },
+        { type: "mc", q: "Did Alex ___ a blue flower?", options: ["pick", "picked", "picks"], ans: "pick", hint: "Question (?) with Did -> use base verb 'pick'!", mob: "alex" },
+        { type: "mc", q: "Yesterday, we ___ to the high mountain.", options: ["went", "go", "goed"], ans: "went", hint: "Affirmative (+) magic verb: go -> went!", mob: "steve" },
+        { type: "mc", q: "Steve didn't ___ the green leaf.", options: ["touch", "touched", "touches"], ans: "touch", hint: "Negative (-) with didn't -> base verb 'touch'!", mob: "steve" },
+        { type: "mc", q: "___ the sun warm the valley yesterday?", options: ["Did", "Does", "Is"], ans: "Did", hint: "Past Simple question -> DID!", mob: "bee" },
+        { type: "mc", q: "The Iron Golem ___ the villagers last night.", options: ["protected", "protect", "protects"], ans: "protected", hint: "Affirmative (+) regular verb: protect + ed!", mob: "golem" },
+        { type: "mc", q: "They didn't ___ dinner in the cave.", options: ["eat", "ate", "eated"], ans: "eat", hint: "Negative (-) with didn't -> V1 'eat'!", mob: "steve" },
+        { type: "mc", q: "Did the puppy ___ near the tree?", options: ["sleep", "slept", "sleeped"], ans: "sleep", hint: "Question (?) with Did -> V1 'sleep'!", mob: "puppy" },
+        { type: "mc", q: "Alex ___ a bright star in the sky.", options: ["saw", "see", "seed"], ans: "saw", hint: "Affirmative (+) magic verb: see -> saw!", mob: "alex" },
+        { type: "mc", q: "We ___ up the mountain two days ago.", options: ["walked", "walk", "walks"], ans: "walked", hint: "Two days ago = Past Simple -> walked!", mob: "villager" },
+        { type: "mc", q: "The zombie didn't ___ the bright sun.", options: ["like", "liked", "likes"], ans: "like", hint: "Negative (-) with didn't -> base verb 'like'!", mob: "zombie" },
+        { type: "mc", q: "Did you ___ a green leaf in the forest?", options: ["find", "found", "finded"], ans: "find", hint: "Question (?) with Did -> V1 'find'!", mob: "alex" },
+        { type: "mc", q: "The squid ___ quickly down the river.", options: ["swam", "swim", "swimmed"], ans: "swam", hint: "Affirmative (+) magic verb: swim -> swam!", mob: "squid" },
+        { type: "mc", q: "He didn't ___ the tall tree yesterday.", options: ["climb", "climbed", "climbs"], ans: "climb", hint: "Negative (-) with didn't -> base verb 'climb'!", mob: "steve" },
+        { type: "mc", q: "___ the sheep follow Steve home?", options: ["Did", "Do", "Does"], ans: "Did", hint: "Past Simple question -> DID!", mob: "sheep" },
+        { type: "mc", q: "Last night, we ___ the silver moon.", options: ["watched", "watch", "watches"], ans: "watched", hint: "Affirmative (+) regular verb: watch + ed!", mob: "wolf" },
+        { type: "mc", q: "The parrot didn't ___ into the cave.", options: ["go", "went", "goes"], ans: "go", hint: "Negative (-) with didn't -> V1 'go'!", mob: "parrot" },
+        { type: "mc", q: "Did Steve ___ the huge cave?", options: ["explore", "explored", "explores"], ans: "explore", hint: "Question (?) with Did -> base verb 'explore'!", mob: "steve" },
+        { type: "mc", q: "The bee ___ on the blue flower.", options: ["rested", "rest", "rests"], ans: "rested", hint: "Affirmative (+) regular verb: rest + ed!", mob: "bee" },
+        { type: "mc", q: "I didn't ___ the stars last night.", options: ["count", "counted", "counts"], ans: "count", hint: "Negative (-) with didn't -> base verb 'count'!", mob: "alex" },
+        { type: "mc", q: "___ they plant a tree near the river?", options: ["Did", "Do", "Are"], ans: "Did", hint: "Past Simple question -> DID!", mob: "villager" },
+        { type: "mc", q: "The cow ___ grass yesterday morning.", options: ["ate", "eat", "eated"], ans: "ate", hint: "Affirmative (+) magic verb: eat -> ate!", mob: "cow" },
+        { type: "mc", q: "Alex didn't ___ her blue flower.", options: ["drop", "dropped", "drops"], ans: "drop", hint: "Negative (-) with didn't -> base verb 'drop'!", mob: "alex" },
+        { type: "mc", q: "Did the kitty ___ with the leaf?", options: ["play", "played", "plays"], ans: "play", hint: "Question (?) with Did -> base verb 'play'!", mob: "kitty" },
+        { type: "mc", q: "Steve ___ the lost pig yesterday!", options: ["saved", "save", "saves"], ans: "saved", hint: "Affirmative (+) regular verb: save + d = saved!", mob: "pig" },
+        { type: "mc", q: "We didn't ___ the spider in the cave.", options: ["wake", "waked", "wakes"], ans: "wake", hint: "Negative (-) with didn't -> base verb 'wake'!", mob: "spider" },
+        { type: "mc", q: "Yesterday, the chicken ___ across the path.", options: ["walked", "walk", "walks"], ans: "walked", hint: "Yesterday = Past Simple -> walked!", mob: "chicken" }
+      ],
+
+      // =======================================================================
+      // GAME 5 POOL (VARIANT B): CAVE DETECTIVE — FIX THE ENDERMAN'S MISTAKES!
+      // 40 UNIQUE BROKEN SENTENCES (10 RANDOM PER ROUND)
+      // =======================================================================
+      game5Pool: [
+        { words: ["Steve", "didn't", "climbed", "the", "mountain."], badIdx: 2, options: ["climb", "climbs", "climbing"], ans: "climb", hint: "After didn't, never use -ed! Use the base verb.", mob: "steve" },
+        { words: ["Did", "Alex", "saw", "a", "star?"], badIdx: 2, options: ["see", "sees", "seed"], ans: "see", hint: "Did is at the front, so change 'saw' back to V1!", mob: "alex" },
+        { words: ["Yesterday,", "we", "goed", "to", "the", "cave."], badIdx: 2, options: ["went", "go", "goes"], ans: "went", hint: "Go is a magic irregular verb! Not 'goed'!", mob: "steve" },
+        { words: ["The", "axolotl", "swimmed", "in", "the", "river."], badIdx: 2, options: ["swam", "swim", "swims"], ans: "swam", hint: "Swim is a magic irregular verb! Not 'swimmed'!", mob: "axolotl" },
+        { words: ["The", "fox", "sleeped", "under", "the", "tree."], badIdx: 2, options: ["slept", "sleep", "sleeps"], ans: "slept", hint: "Sleep is a magic irregular verb! Not 'sleeped'!", mob: "fox" },
+        { words: ["The", "pig", "eated", "a", "carrot", "yesterday."], badIdx: 2, options: ["ate", "eat", "eats"], ans: "ate", hint: "Eat is a magic irregular verb! Not 'eated'!", mob: "pig" },
+        { words: ["Alex", "finded", "a", "blue", "flower."], badIdx: 1, options: ["found", "find", "finds"], ans: "found", hint: "Find is a magic irregular verb! Not 'finded'!", mob: "alex" },
+        { words: ["I", "seed", "the", "silver", "moon", "last", "night."], badIdx: 1, options: ["saw", "see", "sees"], ans: "saw", hint: "See is a magic irregular verb! Not 'seed'!", mob: "wolf" },
+        { words: ["We", "didn't", "went", "to", "the", "river."], badIdx: 2, options: ["go", "goes", "goed"], ans: "go", hint: "After didn't, change 'went' back to base verb V1!", mob: "steve" },
+        { type: "fix", words: ["Did", "you", "explored", "the", "huge", "cave?"], badIdx: 2, options: ["explore", "explores", "exploring"], ans: "explore", hint: "Did is at the front! Remove -d from 'explored'.", mob: "alex" },
+        { words: ["Alex", "didn't", "ate", "the", "leaf."], badIdx: 2, options: ["eat", "eats", "eated"], ans: "eat", hint: "After didn't, change 'ate' back to base verb V1!", mob: "alex" },
+        { words: ["Did", "the", "fox", "slept", "near", "the", "tree?"], badIdx: 3, options: ["sleep", "sleeps", "sleeped"], ans: "sleep", hint: "After Did, change 'slept' back to V1!", mob: "fox" },
+        { words: ["Steve", "didn't", "found", "the", "flower."], badIdx: 2, options: ["find", "finds", "finded"], ans: "find", hint: "After didn't, change 'found' back to V1!", mob: "steve" },
+        { words: ["Did", "the", "squid", "swam", "in", "the", "river?"], badIdx: 3, options: ["swim", "swims", "swimmed"], ans: "swim", hint: "After Did, change 'swam' back to V1!", mob: "squid" },
+        { words: ["Yesterday,", "Steve", "walk", "up", "the", "mountain."], badIdx: 2, options: ["walked", "walks", "walking"], ans: "walked", hint: "Yesterday = Past Simple! Add -ed to 'walk'.", mob: "steve" },
+        { words: ["Last", "night,", "we", "watch", "the", "bright", "moon."], badIdx: 3, options: ["watched", "watches", "watching"], ans: "watched", hint: "Last night = Past Simple! Add -ed to 'watch'.", mob: "wolf" },
+        { words: ["Do", "you", "climb", "the", "tree", "yesterday?"], badIdx: 0, options: ["Did", "Does", "Are"], ans: "Did", hint: "Yesterday = Past Simple question! Use 'Did', not 'Do'.", mob: "steve" },
+        { words: ["Alex", "don't", "pick", "the", "flower", "yesterday."], badIdx: 1, options: ["didn't", "doesn't", "isn't"], ans: "didn't", hint: "Yesterday = Past Simple negative! Use 'didn't'.", mob: "alex" },
+        { words: ["Does", "Steve", "see", "the", "star", "last", "night?"], badIdx: 0, options: ["Did", "Do", "Is"], ans: "Did", hint: "Last night = Past Simple question! Use 'Did'.", mob: "steve" },
+        { words: ["The", "cat", "doesn't", "swim", "yesterday."], badIdx: 2, options: ["didn't", "don't", "wasn't"], ans: "didn't", hint: "Yesterday = Past Simple negative! Use 'didn't'.", mob: "cat" },
+        { words: ["Did", "they", "walked", "near", "the", "river?"], badIdx: 2, options: ["walk", "walks", "walking"], ans: "walk", hint: "After Did, never use -ed! Use base verb 'walk'.", mob: "villager" },
+        { words: ["The", "puppy", "didn't", "jumped", "over", "the", "leaf."], badIdx: 3, options: ["jump", "jumps", "jumping"], ans: "jump", hint: "After didn't, remove -ed from 'jumped'!", mob: "puppy" },
+        { words: ["Did", "Steve", "went", "to", "the", "mountain?"], badIdx: 2, options: ["go", "goes", "goed"], ans: "go", hint: "After Did, change 'went' back to V1 'go'!", mob: "steve" },
+        { words: ["They", "didn't", "watched", "the", "sky", "last", "night."], badIdx: 2, options: ["watch", "watches", "watching"], ans: "watch", hint: "After didn't, remove -ed from 'watched'!", mob: "alex" },
+        { words: ["Yesterday,", "the", "sun", "warm", "the", "forest."], badIdx: 3, options: ["warmed", "warms", "warming"], ans: "warmed", hint: "Yesterday = Past Simple! Add -ed to 'warm'.", mob: "bee" },
+        { words: ["Alex", "didn't", "saw", "the", "Creeper."], badIdx: 2, options: ["see", "sees", "seed"], ans: "see", hint: "After didn't, change 'saw' back to V1 'see'!", mob: "creeper" },
+        { words: ["Did", "the", "pig", "ate", "the", "carrot?"], badIdx: 3, options: ["eat", "eats", "eated"], ans: "eat", hint: "After Did, change 'ate' back to V1 'eat'!", mob: "pig" },
+        { words: ["We", "didn't", "slept", "in", "the", "cave."], badIdx: 2, options: ["sleep", "sleeps", "sleeped"], ans: "sleep", hint: "After didn't, change 'slept' back to V1 'sleep'!", mob: "steve" },
+        { words: ["Did", "Alex", "found", "a", "green", "leaf?"], badIdx: 2, options: ["find", "finds", "finded"], ans: "find", hint: "After Did, change 'found' back to V1 'find'!", mob: "alex" },
+        { words: ["Two", "days", "ago,", "I", "play", "near", "the", "river."], badIdx: 4, options: ["played", "plays", "playing"], ans: "played", hint: "Two days ago = Past Simple! Add -ed to 'play'.", mob: "puppy" },
+        { words: ["Steve", "didn't", "helped", "the", "zombie."], badIdx: 2, options: ["help", "helps", "helping"], ans: "help", hint: "After didn't, use base verb 'help'!", mob: "zombie" },
+        { words: ["Did", "the", "villager", "planted", "a", "tree?"], badIdx: 3, options: ["plant", "plants", "planting"], ans: "plant", hint: "After Did, use base verb 'plant'!", mob: "villager" },
+        { words: ["Yesterday,", "she", "pick", "a", "blue", "flower."], badIdx: 2, options: ["picked", "picks", "picking"], ans: "picked", hint: "Yesterday = Past Simple! Add -ed to 'pick'.", mob: "alex" },
+        { words: ["The", "wolf", "didn't", "swam", "in", "the", "river."], badIdx: 3, options: ["swim", "swims", "swimmed"], ans: "swim", hint: "After didn't, change 'swam' back to V1 'swim'!", mob: "wolf" },
+        { words: ["Did", "you", "counted", "the", "stars", "last", "night?"], badIdx: 2, options: ["count", "counts", "counting"], ans: "count", hint: "After Did, remove -ed from 'counted'!", mob: "alex" },
+        { words: ["Last", "week,", "we", "visit", "the", "high", "mountain."], badIdx: 3, options: ["visited", "visits", "visiting"], ans: "visited", hint: "Last week = Past Simple! Add -ed to 'visit'.", mob: "steve" },
+        { words: ["He", "didn't", "looked", "at", "the", "sun."], badIdx: 2, options: ["look", "looks", "looking"], ans: "look", hint: "After didn't, remove -ed from 'looked'!", mob: "steve" },
+        { words: ["Did", "the", "bee", "rested", "on", "the", "flower?"], badIdx: 3, options: ["rest", "rests", "resting"], ans: "rest", hint: "After Did, remove -ed from 'rested'!", mob: "bee" },
+        { words: ["Yesterday,", "the", "golem", "protect", "the", "village."], badIdx: 3, options: ["protected", "protects", "protecting"], ans: "protected", hint: "Yesterday = Past Simple! Add -ed to 'protect'.", mob: "golem" },
+        { words: ["They", "didn't", "cooked", "near", "the", "tree."], badIdx: 2, options: ["cook", "cooks", "cooking"], ans: "cook", hint: "After didn't, remove -ed from 'cooked'!", mob: "villager" }
+      ],
+
+      // 8 Achievements (Unlocking all 8 opens the Warden's Mystery Certificate)
+      badges: [
+        { id: "b_vocab", title: "Nature Explorer", desc: "Inspect all 10 Nature & World cards in Section 1.", img: "https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png" },
+        { id: "b_game1", title: "Past Storyteller", desc: "Complete a round of Game 1 (Affirmative).", img: "https://i.postimg.cc/tC9rMn8B/cornflower.png" },
+        { id: "b_game2", title: "Didn't Defender", desc: "Complete a round of Game 2 (Negative).", img: "https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png" },
+        { id: "b_game3", title: "Cave Questioner", desc: "Complete a round of Game 3 (Questions).", img: "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" },
+        { id: "b_game4", title: "Mixed Blitz Hero", desc: "Complete all 15 tasks in Game 4 (Mixed Blitz).", img: "https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" },
+        { id: "b_game5", title: "Cave Detective", desc: "Repair 10 journal pages in Game 5 (Detective).", img: "https://i.postimg.cc/v8CPrhc2/Enderman-removebg-preview.png" },
+        { id: "b_totem", title: "Undying Traveler", desc: "Use the Totem of Undying to replay any game!", img: "https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" },
+        { id: "b_rescue", title: "Mob Rescuer", desc: "Rescue 2 lost mobs in Section 4 (or earn 50 Diamonds)!", img: "https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png" }
+      ]
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT & LOCAL STORAGE (UNIQUE KEY: mc_past_simple_nature_v1)
+       ========================================================================= */
+    let appState = {
+      diamonds: 0,
+      totalDiamondsEarned: 0,
+      exploredWords: [],
+      unlockedBadges: [],
+      rescuedMobs: [],
+      certTheme: "bg1",
+      heroName: "Nature Explorer",
+      soundFX: true
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState.diamonds = parsed.diamonds || 0;
+          appState.totalDiamondsEarned = parsed.totalDiamondsEarned || appState.diamonds;
+          appState.exploredWords = parsed.exploredWords || [];
+          appState.unlockedBadges = parsed.unlockedBadges || [];
+          appState.rescuedMobs = parsed.rescuedMobs || [];
+          appState.certTheme = parsed.certTheme || "bg1";
+          appState.heroName = parsed.heroName || "Nature Explorer";
+        }
+      } catch (e) {
+        console.warn("Storage load error:", e);
+      }
+      updateHUD();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.warn("Storage save error:", e);
+      }
+      updateHUD();
+    }
+
+    function showResetConfirm() {
+      playClickSound();
+      document.getElementById("reset-init-btn").classList.add("hidden");
+      const box = document.getElementById("reset-confirm-box");
+      box.classList.remove("hidden");
+      box.classList.add("flex");
+    }
+
+    function cancelResetConfirm() {
+      playClickSound();
+      const box = document.getElementById("reset-confirm-box");
+      box.classList.add("hidden");
+      box.classList.remove("flex");
+      document.getElementById("reset-init-btn").classList.remove("hidden");
+    }
+
+    function confirmResetProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      appState = {
+        diamonds: 0,
+        totalDiamondsEarned: 0,
+        exploredWords: [],
+        unlockedBadges: [],
+        rescuedMobs: [],
+        certTheme: "bg1",
+        heroName: "Nature Explorer",
+        soundFX: true
+      };
+      cancelResetConfirm();
+      renderVocabGrid();
+      renderRescueSection();
+      renderBadgesGrid();
+      setCertificateTheme("bg1");
+      updateHUD();
+      playClickSound();
+    }
+
+    function addDiamonds(amount) {
+      appState.diamonds += amount;
+      appState.totalDiamondsEarned += amount;
+      if (appState.totalDiamondsEarned >= 50) {
+        unlockBadge("b_rescue");
+      }
+      saveState();
+    }
+
+    function unlockBadge(badgeId) {
+      if (!appState.unlockedBadges.includes(badgeId)) {
+        appState.unlockedBadges.push(badgeId);
+        playFanfareSound();
+        saveState();
+        renderBadgesGrid();
+      }
+    }
+
+    function updateHUD() {
+      const unlockedCount = appState.unlockedBadges.length;
+      const totalBadges = GAME_DATA.badges.length;
+
+      document.getElementById("hud-diamonds").textContent = appState.diamonds;
+      const rescueBal = document.getElementById("rescue-diamonds-balance");
+      if (rescueBal) rescueBal.textContent = appState.diamonds;
+
+      document.getElementById("hud-badges").textContent = `${unlockedCount}/${totalBadges}`;
+      document.getElementById("words-explored-count").textContent = `${appState.exploredWords.length} / 10`;
+      document.getElementById("student-name-input").value = appState.heroName;
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+
+      // Update Warden Lock Progress
+      const lockText = document.getElementById("finale-lock-progress-text");
+      const lockBar = document.getElementById("finale-lock-bar");
+      if (lockText && lockBar) {
+        lockText.textContent = `${unlockedCount} / ${totalBadges}`;
+        lockBar.style.width = `${Math.round((unlockedCount / totalBadges) * 100)}%`;
+      }
+
+      const lockedBanner = document.getElementById("finale-locked-banner");
+      const unlockedContent = document.getElementById("finale-unlocked-content");
+      if (unlockedCount >= totalBadges) {
+        lockedBanner.classList.add("hidden");
+        unlockedContent.classList.remove("hidden");
+      } else {
+        lockedBanner.classList.remove("hidden");
+        unlockedContent.classList.add("hidden");
+      }
+    }
+
+    /* =========================================================================
+       3. WEB AUDIO API (8-BIT FX) & WEB SPEECH API (en-US, CLICK ONLY)
+       ========================================================================= */
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSoundFX() {
+      appState.soundFX = !appState.soundFX;
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.innerHTML = appState.soundFX
+        ? '<i class="fa-solid fa-volume-high"></i>'
+        : '<i class="fa-solid fa-volume-xmark"></i>';
+      if (appState.soundFX) playClickSound();
+    }
+
+    function playTone(freq, duration = 0.12, type = "square", vol = 0.12) {
+      if (!appState.soundFX) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playClickSound() {
+      playTone(460, 0.06, "square", 0.08);
+    }
+
+    function playSuccessSound() {
+      playTone(523.25, 0.1, "triangle", 0.16);
+      setTimeout(() => playTone(659.25, 0.12, "triangle", 0.16), 90);
+      setTimeout(() => playTone(783.99, 0.2, "triangle", 0.18), 180);
+    }
+
+    function playErrorSound() {
+      playTone(185, 0.16, "sawtooth", 0.14);
+      setTimeout(() => playTone(140, 0.22, "sawtooth", 0.14), 140);
+    }
+
+    function playFanfareSound() {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((n, idx) => {
+        setTimeout(() => playTone(n, 0.18, "triangle", 0.18), idx * 100);
+      });
+    }
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const indicator = document.getElementById("speech-indicator");
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      utter.rate = 0.88;
+      utter.pitch = 1.05;
+
+      utter.onstart = () => {
+        indicator.classList.remove("hidden");
+        indicator.classList.add("flex");
+      };
+      utter.onend = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+      utter.onerror = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* =========================================================================
+       4. UTILITY: FISHER-YATES SHUFFLE
+       ========================================================================= */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /* =========================================================================
+       5. SECTION 1 & 2 RENDERERS (VOCABULARY & 6 MAGIC IRREGULAR VERBS)
+       ========================================================================= */
+    function renderVocabGrid() {
+      const grid = document.getElementById("vocab-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.vocabulary.forEach((item) => {
+        const isExplored = appState.exploredWords.includes(item.id);
+        const card = document.createElement("div");
+        card.className = "flip-card cursor-pointer";
+        card.innerHTML = `
+          <div class="flip-card-inner" id="flip-${item.id}">
+            <!-- FRONT: Image, English word, Past Simple example, Audio -->
+            <div class="flip-card-front mc-panel justify-between">
+              <div class="w-full flex justify-between items-center">
+                <span class="pixel-font text-[8px] bg-slate-900 text-[var(--primary-light)] px-2 py-0.5">${isExplored ? '✓ INSPECTED' : 'NATURE'}</span>
+                <button onclick="event.stopPropagation(); speakText('${item.word}. ${item.example}')" class="mc-btn px-2.5 py-1 text-xs" style="min-height:34px;" title="Listen">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+              <img src="${item.img}" alt="${item.word}" class="w-20 h-20 object-contain rounded my-1 drop-shadow-md">
+              <div class="text-center">
+                <h4 class="pixel-font text-xs sm:text-sm text-slate-900">${item.word}</h4>
+                <p class="text-[11px] text-slate-700 font-semibold mt-1 leading-tight">"${item.example}"</p>
+              </div>
+              <div class="text-[10px] font-bold text-teal-800 uppercase tracking-wider">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip
+              </div>
+            </div>
+
+            <!-- BACK: Ukrainian Translation -->
+            <div class="flip-card-back mc-panel-dark justify-between border-4 border-[var(--accent)]">
+              <span class="pixel-font text-[9px] text-[var(--accent-light)]">UKRAINIAN</span>
+              <img src="${item.img}" alt="${item.word}" class="w-16 h-16 object-contain rounded">
+              <div class="text-center">
+                <div class="text-xs text-slate-400 uppercase font-bold">${item.word}</div>
+                <div class="text-2xl font-extrabold text-[var(--accent-light)] mt-1">${item.ua}</div>
+              </div>
+              <div class="text-[10px] text-slate-300">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip back
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          playClickSound();
+          card.classList.toggle("flipped");
+          if (!appState.exploredWords.includes(item.id)) {
+            appState.exploredWords.push(item.id);
+            addDiamonds(2);
+            if (appState.exploredWords.length >= 10) {
+              unlockBadge("b_vocab");
+            }
+            saveState();
+            const badgeTag = card.querySelector(".flip-card-front span.pixel-font");
+            if (badgeTag) badgeTag.textContent = "✓ INSPECTED";
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function renderIrregularVerbsGrid() {
+      const grid = document.getElementById("irregular-verbs-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.irregularVerbs.forEach((v) => {
+        const card = document.createElement("div");
+        card.className = "bg-purple-50 border-4 border-purple-700 p-4 flex flex-col justify-between gap-2 cursor-pointer hover:brightness-95 transition";
+        card.onclick = () => {
+          playClickSound();
+          speakText(`${v.v1}, ${v.v2}. ${v.example}`);
+        };
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <img src="${v.icon}" alt="${v.v1}" class="w-10 h-10 object-contain rounded bg-white p-1 border border-purple-300">
+              <div>
+                <div class="pixel-font text-xs sm:text-sm text-purple-950">
+                  ${v.v1} <span class="text-amber-600">➔</span> <span class="text-teal-700">${v.v2}</span>
+                </div>
+                <div class="text-xs font-bold text-slate-600">${v.ua}</div>
+              </div>
+            </div>
+            <span class="text-purple-800 text-base"><i class="fa-solid fa-volume-high"></i></span>
+          </div>
+          <p class="text-xs sm:text-sm font-semibold text-slate-800 bg-white p-2 border border-purple-300">
+            "${v.example}"
+          </p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       6. MINI-GAMES ENGINE (GAMES 1–4)
+       ========================================================================= */
+    let currentGameNum = 1;
+    let activeRoundQuestions = [];
+    let currentQIndex = 0;
+    let currentRoundScore = 0;
+    let questionMistakeMade = false;
+    let questionResolved = false;
+    let scramblePlacedWords = [];
+    let scrambleBankWords = [];
+
+    function selectMiniGame(gameNum) {
+      playClickSound();
+      currentGameNum = gameNum;
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`gbtn-${i}`);
+        if (i === gameNum) {
+          btn.classList.add("mc-btn-teal");
+        } else {
+          btn.classList.remove("mc-btn-teal");
+        }
+      }
+
+      if (gameNum === 5) {
+        document.getElementById("standard-game-wrapper").classList.add("hidden");
+        document.getElementById("game5-custom-wrapper").classList.remove("hidden");
+        startGame5Detective();
+      } else {
+        document.getElementById("game5-custom-wrapper").classList.add("hidden");
+        document.getElementById("standard-game-wrapper").classList.remove("hidden");
+        startStandardGameRound(gameNum);
+      }
+    }
+
+    function startStandardGameRound(gameNum) {
+      currentQIndex = 0;
+      currentRoundScore = 0;
+
+      const titleEl = document.getElementById("active-game-title");
+      const subEl = document.getElementById("active-game-subtitle");
+      const iconEl = document.getElementById("active-game-icon");
+
+      if (gameNum === 1) {
+        titleEl.textContent = "Game 1: Affirmative Explorer (+)";
+        subEl.textContent = "10 random questions from a 50-question pool! Use -ed or the 6 Magic Verbs!";
+        iconEl.src = "https://i.postimg.cc/d1LBdZvq/Tree-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game1Pool).slice(0, 10);
+      } else if (gameNum === 2) {
+        titleEl.textContent = "Game 2: Negative Shield (-)";
+        subEl.textContent = "10 random questions from a 50-question pool! Remember: didn't + Base Verb (V1)!";
+        iconEl.src = "https://i.postimg.cc/mDJSSZ2G/Shield-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game2Pool).slice(0, 10);
+      } else if (gameNum === 3) {
+        titleEl.textContent = "Game 3: Cave Questions (?)";
+        subEl.textContent = "10 random questions from a 50-question pool! Start with Did + Subject + V1!";
+        iconEl.src = "https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game3Pool).slice(0, 10);
+      } else if (gameNum === 4) {
+        titleEl.textContent = "Game 4: Overworld Mixed Blitz (+ / - / ?)";
+        subEl.textContent = "15 random questions from a 50-question pool! All Past Simple rules mixed!";
+        iconEl.src = "https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game4Pool).slice(0, 15);
+      }
+
+      document.getElementById("round-complete-screen").classList.add("hidden");
+      document.getElementById("question-stage").classList.remove("hidden");
+      document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
+
+      renderCurrentStandardQuestion();
+    }
+
+    function renderCurrentStandardQuestion() {
+      questionMistakeMade = false;
+      questionResolved = false;
+
+      const qObj = activeRoundQuestions[currentQIndex];
+      document.getElementById("game-q-num").textContent = currentQIndex + 1;
+      document.getElementById("game-score-val").textContent = currentRoundScore;
+
+      document.getElementById("game-next-btn").classList.add("hidden");
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+
+      const mobImg = GAME_DATA.assets[qObj.mob] || GAME_DATA.assets.steve;
+      document.getElementById("question-mob-img").src = mobImg;
+
+      const tagEl = document.getElementById("question-mode-tag");
+      if (currentGameNum === 1) {
+        tagEl.textContent = "AFFIRMATIVE (+)";
+        tagEl.className = "inline-block bg-teal-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 2) {
+        tagEl.textContent = "NEGATIVE (-)";
+        tagEl.className = "inline-block bg-rose-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 3) {
+        tagEl.textContent = "QUESTION (?)";
+        tagEl.className = "inline-block bg-violet-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else {
+        tagEl.textContent = "MIXED BLITZ";
+        tagEl.className = "inline-block bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      }
+
+      const mcContainer = document.getElementById("mc-options-container");
+      const scrambleContainer = document.getElementById("scramble-container");
+
+      if (qObj.type === "scramble") {
+        mcContainer.classList.add("hidden");
+        scrambleContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.prompt;
+        document.getElementById("scramble-submit-btn").classList.remove("opacity-50");
+
+        scramblePlacedWords = [];
+        scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+        renderScrambleUI();
+      } else {
+        scrambleContainer.classList.add("hidden");
+        mcContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.q;
+
+        const shuffledOpts = shuffleArray(qObj.options);
+        mcContainer.innerHTML = "";
+        shuffledOpts.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "mc-btn py-3.5 px-4 text-sm sm:text-base font-bold transition-all";
+          btn.textContent = opt;
+          btn.onclick = () => handleMCChoice(opt, btn);
+          mcContainer.appendChild(btn);
+        });
+      }
+    }
+
+    // Ukrainian grammar error explainer for beginner learners (Games 1–5)
+    function explainWrongChoiceUA(sentenceText, selectedOpt, correctAns) {
+      const sel = selectedOpt.toLowerCase();
+      const ans = correctAns.toLowerCase();
+      const sent = sentenceText.toLowerCase();
+      const fakeRegulars = ["goed", "seed", "finded", "swimmed", "eated", "sleeped"];
+      const irregularV2 = ["went", "saw", "found", "swam", "ate", "slept", "seen"];
+
+      // 1. Choosing auxiliary Did / didn't
+      if (ans === "did") {
+        if (sel === "do" || sel === "does") {
+          return `❌ «${selectedOpt}» використовується для теперішнього часу, а питання про минуле (Past Simple) завжди починається з «Did»!`;
+        }
+        return `❌ Коли в питанні про минуле є дія (дієслово), на початку ставимо помічника «Did», а не «${selectedOpt}»!`;
+      }
+      if (ans === "didn't") {
+        if (sel === "don't" || sel === "doesn't") {
+          return `❌ «${selectedOpt}» — це заперечення для теперішнього часу, а для минулого (Past Simple) завжди потрібне «didn't»!`;
+        }
+        return `❌ Щоб сказати «не» у минулому часі перед дієсловом, завжди ставимо «didn't», а не «${selectedOpt}»!`;
+      }
+
+      // 2. Verb after Did or didn't (must be base V1!)
+      if (sent.includes("didn't")) {
+        if (sel.endsWith("ed") || irregularV2.includes(sel)) {
+          return `❌ Слово «didn't» вже показує минулий час! Після «didn't» дієслово має бути у початковій формі (V1) — без -ed і без змін.`;
+        }
+        if (sel.endsWith("ing")) {
+          return `❌ Після «didn't» не ставимо закінчення -ing — потрібна звичайна початкова форма дієслова (V1).`;
+        }
+        return `❌ Після «didn't» не додаємо закінчення -s — дієслово завжди стоїть у звичайній початковій формі (V1).`;
+      }
+      if (sent.startsWith("did ") || sent.includes("?")) {
+        if (sel.endsWith("ed") || irregularV2.includes(sel)) {
+          return `❌ Помічник «Did» на початку вже показує минулий час! Тому дієслово має залишатися у початковій формі (V1) — без -ed і без змін.`;
+        }
+        if (sel.endsWith("ing")) {
+          return `❌ Після «Did» не використовуємо -ing — потрібна початкова форма дієслова (V1).`;
+        }
+        return `❌ У питанні з «Did» дієслово не має закінчення -s — потрібна звичайна початкова форма (V1).`;
+      }
+
+      // 3. Affirmative Past Simple mistakes
+      if (fakeRegulars.includes(sel)) {
+        return `❌ Слово «${selectedOpt}» не існує! Це одне з 6 магічних неправильних дієслів — воно не бере -ed, а змінюється по-особливому.`;
+      }
+      if (sel.endsWith("ing")) {
+        return `❌ Закінчення -ing тут не підходить — для завершеної дії в минулому (Past Simple) потрібна минула форма (V2 або -ed).`;
+      }
+      if (sel.endsWith("s") && !ans.endsWith("s")) {
+        return `❌ Закінчення -s використовується в теперішньому часі, а це речення про минуле (Past Simple)! Потрібна минула форма.`;
+      }
+      if (irregularV2.includes(ans)) {
+        return `❌ «${selectedOpt}» — це початкова форма (теперішній час). Для минулого часу тут потрібна магічна 2-га форма одного з 6 неправильних дієслів!`;
+      }
+      return `❌ «${selectedOpt}» — це теперішній час, а дія відбулася в минулому (Past Simple)! Правильному дієслову потрібно додати закінчення -ed.`;
+    }
+
+    function explainScrambleMistakeUA(qObj) {
+      if (qObj.ans.includes("?")) {
+        return `❌ Неправильний порядок слів! У питанні Past Simple спочатку йде «Did», потім ХТО (герой), а потім звичайна дія (V1) і знак «?».`;
+      }
+      if (qObj.ans.includes("didn't")) {
+        return `❌ Неправильний порядок слів! У запереченні Past Simple спочатку йде ХТО, потім «didn't», а потім звичайна дія (V1) і решта речення.`;
+      }
+      return `❌ Неправильний порядок слів! У ствердженні Past Simple спочатку ставимо ХТО (герой), потім ДІЮ в минулому часі, а потім де/що/коли і крапку.`;
+    }
+
+    function handleMCChoice(selectedOpt, btnEl) {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+
+      if (selectedOpt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        btnEl.classList.add("mc-btn-teal");
+
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(2);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+
+        const fullSentence = qObj.q.replace("___", qObj.ans);
+        showFeedbackBar(true, `✅ Correct! "${fullSentence}"`);
+        speakText(fullSentence);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+      } else {
+        playErrorSound();
+        btnEl.classList.add("opacity-40", "pointer-events-none", "bg-rose-950", "text-rose-400");
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainWrongChoiceUA(qObj.q, selectedOpt, qObj.ans));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function renderScrambleUI() {
+      const slotsEl = document.getElementById("scramble-target-slots");
+      const bankEl = document.getElementById("scramble-word-bank");
+
+      slotsEl.innerHTML = "";
+      if (scramblePlacedWords.length === 0) {
+        slotsEl.innerHTML = `<span class="text-xs text-slate-400 italic">Tap word blocks below to place them here...</span>`;
+      } else {
+        scramblePlacedWords.forEach((wObj, idx) => {
+          const b = document.createElement("button");
+          b.className = "mc-btn mc-btn-gold px-3 py-2 text-xs sm:text-sm";
+          b.textContent = wObj.text;
+          b.onclick = () => {
+            if (questionResolved) return;
+            playClickSound();
+            scramblePlacedWords.splice(idx, 1);
+            scrambleBankWords.push(wObj);
+            renderScrambleUI();
+          };
+          slotsEl.appendChild(b);
+        });
+      }
+
+      bankEl.innerHTML = "";
+      scrambleBankWords.forEach((wObj, idx) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn px-3 py-2 text-xs sm:text-sm";
+        b.textContent = wObj.text;
+        b.onclick = () => {
+          if (questionResolved) return;
+          playClickSound();
+          scrambleBankWords.splice(idx, 1);
+          scramblePlacedWords.push(wObj);
+          renderScrambleUI();
+        };
+        bankEl.appendChild(b);
+      });
+    }
+
+    function resetScrambleWords() {
+      if (questionResolved) return;
+      playClickSound();
+      const qObj = activeRoundQuestions[currentQIndex];
+      scramblePlacedWords = [];
+      scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+      renderScrambleUI();
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+    }
+
+    function checkScrambleAnswer() {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+      const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+
+      if (userAttempt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(3);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+        const cleanSpoken = qObj.ans.replace(" .", ".").replace(" ?", "?");
+        showFeedbackBar(true, `✅ Perfect Order! "${cleanSpoken}"`);
+        speakText(cleanSpoken);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+        document.getElementById("scramble-submit-btn").classList.add("opacity-50");
+      } else {
+        playErrorSound();
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainScrambleMistakeUA(qObj));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function showFeedbackBar(isCorrect, message) {
+      const bar = document.getElementById("game-feedback-bar");
+      const msgEl = document.getElementById("game-feedback-msg");
+      bar.classList.remove("hidden");
+      bar.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 ${
+        isCorrect ? "bg-teal-950 border-teal-400 text-teal-200" : "bg-rose-950 border-rose-400 text-rose-200"
+      }`;
+      msgEl.textContent = message;
+    }
+
+    function nextGameQuestion() {
+      playClickSound();
+      currentQIndex++;
+      if (currentQIndex >= activeRoundQuestions.length) {
+        finishStandardRound();
+      } else {
+        renderCurrentStandardQuestion();
+      }
+    }
+
+    function speakCurrentQuestion() {
+      const qObj = activeRoundQuestions[currentQIndex];
+      if (qObj.type === "scramble") {
+        speakText(qObj.prompt);
+      } else {
+        speakText(qObj.q.replace("___", "blank"));
+      }
+    }
+
+    function finishStandardRound() {
+      document.getElementById("question-stage").classList.add("hidden");
+      document.getElementById("round-complete-screen").classList.remove("hidden");
+      document.getElementById("round-result-summary").textContent =
+        `You scored ${currentRoundScore} / ${activeRoundQuestions.length} on the first try and earned Diamonds!`;
+
+      if (currentGameNum === 1) unlockBadge("b_game1");
+      if (currentGameNum === 2) unlockBadge("b_game2");
+      if (currentGameNum === 3) unlockBadge("b_game3");
+      if (currentGameNum === 4) unlockBadge("b_game4");
+
+      playFanfareSound();
+    }
+
+    function replayCurrentGame() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startStandardGameRound(currentGameNum);
+    }
+
+    /* =========================================================================
+       7. GAME 5 (VARIANT B): CAVE DETECTIVE — FIX THE ENDERMAN'S MISTAKES!
+       ========================================================================= */
+    let g5Questions = [];
+    let g5Index = 0;
+    let g5Score = 0;
+    let g5MistakeMade = false;
+    let g5Step = 1; // 1 = find wrong word, 2 = pick fix, 3 = done
+
+    function startGame5Detective() {
+      g5Questions = shuffleArray(GAME_DATA.game5Pool).slice(0, 10);
+      g5Index = 0;
+      g5Score = 0;
+      document.getElementById("g5-complete-screen").classList.add("hidden");
+      document.getElementById("g5-stage").classList.remove("hidden");
+      renderG5Question();
+    }
+
+    function replayGame5() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startGame5Detective();
+    }
+
+    function renderG5Question() {
+      g5MistakeMade = false;
+      g5Step = 1;
+
+      const q = g5Questions[g5Index];
+      document.getElementById("g5-progress").textContent = `${g5Index + 1} / ${g5Questions.length}`;
+      document.getElementById("g5-score-val").textContent = g5Score;
+      document.getElementById("g5-mob-img").src = GAME_DATA.assets[q.mob] || GAME_DATA.assets.enderman;
+
+      document.getElementById("g5-step-badge").textContent = "STEP 1: SPOT THE MISTAKE";
+      document.getElementById("g5-step-badge").className = "inline-block bg-[var(--secondary)] text-white pixel-font text-[9px] px-2.5 py-1 mb-1";
+      document.getElementById("g5-instruction").textContent = "The Enderman broke this Past Simple sentence! Tap the WRONG word block:";
+
+      document.getElementById("g5-fix-container").classList.add("hidden");
+      document.getElementById("g5-feedback").classList.add("hidden");
+      document.getElementById("g5-next-btn").classList.add("hidden");
+
+      const wordsBox = document.getElementById("g5-words-container");
+      wordsBox.innerHTML = "";
+      q.words.forEach((word, idx) => {
+        const btn = document.createElement("button");
+        btn.id = `g5-word-${idx}`;
+        btn.className = "mc-btn px-4 py-2.5 text-sm sm:text-base font-bold";
+        btn.textContent = word;
+        btn.onclick = () => handleG5WordClick(idx, btn);
+        wordsBox.appendChild(btn);
+      });
+    }
+
+    function handleG5WordClick(idx, btnEl) {
+      if (g5Step !== 1) return;
+      const q = g5Questions[g5Index];
+
+      if (idx === q.badIdx) {
+        g5Step = 2;
+        playSuccessSound();
+        btnEl.classList.add("mc-btn-danger");
+
+        document.getElementById("g5-step-badge").textContent = "STEP 2: FIX THE WORD";
+        document.getElementById("g5-step-badge").className = "inline-block bg-[var(--accent)] text-slate-900 pixel-font text-[9px] px-2.5 py-1 mb-1";
+        document.getElementById("g5-instruction").textContent = "Great detective eyes! Now pick the right word below:";
+
+        document.getElementById("g5-bad-word-label").textContent = q.words[q.badIdx];
+        const fixBox = document.getElementById("g5-fix-container");
+        fixBox.classList.remove("hidden");
+
+        const optBox = document.getElementById("g5-fix-options");
+        optBox.innerHTML = "";
+        shuffleArray(q.options).forEach((opt) => {
+          const b = document.createElement("button");
+          b.className = "mc-btn mc-btn-purple py-3 px-4 text-sm sm:text-base";
+          b.textContent = opt;
+          b.onclick = () => handleG5FixChoice(opt, b);
+          optBox.appendChild(b);
+        });
+        document.getElementById("g5-feedback").classList.add("hidden");
+      } else {
+        playErrorSound();
+        g5MistakeMade = true;
+        btnEl.classList.add("opacity-50");
+        showG5Feedback(false, `❌ Слово «${q.words[idx]}» написане правильно! Шукай помилку в дієслові або в помічнику (Did / didn't / Do / Does).`);
+      }
+    }
+
+    function handleG5FixChoice(chosenOpt, btnEl) {
+      if (g5Step !== 2) return;
+      const q = g5Questions[g5Index];
+
+      if (chosenOpt === q.ans) {
+        g5Step = 3;
+        playSuccessSound();
+        btnEl.classList.remove("mc-btn-purple");
+        btnEl.classList.add("mc-btn-teal");
+
+        // Visually repair the broken word block!
+        const repairedWordBtn = document.getElementById(`g5-word-${q.badIdx}`);
+        if (repairedWordBtn) {
+          repairedWordBtn.textContent = q.ans;
+          repairedWordBtn.classList.remove("mc-btn-danger");
+          repairedWordBtn.classList.add("mc-btn-teal");
+        }
+
+        if (!g5MistakeMade) {
+          g5Score++;
+          addDiamonds(4);
+        } else {
+          addDiamonds(2);
+        }
+        document.getElementById("g5-score-val").textContent = g5Score;
+
+        const fixedWords = [...q.words];
+        fixedWords[q.badIdx] = q.ans;
+        const fixedSentence = fixedWords.join(" ");
+
+        showG5Feedback(true, `✅ Page Repaired! "${fixedSentence}"`);
+        document.getElementById("g5-next-btn").classList.remove("hidden");
+        speakText(fixedSentence);
+      } else {
+        playErrorSound();
+        g5MistakeMade = true;
+        btnEl.classList.add("opacity-40", "pointer-events-none");
+        showG5Feedback(false, explainWrongChoiceUA(q.words.join(" "), chosenOpt, q.ans));
+      }
+    }
+
+    function showG5Feedback(isCorrect, text) {
+      const box = document.getElementById("g5-feedback");
+      box.classList.remove("hidden");
+      box.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 ${
+        isCorrect ? "bg-teal-950 border-teal-400 text-teal-200" : "bg-rose-950 border-rose-400 text-rose-200"
+      }`;
+      document.getElementById("g5-feedback-text").textContent = text;
+    }
+
+    function speakG5Sentence() {
+      const q = g5Questions[g5Index];
+      if (g5Step === 3) {
+        const fixed = [...q.words];
+        fixed[q.badIdx] = q.ans;
+        speakText(fixed.join(" "));
+      } else {
+        speakText(q.words.join(" "));
+      }
+    }
+
+    function nextG5Question() {
+      playClickSound();
+      g5Index++;
+      if (g5Index >= g5Questions.length) {
+        document.getElementById("g5-stage").classList.add("hidden");
+        document.getElementById("g5-complete-screen").classList.remove("hidden");
+        document.getElementById("g5-final-summary").textContent =
+          `You repaired all 10 journal pages (${g5Score} / 10 on the first try)!`;
+        unlockBadge("b_game5");
+        playFanfareSound();
+      } else {
+        renderG5Question();
+      }
+    }
+
+    /* =========================================================================
+       8. SECTION 4 (VARIANT 4): RESCUE & FEED THE LOST MOBS
+       ========================================================================= */
+    function renderRescueSection() {
+      const savedCanvas = document.getElementById("saved-mobs-canvas");
+      const mobsGrid = document.getElementById("rescue-mobs-grid");
+      const countLabel = document.getElementById("rescued-count-label");
+      if (!savedCanvas || !mobsGrid) return;
+
+      countLabel.textContent = `${appState.rescuedMobs.length} / ${GAME_DATA.lostMobs.length}`;
+
+      // Render Saved Mobs Sanctuary
+      savedCanvas.innerHTML = "";
+      if (appState.rescuedMobs.length === 0) {
+        savedCanvas.innerHTML = `
+          <div class="text-center text-slate-400 py-5 space-y-2">
+            <div class="text-3xl">🏕️</div>
+            <p class="text-xs sm:text-sm font-bold">No mobs rescued yet!</p>
+            <p class="text-xs text-slate-400">Earn Diamonds in the Mini-Games and rescue the lost mobs below!</p>
+          </div>
+        `;
+      } else {
+        appState.rescuedMobs.forEach((mobId) => {
+          const mob = GAME_DATA.lostMobs.find(m => m.id === mobId);
+          if (!mob) return;
+          const card = document.createElement("div");
+          card.className = "flex flex-col items-center bg-slate-900/90 border-2 border-[var(--primary-light)] p-3 rounded-lg cursor-pointer hover:scale-105 transition animate-float";
+          card.innerHTML = `
+            <img src="${mob.savedImg}" alt="${mob.name}" class="w-16 h-16 object-contain">
+            <span class="pixel-font text-[9px] text-[var(--accent-light)] mt-1.5">${mob.name.replace("Lost ", "")} ❤️</span>
+            <span class="text-[10px] text-teal-300 mt-0.5"><i class="fa-solid fa-volume-high"></i> Tap me!</span>
+          `;
+          card.onclick = () => {
+            playClickSound();
+            speakText(mob.story);
+          };
+          savedCanvas.appendChild(card);
+        });
+      }
+
+      // Render 8 Lost Mob Rescue Cards
+      mobsGrid.innerHTML = "";
+      GAME_DATA.lostMobs.forEach((mob) => {
+        const isSaved = appState.rescuedMobs.includes(mob.id);
+        const canAfford = appState.diamonds >= mob.cost;
+
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 ${
+          isSaved ? "border-[var(--primary-light)] bg-teal-950/40" : "border-slate-600"
+        }`;
+        card.innerHTML = `
+          <div class="w-full flex justify-between items-center mb-2">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isSaved ? "bg-teal-700 text-white" : "bg-slate-800 text-amber-300"}">
+              ${isSaved ? "SAVED ❤️" : mob.location}
+            </span>
+            <img src="${mob.treatImg}" alt="${mob.treatName}" class="w-7 h-7 object-contain" title="Needs ${mob.treatName}">
+          </div>
+
+          <div class="w-20 h-20 mc-slot flex items-center justify-center p-2 mb-2">
+            <img src="${isSaved ? mob.savedImg : mob.img}" alt="${mob.name}" class="w-16 h-16 object-contain">
+          </div>
+
+          <div>
+            <h4 class="pixel-font text-xs text-white">${isSaved ? mob.name.replace("Lost ", "Safe ") : mob.name}</h4>
+            <p class="text-[11px] text-slate-300 mt-1">
+              ${isSaved ? `"${mob.story}"` : `Needs <b>${mob.treatName}</b> to return safely!`}
+            </p>
+          </div>
+
+          <div class="w-full mt-3 pt-2 border-t border-slate-700">
+            ${
+              isSaved
+                ? `<button onclick="speakText('${mob.story.replace(/'/g, "\\'")}')" class="mc-btn mc-btn-teal w-full py-1.5 text-[10px] gap-1.5">
+                     <i class="fa-solid fa-volume-high"></i> <span>HEAR STORY</span>
+                   </button>`
+                : `<button onclick="rescueMob('${mob.id}')" class="mc-btn ${canAfford ? "mc-btn-gold" : "opacity-50"} w-full py-1.5 text-[10px] flex items-center justify-center gap-1.5">
+                     <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" class="w-4 h-4 object-contain" alt="D">
+                     <span>RESCUE (${mob.cost})</span>
+                   </button>`
+            }
+          </div>
+        `;
+        mobsGrid.appendChild(card);
+      });
+    }
+
+    function rescueMob(mobId) {
+      const mob = GAME_DATA.lostMobs.find(m => m.id === mobId);
+      if (!mob || appState.rescuedMobs.includes(mobId)) return;
+
+      if (appState.diamonds < mob.cost) {
+        playErrorSound();
+        speakText("You need more diamonds! Play mini-games to earn diamonds.");
+        return;
+      }
+
+      appState.diamonds -= mob.cost;
+      appState.rescuedMobs.push(mobId);
+      playSuccessSound();
+      if (appState.rescuedMobs.length >= 2) {
+        unlockBadge("b_rescue");
+      }
+      saveState();
+      renderRescueSection();
+      speakText(mob.story);
+    }
+
+    /* =========================================================================
+       9. BADGES, CERTIFICATE & NAVIGATION
+       ========================================================================= */
+    function renderBadgesGrid() {
+      const grid = document.getElementById("badges-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.badges.forEach((b) => {
+        const unlocked = appState.unlockedBadges.includes(b.id);
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 ${
+          unlocked ? "border-[var(--accent)] bg-slate-800 animate-glow" : "border-slate-700 opacity-60"
+        }`;
+        card.innerHTML = `
+          <div class="w-16 h-16 mc-slot flex items-center justify-center p-2 mb-2 ${unlocked ? "bg-amber-950" : ""}">
+            <img src="${b.img}" alt="${b.title}" class="w-12 h-12 object-contain ${unlocked ? "" : "grayscale"}">
+          </div>
+          <div>
+            <h4 class="pixel-font text-xs ${unlocked ? "text-[var(--accent-light)]" : "text-slate-400"}">${b.title}</h4>
+            <p class="text-xs text-slate-300 mt-1">${b.desc}</p>
+          </div>
+          <div class="mt-3 pixel-font text-[9px] px-2.5 py-1 ${unlocked ? "bg-[var(--primary)] text-white" : "bg-slate-900 text-slate-500"}">
+            ${unlocked ? "✓ UNLOCKED" : "🔒 LOCKED"}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setCertificateTheme(themeKey) {
+      playClickSound();
+      const url = GAME_DATA.certWallpapers[themeKey] || GAME_DATA.certWallpapers.bg1;
+      appState.certTheme = themeKey;
+      const certEl = document.getElementById("printable-certificate");
+      if (certEl) {
+        certEl.style.backgroundImage = `url('${url}')`;
+      }
+
+      ["bg1", "bg2", "bg3"].forEach((k) => {
+        const btn = document.getElementById(`theme-btn-${k}`);
+        if (btn) {
+          if (k === themeKey) btn.classList.add("mc-btn-teal");
+          else btn.classList.remove("mc-btn-teal");
+        }
+      });
+      saveState();
+    }
+
+    function updateCertificateName(val) {
+      appState.heroName = val.trim() || "Nature Explorer";
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+      saveState();
+    }
+
+    function launchVictoryConfetti() {
+      playFanfareSound();
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 100,
+          spread: 75,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function switchSection(secId) {
+      playClickSound();
+      const sections = ["hub", "grammar", "games", "rescue", "badges", "finale"];
+      sections.forEach((s) => {
+        const el = document.getElementById(`sec-${s}`);
+        const navBtn = document.getElementById(`nav-${s}`);
+        if (s === secId) {
+          el.classList.remove("hidden");
+          if (navBtn) navBtn.classList.add("mc-btn-teal");
+        } else {
+          el.classList.add("hidden");
+          if (navBtn) navBtn.classList.remove("mc-btn-teal");
+        }
+      });
+
+      if (secId === "rescue") {
+        renderRescueSection();
+      }
+      if (secId === "finale" && appState.unlockedBadges.length >= GAME_DATA.badges.length) {
+        launchVictoryConfetti();
+      }
+    }
+
+    /* =========================================================================
+       10. INITIALIZATION (ZERO AUTOPLAY)
+       ========================================================================= */
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      renderVocabGrid();
+      renderIrregularVerbsGrid();
+      renderRescueSection();
+      renderBadgesGrid();
+      setCertificateTheme(appState.certTheme || "bg1");
+      startStandardGameRound(1);
+
+      const now = new Date();
+      document.getElementById("cert-date-display").textContent = now.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    });
+  </script>
+</body>
+</html>

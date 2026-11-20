@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft Defender's Base: Present Continuous</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #7e22ce;
+      --primary-dark: #581c87;
+      --secondary: #5b8731;
+      --secondary-dark: #3b5a1e;
+      --accent: #4deeea;
+      --gold: #fcee21;
+      --background: #171514;
+      --panel: #2b2725;
+      --stone: #737373;
+      --stone-dark: #373737;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--background);
+      background-image:
+        radial-gradient(#2c2623 15%, transparent 16%),
+        radial-gradient(#2c2623 15%, transparent 16%);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      color: #f3f4f6;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    .pixel-font {
+      font-family: 'Press Start 2P', monospace;
+      line-height: 1.5;
+    }
+
+    /* Minecraft 3D Beveled UI Panel */
+    .mc-panel {
+      background-color: #c6c6c6;
+      border: 4px solid #ffffff;
+      border-right-color: #555555;
+      border-bottom-color: #555555;
+      box-shadow: 0 6px 0 #0f0e0e;
+      color: #1f2937;
+    }
+
+    .mc-panel-dark {
+      background-color: var(--panel);
+      border: 4px solid #57524e;
+      border-right-color: #141211;
+      border-bottom-color: #141211;
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.8);
+      color: #f3f4f6;
+    }
+
+    /* Minecraft 3D Button */
+    .mc-btn {
+      font-family: 'Press Start 2P', monospace;
+      background-color: var(--stone);
+      border: 3px solid #ffffff;
+      border-right-color: var(--stone-dark);
+      border-bottom-color: var(--stone-dark);
+      color: #ffffff;
+      text-shadow: 2px 2px #1a1a1a;
+      transition: transform 0.06s, filter 0.1s;
+      cursor: pointer;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mc-btn:hover {
+      filter: brightness(1.12);
+    }
+
+    .mc-btn:active {
+      transform: translateY(2px);
+      border-top-color: var(--stone-dark);
+      border-left-color: var(--stone-dark);
+      border-right-color: #ffffff;
+      border-bottom-color: #ffffff;
+    }
+
+    .mc-btn-purple {
+      background-color: var(--primary);
+      border-color: #c084fc var(--primary-dark) var(--primary-dark) #c084fc;
+    }
+
+    .mc-btn-green {
+      background-color: var(--secondary);
+      border-color: #8ce046 var(--secondary-dark) var(--secondary-dark) #8ce046;
+    }
+
+    .mc-btn-diamond {
+      background-color: #0ca678;
+      border-color: var(--accent) #065f46 #065f46 var(--accent);
+    }
+
+    .mc-btn-gold {
+      background-color: #d97706;
+      border-color: #fde047 #78350f #78350f #fde047;
+    }
+
+    /* Inventory Slot */
+    .mc-slot {
+      background-color: #8b8b8b;
+      border: 3px solid #373737;
+      border-right-color: #ffffff;
+      border-bottom-color: #ffffff;
+      box-shadow: inset 2px 2px 5px rgba(0,0,0,0.65);
+    }
+
+    /* 3D Flip Card for Vocabulary */
+    .flip-card {
+      perspective: 1000px;
+      height: 215px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .animate-float {
+      animation: floatSlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes enchantGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px #c084fc) brightness(1.1); transform: scale(1.03); }
+      50% { filter: drop-shadow(0 0 24px #a855f7) brightness(1.3); transform: scale(1.12); }
+    }
+    .enchant-active {
+      animation: enchantGlow 1.1s infinite ease-in-out;
+    }
+
+    /* Voice Active Indicator */
+    .voice-wave {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .voice-wave span {
+      width: 4px;
+      height: 12px;
+      background-color: var(--accent);
+      animation: waveBounce 0.6s infinite ease-in-out;
+    }
+    .voice-wave span:nth-child(2) { animation-delay: 0.15s; }
+    .voice-wave span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes waveBounce {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.2); }
+    }
+
+    /* Room Furniture Drag System */
+    .furniture-item {
+      touch-action: none;
+      cursor: grab;
+      user-select: none;
+      transition: filter 0.15s ease;
+      position: absolute;
+      transform-origin: center center;
+    }
+    .furniture-item:active {
+      cursor: grabbing;
+    }
+    .furniture-item.selected {
+      outline: 3px dashed #4deeea;
+      outline-offset: 4px;
+      filter: drop-shadow(0 0 12px rgba(77, 238, 234, 0.85));
+      z-index: 60 !important;
+    }
+
+    /* Print Media Certificate Isolation */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-certificate-container, #printable-certificate-container * {
+        visibility: visible !important;
+      }
+      #printable-certificate-container, #printable-certificate {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #printable-certificate-container {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-10">
+
+  <!-- TOP STICKY HUD -->
+  <header class="sticky top-0 z-40 bg-[#141210]/95 backdrop-blur-md border-b-4 border-[var(--primary)] px-3 py-2 shadow-2xl no-print">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      
+      <!-- Brand -->
+      <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchSection('hub')">
+        <img src="https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png" alt="Enchanting Table" class="w-9 h-9 object-contain animate-float drop-shadow-md">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="pixel-font text-[11px] sm:text-sm text-purple-400 tracking-wide">DEFENDER'S BASE</h1>
+            <span class="bg-[var(--primary)] text-white text-[9px] font-bold px-2 py-0.5 rounded border border-purple-400">Beginner+</span>
+          </div>
+          <p class="text-[11px] text-stone-300 font-semibold">Present Continuous: Action Right Now!</p>
+        </div>
+      </div>
+
+      <!-- Stats & Controls -->
+      <div class="flex items-center gap-2 flex-wrap">
+        
+        <!-- Live Speech Indicator -->
+        <div id="speech-indicator" class="hidden items-center gap-2 bg-cyan-950 border-2 border-cyan-400 px-2.5 py-1 rounded-lg text-[11px] font-bold text-cyan-200">
+          <div class="voice-wave"><span></span><span></span><span></span></div>
+          <span>Speaking...</span>
+        </div>
+
+        <!-- Diamonds Counter -->
+        <div class="mc-slot px-2.5 py-1 flex items-center gap-1.5 bg-stone-800">
+          <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-5 h-5 object-contain">
+          <span class="pixel-font text-[11px] text-cyan-300" id="hud-diamonds">0</span>
+        </div>
+
+        <!-- Badges Counter -->
+        <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-2.5 py-1 text-[9px] sm:text-[10px] flex items-center gap-1.5">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Badge" class="w-4 h-4 object-contain">
+          <span>Badges: <span id="hud-badges">0/8</span></span>
+        </button>
+
+        <!-- Base Builder Button -->
+        <button onclick="switchSection('shop')" class="mc-btn mc-btn-purple px-2.5 py-1 text-[9px] sm:text-[10px] flex items-center gap-1.5" title="Decorate your base!">
+          <span>🛋️</span>
+          <span>My Room</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button onclick="toggleSoundFX()" id="sound-toggle-btn" class="mc-btn px-2.5 py-1 text-xs" title="Toggle Sound Effects">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="max-w-6xl mx-auto mt-2 flex gap-1.5 overflow-x-auto pb-0.5">
+      <button onclick="switchSection('hub')" id="nav-hub" class="mc-btn mc-btn-purple px-2.5 py-1.5 text-[9px] sm:text-[10px] flex items-center gap-1.5 shrink-0">
+        <img src="https://i.postimg.cc/JnvQQ74Z/grass-removebg-preview.png" class="w-4 h-4 object-contain" alt="Hub">
+        <span>1. Story & Tools</span>
+      </button>
+      <button onclick="switchSection('grammar')" id="nav-grammar" class="mc-btn px-2.5 py-1.5 text-[9px] sm:text-[10px] flex items-center gap-1.5 shrink-0">
+        <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" class="w-4 h-4 object-contain" alt="Rules">
+        <span>2. Grammar</span>
+      </button>
+      <button onclick="switchSection('games')" id="nav-games" class="mc-btn px-2.5 py-1.5 text-[9px] sm:text-[10px] flex items-center gap-1.5 shrink-0">
+        <img src="https://i.postimg.cc/Y9Zxx2qm/diamond-pickaxe-removebg-preview.png" class="w-4 h-4 object-contain" alt="Games">
+        <span>3. 5 Mini-Games</span>
+      </button>
+      <button onclick="switchSection('shop')" id="nav-shop" class="mc-btn px-2.5 py-1.5 text-[9px] sm:text-[10px] flex items-center gap-1.5 shrink-0">
+        <img src="https://i.postimg.cc/13KWnFFL/iron-pickaxe.png" class="w-4 h-4 object-contain" alt="Shop">
+        <span>4. Base Builder</span>
+      </button>
+      <button onclick="switchSection('badges')" id="nav-badges" class="mc-btn px-2.5 py-1.5 text-[9px] sm:text-[10px] flex items-center gap-1.5 shrink-0">
+        <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" class="w-4 h-4 object-contain" alt="Badges">
+        <span>5. Trophy Chest</span>
+      </button>
+      <button onclick="switchSection('finale')" id="nav-finale" class="mc-btn px-2.5 py-1.5 text-[9px] sm:text-[10px] flex items-center gap-1.5 shrink-0">
+        <img src="https://i.postimg.cc/6pXYSQVy/Ender-Dragon-removebg-preview.png" class="w-4 h-4 object-contain" alt="Prize">
+        <span>6. License</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-6xl mx-auto w-full px-3 sm:px-5 pt-4 flex-1">
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: STORY HUB & 10 TOOLS / WEAPONS FLASHCARDS     -->
+    <!-- ======================================================== -->
+    <section id="sec-hub" class="space-y-5">
+      
+      <!-- Story Intro Banner -->
+      <div class="mc-panel p-4 sm:p-5 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+          
+          <div class="lg:col-span-3 flex justify-center items-center gap-2">
+            <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-20 sm:w-24 h-24 object-contain animate-float drop-shadow-xl">
+            <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-20 sm:w-24 h-24 object-contain animate-float drop-shadow-xl" style="animation-delay: 0.45s;">
+          </div>
+
+          <div class="lg:col-span-9 space-y-2.5">
+            <div class="inline-flex items-center gap-2 bg-[var(--primary)] text-white px-2.5 py-1 text-[11px] font-bold border-2 border-black">
+              <span>⚔️</span> <span>LIVE BASE DEFENSE MISSION</span>
+            </div>
+            <h2 class="pixel-font text-xs sm:text-base text-stone-900">Defend the Base Right Now!</h2>
+            <p id="story-intro-text" class="text-sm sm:text-base text-stone-800 font-semibold leading-relaxed">
+              Zombies and Skeletons are approaching our base right now! Steve and Alex are crafting tools and putting on their iron armor. Master Present Continuous, earn Diamonds, and decorate your dream room!
+            </p>
+            <div class="flex flex-wrap gap-2.5 pt-1">
+              <button onclick="speakText(GAME_DATA.story.intro)" class="mc-btn mc-btn-purple px-3.5 py-1.5 text-[10px] sm:text-xs gap-2">
+                <i class="fa-solid fa-volume-high"></i> <span>Listen to Story</span>
+              </button>
+              <button onclick="switchSection('grammar')" class="mc-btn mc-btn-green px-3.5 py-1.5 text-[10px] sm:text-xs gap-2">
+                <span>Open Grammar Rules</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Visual Support Checklist -->
+      <div class="mc-panel-dark p-3.5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <img src="https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png" alt="Lantern" class="w-8 h-8 object-contain">
+          <div>
+            <h3 class="pixel-font text-[11px] text-amber-300">ARMORY CHECKLIST:</h3>
+            <p class="text-xs text-stone-300">Tap each card to hear the tool and flip it for the Ukrainian meaning!</p>
+          </div>
+        </div>
+        <div class="bg-stone-800 border-2 border-stone-600 px-3.5 py-1.5 text-xs font-bold text-lime-400">
+          Tools Inspected: <span id="materials-explored-count">0 / 10</span>
+        </div>
+      </div>
+
+      <!-- 10 Tools & Weapons Flip Cards Grid -->
+      <div id="materials-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+        <!-- Populated from GAME_DATA.vocabulary -->
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: PRESENT CONTINUOUS GRAMMAR RULES              -->
+    <!-- ======================================================== -->
+    <section id="sec-grammar" class="hidden space-y-5">
+      
+      <!-- Part A: When do we use Present Continuous? -->
+      <div class="mc-panel p-4 sm:p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b-4 border-stone-400 pb-2.5">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/8cvmX8jB/bookshelf-removebg-preview.png" alt="Bookshelf" class="w-10 h-10 object-contain">
+            <div>
+              <h2 class="pixel-font text-xs sm:text-base text-stone-900">WHEN DO WE USE PRESENT CONTINUOUS?</h2>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">For actions happening RIGHT NOW, at this very second!</p>
+            </div>
+          </div>
+          <button onclick="speakText('We use Present Continuous for actions happening right now, at this moment! Look for clue words like now, right now, at the moment, Look, and Listen!')" class="mc-btn mc-btn-purple px-3 py-1.5 text-[10px] sm:text-xs gap-2">
+            <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          <!-- Card 1: Action Now -->
+          <div class="bg-stone-100 border-4 border-purple-700 p-3.5 flex flex-col justify-between">
+            <div>
+              <span class="pixel-font text-[9px] bg-purple-700 text-white px-2 py-1 inline-block mb-2">1. HAPPENING NOW</span>
+              <p class="text-xs sm:text-sm text-stone-800 font-bold mb-2">Like commenting on a live Minecraft stream!</p>
+              <div class="space-y-1.5 text-xs sm:text-sm bg-white p-2.5 border-2 border-stone-300">
+                <div class="flex items-center justify-between">
+                  <span>"Look! Steve <b class="text-purple-700">is mining</b> stone."</span>
+                  <button onclick="speakText('Look! Steve is mining stone.')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between border-t pt-1">
+                  <span>"They <b class="text-purple-700">are shooting</b> arrows!"</span>
+                  <button onclick="speakText('They are shooting arrows!')" class="text-stone-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2.5 text-[11px] font-bold text-purple-900">
+              Clue words: <span class="bg-purple-200 px-1 rounded">now</span> <span class="bg-purple-200 px-1 rounded">right now</span> <span class="bg-purple-200 px-1 rounded">Look!</span>
+            </div>
+          </div>
+
+          <!-- Card 2: The 3 Helpers -->
+          <div class="bg-stone-100 border-4 border-amber-600 p-3.5 flex flex-col justify-between">
+            <div>
+              <span class="pixel-font text-[9px] bg-amber-600 text-white px-2 py-1 inline-block mb-2">2. MAGIC HELPERS (AM/IS/ARE)</span>
+              <p class="text-xs sm:text-sm text-stone-800 font-bold mb-2">Never forget the helper before Verb + ING!</p>
+              <div class="space-y-1.5 text-xs sm:text-sm bg-white p-2.5 border-2 border-stone-300 font-bold">
+                <div><span class="bg-lime-200 px-1.5 rounded">I</span> + <b class="text-lime-700">am</b> + Verb-ing</div>
+                <div><span class="bg-amber-200 px-1.5 rounded">He / She / It</span> + <b class="text-amber-700">is</b> + Verb-ing</div>
+                <div><span class="bg-sky-200 px-1.5 rounded">You / We / They</span> + <b class="text-sky-700">are</b> + Verb-ing</div>
+              </div>
+            </div>
+            <div class="mt-2.5 text-[11px] font-bold text-amber-900">
+              Formula: Who + am/is/are + Action-ing
+            </div>
+          </div>
+
+          <!-- Card 3: -ING Spelling Rules -->
+          <div class="bg-stone-100 border-4 border-emerald-700 p-3.5 flex flex-col justify-between">
+            <div>
+              <span class="pixel-font text-[9px] bg-emerald-700 text-white px-2 py-1 inline-block mb-2">3. -ING SPELLING MAGIC</span>
+              <p class="text-xs sm:text-sm text-stone-800 font-bold mb-2">3 rules for the Enchanting Table:</p>
+              <div class="space-y-1.5 text-xs bg-white p-2.5 border-2 border-stone-300">
+                <div><b>1) Normal:</b> hold ➔ <span class="text-emerald-700 font-bold">holding</span></div>
+                <div><b>2) Drop silent -e:</b> min<del>e</del> ➔ <span class="text-purple-700 font-bold">mining</span></div>
+                <div><b>3) Double letter:</b> dig ➔ <span class="text-rose-700 font-bold">digging</span>, run ➔ <span class="text-rose-700 font-bold">running</span></div>
+              </div>
+            </div>
+            <div class="mt-2.5 text-[11px] font-bold text-emerald-900">
+              Practice these in Game 5: Enchanting Table!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part B: How to Build Sentences (+, -, ?) -->
+      <div class="mc-panel p-4 sm:p-5 space-y-4">
+        <div class="flex items-center gap-3 border-b-4 border-stone-400 pb-2.5">
+          <img src="https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png" alt="Crafting" class="w-10 h-10 object-contain">
+          <div>
+            <h2 class="pixel-font text-xs sm:text-base text-stone-900">HOW TO CRAFT SENTENCES (+ / - / ?)</h2>
+            <p class="text-xs sm:text-sm text-stone-700 font-semibold">Watch how AM / IS / ARE move in Affirmative, Negative, and Questions!</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          
+          <!-- 1. AFFIRMATIVE (+) -->
+          <div class="bg-lime-50 border-4 border-lime-700 p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-[10px] bg-lime-700 text-white px-2 py-1">➕ AFFIRMATIVE (+)</span>
+              <img src="https://i.postimg.cc/vZvPgnnJ/iron-sword.png" alt="Sword" class="w-8 h-8 object-contain">
+            </div>
+            <div class="bg-white p-2.5 border-2 border-lime-600 text-xs font-bold text-stone-800 space-y-1">
+              <div>I <b class="text-lime-700">am</b> + V-ing</div>
+              <div>He / She / It <b class="text-lime-700">is</b> + V-ing</div>
+              <div>You / We / They <b class="text-lime-700">are</b> + V-ing</div>
+            </div>
+            <div class="space-y-1.5 text-xs bg-lime-100/80 p-2.5 border border-lime-500">
+              <div class="flex items-center justify-between">
+                <span>• I <b>am holding</b> a sword.</span>
+                <button onclick="speakText('I am holding a sword.')" class="text-lime-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Steve <b>is wearing</b> a helmet.</span>
+                <button onclick="speakText('Steve is wearing a helmet.')" class="text-lime-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• They <b>are digging</b> with shovels.</span>
+                <button onclick="speakText('They are digging with shovels.')" class="text-lime-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. NEGATIVE (-) -->
+          <div class="bg-red-50 border-4 border-red-700 p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-[10px] bg-red-700 text-white px-2 py-1">➖ NEGATIVE (-)</span>
+              <img src="https://i.postimg.cc/7ZNBGz7y/shield.png" alt="Shield" class="w-8 h-8 object-contain">
+            </div>
+            <div class="bg-white p-2.5 border-2 border-red-600 text-xs font-bold text-stone-800 space-y-1">
+              <div>I <b class="text-red-600">am not</b> + V-ing</div>
+              <div>He / She / It <b class="text-red-600">isn't</b> + V-ing</div>
+              <div>You / We / They <b class="text-red-600">aren't</b> + V-ing</div>
+            </div>
+            <div class="space-y-1.5 text-xs bg-red-100/80 p-2.5 border border-red-400">
+              <div class="flex items-center justify-between">
+                <span>• I <b>am not dropping</b> my shield.</span>
+                <button onclick="speakText('I am not dropping my shield.')" class="text-red-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Alex <b>isn't wearing</b> armor.</span>
+                <button onclick="speakText('Alex is not wearing armor.')" class="text-red-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• We <b>aren't hiding</b> now.</span>
+                <button onclick="speakText('We are not hiding now.')" class="text-red-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. QUESTIONS (?) -->
+          <div class="bg-sky-50 border-4 border-sky-700 p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-[10px] bg-sky-700 text-white px-2 py-1">❓ QUESTIONS (?)</span>
+              <img src="https://i.postimg.cc/rw9h04W2/bow.png" alt="Bow" class="w-8 h-8 object-contain">
+            </div>
+            <div class="bg-white p-2.5 border-2 border-sky-600 text-xs font-bold text-stone-800 space-y-1">
+              <div><b class="text-sky-700">Am</b> I + V-ing?</div>
+              <div><b class="text-sky-700">Is</b> he / she / it + V-ing?</div>
+              <div><b class="text-sky-700">Are</b> you / we / they + V-ing?</div>
+            </div>
+            <div class="space-y-1.5 text-xs bg-sky-100/80 p-2.5 border border-sky-400">
+              <div class="flex items-center justify-between">
+                <span>• <b>Am</b> I <b>holding</b> an axe?</span>
+                <button onclick="speakText('Am I holding an axe?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Is</b> Steve <b>mining</b> stone?</span>
+                <button onclick="speakText('Is Steve mining stone?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Are</b> they <b>shooting</b> arrows?</span>
+                <button onclick="speakText('Are they shooting arrows?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="flex justify-center pt-1">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-purple px-6 py-2.5 text-xs gap-2.5">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Sword">
+            <span>START THE 5 MINI-GAMES!</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 3: 5 MINI-GAMES ARENA                            -->
+    <!-- ======================================================== -->
+    <section id="sec-games" class="hidden space-y-5">
+
+      <!-- Mini-Game Selector Sub-Nav -->
+      <div class="mc-panel-dark p-3.5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <span class="pixel-font text-[11px] text-purple-400">CHOOSE YOUR BATTLE SIMULATOR:</span>
+          <span class="text-xs text-stone-300">Random tasks from 50-question pools!</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+          <button onclick="selectMiniGame(1)" id="gbtn-1" class="mc-btn mc-btn-purple p-2 text-[9px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/vZvPgnnJ/iron-sword.png" class="w-5 h-5 object-contain" alt="G1">
+            <div class="text-left">
+              <div>Game 1: Affirmative</div>
+              <div class="text-[9px] text-lime-200 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(2)" id="gbtn-2" class="mc-btn p-2 text-[9px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/7ZNBGz7y/shield.png" class="w-5 h-5 object-contain" alt="G2">
+            <div class="text-left">
+              <div>Game 2: Negative</div>
+              <div class="text-[9px] text-stone-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(3)" id="gbtn-3" class="mc-btn p-2 text-[9px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/rw9h04W2/bow.png" class="w-5 h-5 object-contain" alt="G3">
+            <div class="text-left">
+              <div>Game 3: Questions</div>
+              <div class="text-[9px] text-stone-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(4)" id="gbtn-4" class="mc-btn p-2 text-[9px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/kMLjQsBV/Diamond-Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="G4">
+            <div class="text-left">
+              <div>Game 4: Mixed Blitz</div>
+              <div class="text-[9px] text-stone-300 font-sans">15 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(5)" id="gbtn-5" class="mc-btn p-2 text-[9px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png" class="w-5 h-5 object-contain" alt="G5">
+            <div class="text-left">
+              <div>Game 5: Enchanting</div>
+              <div class="text-[9px] text-purple-300 font-sans">10 -ING Spells (Pool: 30)</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ACTIVE GAME CONTAINER (Games 1-4 Standard Engine) -->
+      <div id="standard-game-wrapper" class="mc-panel p-4 sm:p-5">
+        
+        <!-- Game Header Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b-4 border-stone-400 pb-2.5 mb-4">
+          <div class="flex items-center gap-2.5">
+            <span id="active-game-icon" class="text-2xl">➕</span>
+            <div>
+              <h3 id="active-game-title" class="pixel-font text-xs sm:text-sm text-stone-900">Game 1: Affirmative (+)</h3>
+              <p id="active-game-subtitle" class="text-xs text-stone-700 font-semibold">10 random tasks (Pool: 50) • Am/Is/Are + V-ing</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="bg-stone-800 text-white px-2.5 py-1 border-2 border-black pixel-font text-[10px]">
+              Task <span id="game-q-num" class="text-lime-400">1</span> / <span id="game-q-total">10</span>
+            </div>
+            <div class="bg-stone-800 text-cyan-300 px-2.5 py-1 border-2 border-black pixel-font text-[10px]">
+              Score: <span id="game-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Stage -->
+        <div id="question-stage" class="mc-panel-dark p-4 sm:p-5 space-y-4">
+          
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3.5">
+              <div class="w-16 h-16 bg-stone-800/90 p-1.5 border-2 border-stone-600 flex items-center justify-center animate-float shrink-0">
+                <img id="question-mob-img" src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Character" class="w-12 h-12 object-contain">
+              </div>
+              <div>
+                <span id="question-mode-tag" class="inline-block bg-lime-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1">AFFIRMATIVE (+)</span>
+                <h4 id="question-prompt-text" class="text-base sm:text-xl font-bold text-white leading-snug">Loading task...</h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakCurrentQuestion()" class="mc-btn px-3 py-1.5 text-xs" title="Listen">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Container -->
+          <div id="mc-options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1"></div>
+
+          <!-- Word-Order Click-to-Place Container -->
+          <div id="scramble-container" class="hidden space-y-3 pt-1">
+            <div class="text-xs text-cyan-300 font-bold">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Click word blocks in the right order! (Click a placed block to remove it)
+            </div>
+
+            <!-- Target Slots -->
+            <div id="scramble-target-slots" class="min-h-[58px] bg-stone-900 border-4 border-dashed border-amber-400 p-2.5 flex flex-wrap items-center gap-2"></div>
+
+            <!-- Word Bank -->
+            <div id="scramble-word-bank" class="flex flex-wrap gap-2"></div>
+
+            <div class="flex flex-wrap gap-2.5 pt-1">
+              <button onclick="checkScrambleAnswer()" id="scramble-submit-btn" class="mc-btn mc-btn-green px-4 py-2 text-[10px] sm:text-xs gap-2">
+                <i class="fa-solid fa-hammer"></i> <span>CRAFT SENTENCE</span>
+              </button>
+              <button onclick="resetScrambleWords()" class="mc-btn px-3.5 py-2 text-[10px] sm:text-xs gap-2">
+                <i class="fa-solid fa-rotate-left"></i> <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feedback Alert & Next Button -->
+          <div id="game-feedback-bar" class="hidden p-3.5 border-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div id="game-feedback-msg" class="text-xs sm:text-sm font-bold"></div>
+            <button onclick="nextGameQuestion()" id="game-next-btn" class="mc-btn mc-btn-green px-4 py-1.5 text-[10px] sm:text-xs shrink-0">
+              <span>NEXT TASK</span> <i class="fa-solid fa-forward ml-1.5"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Round Complete Summary Screen (Totem of Undying Try Again!) -->
+        <div id="round-complete-screen" class="hidden mc-panel-dark p-6 text-center space-y-4 border-4 border-lime-500">
+          <img src="https://i.postimg.cc/YS28ryyJ/Enchanted-golden-apple-removebg-preview.png" alt="Victory" class="w-16 h-16 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-sm sm:text-lg text-lime-400">ROUND COMPLETE!</h3>
+          <p id="round-result-summary" class="text-sm sm:text-base text-stone-200 font-bold"></p>
+
+          <div class="flex flex-wrap justify-center gap-3 pt-1">
+            <button onclick="replayCurrentGame()" class="mc-btn mc-btn-gold px-4 py-2.5 text-[10px] sm:text-xs flex items-center gap-2.5">
+              <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem of Undying" class="w-7 h-7 object-contain">
+              <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+            </button>
+            <button onclick="switchSection('shop')" class="mc-btn mc-btn-purple px-4 py-2.5 text-[10px] sm:text-xs flex items-center gap-2">
+              <span>🛋️</span>
+              <span>DECORATE ROOM</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- GAME 5: ENCHANTING TABLE (-ING SPELLING LAB)             -->
+      <!-- ======================================================== -->
+      <div id="game5-custom-wrapper" class="hidden mc-panel p-4 sm:p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b-4 border-stone-400 pb-2.5">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png" alt="Enchanting Table" class="w-10 h-10 object-contain">
+            <div>
+              <h3 class="pixel-font text-xs sm:text-sm text-stone-900">Game 5: Enchanting Table (-ING Spelling)</h3>
+              <p class="text-xs text-stone-700 font-semibold">Enchant the tool by spelling the Present Continuous (-ing) form correctly!</p>
+            </div>
+          </div>
+          <div class="bg-stone-800 text-purple-300 px-3 py-1 border-2 border-black pixel-font text-[10px]">
+            Enchanted: <span id="g5-progress">0</span> / 10
+          </div>
+        </div>
+
+        <div id="g5-stage" class="mc-panel-dark p-4 sm:p-5 space-y-4">
+          
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-stone-900/90 border-2 border-purple-700 p-4">
+            <div class="flex items-center gap-4">
+              <div class="w-20 h-20 mc-slot bg-stone-950 flex items-center justify-center p-2">
+                <img id="g5-tool-img" src="https://i.postimg.cc/13KWnFFL/iron-pickaxe.png" alt="Tool" class="w-14 h-14 object-contain grayscale opacity-50 transition-all">
+              </div>
+              <div>
+                <div class="text-[11px] font-bold text-purple-300 uppercase">Base Verb to Enchant:</div>
+                <div class="flex items-center gap-2.5 mt-1">
+                  <span id="g5-base-word" class="pixel-font text-lg sm:text-2xl text-amber-300">mine</span>
+                  <span class="text-stone-400 font-bold text-sm">+ ING ➔ ?</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="speakG5Word()" class="mc-btn px-3 py-1.5 text-xs">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Target Letter Slots -->
+          <div class="space-y-1.5">
+            <div class="text-xs text-purple-300 font-bold">Tap letters below to spell the enchanted -ING word (tap a placed letter to return it):</div>
+            <div id="g5-target-slots" class="min-h-[60px] bg-stone-900 border-4 border-dashed border-purple-400 p-2.5 flex flex-wrap items-center justify-center gap-1.5"></div>
+          </div>
+
+          <!-- Shuffled Letter Bank -->
+          <div id="g5-letter-bank" class="flex flex-wrap justify-center gap-2 pt-1"></div>
+
+          <div class="flex flex-wrap justify-center gap-3 pt-1">
+            <button onclick="checkG5Spelling()" id="g5-submit-btn" class="mc-btn mc-btn-purple px-5 py-2 text-xs gap-2">
+              <span>✨ ENCHANT TOOL!</span>
+            </button>
+            <button onclick="resetG5Word()" class="mc-btn px-4 py-2 text-xs gap-2">
+              <i class="fa-solid fa-rotate-left"></i> <span>Clear</span>
+            </button>
+          </div>
+
+          <!-- Game 5 Feedback -->
+          <div id="g5-feedback" class="hidden p-3.5 border-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span id="g5-feedback-text" class="text-xs sm:text-sm font-bold"></span>
+            <button onclick="nextG5Word()" id="g5-next-btn" class="mc-btn mc-btn-green px-4 py-1.5 text-xs shrink-0">
+              <span>NEXT SPELL</span> <i class="fa-solid fa-forward ml-1.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Game 5 Complete Screen -->
+        <div id="g5-complete-screen" class="hidden mc-panel-dark p-6 text-center space-y-4 border-4 border-purple-500">
+          <img src="https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png" alt="Enchanting" class="w-16 h-16 mx-auto object-contain enchant-active">
+          <h3 class="pixel-font text-sm sm:text-lg text-purple-300">MASTER ENCHANTER!</h3>
+          <p class="text-sm sm:text-base text-stone-200 font-bold">You successfully spelled 10 -ING words and earned Diamonds!</p>
+          <div class="flex justify-center gap-3">
+            <button onclick="startG5EnchantingLab()" class="mc-btn mc-btn-gold px-4 py-2.5 text-[10px] sm:text-xs flex items-center gap-2.5">
+              <img src="https://i.postimg.cc/9FTLJ99r/𝐓𝐨𝐭𝐞𝐦-𝐎𝐟-𝐔𝐧𝐝𝐲𝐢𝐧𝐠-𖦹-removebg-preview.png" alt="Totem of Undying" class="w-7 h-7 object-contain">
+              <span>TRY AGAIN (NEW SPELLS)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 4: MY ROOM & FURNITURE SHOP (BASE BUILDER)       -->
+    <!-- ======================================================== -->
+    <section id="sec-shop" class="hidden space-y-5">
+      
+      <div class="mc-panel p-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b-4 border-stone-400 pb-3 mb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🛋️</span>
+            <div>
+              <h2 class="pixel-font text-xs sm:text-base text-stone-900">BASE BUILDER & FURNITURE SHOP</h2>
+              <p class="text-xs text-stone-700 font-semibold">Buy furniture, drag to move, tap an item to resize (+ / -), flip, or layer it!</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="clearRoomToStorage()" class="mc-btn px-3 py-1.5 text-[9px] bg-stone-700" title="Move all placed furniture back to storage">
+              <span>📦 Clear Room</span>
+            </button>
+            <div class="mc-slot bg-stone-900 px-3.5 py-1.5 flex items-center gap-2 border-2 border-cyan-400">
+              <img src="https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" alt="Diamond" class="w-5 h-5 object-contain">
+              <div>
+                <div class="text-[8px] text-cyan-300 font-bold uppercase leading-none">Diamonds</div>
+                <div class="pixel-font text-xs text-white"><span id="shop-diamonds-balance">0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Micro-Toolbar for Selected Item (Docked above room) -->
+        <div id="item-toolbar" class="hidden mb-3 bg-stone-900 border-2 border-cyan-400 rounded-xl p-2 flex flex-wrap items-center justify-between gap-2 shadow-lg">
+          <div class="flex items-center gap-2 px-1">
+            <span class="text-xs font-bold text-cyan-300">Selected:</span>
+            <span id="selected-furn-name" class="text-xs font-extrabold text-white bg-stone-800 px-2 py-0.5 rounded border border-stone-600">Item</span>
+            <span id="selected-furn-scale" class="text-[11px] font-mono text-amber-300 font-bold">100%</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="scaleSelectedItem(0.15)" class="px-3 py-1.5 rounded bg-lime-600 hover:bg-lime-500 text-white font-black text-sm border border-lime-300" title="Make Bigger">+</button>
+            <button onclick="scaleSelectedItem(-0.15)" class="px-3 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-black text-sm border border-rose-300" title="Make Smaller">-</button>
+            <button onclick="flipSelectedItem()" class="px-2.5 py-1.5 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs border border-indigo-400" title="Flip Left/Right">↔️ Flip</button>
+            <button onclick="layerSelectedItem(1)" class="px-2 py-1.5 rounded bg-stone-700 hover:bg-stone-600 text-white font-bold text-xs border border-stone-500" title="Bring Forward">⬆️ Front</button>
+            <button onclick="layerSelectedItem(-1)" class="px-2 py-1.5 rounded bg-stone-700 hover:bg-stone-600 text-white font-bold text-xs border border-stone-500" title="Send Backward">⬇️ Back</button>
+            <button onclick="speakSelectedItem()" class="px-2.5 py-1.5 rounded bg-cyan-700 hover:bg-cyan-600 text-white font-bold text-xs border border-cyan-400" title="Hear Present Continuous Sentence">🔊</button>
+            <button onclick="deleteSelectedItem()" class="px-2.5 py-1.5 rounded bg-amber-700 hover:bg-amber-600 text-white font-bold text-xs border border-amber-400">📦 Store</button>
+          </div>
+        </div>
+
+        <!-- Interactive Room Area -->
+        <div class="relative w-full h-[430px] sm:h-[560px] bg-stone-950 rounded-xl border-4 border-stone-700 overflow-hidden shadow-inner mb-5" id="my-room-container">
+          <img src="https://i.postimg.cc/wjtYYHGP/Gemini-Generated-Image-o4ajdvo4ajdvo4aj.jpg" class="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" alt="Room Background">
+          
+          <div id="room-empty-hint" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/75 backdrop-blur-sm text-white px-5 py-3 rounded-xl text-xs sm:text-sm font-bold text-center pointer-events-none border-2 border-purple-400/60">
+            Buy furniture from the shop below!<br>Drag items to arrange your room and tap them to resize (+ / -).
+          </div>
+
+          <div id="placed-items-layer" class="absolute inset-0 w-full h-full overflow-hidden" onclick="handleRoomCanvasClick(event)"></div>
+        </div>
+
+        <!-- Shop Catalog -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h3 class="pixel-font text-[10px] sm:text-xs text-stone-900">FURNITURE CATALOG (OWNED ITEMS CAN BE PLACED ANYTIME!):</h3>
+          </div>
+          <div id="shop-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-2.5"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 5: ACHIEVEMENTS & BADGES                         -->
+    <!-- ======================================================== -->
+    <section id="sec-badges" class="hidden space-y-5">
+      <div class="mc-panel p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b-4 border-stone-400 pb-3 mb-4">
+          <div class="flex items-center gap-3">
+            <img src="https://i.postimg.cc/KjTDpXRD/chest-removebg-preview.png" alt="Chest" class="w-10 h-10 object-contain">
+            <div>
+              <h2 class="pixel-font text-xs sm:text-base text-stone-900">DEFENDER'S TROPHY CHEST (8 BADGES)</h2>
+              <p class="text-xs text-stone-700 font-semibold">Unlock ALL 8 badges to unseal your Master Builder & Defender License!</p>
+            </div>
+          </div>
+          <button onclick="resetAllSavedProgress()" class="mc-btn px-3 py-1.5 text-[9px] bg-red-800">
+            Reset Progress
+          </button>
+        </div>
+
+        <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 6: GRAND FINALE & PRINTABLE LICENSE              -->
+    <!-- ======================================================== -->
+    <section id="sec-finale" class="hidden space-y-5">
+      
+      <!-- LOCK SCREEN (Until 8/8 badges) -->
+      <div id="finale-locked-banner" class="mc-panel-dark p-7 sm:p-10 text-center space-y-5 border-4 border-purple-500">
+        <div class="relative inline-block">
+          <img src="https://i.postimg.cc/m2Mm89Hm/Warden-removebg-preview.png" alt="Warden Guardian" class="w-24 h-24 sm:w-32 sm:h-32 mx-auto object-contain animate-float">
+          <span class="absolute -top-2 -right-2 bg-red-700 text-white pixel-font text-[9px] px-2 py-1 border-2 border-white">🔒 SEALED</span>
+        </div>
+
+        <h3 class="pixel-font text-sm sm:text-xl text-purple-300">THE DEFENDER'S VAULT IS SEALED!</h3>
+        <p class="text-xs sm:text-sm text-stone-300 max-w-lg mx-auto font-semibold leading-relaxed">
+          The Warden guards the Official Master Builder & Defender License! Unlock <b>ALL 8 Achievements</b> to reveal and print your prize!
+        </p>
+
+        <div class="max-w-md mx-auto bg-stone-900 border-4 border-stone-700 p-3.5 space-y-2">
+          <div class="flex justify-between text-xs font-bold text-lime-400">
+            <span>BADGES COLLECTED:</span>
+            <span id="finale-lock-progress-text">0 / 8</span>
+          </div>
+          <div class="w-full h-4 bg-stone-800 border-2 border-black overflow-hidden">
+            <div id="finale-lock-bar" class="h-full bg-gradient-to-r from-purple-500 to-lime-500 transition-all duration-500" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 pt-1">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-purple px-4 py-2.5 text-[10px] sm:text-xs gap-2">
+            <span>⚔️ PLAY MINI-GAMES</span>
+          </button>
+          <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-4 py-2.5 text-[10px] sm:text-xs gap-2">
+            <span>🏆 CHECK BADGES</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- UNLOCKED CERTIFICATE CONTAINER -->
+      <div id="finale-unlocked-content" class="hidden space-y-5">
+        
+        <!-- Customizer Controls & Wallpaper Picker -->
+        <div class="mc-panel p-4 no-print space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <label for="student-name-input" class="pixel-font text-[10px] sm:text-xs text-stone-900">HERO NAME:</label>
+              <input id="student-name-input" type="text" value="Steve" oninput="updateCertificateName(this.value)" class="px-3 py-1.5 border-4 border-stone-700 bg-white text-stone-900 font-bold text-sm sm:text-base focus:outline-none">
+            </div>
+
+            <div class="flex flex-wrap gap-2.5">
+              <button onclick="launchVictoryConfetti()" class="mc-btn mc-btn-gold px-3.5 py-2 text-[10px] sm:text-xs gap-1.5">
+                <span>🎆</span> <span>Celebrate!</span>
+              </button>
+              <button onclick="window.print()" class="mc-btn mc-btn-green px-4 py-2 text-[10px] sm:text-xs gap-2">
+                <i class="fa-solid fa-print"></i> <span>Print / Save as PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3 Custom Minecraft Wallpapers -->
+          <div class="border-t-2 border-stone-400 pt-2.5 flex flex-wrap items-center justify-between gap-2">
+            <span class="pixel-font text-[9px] sm:text-[10px] text-stone-800">CHOOSE LICENSE WALLPAPER:</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCertificateTheme('bg1')" id="theme-btn-bg1" class="mc-btn mc-btn-purple px-3 py-1 text-[9px]">🏰 1. Cozy Base</button>
+              <button onclick="setCertificateTheme('bg2')" id="theme-btn-bg2" class="mc-btn px-3 py-1 text-[9px]">🌅 2. Sunset World</button>
+              <button onclick="setCertificateTheme('bg3')" id="theme-btn-bg3" class="mc-btn px-3 py-1 text-[9px]">⚔️ 3. Adventure</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRINTABLE MASTER BUILDER & DEFENDER LICENSE -->
+        <div id="printable-certificate-container" class="w-full flex justify-center">
+          <div id="printable-certificate" class="mc-panel p-5 sm:p-9 border-8 border-[#7e22ce] text-stone-900 relative overflow-hidden shadow-2xl bg-cover bg-center w-full max-w-4xl" style="background-image: url('https://i.postimg.cc/MGN1vZs6/Minecraft.jpg');">
+            
+            <div class="absolute inset-0 bg-white/65 backdrop-blur-[2px]"></div>
+
+            <div class="bg-[#fdfaf0]/95 border-4 border-dashed border-[#7e22ce] p-5 sm:p-8 text-center space-y-4 relative shadow-xl z-10 w-full">
+              
+              <div class="flex items-center justify-between sm:px-6">
+                <img src="https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png" alt="Steve" class="w-14 h-14 sm:w-20 sm:h-20 object-contain">
+                <div class="text-center">
+                  <div class="inline-block bg-[#7e22ce] text-white pixel-font text-[9px] px-3 py-1 mb-1.5">OFFICIAL OVERWORLD LICENSE</div>
+                  <h2 class="pixel-font text-base sm:text-xl md:text-2xl text-[#581c87]">MASTER BUILDER & DEFENDER</h2>
+                </div>
+                <img src="https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png" alt="Alex" class="w-14 h-14 sm:w-20 sm:h-20 object-contain">
+              </div>
+
+              <p class="text-xs sm:text-sm font-bold text-stone-600 uppercase tracking-widest">This legendary license is proudly awarded to:</p>
+
+              <div id="cert-hero-name" class="pixel-font text-lg sm:text-3xl text-[#581c87] border-b-4 border-[#7e22ce] inline-block px-6 py-1.5 bg-white/85">
+                Steve
+              </div>
+
+              <p class="text-xs sm:text-base text-stone-800 max-w-2xl mx-auto font-semibold leading-relaxed">
+                For defending the Overworld Base, mastering the <b>Present Continuous Tense</b> (Affirmative, Negative, Questions, and -ING Enchantments), equipping all <b>10 Tools & Weapons</b>, and designing an epic custom room!
+              </p>
+
+              <!-- 10 Tools Strip -->
+              <div class="flex flex-wrap items-center justify-center gap-2.5 py-2 bg-purple-900/10 rounded-xl px-3">
+                <img src="https://i.postimg.cc/13KWnFFL/iron-pickaxe.png" class="w-7 h-7 object-contain" alt="Pickaxe">
+                <img src="https://i.postimg.cc/y8TfgR9K/iron-axe.png" class="w-7 h-7 object-contain" alt="Axe">
+                <img src="https://i.postimg.cc/bwR6Dnbc/iron-shovel.png" class="w-7 h-7 object-contain" alt="Shovel">
+                <img src="https://i.postimg.cc/vZvPgnnJ/iron-sword.png" class="w-7 h-7 object-contain" alt="Sword">
+                <img src="https://i.postimg.cc/rw9h04W2/bow.png" class="w-7 h-7 object-contain" alt="Bow">
+                <img src="https://i.postimg.cc/52mPYzvV/arrow.png" class="w-7 h-7 object-contain" alt="Arrow">
+                <img src="https://i.postimg.cc/7ZNBGz7y/shield.png" class="w-7 h-7 object-contain" alt="Shield">
+                <img src="https://i.postimg.cc/7ZNBGzzj/iron-chestplate.png" class="w-7 h-7 object-contain" alt="Armor">
+                <img src="https://i.postimg.cc/cLcDg3Yq/iron-helmet.png" class="w-7 h-7 object-contain" alt="Helmet">
+                <img src="https://i.postimg.cc/13KWnF6s/iron-boots.png" class="w-7 h-7 object-contain" alt="Boots">
+              </div>
+
+              <div class="grid grid-cols-3 items-center pt-3 border-t-2 border-stone-300 text-xs sm:text-sm font-bold text-stone-700">
+                <div>
+                  <div class="text-stone-900 font-extrabold">Steve & Alex</div>
+                  <div class="text-[10px] text-stone-500">Base Commanders</div>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png" alt="Seal" class="w-11 h-11 object-contain">
+                  <span class="pixel-font text-[8px] text-purple-800 mt-1">ENCHANTED SEAL</span>
+                </div>
+                <div>
+                  <div id="cert-date-display" class="text-stone-900 font-extrabold">2026</div>
+                  <div class="text-[10px] text-stone-500">Date Issued</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT ENGINE & CONFIGURATION -->
+  <script>
+    /* =========================================================================
+       1. GAME_DATA CONFIGURATION (ALL POOLS, VOCABULARY, SHOP, STORY & ASSETS)
+       ========================================================================= */
+    const GAME_DATA = {
+      story: {
+        intro: "Zombies and Skeletons are approaching our base right now! Steve and Alex are crafting tools and putting on their iron armor. Master Present Continuous, earn Diamonds, and decorate your dream room!"
+      },
+
+      assets: {
+        steve: "https://i.postimg.cc/J7STNxGN/Steve-removebg-preview.png",
+        alex: "https://i.postimg.cc/wxnWX27J/Alex-removebg-preview.png",
+        creeper: "https://i.postimg.cc/y6DQ3tYD/Creeper-removebg-preview-(1).png",
+        zombie: "https://i.postimg.cc/QNv6QmHp/Zombie-removebg-preview.png",
+        skeleton: "https://i.postimg.cc/FFwPyp7W/Skeleton-removebg-preview.png",
+        enderman: "https://i.postimg.cc/v8CPrhc2/Enderman-removebg-preview.png",
+        spider: "https://i.postimg.cc/KcC9PfRW/Spider-removebg-preview.png",
+        golem: "https://i.postimg.cc/dVj4KKny/Iron-Golem-with-flower-removebg-preview.png",
+        wolf: "https://i.postimg.cc/L8pN7skm/Wolf-removebg-preview.png",
+        cat: "https://i.postimg.cc/zfd7VSsf/Cat-removebg-preview.png",
+        villager: "https://i.postimg.cc/BnBMGGNx/Villager-removebg-preview.png",
+        fox: "https://i.postimg.cc/Hk9BCC3f/Fox-removebg-preview.png",
+        bee: "https://i.postimg.cc/Qx5f077M/Bee-removebg-preview.png",
+        axolotl: "https://i.postimg.cc/SN8gD9M1/axolotl-removebg-preview.png",
+        warden: "https://i.postimg.cc/m2Mm89Hm/Warden-removebg-preview.png",
+        blaze: "https://i.postimg.cc/TYmtCbbf/blaze-removebg-preview.png"
+      },
+
+      certWallpapers: {
+        bg1: "https://i.postimg.cc/MGN1vZs6/Minecraft.jpg",
+        bg2: "https://i.postimg.cc/bvW1sY6Y/Minecraft.jpg",
+        bg3: "https://i.postimg.cc/HLRbVWSd/Minecraft-wallpaper-(1).jpg"
+      },
+
+      vocabulary: [
+        { id: "pickaxe", word: "Pickaxe", ua: "кайло", img: "https://i.postimg.cc/13KWnFFL/iron-pickaxe.png", example: "Steve is mining stone with a pickaxe." },
+        { id: "axe", word: "Axe", ua: "сокира", img: "https://i.postimg.cc/y8TfgR9K/iron-axe.png", example: "He is chopping wood with an axe." },
+        { id: "shovel", word: "Shovel", ua: "лопата", img: "https://i.postimg.cc/bwR6Dnbc/iron-shovel.png", example: "They are digging with a shovel." },
+        { id: "sword", word: "Sword", ua: "меч", img: "https://i.postimg.cc/vZvPgnnJ/iron-sword.png", example: "She is fighting with a sword." },
+        { id: "bow", word: "Bow", ua: "лук", img: "https://i.postimg.cc/rw9h04W2/bow.png", example: "I am pulling a bow right now." },
+        { id: "arrow", word: "Arrow", ua: "стріла", img: "https://i.postimg.cc/52mPYzvV/arrow.png", example: "He is shooting an arrow." },
+        { id: "shield", word: "Shield", ua: "щит", img: "https://i.postimg.cc/7ZNBGz7y/shield.png", example: "We are blocking with a shield." },
+        { id: "armor", word: "Armor", ua: "броня", img: "https://i.postimg.cc/7ZNBGzzj/iron-chestplate.png", example: "You are wearing iron armor." },
+        { id: "helmet", word: "Helmet", ua: "шолом", img: "https://i.postimg.cc/cLcDg3Yq/iron-helmet.png", example: "Steve is wearing a helmet." },
+        { id: "boots", word: "Boots", ua: "черевики", img: "https://i.postimg.cc/13KWnF6s/iron-boots.png", example: "I am putting on my boots." }
+      ],
+
+      // 21 Furniture Items with generous default widths so they look great immediately!
+      shopItems: [
+        { id: "f_lantern", name: "Iron Lantern", cost: 5, defaultWidth: 135, img: "https://i.postimg.cc/qMxz6cBV/lantern-2-removebg-preview.png", sentence: "The lantern is glowing in the dark." },
+        { id: "f_bath_shelf", name: "Bathroom Shelf", cost: 8, defaultWidth: 165, img: "https://i.postimg.cc/287VLdk2/bathroom-shelves-removebg-preview.png", sentence: "I am putting soap on the bathroom shelf." },
+        { id: "f_wall_shelves", name: "Wall Shelves", cost: 10, defaultWidth: 185, img: "https://i.postimg.cc/wTQ7R5q2/wall-shelves-removebg-preview.png", sentence: "We are decorating the wall shelves right now." },
+        { id: "f_shelves_basic", name: "Oak Shelves", cost: 10, defaultWidth: 185, img: "https://i.postimg.cc/GhC4pgCJ/Shelves-removebg-preview.png", sentence: "Steve is putting tools on the oak shelves." },
+        { id: "f_bookshelf_1", name: "Double Shelf", cost: 12, defaultWidth: 205, img: "https://i.postimg.cc/CLsznChb/and-shelves-2-removebg-preview.png", sentence: "I am reading a book from the double shelf." },
+        { id: "f_bookshelf_2", name: "Classic Shelf", cost: 12, defaultWidth: 205, img: "https://i.postimg.cc/c4SvJkSX/and-shelves-removebg-preview.png", sentence: "She is taking a book from the classic shelf." },
+        { id: "f_more_shelves", name: "Storage Shelf", cost: 12, defaultWidth: 205, img: "https://i.postimg.cc/CLsznChk/more-shelves-removebg-preview.png", sentence: "They are organizing the storage shelf." },
+        { id: "f_shelves_again", name: "Cozy Shelves", cost: 12, defaultWidth: 205, img: "https://i.postimg.cc/TY6KPN6c/shelves-again-removebg-preview.png", sentence: "Alex is cleaning the cozy shelves." },
+        { id: "f_barrel_shelf", name: "Barrel Shelves", cost: 14, defaultWidth: 215, img: "https://i.postimg.cc/yYHDNpHy/Spruce-Log-Barrel-Minecraft-Shelves-removebg-preview.png", sentence: "We are keeping arrows in the barrel shelves." },
+        { id: "f_cherry_shelf", name: "Cherry Shelf", cost: 14, defaultWidth: 215, img: "https://i.postimg.cc/c4Brt71N/Minecraft-Cherry-Abstract-Shelving-removebg-preview.png", sentence: "She is looking at the cherry shelf." },
+        { id: "f_doghouse", name: "Doghouse", cost: 15, defaultWidth: 195, img: "https://i.postimg.cc/hP1fQ8Dk/doghouse-removebg-preview.png", sentence: "The dog is sleeping in the doghouse." },
+        { id: "f_cat_tree", name: "Cat Tree", cost: 16, defaultWidth: 200, img: "https://i.postimg.cc/KvDR37cF/cat-tree-removebg-preview.png", sentence: "The cat is climbing the cat tree right now." },
+        { id: "f_aquarium", name: "Fish Aquarium", cost: 18, defaultWidth: 225, img: "https://i.postimg.cc/WbwhqmNZ/aquarium-removebg-preview.png", sentence: "The fish are swimming in the aquarium." },
+        { id: "f_desk", name: "Work Desk", cost: 18, defaultWidth: 235, img: "https://i.postimg.cc/dtjLZRsp/Desk-removebg-preview.png", sentence: "He is sitting at the work desk." },
+        { id: "f_couch", name: "Spruce Couch", cost: 20, defaultWidth: 255, img: "https://i.postimg.cc/65fy4VWm/Spruce-Couch-Minecraft-removebg-preview.png", sentence: "They are sitting on the spruce couch." },
+        { id: "f_chandelier", name: "Chandelier", cost: 22, defaultWidth: 215, img: "https://i.postimg.cc/15rfV0mM/chandelliere-removebg-preview.png", sentence: "The chandelier is shining brightly." },
+        { id: "f_bed", name: "Cozy Bed", cost: 24, defaultWidth: 265, img: "https://i.postimg.cc/Nfk528sV/minecraft-bed-design-removebg-preview.png", sentence: "I am resting on the cozy bed." },
+        { id: "f_wardrobe", name: "Wardrobe", cost: 24, defaultWidth: 235, img: "https://i.postimg.cc/sD4vGPfF/wardrobe-removebg-preview.png", sentence: "I am hanging my armor in the wardrobe." },
+        { id: "f_fireplace", name: "Fireplace", cost: 28, defaultWidth: 260, img: "https://i.postimg.cc/c4SvJkST/fireplace-removebg-preview.png", sentence: "The fire is burning in the fireplace." },
+        { id: "f_piano", name: "Grand Piano", cost: 32, defaultWidth: 260, img: "https://i.postimg.cc/4NQmHvf5/piano-removebg-preview.png", sentence: "I am playing music on the grand piano." },
+        { id: "f_giant_shelf", name: "Heart Wall Shelf", cost: 55, defaultWidth: 370, img: "https://i.postimg.cc/bN9sS0y5/Minecraft-heart-strorage-bookshelf-removebg-preview.png", sentence: "We are storing treasures in the giant heart shelf." }
+      ],
+
+      badges: [
+        { id: "b_vocab", title: "Armory Master", desc: "Inspect all 10 tools & weapons.", img: "https://i.postimg.cc/vZvPgnnJ/iron-sword.png" },
+        { id: "b_game1", title: "Positive Power", desc: "Complete a round of Game 1 (+).", img: "https://i.postimg.cc/cLcDg3Yq/iron-helmet.png" },
+        { id: "b_game2", title: "Negative Shield", desc: "Complete a round of Game 2 (-).", img: "https://i.postimg.cc/7ZNBGz7y/shield.png" },
+        { id: "b_game3", title: "Question Archer", desc: "Complete a round of Game 3 (?).", img: "https://i.postimg.cc/rw9h04W2/bow.png" },
+        { id: "b_game4", title: "Blitz Warrior", desc: "Complete the 15-task Mixed Blitz.", img: "https://i.postimg.cc/7ZNBGzzj/iron-chestplate.png" },
+        { id: "b_game5", title: "Master Enchanter", desc: "Complete Game 5 (-ING Spelling).", img: "https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png" },
+        { id: "b_decorator", title: "Room Designer", desc: "Buy 3 furniture items for your room.", img: "https://i.postimg.cc/Nfk528sV/minecraft-bed-design-removebg-preview.png" },
+        { id: "b_rich", title: "Diamond Hero", desc: "Earn 50 total Diamonds.", img: "https://i.postimg.cc/SsJr8Y4V/Diamond-removebg-preview.png" }
+      ],
+
+      // GAME 1: Affirmative (+) — 50 Questions (Articles NEVER split from nouns!)
+      game1Pool: [
+        { type: "mc", q: "I ___ holding a sword right now.", options: ["am", "is", "are"], ans: "am", hint: "'I' always goes with 'am'!", mob: "steve" },
+        { type: "mc", q: "Steve ___ mining stone with a pickaxe.", options: ["am", "is", "are"], ans: "is", hint: "Steve is 'He', so use 'is'.", mob: "steve" },
+        { type: "mc", q: "They ___ shooting arrows at the target.", options: ["am", "is", "are"], ans: "are", hint: "'They' goes with 'are'.", mob: "skeleton" },
+        { type: "mc", q: "We ___ building a strong base now.", options: ["am", "is", "are"], ans: "are", hint: "'We' goes with 'are'.", mob: "alex" },
+        { type: "mc", q: "The creeper ___ walking to the house.", options: ["am", "is", "are"], ans: "is", hint: "The creeper is 'It', so use 'is'.", mob: "creeper" },
+        { type: "mc", q: "You ___ wearing iron armor today.", options: ["am", "is", "are"], ans: "are", hint: "'You' always goes with 'are'.", mob: "steve" },
+        { type: "mc", q: "Alex ___ crafting a new bow.", options: ["am", "is", "are"], ans: "is", hint: "Alex is 'She', so use 'is'.", mob: "alex" },
+        { type: "mc", q: "I ___ digging dirt with a shovel.", options: ["am", "is", "are"], ans: "am", hint: "'I' goes with 'am'.", mob: "steve" },
+        { type: "mc", q: "The wolves ___ helping us fight.", options: ["am", "is", "are"], ans: "are", hint: "The wolves = They -> 'are'.", mob: "wolf" },
+        { type: "mc", q: "He ___ putting on his iron boots.", options: ["am", "is", "are"], ans: "is", hint: "'He' goes with 'is'.", mob: "steve" },
+        { type: "mc", q: "Look! She ___ chopping wood with an axe.", options: ["am", "is", "are"], ans: "is", hint: "'She' goes with 'is'.", mob: "alex" },
+        { type: "mc", q: "I am ___ my iron shield right now.", options: ["holding", "hold", "holds"], ans: "holding", hint: "Present Continuous uses Verb + ing: holding!", mob: "steve" },
+        { type: "mc", q: "Steve is ___ a deep hole with a shovel.", options: ["digging", "diging", "dig"], ans: "digging", hint: "Dig doubles the 'g': digging!", mob: "steve" },
+        { type: "mc", q: "Alex is ___ an arrow at the zombie.", options: ["shooting", "shoot", "shoots"], ans: "shooting", hint: "Add -ing to shoot -> shooting!", mob: "alex" },
+        { type: "mc", q: "We are ___ strong iron helmets.", options: ["wearing", "wear", "wears"], ans: "wearing", hint: "Add -ing to wear -> wearing!", mob: "steve" },
+        { type: "mc", q: "The skeleton ___ pulling its bow.", options: ["is", "are", "am"], ans: "is", hint: "One skeleton (It) -> 'is'.", mob: "skeleton" },
+        { type: "mc", q: "My cat ___ chasing the creeper away!", options: ["is", "are", "am"], ans: "is", hint: "One cat (It) -> 'is'.", mob: "cat" },
+        { type: "mc", q: "The zombies ___ running toward our gate!", options: ["are", "is", "am"], ans: "are", hint: "Zombies (plural) -> 'are'.", mob: "zombie" },
+        { type: "mc", q: "I ___ making a diamond pickaxe now.", options: ["am", "is", "are"], ans: "am", hint: "'I' goes with 'am'.", mob: "steve" },
+        { type: "mc", q: "Look! The Iron Golem ___ protecting the village.", options: ["is", "are", "am"], ans: "is", hint: "The Iron Golem (It) -> 'is'.", mob: "golem" },
+        { type: "mc", q: "You are ___ away from the spider!", options: ["running", "runing", "run"], ans: "running", hint: "Run doubles the 'n': running!", mob: "spider" },
+        { type: "mc", q: "She is ___ a new iron sword.", options: ["making", "makeing", "make"], ans: "making", hint: "Drop silent 'e' in make -> making!", mob: "alex" },
+        { type: "mc", q: "They are ___ behind a tall wall.", options: ["hiding", "hideing", "hide"], ans: "hiding", hint: "Drop silent 'e' in hide -> hiding!", mob: "villager" },
+        { type: "mc", q: "Steve is ___ oak trees with an axe.", options: ["chopping", "choping", "chop"], ans: "chopping", hint: "Chop doubles the 'p': chopping!", mob: "steve" },
+        { type: "mc", q: "The axolotl ___ swimming in the water.", options: ["is", "are", "am"], ans: "is", hint: "One axolotl (It) -> 'is'.", mob: "axolotl" },
+        { type: "mc", q: "We ___ crafting arrows at the moment.", options: ["are", "is", "am"], ans: "are", hint: "'We' goes with 'are'.", mob: "alex" },
+        { type: "mc", q: "Listen! The villager ___ trading armor.", options: ["is", "are", "am"], ans: "is", hint: "One villager (He) -> 'is'.", mob: "villager" },
+        { type: "mc", q: "I am ___ on my new boots now.", options: ["putting", "puting", "put"], ans: "putting", hint: "Put doubles the 't': putting!", mob: "steve" },
+        { type: "mc", q: "The bees ___ flying over our base.", options: ["are", "is", "am"], ans: "are", hint: "Bees (plural) -> 'are'.", mob: "bee" },
+        { type: "mc", q: "An Enderman ___ picking up a block.", options: ["is", "are", "am"], ans: "is", hint: "One Enderman -> 'is'.", mob: "enderman" },
+        { type: "mc", q: "They ___ fixing their iron shields.", options: ["are", "is", "am"], ans: "are", hint: "'They' goes with 'are'.", mob: "alex" },
+        { type: "mc", q: "He is ___ a diamond pickaxe now.", options: ["using", "useing", "use"], ans: "using", hint: "Drop silent 'e' in use -> using!", mob: "steve" },
+        { type: "mc", q: "You ___ fighting very bravely!", options: ["are", "is", "am"], ans: "are", hint: "'You' goes with 'are'.", mob: "alex" },
+        { type: "mc", q: "The fox ___ jumping over the fence.", options: ["is", "are", "am"], ans: "is", hint: "One fox (It) -> 'is'.", mob: "fox" },
+        { type: "mc", q: "I ___ checking my armor right now.", options: ["am", "is", "are"], ans: "am", hint: "'I' goes with 'am'.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["I", "am", "holding", "a sword"], ans: "I am holding a sword", hint: "Order: Who + am + Action-ing + Object.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["Steve", "is", "mining", "stone"], ans: "Steve is mining stone", hint: "Order: Steve + is + mining + stone.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["They", "are", "shooting", "arrows"], ans: "They are shooting arrows", hint: "Order: They + are + shooting + arrows.", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["We", "are", "crafting", "armor"], ans: "We are crafting armor", hint: "Order: We + are + crafting + armor.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["The zombie", "is", "running", "now"], ans: "The zombie is running now", hint: "Order: The zombie + is + running + now.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["You", "are", "using", "a shield"], ans: "You are using a shield", hint: "Order: You + are + using + a shield.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["Alex", "is", "chopping", "wood"], ans: "Alex is chopping wood", hint: "Order: Alex + is + chopping + wood.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["I", "am", "wearing", "a helmet"], ans: "I am wearing a helmet", hint: "Order: I + am + wearing + a helmet.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["The skeleton", "is", "attacking", "us"], ans: "The skeleton is attacking us", hint: "Order: The skeleton + is + attacking + us.", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["She", "is", "digging", "with", "a shovel"], ans: "She is digging with a shovel", hint: "Order: She + is + digging + with + a shovel.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["He", "is", "pulling", "a bow"], ans: "He is pulling a bow", hint: "Order: He + is + pulling + a bow.", mob: "steve" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["My wolf", "is", "helping", "me"], ans: "My wolf is helping me", hint: "Order: My wolf + is + helping + me.", mob: "wolf" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["They", "are", "wearing", "iron boots"], ans: "They are wearing iron boots", hint: "Order: They + are + wearing + iron boots.", mob: "alex" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["The creeper", "is", "hiding", "now"], ans: "The creeper is hiding now", hint: "Order: The creeper + is + hiding + now.", mob: "creeper" },
+        { type: "scramble", prompt: "Build the affirmative sentence:", words: ["I", "am", "carrying", "an axe"], ans: "I am carrying an axe", hint: "Order: I + am + carrying + an axe.", mob: "steve" }
+      ],
+
+      // GAME 2: Negative (-) — 50 Questions (Articles NEVER split from nouns!)
+      game2Pool: [
+        { type: "mc", q: "I ___ holding a sword right now.", options: ["am not", "isn't", "aren't"], ans: "am not", hint: "'I' takes 'am not'.", mob: "steve" },
+        { type: "mc", q: "Steve ___ mining stone today.", options: ["am not", "isn't", "aren't"], ans: "isn't", hint: "Steve (He) takes 'isn't'.", mob: "steve" },
+        { type: "mc", q: "They ___ shooting arrows at us.", options: ["am not", "isn't", "aren't"], ans: "aren't", hint: "They takes 'aren't'.", mob: "skeleton" },
+        { type: "mc", q: "We ___ building a dirt house.", options: ["am not", "isn't", "aren't"], ans: "aren't", hint: "We takes 'aren't'.", mob: "alex" },
+        { type: "mc", q: "The creeper ___ exploding now.", options: ["am not", "isn't", "aren't"], ans: "isn't", hint: "The creeper (It) takes 'isn't'.", mob: "creeper" },
+        { type: "mc", q: "You ___ wearing diamond armor.", options: ["am not", "isn't", "aren't"], ans: "aren't", hint: "You takes 'aren't'.", mob: "steve" },
+        { type: "mc", q: "Alex ___ crafting a shovel right now.", options: ["am not", "isn't", "aren't"], ans: "isn't", hint: "Alex (She) takes 'isn't'.", mob: "alex" },
+        { type: "mc", q: "I ___ digging straight down.", options: ["am not", "isn't", "aren't"], ans: "am not", hint: "'I' takes 'am not'.", mob: "steve" },
+        { type: "mc", q: "The zombies ___ walking fast.", options: ["am not", "isn't", "aren't"], ans: "aren't", hint: "Zombies (plural) takes 'aren't'.", mob: "zombie" },
+        { type: "mc", q: "He ___ putting on iron boots.", options: ["am not", "isn't", "aren't"], ans: "isn't", hint: "He takes 'isn't'.", mob: "steve" },
+        { type: "mc", q: "She ___ using a pickaxe at the moment.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "She takes 'isn't'.", mob: "alex" },
+        { type: "mc", q: "My cat ___ sleeping right now.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "One cat (It) takes 'isn't'.", mob: "cat" },
+        { type: "mc", q: "The villagers ___ fighting the monsters.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "Villagers (plural) takes 'aren't'.", mob: "villager" },
+        { type: "mc", q: "I ___ dropping my iron shield.", options: ["am not", "isn't", "aren't"], ans: "am not", hint: "'I' takes 'am not'.", mob: "steve" },
+        { type: "mc", q: "The skeleton ___ holding an axe.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "One skeleton (It) takes 'isn't'.", mob: "skeleton" },
+        { type: "mc", q: "We ___ hiding in the cave now.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "We takes 'aren't'.", mob: "alex" },
+        { type: "mc", q: "The Iron Golem ___ running away.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "One Golem (It) takes 'isn't'.", mob: "golem" },
+        { type: "mc", q: "You ___ breaking the wooden door.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "You takes 'aren't'.", mob: "steve" },
+        { type: "mc", q: "The wolf ___ barking at Alex.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "One wolf (It) takes 'isn't'.", mob: "wolf" },
+        { type: "mc", q: "They ___ wearing helmets right now.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "They takes 'aren't'.", mob: "zombie" },
+        { type: "mc", q: "Steve isn't ___ his bow right now.", options: ["using", "useing", "uses"], ans: "using", hint: "Drop silent 'e' in use -> using!", mob: "steve" },
+        { type: "mc", q: "I am not ___ with a shovel now.", options: ["digging", "diging", "dig"], ans: "digging", hint: "Dig doubles 'g' -> digging!", mob: "steve" },
+        { type: "mc", q: "Alex isn't ___ wood today.", options: ["chopping", "choping", "chop"], ans: "chopping", hint: "Chop doubles 'p' -> chopping!", mob: "alex" },
+        { type: "mc", q: "We aren't ___ away from the battle.", options: ["running", "runing", "run"], ans: "running", hint: "Run doubles 'n' -> running!", mob: "alex" },
+        { type: "mc", q: "He isn't ___ an iron sword now.", options: ["making", "makeing", "makes"], ans: "making", hint: "Drop silent 'e' in make -> making!", mob: "steve" },
+        { type: "mc", q: "An Enderman ___ swimming in water!", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "One Enderman -> 'isn't'.", mob: "enderman" },
+        { type: "mc", q: "The spiders ___ climbing our base.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "Spiders (plural) -> 'aren't'.", mob: "spider" },
+        { type: "mc", q: "I ___ losing my arrows!", options: ["am not", "isn't", "aren't"], ans: "am not", hint: "'I' takes 'am not'.", mob: "alex" },
+        { type: "mc", q: "She ___ carrying a heavy shield.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "She takes 'isn't'.", mob: "alex" },
+        { type: "mc", q: "You ___ sleeping during the attack!", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "You takes 'aren't'.", mob: "steve" },
+        { type: "mc", q: "The fox ___ stealing my boots.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "One fox (It) takes 'isn't'.", mob: "fox" },
+        { type: "mc", q: "We ___ wasting our arrows.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "We takes 'aren't'.", mob: "alex" },
+        { type: "mc", q: "The Warden ___ coming up here.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "The Warden (It) takes 'isn't'.", mob: "warden" },
+        { type: "mc", q: "They ___ opening the iron chest.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "They takes 'aren't'.", mob: "villager" },
+        { type: "mc", q: "I ___ fighting without my armor.", options: ["am not", "isn't", "aren't"], ans: "am not", hint: "'I' takes 'am not'.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["I", "am not", "holding", "a sword"], ans: "I am not holding a sword", hint: "Order: I + am not + holding + a sword.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["Steve", "isn't", "mining", "stone"], ans: "Steve isn't mining stone", hint: "Order: Steve + isn't + mining + stone.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["They", "aren't", "shooting", "arrows"], ans: "They aren't shooting arrows", hint: "Order: They + aren't + shooting + arrows.", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["We", "aren't", "crafting", "armor"], ans: "We aren't crafting armor", hint: "Order: We + aren't + crafting + armor.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["The zombie", "isn't", "running", "now"], ans: "The zombie isn't running now", hint: "Order: The zombie + isn't + running + now.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["You", "aren't", "using", "a shield"], ans: "You aren't using a shield", hint: "Order: You + aren't + using + a shield.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["Alex", "isn't", "chopping", "wood"], ans: "Alex isn't chopping wood", hint: "Order: Alex + isn't + chopping + wood.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["I", "am not", "wearing", "a helmet"], ans: "I am not wearing a helmet", hint: "Order: I + am not + wearing + a helmet.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["The skeleton", "isn't", "attacking", "us"], ans: "The skeleton isn't attacking us", hint: "Order: The skeleton + isn't + attacking + us.", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["We", "aren't", "hiding", "now"], ans: "We aren't hiding now", hint: "Order: We + aren't + hiding + now.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["She", "isn't", "holding", "a shovel"], ans: "She isn't holding a shovel", hint: "Order: She + isn't + holding + a shovel.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["He", "isn't", "pulling", "a bow"], ans: "He isn't pulling a bow", hint: "Order: He + isn't + pulling + a bow.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["The creeper", "isn't", "walking", "here"], ans: "The creeper isn't walking here", hint: "Order: The creeper + isn't + walking + here.", mob: "creeper" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["My cat", "isn't", "sleeping", "now"], ans: "My cat isn't sleeping now", hint: "Order: My cat + isn't + sleeping + now.", mob: "cat" },
+        { type: "scramble", prompt: "Build the negative sentence:", words: ["They", "aren't", "wearing", "iron boots"], ans: "They aren't wearing iron boots", hint: "Order: They + aren't + wearing + iron boots.", mob: "steve" }
+      ],
+
+      // GAME 3: Questions (?) — 50 Questions (Articles NEVER split from nouns!)
+      game3Pool: [
+        { type: "mc", q: "___ I holding the right sword?", options: ["Am", "Is", "Are"], ans: "Am", hint: "Questions with 'I' start with 'Am'.", mob: "steve" },
+        { type: "mc", q: "___ Steve mining diamonds now?", options: ["Am", "Is", "Are"], ans: "Is", hint: "Steve (He) -> start with 'Is'.", mob: "steve" },
+        { type: "mc", q: "___ they shooting arrows?", options: ["Am", "Is", "Are"], ans: "Are", hint: "They -> start with 'Are'.", mob: "skeleton" },
+        { type: "mc", q: "___ we building a safe base?", options: ["Am", "Is", "Are"], ans: "Are", hint: "We -> start with 'Are'.", mob: "alex" },
+        { type: "mc", q: "___ the creeper walking closer?", options: ["Am", "Is", "Are"], ans: "Is", hint: "The creeper (It) -> start with 'Is'.", mob: "creeper" },
+        { type: "mc", q: "___ you wearing iron armor?", options: ["Am", "Is", "Are"], ans: "Are", hint: "You -> start with 'Are'.", mob: "steve" },
+        { type: "mc", q: "___ Alex crafting a bow?", options: ["Am", "Is", "Are"], ans: "Is", hint: "Alex (She) -> start with 'Is'.", mob: "alex" },
+        { type: "mc", q: "___ I digging with a shovel?", options: ["Am", "Is", "Are"], ans: "Am", hint: "'I' -> start with 'Am'.", mob: "steve" },
+        { type: "mc", q: "___ the zombies breaking the door?", options: ["Am", "Is", "Are"], ans: "Are", hint: "Zombies (plural) -> start with 'Are'.", mob: "zombie" },
+        { type: "mc", q: "___ he putting on his boots?", options: ["Am", "Is", "Are"], ans: "Is", hint: "He -> start with 'Is'.", mob: "steve" },
+        { type: "mc", q: "___ she blocking with a shield?", options: ["Is", "Are", "Am"], ans: "Is", hint: "She -> start with 'Is'.", mob: "alex" },
+        { type: "mc", q: "___ the wolf guarding our base?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One wolf (It) -> 'Is'.", mob: "wolf" },
+        { type: "mc", q: "___ the villagers hiding inside?", options: ["Are", "Is", "Am"], ans: "Are", hint: "Villagers (plural) -> 'Are'.", mob: "villager" },
+        { type: "mc", q: "___ you using an iron axe?", options: ["Are", "Is", "Am"], ans: "Are", hint: "You -> start with 'Are'.", mob: "steve" },
+        { type: "mc", q: "___ the Iron Golem fighting the zombie?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One Golem (It) -> 'Is'.", mob: "golem" },
+        { type: "mc", q: "___ we making more arrows?", options: ["Are", "Is", "Am"], ans: "Are", hint: "We -> start with 'Are'.", mob: "alex" },
+        { type: "mc", q: "___ my cat scaring the creeper?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One cat (It) -> 'Is'.", mob: "cat" },
+        { type: "mc", q: "___ the spiders climbing the wall?", options: ["Are", "Is", "Am"], ans: "Are", hint: "Spiders (plural) -> 'Are'.", mob: "spider" },
+        { type: "mc", q: "Is Steve ___ a diamond pickaxe?", options: ["holding", "hold", "holds"], ans: "holding", hint: "In Present Continuous questions, use Verb + ing: holding!", mob: "steve" },
+        { type: "mc", q: "Are you ___ a strong helmet?", options: ["wearing", "wear", "wears"], ans: "wearing", hint: "Use Verb + ing: wearing!", mob: "alex" },
+        { type: "mc", q: "Is Alex ___ an arrow right now?", options: ["shooting", "shoot", "shoots"], ans: "shooting", hint: "Use Verb + ing: shooting!", mob: "alex" },
+        { type: "mc", q: "Are they ___ with iron shovels?", options: ["digging", "diging", "dig"], ans: "digging", hint: "Dig doubles 'g' -> digging!", mob: "steve" },
+        { type: "mc", q: "Is he ___ wood with an axe?", options: ["chopping", "choping", "chop"], ans: "chopping", hint: "Chop doubles 'p' -> chopping!", mob: "steve" },
+        { type: "mc", q: "Are we ___ a new iron shield?", options: ["making", "makeing", "make"], ans: "making", hint: "Drop silent 'e' in make -> making!", mob: "alex" },
+        { type: "mc", q: "Is the skeleton ___ away?", options: ["running", "runing", "run"], ans: "running", hint: "Run doubles 'n' -> running!", mob: "skeleton" },
+        { type: "mc", q: "___ an Enderman looking at us?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One Enderman -> 'Is'.", mob: "enderman" },
+        { type: "mc", q: "___ I wearing the right boots?", options: ["Am", "Is", "Are"], ans: "Am", hint: "'I' -> start with 'Am'.", mob: "steve" },
+        { type: "mc", q: "___ the axolotl swimming fast?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One axolotl -> 'Is'.", mob: "axolotl" },
+        { type: "mc", q: "___ the bees flying near the door?", options: ["Are", "Is", "Am"], ans: "Are", hint: "Bees (plural) -> 'Are'.", mob: "bee" },
+        { type: "mc", q: "___ the fox hiding behind a tree?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One fox -> 'Is'.", mob: "fox" },
+        { type: "mc", q: "___ you sharpening your sword?", options: ["Are", "Is", "Am"], ans: "Are", hint: "You -> 'Are'.", mob: "steve" },
+        { type: "mc", q: "___ she carrying iron armor?", options: ["Is", "Are", "Am"], ans: "Is", hint: "She -> 'Is'.", mob: "alex" },
+        { type: "mc", q: "___ they protecting the base?", options: ["Are", "Is", "Am"], ans: "Are", hint: "They -> 'Are'.", mob: "golem" },
+        { type: "mc", q: "___ he fixing his broken bow?", options: ["Is", "Are", "Am"], ans: "Is", hint: "He -> 'Is'.", mob: "steve" },
+        { type: "mc", q: "___ the Blaze shooting fire?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One Blaze -> 'Is'.", mob: "blaze" },
+        { type: "scramble", prompt: "Build the question:", words: ["Am", "I", "holding", "a sword", "?"], ans: "Am I holding a sword ?", hint: "Start with Am -> Am I holding a sword ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Is", "Steve", "mining", "stone", "?"], ans: "Is Steve mining stone ?", hint: "Start with Is -> Is Steve mining stone ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Are", "they", "shooting", "arrows", "?"], ans: "Are they shooting arrows ?", hint: "Start with Are -> Are they shooting arrows ?", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the question:", words: ["Are", "we", "crafting", "armor", "?"], ans: "Are we crafting armor ?", hint: "Start with Are -> Are we crafting armor ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the question:", words: ["Is", "the zombie", "running", "now", "?"], ans: "Is the zombie running now ?", hint: "Start with Is -> Is the zombie running now ?", mob: "zombie" },
+        { type: "scramble", prompt: "Build the question:", words: ["Are", "you", "using", "a shield", "?"], ans: "Are you using a shield ?", hint: "Start with Are -> Are you using a shield ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Is", "Alex", "chopping", "wood", "?"], ans: "Is Alex chopping wood ?", hint: "Start with Is -> Is Alex chopping wood ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the question:", words: ["Am", "I", "wearing", "a helmet", "?"], ans: "Am I wearing a helmet ?", hint: "Start with Am -> Am I wearing a helmet ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Is", "the skeleton", "attacking", "us", "?"], ans: "Is the skeleton attacking us ?", hint: "Start with Is -> Is the skeleton attacking us ?", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the question:", words: ["Are", "we", "hiding", "now", "?"], ans: "Are we hiding now ?", hint: "Start with Are -> Are we hiding now ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the question:", words: ["Is", "she", "holding", "a pickaxe", "?"], ans: "Is she holding a pickaxe ?", hint: "Start with Is -> Is she holding a pickaxe ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the question:", words: ["Are", "you", "digging", "with", "a shovel", "?"], ans: "Are you digging with a shovel ?", hint: "Start with Are -> Are you digging with a shovel ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Is", "he", "pulling", "a bow", "?"], ans: "Is he pulling a bow ?", hint: "Start with Is -> Is he pulling a bow ?", mob: "steve" },
+        { type: "scramble", prompt: "Build the question:", words: ["Is", "the creeper", "walking", "here", "?"], ans: "Is the creeper walking here ?", hint: "Start with Is -> Is the creeper walking here ?", mob: "creeper" },
+        { type: "scramble", prompt: "Build the question:", words: ["Are", "they", "wearing", "iron boots", "?"], ans: "Are they wearing iron boots ?", hint: "Start with Are -> Are they wearing iron boots ?", mob: "alex" }
+      ],
+
+      // GAME 4: Mixed Blitz (+ / - / ?) — 50 Questions (Articles NEVER split from nouns!)
+      game4Pool: [
+        { type: "mc", q: "I ___ holding a diamond sword right now.", options: ["am", "is", "are"], ans: "am", hint: "Affirmative (+): I am.", mob: "steve" },
+        { type: "mc", q: "Steve ___ mining stone at the moment.", options: ["am not", "isn't", "aren't"], ans: "isn't", hint: "Negative (-): Steve isn't.", mob: "steve" },
+        { type: "mc", q: "___ they shooting arrows right now?", options: ["Am", "Is", "Are"], ans: "Are", hint: "Question (?): Are they?", mob: "skeleton" },
+        { type: "mc", q: "The zombie ___ running very fast!", options: ["am", "is", "are"], ans: "is", hint: "One zombie (It) -> is.", mob: "zombie" },
+        { type: "mc", q: "You ___ using a shield right now.", options: ["am not", "isn't", "aren't"], ans: "aren't", hint: "You -> aren't.", mob: "steve" },
+        { type: "mc", q: "___ I wearing my iron helmet?", options: ["Am", "Is", "Are"], ans: "Am", hint: "Question with I -> Am I?", mob: "steve" },
+        { type: "mc", q: "The skeletons ___ attacking our base.", options: ["am not", "isn't", "aren't"], ans: "aren't", hint: "Skeletons (plural) -> aren't.", mob: "skeleton" },
+        { type: "mc", q: "She ___ digging a hole with a shovel.", options: ["am", "is", "are"], ans: "is", hint: "She -> is.", mob: "alex" },
+        { type: "mc", q: "They ___ building a house right now.", options: ["am not", "isn't", "aren't"], ans: "aren't", hint: "They -> aren't.", mob: "alex" },
+        { type: "mc", q: "___ the wolf barking at the skeleton?", options: ["Am", "Is", "Are"], ans: "Is", hint: "One wolf (It) -> Is.", mob: "wolf" },
+        { type: "mc", q: "We ___ looking at the base map.", options: ["am", "is", "are"], ans: "are", hint: "We -> are.", mob: "alex" },
+        { type: "mc", q: "He ___ listening to the creeper!", options: ["am not", "isn't", "aren't"], ans: "isn't", hint: "He -> isn't.", mob: "creeper" },
+        { type: "mc", q: "The creeper ___ hiding behind the tree.", options: ["am", "is", "are"], ans: "is", hint: "The creeper (It) -> is.", mob: "creeper" },
+        { type: "mc", q: "___ I holding the axe correctly?", options: ["Am", "Is", "Are"], ans: "Am", hint: "I -> Am I?", mob: "steve" },
+        { type: "mc", q: "Alex is ___ a strong iron shield.", options: ["making", "makeing", "make"], ans: "making", hint: "Drop silent 'e' in make -> making!", mob: "alex" },
+        { type: "mc", q: "Steve isn't ___ his pickaxe right now.", options: ["using", "useing", "use"], ans: "using", hint: "Drop silent 'e' in use -> using!", mob: "steve" },
+        { type: "mc", q: "Are you ___ on your iron boots?", options: ["putting", "puting", "put"], ans: "putting", hint: "Put doubles 't' -> putting!", mob: "steve" },
+        { type: "mc", q: "Look! They are ___ deep underground!", options: ["digging", "diging", "dig"], ans: "digging", hint: "Dig doubles 'g' -> digging!", mob: "steve" },
+        { type: "mc", q: "The axolotl is ___ in cool water.", options: ["swimming", "swiming", "swim"], ans: "swimming", hint: "Swim doubles 'm' -> swimming!", mob: "axolotl" },
+        { type: "mc", q: "___ the Iron Golem protecting us?", options: ["Is", "Are", "Am"], ans: "Is", hint: "One Golem -> Is.", mob: "golem" },
+        { type: "mc", q: "I ___ dropping my diamond sword!", options: ["am not", "isn't", "aren't"], ans: "am not", hint: "I -> am not.", mob: "steve" },
+        { type: "mc", q: "She is ___ wood with an iron axe.", options: ["chopping", "choping", "chop"], ans: "chopping", hint: "Chop doubles 'p' -> chopping!", mob: "alex" },
+        { type: "mc", q: "We ___ crafting arrows right now.", options: ["are", "is", "am"], ans: "are", hint: "We -> are.", mob: "alex" },
+        { type: "mc", q: "My cat ___ chasing the creeper!", options: ["is", "are", "am"], ans: "is", hint: "One cat -> is.", mob: "cat" },
+        { type: "mc", q: "The villagers ___ fighting with swords.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "Villagers (plural) -> aren't.", mob: "villager" },
+        { type: "mc", q: "___ you wearing iron armor today?", options: ["Are", "Is", "Am"], ans: "Are", hint: "You -> Are.", mob: "steve" },
+        { type: "mc", q: "He ___ pulling his bow right now.", options: ["is", "are", "am"], ans: "is", hint: "He -> is.", mob: "steve" },
+        { type: "mc", q: "The spiders ___ climbing the roof.", options: ["are", "is", "am"], ans: "are", hint: "Spiders (plural) -> are.", mob: "spider" },
+        { type: "mc", q: "An Enderman ___ swimming in the lake.", options: ["isn't", "aren't", "am not"], ans: "isn't", hint: "Endermen hate water! One Enderman -> isn't.", mob: "enderman" },
+        { type: "mc", q: "___ the bees flying over the garden?", options: ["Are", "Is", "Am"], ans: "Are", hint: "Bees (plural) -> Are.", mob: "bee" },
+        { type: "mc", q: "I am ___ behind my iron shield.", options: ["hiding", "hideing", "hide"], ans: "hiding", hint: "Drop silent 'e' -> hiding!", mob: "steve" },
+        { type: "mc", q: "The fox ___ sleeping under the tree.", options: ["is", "are", "am"], ans: "is", hint: "One fox -> is.", mob: "fox" },
+        { type: "mc", q: "We ___ wasting our golden apples.", options: ["aren't", "isn't", "am not"], ans: "aren't", hint: "We -> aren't.", mob: "alex" },
+        { type: "mc", q: "___ Alex mining with a pickaxe?", options: ["Is", "Are", "Am"], ans: "Is", hint: "Alex (She) -> Is.", mob: "alex" },
+        { type: "mc", q: "You are ___ very fast!", options: ["running", "runing", "run"], ans: "running", hint: "Run doubles 'n' -> running!", mob: "steve" },
+        { type: "scramble", prompt: "Build the sentence (+):", words: ["We", "are", "crafting", "armor"], ans: "We are crafting armor", hint: "We + are + crafting + armor.", mob: "alex" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Is", "Alex", "chopping", "wood", "?"], ans: "Is Alex chopping wood ?", hint: "Is + Alex + chopping + wood + ?", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative (-):", words: ["We", "aren't", "hiding", "now"], ans: "We aren't hiding now", hint: "We + aren't + hiding + now.", mob: "steve" },
+        { type: "scramble", prompt: "Build the sentence (+):", words: ["I", "am", "putting on", "my boots"], ans: "I am putting on my boots", hint: "I + am + putting on + my boots.", mob: "steve" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Are", "you", "swimming", "now", "?"], ans: "Are you swimming now ?", hint: "Are + you + swimming + now + ?", mob: "axolotl" },
+        { type: "scramble", prompt: "Build the negative (-):", words: ["They", "aren't", "fighting", "now"], ans: "They aren't fighting now", hint: "They + aren't + fighting + now.", mob: "zombie" },
+        { type: "scramble", prompt: "Build the sentence (+):", words: ["Steve", "is", "holding", "a pickaxe"], ans: "Steve is holding a pickaxe", hint: "Steve + is + holding + a pickaxe.", mob: "steve" },
+        { type: "scramble", prompt: "Build the negative (-):", words: ["I", "am not", "using", "a shovel"], ans: "I am not using a shovel", hint: "I + am not + using + a shovel.", mob: "steve" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Is", "the creeper", "walking", "here", "?"], ans: "Is the creeper walking here ?", hint: "Is + the creeper + walking + here + ?", mob: "creeper" },
+        { type: "scramble", prompt: "Build the sentence (+):", words: ["She", "is", "shooting", "an arrow"], ans: "She is shooting an arrow", hint: "She + is + shooting + an arrow.", mob: "alex" },
+        { type: "scramble", prompt: "Build the negative (-):", words: ["He", "isn't", "wearing", "a helmet"], ans: "He isn't wearing a helmet", hint: "He + isn't + wearing + a helmet.", mob: "steve" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Are", "they", "holding", "shields", "?"], ans: "Are they holding shields ?", hint: "Are + they + holding + shields + ?", mob: "golem" },
+        { type: "scramble", prompt: "Build the sentence (+):", words: ["The wolf", "is", "guarding", "the base"], ans: "The wolf is guarding the base", hint: "The wolf + is + guarding + the base.", mob: "wolf" },
+        { type: "scramble", prompt: "Build the negative (-):", words: ["My cat", "isn't", "sleeping", "now"], ans: "My cat isn't sleeping now", hint: "My cat + isn't + sleeping + now.", mob: "cat" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Am", "I", "holding", "an axe", "?"], ans: "Am I holding an axe ?", hint: "Am + I + holding + an axe + ?", mob: "steve" }
+      ],
+
+      // GAME 5: Enchanting Table (30 Verified -ING Spelling Words!)
+      game5Pool: [
+        { base: "mine", target: "mining", tool: "https://i.postimg.cc/13KWnFFL/iron-pickaxe.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "make", target: "making", tool: "https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "hide", target: "hiding", tool: "https://i.postimg.cc/7ZNBGz7y/shield.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "use", target: "using", tool: "https://i.postimg.cc/y8TfgR9K/iron-axe.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "ride", target: "riding", tool: "https://i.postimg.cc/13KWnF6s/iron-boots.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "take", target: "taking", tool: "https://i.postimg.cc/vZvPgnnJ/iron-sword.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "move", target: "moving", tool: "https://i.postimg.cc/13KWnF6s/iron-boots.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "save", target: "saving", tool: "https://i.postimg.cc/7ZNBGzzj/iron-chestplate.png", hint: "Drop the silent 'e' before adding -ing!" },
+        { base: "dig", target: "digging", tool: "https://i.postimg.cc/bwR6Dnbc/iron-shovel.png", hint: "Short CVC word: double the 'g'!" },
+        { base: "run", target: "running", tool: "https://i.postimg.cc/13KWnF6s/iron-boots.png", hint: "Short CVC word: double the 'n'!" },
+        { base: "swim", target: "swimming", tool: "https://i.postimg.cc/cLcDg3Yq/iron-helmet.png", hint: "Short CVC word: double the 'm'!" },
+        { base: "chop", target: "chopping", tool: "https://i.postimg.cc/y8TfgR9K/iron-axe.png", hint: "Short CVC word: double the 'p'!" },
+        { base: "cut", target: "cutting", tool: "https://i.postimg.cc/vZvPgnnJ/iron-sword.png", hint: "Short CVC word: double the 't'!" },
+        { base: "put", target: "putting", tool: "https://i.postimg.cc/cLcDg3Yq/iron-helmet.png", hint: "Short CVC word: double the 't'!" },
+        { base: "hit", target: "hitting", tool: "https://i.postimg.cc/vZvPgnnJ/iron-sword.png", hint: "Short CVC word: double the 't'!" },
+        { base: "sit", target: "sitting", tool: "https://i.postimg.cc/7ZNBGzzj/iron-chestplate.png", hint: "Short CVC word: double the 't'!" },
+        { base: "get", target: "getting", tool: "https://i.postimg.cc/52mPYzvV/arrow.png", hint: "Short CVC word: double the 't'!" },
+        { base: "stop", target: "stopping", tool: "https://i.postimg.cc/7ZNBGz7y/shield.png", hint: "Short CVC word: double the 'p'!" },
+        { base: "drop", target: "dropping", tool: "https://i.postimg.cc/13KWnFFL/iron-pickaxe.png", hint: "Short CVC word: double the 'p'!" },
+        { base: "fight", target: "fighting", tool: "https://i.postimg.cc/vZvPgnnJ/iron-sword.png", hint: "Just add -ing!" },
+        { base: "shoot", target: "shooting", tool: "https://i.postimg.cc/rw9h04W2/bow.png", hint: "Just add -ing!" },
+        { base: "craft", target: "crafting", tool: "https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png", hint: "Just add -ing!" },
+        { base: "hold", target: "holding", tool: "https://i.postimg.cc/7ZNBGz7y/shield.png", hint: "Just add -ing!" },
+        { base: "wear", target: "wearing", tool: "https://i.postimg.cc/7ZNBGzzj/iron-chestplate.png", hint: "Just add -ing!" },
+        { base: "build", target: "building", tool: "https://i.postimg.cc/13KWnFFL/iron-pickaxe.png", hint: "Just add -ing!" },
+        { base: "jump", target: "jumping", tool: "https://i.postimg.cc/13KWnF6s/iron-boots.png", hint: "Just add -ing!" },
+        { base: "play", target: "playing", tool: "https://i.postimg.cc/rw9h04W2/bow.png", hint: "Just add -ing!" },
+        { base: "look", target: "looking", tool: "https://i.postimg.cc/cLcDg3Yq/iron-helmet.png", hint: "Just add -ing!" },
+        { base: "walk", target: "walking", tool: "https://i.postimg.cc/13KWnF6s/iron-boots.png", hint: "Just add -ing!" },
+        { base: "sleep", target: "sleeping", tool: "https://i.postimg.cc/Nfk528sV/minecraft-bed-design-removebg-preview.png", hint: "Just add -ing!" }
+      ]
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT & LOCAL STORAGE
+       ========================================================================= */
+    const STORAGE_KEY = "mc_present_continuous_v4";
+
+    let appState = {
+      diamonds: 0,
+      totalDiamondsEarned: 0,
+      exploredMaterials: [],
+      unlockedBadges: [],
+      purchasedItems: [],
+      placedFurniture: [], // {id, shopId, xPct, yPct, scale, flipX, z}
+      certTheme: "bg1",
+      heroName: "Steve",
+      soundFX: true
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState.diamonds = parsed.diamonds || 0;
+          appState.totalDiamondsEarned = parsed.totalDiamondsEarned || appState.diamonds;
+          appState.exploredMaterials = Array.isArray(parsed.exploredMaterials) ? parsed.exploredMaterials : [];
+          appState.unlockedBadges = Array.isArray(parsed.unlockedBadges) ? parsed.unlockedBadges : [];
+          appState.purchasedItems = Array.isArray(parsed.purchasedItems) ? parsed.purchasedItems : [];
+          appState.placedFurniture = Array.isArray(parsed.placedFurniture) ? parsed.placedFurniture : [];
+          appState.certTheme = parsed.certTheme || "bg1";
+          appState.heroName = parsed.heroName || "Steve";
+        }
+      } catch (e) {
+        console.warn("Storage load error:", e);
+      }
+      updateHUD();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.warn("Storage save error:", e);
+      }
+      updateHUD();
+    }
+
+    function resetAllSavedProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      appState = {
+        diamonds: 0,
+        totalDiamondsEarned: 0,
+        exploredMaterials: [],
+        unlockedBadges: [],
+        purchasedItems: [],
+        placedFurniture: [],
+        certTheme: "bg1",
+        heroName: "Steve",
+        soundFX: true
+      };
+      selectedFurnId = null;
+      renderMaterialsGrid();
+      renderShopCatalog();
+      renderRoomFurniture();
+      renderBadgesGrid();
+      updateHUD();
+    }
+
+    function addDiamonds(amount) {
+      appState.diamonds += amount;
+      appState.totalDiamondsEarned += amount;
+      if (appState.totalDiamondsEarned >= 50) {
+        unlockBadge("b_rich");
+      }
+      saveState();
+      renderShopCatalog();
+    }
+
+    function unlockBadge(badgeId) {
+      if (!appState.unlockedBadges.includes(badgeId)) {
+        appState.unlockedBadges.push(badgeId);
+        playFanfareSound();
+        saveState();
+        renderBadgesGrid();
+      }
+    }
+
+    function updateHUD() {
+      const unlockedCount = appState.unlockedBadges.length;
+      const totalBadges = GAME_DATA.badges.length;
+
+      document.getElementById("hud-diamonds").textContent = appState.diamonds;
+      const shopBal = document.getElementById("shop-diamonds-balance");
+      if (shopBal) shopBal.textContent = appState.diamonds;
+
+      document.getElementById("hud-badges").textContent = `${unlockedCount}/${totalBadges}`;
+      document.getElementById("materials-explored-count").textContent = `${appState.exploredMaterials.length} / 10`;
+      document.getElementById("student-name-input").value = appState.heroName;
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+
+      const lockText = document.getElementById("finale-lock-progress-text");
+      const lockBar = document.getElementById("finale-lock-bar");
+      if (lockText && lockBar) {
+        lockText.textContent = `${unlockedCount} / ${totalBadges}`;
+        lockBar.style.width = `${Math.round((unlockedCount / totalBadges) * 100)}%`;
+      }
+
+      const lockedBanner = document.getElementById("finale-locked-banner");
+      const unlockedContent = document.getElementById("finale-unlocked-content");
+      if (unlockedCount >= totalBadges) {
+        lockedBanner.classList.add("hidden");
+        unlockedContent.classList.remove("hidden");
+      } else {
+        lockedBanner.classList.remove("hidden");
+        unlockedContent.classList.add("hidden");
+      }
+    }
+
+    /* =========================================================================
+       3. WEB AUDIO API & WEB SPEECH API (CLICK-ONLY)
+       ========================================================================= */
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSoundFX() {
+      appState.soundFX = !appState.soundFX;
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.innerHTML = appState.soundFX ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+      if (appState.soundFX) playClickSound();
+    }
+
+    function playTone(freq, duration = 0.12, type = "square", vol = 0.12) {
+      if (!appState.soundFX) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playClickSound() { playTone(440, 0.06, "square", 0.08); }
+    function playSuccessSound() {
+      playTone(523.25, 0.1, "triangle", 0.15);
+      setTimeout(() => playTone(659.25, 0.12, "triangle", 0.15), 90);
+      setTimeout(() => playTone(783.99, 0.2, "triangle", 0.17), 180);
+    }
+    function playErrorSound() {
+      playTone(190, 0.15, "sawtooth", 0.13);
+      setTimeout(() => playTone(145, 0.2, "sawtooth", 0.13), 130);
+    }
+    function playFanfareSound() {
+      [523.25, 659.25, 783.99, 1046.5].forEach((n, idx) => {
+        setTimeout(() => playTone(n, 0.18, "triangle", 0.16), idx * 95);
+      });
+    }
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const indicator = document.getElementById("speech-indicator");
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      utter.rate = 0.9;
+      utter.pitch = 1.05;
+
+      utter.onstart = () => {
+        indicator.classList.remove("hidden");
+        indicator.classList.add("flex");
+      };
+      utter.onend = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+      utter.onerror = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* =========================================================================
+       4. UTILITY: FISHER-YATES SHUFFLE
+       ========================================================================= */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /* =========================================================================
+       5. SECTION 1: 10 TOOLS & WEAPONS FLIP CARDS
+       ========================================================================= */
+    function renderMaterialsGrid() {
+      const grid = document.getElementById("materials-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.vocabulary.forEach((item) => {
+        const isExplored = appState.exploredMaterials.includes(item.id);
+        const card = document.createElement("div");
+        card.className = "flip-card cursor-pointer";
+        card.innerHTML = `
+          <div class="flip-card-inner" id="flip-${item.id}">
+            <!-- FRONT -->
+            <div class="flip-card-front mc-panel justify-between">
+              <div class="w-full flex justify-between items-center">
+                <span class="pixel-font text-[8px] bg-stone-800 text-lime-400 px-1.5 py-0.5">${isExplored ? '✓ READY' : 'GEAR'}</span>
+                <button onclick="event.stopPropagation(); speakText('${item.word}. ${item.example}')" class="mc-btn px-2 py-1 text-xs" style="min-height:32px;" title="Listen">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+              <img src="${item.img}" alt="${item.word}" class="w-16 h-16 object-contain my-1 drop-shadow-md">
+              <div class="text-center">
+                <h4 class="pixel-font text-xs text-stone-900">${item.word}</h4>
+                <p class="text-[11px] text-stone-700 font-semibold mt-1 leading-tight">"${item.example}"</p>
+              </div>
+              <div class="text-[9px] font-bold text-purple-800 uppercase tracking-wider">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip
+              </div>
+            </div>
+
+            <!-- BACK -->
+            <div class="flip-card-back mc-panel-dark justify-between border-4 border-purple-400">
+              <span class="pixel-font text-[8px] text-purple-300">UKRAINIAN</span>
+              <img src="${item.img}" alt="${item.word}" class="w-14 h-14 object-contain">
+              <div class="text-center">
+                <div class="text-xs text-stone-400 uppercase font-bold">${item.word}</div>
+                <div class="text-xl font-extrabold text-amber-300 mt-0.5">${item.ua}</div>
+              </div>
+              <div class="text-[9px] text-stone-300">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip back
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          playClickSound();
+          card.classList.toggle("flipped");
+          if (!appState.exploredMaterials.includes(item.id)) {
+            appState.exploredMaterials.push(item.id);
+            addDiamonds(2);
+            if (appState.exploredMaterials.length >= 10) {
+              unlockBadge("b_vocab");
+            }
+            saveState();
+            const badgeTag = card.querySelector(".flip-card-front span");
+            if (badgeTag) badgeTag.textContent = "✓ READY";
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       6. MINI-GAMES ENGINE (GAMES 1-4: 50-QUESTION POOLS, HINTS & SHUFFLE)
+       ========================================================================= */
+    let currentGameNum = 1;
+    let activeRoundQuestions = [];
+    let currentQIndex = 0;
+    let currentRoundScore = 0;
+    let questionMistakeMade = false;
+    let questionResolved = false;
+    let scramblePlacedWords = [];
+    let scrambleBankWords = [];
+
+    function selectMiniGame(gameNum) {
+      playClickSound();
+      currentGameNum = gameNum;
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`gbtn-${i}`);
+        if (i === gameNum) btn.classList.add("mc-btn-purple");
+        else btn.classList.remove("mc-btn-purple");
+      }
+
+      if (gameNum === 5) {
+        document.getElementById("standard-game-wrapper").classList.add("hidden");
+        document.getElementById("game5-custom-wrapper").classList.remove("hidden");
+        startG5EnchantingLab();
+      } else {
+        document.getElementById("game5-custom-wrapper").classList.add("hidden");
+        document.getElementById("standard-game-wrapper").classList.remove("hidden");
+        startStandardGameRound(gameNum);
+      }
+    }
+
+    function startStandardGameRound(gameNum) {
+      currentQIndex = 0;
+      currentRoundScore = 0;
+
+      const titleEl = document.getElementById("active-game-title");
+      const subEl = document.getElementById("active-game-subtitle");
+      const iconEl = document.getElementById("active-game-icon");
+
+      let pool = [];
+      let roundSize = 10;
+
+      if (gameNum === 1) {
+        titleEl.textContent = "Game 1: Affirmative (+)";
+        subEl.textContent = "10 random tasks (Pool: 50) • Am/Is/Are + V-ing";
+        iconEl.textContent = "➕";
+        pool = GAME_DATA.game1Pool;
+      } else if (gameNum === 2) {
+        titleEl.textContent = "Game 2: Negative (-)";
+        subEl.textContent = "10 random tasks (Pool: 50) • am not / isn't / aren't";
+        iconEl.textContent = "➖";
+        pool = GAME_DATA.game2Pool;
+      } else if (gameNum === 3) {
+        titleEl.textContent = "Game 3: Questions (?)";
+        subEl.textContent = "10 random tasks (Pool: 50) • Am/Is/Are at the front!";
+        iconEl.textContent = "❓";
+        pool = GAME_DATA.game3Pool;
+      } else if (gameNum === 4) {
+        titleEl.textContent = "Game 4: Mixed Blitz";
+        subEl.textContent = "15 random tasks (Pool: 50) • All rules mixed!";
+        iconEl.textContent = "🌪️";
+        pool = GAME_DATA.game4Pool;
+        roundSize = 15;
+      }
+
+      activeRoundQuestions = shuffleArray(pool).slice(0, roundSize);
+      document.getElementById("round-complete-screen").classList.add("hidden");
+      document.getElementById("question-stage").classList.remove("hidden");
+      document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
+
+      renderCurrentStandardQuestion();
+    }
+
+    function renderCurrentStandardQuestion() {
+      questionMistakeMade = false;
+      questionResolved = false;
+
+      const qObj = activeRoundQuestions[currentQIndex];
+      document.getElementById("game-q-num").textContent = currentQIndex + 1;
+      document.getElementById("game-score-val").textContent = currentRoundScore;
+      document.getElementById("game-next-btn").classList.add("hidden");
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+
+      const mobUrl = GAME_DATA.assets[qObj.mob] || GAME_DATA.assets.steve;
+      document.getElementById("question-mob-img").src = mobUrl;
+
+      const tagEl = document.getElementById("question-mode-tag");
+      if (currentGameNum === 1) {
+        tagEl.textContent = "AFFIRMATIVE (+)";
+        tagEl.className = "inline-block bg-lime-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 2) {
+        tagEl.textContent = "NEGATIVE (-)";
+        tagEl.className = "inline-block bg-red-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 3) {
+        tagEl.textContent = "QUESTION (?)";
+        tagEl.className = "inline-block bg-sky-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else {
+        tagEl.textContent = "MIXED BLITZ";
+        tagEl.className = "inline-block bg-purple-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      }
+
+      const mcContainer = document.getElementById("mc-options-container");
+      const scrambleContainer = document.getElementById("scramble-container");
+
+      if (qObj.type === "scramble") {
+        mcContainer.classList.add("hidden");
+        scrambleContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.prompt;
+        document.getElementById("scramble-submit-btn").classList.remove("opacity-50");
+
+        scramblePlacedWords = [];
+        scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+        renderScrambleUI();
+      } else {
+        scrambleContainer.classList.add("hidden");
+        mcContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.q;
+
+        mcContainer.innerHTML = "";
+        shuffleArray(qObj.options).forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "mc-btn py-3 px-4 text-sm sm:text-base font-bold transition-all";
+          btn.textContent = opt;
+          btn.onclick = () => handleMCChoice(opt, btn);
+          mcContainer.appendChild(btn);
+        });
+      }
+    }
+
+    // Ukrainian grammar error explainer for beginner learners (Games 1–4)
+    function explainWrongChoiceUA(qObj, selectedOpt) {
+      const sel = selectedOpt.toLowerCase();
+      const ans = qObj.ans.toLowerCase();
+
+      // 1. Choosing helper am / is / are
+      if (ans === "am") {
+        return `❌ «${selectedOpt}» тут не підходить — зі словом «I» (я) завжди вживається лише помічник «am»!`;
+      }
+      if (ans === "is") {
+        if (sel === "am") {
+          return `❌ «am» вживається тільки зі словом «I» (я), а тут 1 герой (he / she / it) — тому потрібне «is»!`;
+        }
+        return `❌ «are» вживається для множини (2+ герої або you / we / they), а тут 1 герой (he / she / it) — тому потрібне «is»!`;
+      }
+      if (ans === "are") {
+        if (sel === "am") {
+          return `❌ «am» вживається тільки зі словом «I» (я), а тут «you / we / they» або множина — тому потрібне «are»!`;
+        }
+        return `❌ «is» вживається лише для 1 героя (he / she / it), а тут «you / we / they» або множина — тому потрібне «are»!`;
+      }
+
+      // 2. Choosing negative helper am not / isn't / aren't
+      if (ans === "am not") {
+        return `❌ «${selectedOpt}» тут не підходить — у запереченні зі словом «I» (я) завжди ставимо «am not»!`;
+      }
+      if (ans === "isn't") {
+        if (sel === "am not") {
+          return `❌ «am not» вживається тільки зі словом «I» (я), а тут 1 герой (he / she / it) — тому потрібне «isn't»!`;
+        }
+        return `❌ «aren't» вживається для множини (2+ герої або you / we / they), а тут 1 герой (he / she / it) — тому потрібне «isn't»!`;
+      }
+      if (ans === "aren't") {
+        if (sel === "am not") {
+          return `❌ «am not» вживається тільки зі словом «I» (я), а тут «you / we / they» або множина — тому потрібне «aren't»!`;
+        }
+        return `❌ «isn't» вживається лише для 1 героя (he / she / it), а тут «you / we / they» або множина — тому потрібне «aren't»!`;
+      }
+
+      // 3. Verb + -ing forms & spelling rules
+      if (!sel.endsWith("ing")) {
+        return `❌ Слово «${selectedOpt}» без закінчення -ing! У Present Continuous (дія зараз) після am / is / are дієслово завжди має закінчення -ing.`;
+      }
+      if (sel.endsWith("eing")) {
+        return `❌ У слові «${selectedOpt}» зайва буква «e» перед -ing! Коли слово закінчується на німу «-e» (make, use, hide), буква «e» зникає перед -ing.`;
+      }
+      if (sel.endsWith("ing") && ans.endsWith("ing")) {
+        return `❌ У коротких словах (dig, run, swim, chop, put) перед -ing остання приголосна буква подвоюється! У слові «${selectedOpt}» бракує подвоєної букви.`;
+      }
+
+      return `❌ Варіант «${selectedOpt}» тут не підходить за правилами Present Continuous. Спробуй інший варіант!`;
+    }
+
+    function explainScrambleMistakeUA(qObj) {
+      if (qObj.ans.includes("?")) {
+        return `❌ Неправильний порядок слів! У питанні Present Continuous на перше місце ставимо помічника (Am / Is / Are), потім ХТО (герой), далі дію з -ing і знак «?».`;
+      }
+      if (qObj.ans.includes("am not") || qObj.ans.includes("isn't") || qObj.ans.includes("aren't")) {
+        return `❌ Неправильний порядок слів! У запереченні спочатку ставимо ХТО (герой), потім «am not / isn't / aren't», а далі дію з закінченням -ing.`;
+      }
+      return `❌ Неправильний порядок слів! У ствердженні спочатку ставимо ХТО (герой), потім помічника (am / is / are), а далі дію з закінченням -ing.`;
+    }
+
+    function handleMCChoice(selectedOpt, btnEl) {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+
+      if (selectedOpt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        btnEl.classList.add("mc-btn-green");
+
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(3);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+
+        const fullSentence = qObj.q.replace("___", qObj.ans);
+        showFeedbackBar(true, `✅ Correct! "${fullSentence}"`);
+        speakText(fullSentence);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+      } else {
+        playErrorSound();
+        btnEl.classList.add("opacity-40", "pointer-events-none", "bg-red-950", "text-red-400");
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainWrongChoiceUA(qObj, selectedOpt));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function renderScrambleUI() {
+      const slotsEl = document.getElementById("scramble-target-slots");
+      const bankEl = document.getElementById("scramble-word-bank");
+
+      slotsEl.innerHTML = "";
+      if (scramblePlacedWords.length === 0) {
+        slotsEl.innerHTML = `<span class="text-xs text-stone-500 italic">Click word blocks below to place them here...</span>`;
+      } else {
+        scramblePlacedWords.forEach((wObj, idx) => {
+          const b = document.createElement("button");
+          b.className = "mc-btn mc-btn-gold px-3 py-1.5 text-xs sm:text-sm";
+          b.textContent = wObj.text;
+          b.onclick = () => {
+            if (questionResolved) return;
+            playClickSound();
+            scramblePlacedWords.splice(idx, 1);
+            scrambleBankWords.push(wObj);
+            renderScrambleUI();
+          };
+          slotsEl.appendChild(b);
+        });
+      }
+
+      bankEl.innerHTML = "";
+      scrambleBankWords.forEach((wObj, idx) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn px-3 py-1.5 text-xs sm:text-sm";
+        b.textContent = wObj.text;
+        b.onclick = () => {
+          if (questionResolved) return;
+          playClickSound();
+          scrambleBankWords.splice(idx, 1);
+          scramblePlacedWords.push(wObj);
+          renderScrambleUI();
+        };
+        bankEl.appendChild(b);
+      });
+    }
+
+    function resetScrambleWords() {
+      if (questionResolved) return;
+      playClickSound();
+      const qObj = activeRoundQuestions[currentQIndex];
+      scramblePlacedWords = [];
+      scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+      renderScrambleUI();
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+    }
+
+    function checkScrambleAnswer() {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+      const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+
+      if (userAttempt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(4);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+        showFeedbackBar(true, `✅ Perfect Word Order! "${qObj.ans}"`);
+        speakText(qObj.ans);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+        document.getElementById("scramble-submit-btn").classList.add("opacity-50");
+      } else {
+        playErrorSound();
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainScrambleMistakeUA(qObj));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function showFeedbackBar(isCorrect, message) {
+      const bar = document.getElementById("game-feedback-bar");
+      const msgEl = document.getElementById("game-feedback-msg");
+      bar.classList.remove("hidden");
+      bar.className = `p-3.5 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 ${
+        isCorrect ? "bg-lime-950 border-lime-400 text-lime-200" : "bg-red-950 border-red-400 text-red-200"
+      }`;
+      msgEl.textContent = message;
+    }
+
+    function nextGameQuestion() {
+      playClickSound();
+      currentQIndex++;
+      if (currentQIndex >= activeRoundQuestions.length) {
+        finishStandardRound();
+      } else {
+        renderCurrentStandardQuestion();
+      }
+    }
+
+    function speakCurrentQuestion() {
+      const qObj = activeRoundQuestions[currentQIndex];
+      if (qObj.type === "scramble") speakText(qObj.prompt);
+      else speakText(qObj.q.replace("___", "blank"));
+    }
+
+    function finishStandardRound() {
+      document.getElementById("question-stage").classList.add("hidden");
+      document.getElementById("round-complete-screen").classList.remove("hidden");
+      document.getElementById("round-result-summary").textContent = `You scored ${currentRoundScore} / ${activeRoundQuestions.length} in this round!`;
+
+      if (currentGameNum === 1) unlockBadge("b_game1");
+      if (currentGameNum === 2) unlockBadge("b_game2");
+      if (currentGameNum === 3) unlockBadge("b_game3");
+      if (currentGameNum === 4) unlockBadge("b_game4");
+
+      playFanfareSound();
+    }
+
+    function replayCurrentGame() {
+      playSuccessSound();
+      startStandardGameRound(currentGameNum);
+    }
+
+    /* =========================================================================
+       7. GAME 5: ENCHANTING TABLE (-ING SPELLING LAB)
+       ========================================================================= */
+    let g5RoundWords = [];
+    let g5Index = 0;
+    let g5Placed = [];
+    let g5Bank = [];
+    let g5Resolved = false;
+    let g5Mistake = false;
+
+    function startG5EnchantingLab() {
+      g5RoundWords = shuffleArray(GAME_DATA.game5Pool).slice(0, 10);
+      g5Index = 0;
+      document.getElementById("g5-complete-screen").classList.add("hidden");
+      document.getElementById("g5-stage").classList.remove("hidden");
+      loadG5Word();
+    }
+
+    function loadG5Word() {
+      g5Resolved = false;
+      g5Mistake = false;
+      const wordObj = g5RoundWords[g5Index];
+
+      document.getElementById("g5-progress").textContent = g5Index;
+      document.getElementById("g5-base-word").textContent = wordObj.base;
+
+      const toolImg = document.getElementById("g5-tool-img");
+      toolImg.src = wordObj.tool || "https://i.postimg.cc/13KWnFFL/iron-pickaxe.png";
+      toolImg.classList.add("grayscale", "opacity-50");
+      toolImg.classList.remove("enchant-active");
+
+      document.getElementById("g5-feedback").classList.add("hidden");
+      document.getElementById("g5-next-btn").classList.add("hidden");
+      document.getElementById("g5-submit-btn").classList.remove("opacity-50");
+
+      // Exact letters derived directly from target -> 100% spelling accuracy
+      const exactLetters = wordObj.target.split("");
+      g5Placed = [];
+      g5Bank = shuffleArray(exactLetters.map((l, i) => ({ id: i, letter: l })));
+      renderG5Spelling();
+    }
+
+    function renderG5Spelling() {
+      const targetEl = document.getElementById("g5-target-slots");
+      const bankEl = document.getElementById("g5-letter-bank");
+
+      targetEl.innerHTML = "";
+      if (g5Placed.length === 0) {
+        targetEl.innerHTML = `<span class="text-xs text-stone-500 italic">Tap letters below to spell the -ING form...</span>`;
+      } else {
+        g5Placed.forEach((item, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "mc-btn mc-btn-purple w-11 h-11 text-sm sm:text-base uppercase";
+          btn.textContent = item.letter;
+          btn.onclick = () => {
+            if (g5Resolved) return;
+            playClickSound();
+            g5Placed.splice(idx, 1);
+            g5Bank.push(item);
+            renderG5Spelling();
+          };
+          targetEl.appendChild(btn);
+        });
+      }
+
+      bankEl.innerHTML = "";
+      g5Bank.forEach((item, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "mc-btn w-11 h-11 text-sm sm:text-base uppercase";
+        btn.textContent = item.letter;
+        btn.onclick = () => {
+          if (g5Resolved) return;
+          playClickSound();
+          g5Bank.splice(idx, 1);
+          g5Placed.push(item);
+          renderG5Spelling();
+        };
+        bankEl.appendChild(btn);
+      });
+    }
+
+    function resetG5Word() {
+      if (g5Resolved) return;
+      playClickSound();
+      const exactLetters = g5RoundWords[g5Index].target.split("");
+      g5Placed = [];
+      g5Bank = shuffleArray(exactLetters.map((l, i) => ({ id: i, letter: l })));
+      renderG5Spelling();
+      document.getElementById("g5-feedback").classList.add("hidden");
+    }
+
+    function explainG5SpellingMistakeUA(wordObj, attempt) {
+      if (!attempt) {
+        return `❌ Ти ще не поставив жодної букви! Склади слово «${wordObj.base}» із закінченням -ing.`;
+      }
+      if (!attempt.endsWith("ing")) {
+        return `❌ Слово «${attempt}» не закінчується на -ing! У Present Continuous наприкінці завжди додаємо -ing.`;
+      }
+      if (wordObj.base.endsWith("e")) {
+        return `❌ Слово «${wordObj.base}» закінчується на німу букву «e» — перед додаванням -ing буква «e» має зникнути!`;
+      }
+      if (wordObj.target.length === wordObj.base.length + 4) {
+        return `❌ «${wordObj.base}» — коротке слово, тому перед -ing його остання приголосна буква подвоюється!`;
+      }
+      return `❌ Неправильний порядок букв у «${attempt}»! Спочатку виклади слово «${wordObj.base}», а потім додай «-ing».`;
+    }
+
+    function speakG5Word() {
+      const wordObj = g5RoundWords[g5Index];
+      speakText(`${wordObj.base} ... ${wordObj.target}`);
+    }
+
+    function checkG5Spelling() {
+      if (g5Resolved) return;
+      const wordObj = g5RoundWords[g5Index];
+      const attempt = g5Placed.map(x => x.letter).join("").toLowerCase();
+      const fb = document.getElementById("g5-feedback");
+      const fbText = document.getElementById("g5-feedback-text");
+
+      if (attempt === wordObj.target) {
+        g5Resolved = true;
+        playSuccessSound();
+        addDiamonds(g5Mistake ? 2 : 4);
+
+        const toolImg = document.getElementById("g5-tool-img");
+        toolImg.classList.remove("grayscale", "opacity-50");
+        toolImg.classList.add("enchant-active");
+
+        fb.classList.remove("hidden");
+        fb.className = "p-3.5 border-2 bg-purple-950 border-purple-400 text-purple-200 flex flex-col sm:flex-row items-center justify-between gap-3";
+        fbText.textContent = `✨ ENCHANTED! ${wordObj.base} ➔ ${wordObj.target.toUpperCase()}!`;
+        document.getElementById("g5-next-btn").classList.remove("hidden");
+        document.getElementById("g5-submit-btn").classList.add("opacity-50");
+        speakText(wordObj.target);
+      } else {
+        playErrorSound();
+        g5Mistake = true;
+        fb.classList.remove("hidden");
+        fb.className = "p-3.5 border-2 bg-red-950 border-red-400 text-red-200 flex flex-col sm:flex-row items-center justify-between gap-3";
+        fbText.textContent = explainG5SpellingMistakeUA(wordObj, attempt);
+        document.getElementById("g5-next-btn").classList.add("hidden");
+      }
+    }
+
+    function nextG5Word() {
+      playClickSound();
+      g5Index++;
+      document.getElementById("g5-progress").textContent = g5Index;
+      if (g5Index >= g5RoundWords.length) {
+        document.getElementById("g5-stage").classList.add("hidden");
+        document.getElementById("g5-complete-screen").classList.remove("hidden");
+        unlockBadge("b_game5");
+        playFanfareSound();
+      } else {
+        loadG5Word();
+      }
+    }
+
+    /* =========================================================================
+       8. SHOP & ROOM BUILDER (LARGE SCALE, CENTERED, CLAMPED, FREE RE-PLACE)
+       ========================================================================= */
+    let topFurnZ = 10;
+    let selectedFurnId = null;
+
+    function renderShopCatalog() {
+      const grid = document.getElementById("shop-items-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      GAME_DATA.shopItems.forEach((item) => {
+        const isOwned = appState.purchasedItems.includes(item.id);
+        const canAfford = appState.diamonds >= item.cost;
+        const div = document.createElement("div");
+        div.className = `mc-panel p-2 flex flex-col items-center justify-between text-center border-2 ${
+          isOwned ? "border-lime-500 bg-lime-50" : canAfford ? "border-cyan-400" : "border-stone-500 opacity-85"
+        }`;
+        div.innerHTML = `
+          <div class="h-14 flex items-center justify-center mb-1">
+            <img src="${item.img}" class="max-h-14 object-contain drop-shadow" alt="${item.name}">
+          </div>
+          <div class="text-[10px] font-bold text-stone-900 leading-tight h-7 flex items-center justify-center">${item.name}</div>
+          ${
+            isOwned
+              ? `<button onclick="placeOwnedFurniture('${item.id}')" class="mc-btn mc-btn-green w-full py-1 text-[9px] mt-1" style="min-height:36px;">
+                   ➕ PLACE
+                 </button>`
+              : `<button onclick="buyFurniture('${item.id}')" class="mc-btn w-full py-1 text-[9px] mt-1 ${canAfford ? "mc-btn-diamond" : ""}" style="min-height:36px;">
+                   💎 ${item.cost}
+                 </button>`
+          }
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function addFurnitureInstanceToRoom(item) {
+      topFurnZ++;
+      const newPlaced = {
+        id: "f_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        shopId: item.id,
+        xPct: 35 + Math.random() * 30,
+        yPct: 45 + Math.random() * 25,
+        scale: 1.0,
+        flipX: false,
+        z: topFurnZ
+      };
+      appState.placedFurniture.push(newPlaced);
+      selectedFurnId = newPlaced.id;
+      saveState();
+      renderRoomFurniture();
+    }
+
+    function buyFurniture(itemId) {
+      const item = GAME_DATA.shopItems.find(i => i.id === itemId);
+      if (!item || appState.diamonds < item.cost) {
+        playErrorSound();
+        return;
+      }
+      appState.diamonds -= item.cost;
+      playSuccessSound();
+      if (!appState.purchasedItems.includes(itemId)) {
+        appState.purchasedItems.push(itemId);
+      }
+      if (appState.purchasedItems.length >= 3) unlockBadge("b_decorator");
+      addFurnitureInstanceToRoom(item);
+      renderShopCatalog();
+      speakText(item.sentence);
+    }
+
+    function placeOwnedFurniture(itemId) {
+      const item = GAME_DATA.shopItems.find(i => i.id === itemId);
+      if (!item) return;
+      playClickSound();
+      addFurnitureInstanceToRoom(item);
+      speakText(item.sentence);
+    }
+
+    function clearRoomToStorage() {
+      playClickSound();
+      appState.placedFurniture = [];
+      selectedFurnId = null;
+      saveState();
+      renderRoomFurniture();
+    }
+
+    function renderRoomFurniture() {
+      const layer = document.getElementById("placed-items-layer");
+      if (!layer) return;
+      layer.innerHTML = "";
+
+      if (appState.placedFurniture.length > 0) {
+        document.getElementById("room-empty-hint").classList.add("hidden");
+      } else {
+        document.getElementById("room-empty-hint").classList.remove("hidden");
+      }
+
+      appState.placedFurniture.forEach((f, idx) => {
+        const shopItem = GAME_DATA.shopItems.find(i => i.id === f.shopId);
+        if (!shopItem) return;
+
+        if (typeof f.xPct !== "number") f.xPct = 50;
+        if (typeof f.yPct !== "number") f.yPct = 60;
+        if (typeof f.z !== "number") f.z = idx + 1;
+        if (f.z > topFurnZ) topFurnZ = f.z;
+
+        const el = document.createElement("div");
+        el.className = `furniture-item ${selectedFurnId === f.id ? "selected" : ""}`;
+        el.style.left = `${f.xPct}%`;
+        el.style.top = `${f.yPct}%`;
+        el.style.zIndex = f.z;
+        const flipFactor = f.flipX ? -1 : 1;
+        el.style.transform = `translate(-50%, -50%) scale(${f.scale * flipFactor}, ${f.scale})`;
+
+        const baseW = shopItem.defaultWidth || 200;
+        el.innerHTML = `<img src="${shopItem.img}" style="width:${baseW}px; max-width:none;" class="h-auto object-contain pointer-events-none drop-shadow-2xl">`;
+
+        el.addEventListener("mousedown", (e) => startDrag(e, el, f));
+        el.addEventListener("touchstart", (e) => startDrag(e, el, f), { passive: false });
+        layer.appendChild(el);
+      });
+      updateMicroToolbar();
+    }
+
+    function startDrag(e, el, fData) {
+      e.preventDefault();
+      e.stopPropagation();
+      const container = document.getElementById("my-room-container");
+      const rect = container.getBoundingClientRect();
+
+      if (selectedFurnId !== fData.id) {
+        selectedFurnId = fData.id;
+        document.querySelectorAll(".furniture-item").forEach(node => node.classList.remove("selected"));
+        el.classList.add("selected");
+        updateMicroToolbar();
+      }
+      playClickSound();
+
+      const startX = e.touches ? e.touches[0].clientX : e.clientX;
+      const startY = e.touches ? e.touches[0].clientY : e.clientY;
+      const origXPct = fData.xPct;
+      const origYPct = fData.yPct;
+
+      function onMove(me) {
+        if (me.touches) me.preventDefault();
+        const cX = me.touches ? me.touches[0].clientX : me.clientX;
+        const cY = me.touches ? me.touches[0].clientY : me.clientY;
+        const dxPct = ((cX - startX) / rect.width) * 100;
+        const dyPct = ((cY - startY) / rect.height) * 100;
+        fData.xPct = Math.max(5, Math.min(95, origXPct + dxPct));
+        fData.yPct = Math.max(8, Math.min(92, origYPct + dyPct));
+        el.style.left = `${fData.xPct}%`;
+        el.style.top = `${fData.yPct}%`;
+      }
+
+      function onUp() {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        document.removeEventListener("touchmove", onMove);
+        document.removeEventListener("touchend", onUp);
+        saveState();
+      }
+
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+      document.addEventListener("touchmove", onMove, { passive: false });
+      document.addEventListener("touchend", onUp);
+    }
+
+    function handleRoomCanvasClick(e) {
+      if (e.target.id === "placed-items-layer" || e.target.id === "my-room-container") {
+        selectedFurnId = null;
+        renderRoomFurniture();
+      }
+    }
+
+    function updateMicroToolbar() {
+      const tb = document.getElementById("item-toolbar");
+      if (!tb) return;
+      const f = appState.placedFurniture.find(i => i.id === selectedFurnId);
+      if (f) {
+        const shopItem = GAME_DATA.shopItems.find(i => i.id === f.shopId);
+        document.getElementById("selected-furn-name").textContent = shopItem ? shopItem.name : "Item";
+        document.getElementById("selected-furn-scale").textContent = `${Math.round(f.scale * 100)}%`;
+        tb.classList.remove("hidden");
+      } else {
+        tb.classList.add("hidden");
+      }
+    }
+
+    function scaleSelectedItem(delta) {
+      if (!selectedFurnId) return;
+      playClickSound();
+      const f = appState.placedFurniture.find(i => i.id === selectedFurnId);
+      if (f) {
+        f.scale = Math.max(0.4, Math.min(2.6, +(f.scale + delta).toFixed(2)));
+        saveState();
+        renderRoomFurniture();
+      }
+    }
+
+    function flipSelectedItem() {
+      if (!selectedFurnId) return;
+      playClickSound();
+      const f = appState.placedFurniture.find(i => i.id === selectedFurnId);
+      if (f) {
+        f.flipX = !f.flipX;
+        saveState();
+        renderRoomFurniture();
+      }
+    }
+
+    function layerSelectedItem(dir) {
+      if (!selectedFurnId) return;
+      playClickSound();
+      const f = appState.placedFurniture.find(i => i.id === selectedFurnId);
+      if (f) {
+        if (dir > 0) {
+          topFurnZ++;
+          f.z = topFurnZ;
+        } else {
+          f.z = Math.max(1, (f.z || 2) - 2);
+        }
+        saveState();
+        renderRoomFurniture();
+      }
+    }
+
+    function speakSelectedItem() {
+      if (!selectedFurnId) return;
+      const f = appState.placedFurniture.find(i => i.id === selectedFurnId);
+      const shopItem = f ? GAME_DATA.shopItems.find(i => i.id === f.shopId) : null;
+      if (shopItem) speakText(shopItem.sentence);
+    }
+
+    function deleteSelectedItem() {
+      if (!selectedFurnId) return;
+      playClickSound();
+      appState.placedFurniture = appState.placedFurniture.filter(i => i.id !== selectedFurnId);
+      selectedFurnId = null;
+      saveState();
+      renderRoomFurniture();
+    }
+
+    /* =========================================================================
+       9. BADGES, CERTIFICATE & NAVIGATION
+       ========================================================================= */
+    function renderBadgesGrid() {
+      const grid = document.getElementById("badges-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      GAME_DATA.badges.forEach((b) => {
+        const unlocked = appState.unlockedBadges.includes(b.id);
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-3.5 flex flex-col items-center text-center justify-between border-4 ${
+          unlocked ? "border-amber-400 bg-stone-800" : "border-stone-700 opacity-60"
+        }`;
+        card.innerHTML = `
+          <div class="w-14 h-14 mc-slot flex items-center justify-center p-2 mb-2 ${unlocked ? "bg-amber-950" : ""}">
+            <img src="${b.img}" alt="${b.title}" class="w-10 h-10 object-contain ${unlocked ? "" : "grayscale"}">
+          </div>
+          <div>
+            <h4 class="pixel-font text-[10px] ${unlocked ? "text-amber-300" : "text-stone-400"}">${b.title}</h4>
+            <p class="text-xs text-stone-300 mt-1">${b.desc}</p>
+          </div>
+          <div class="mt-2.5 pixel-font text-[8px] px-2 py-1 ${unlocked ? "bg-lime-700 text-white" : "bg-stone-900 text-stone-500"}">
+            ${unlocked ? "✓ UNLOCKED" : "🔒 LOCKED"}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setCertificateTheme(themeKey) {
+      playClickSound();
+      const url = GAME_DATA.certWallpapers[themeKey] || GAME_DATA.certWallpapers.bg1;
+      appState.certTheme = themeKey;
+      const certEl = document.getElementById("printable-certificate");
+      if (certEl) certEl.style.backgroundImage = `url('${url}')`;
+
+      ["bg1", "bg2", "bg3"].forEach((k) => {
+        const btn = document.getElementById(`theme-btn-${k}`);
+        if (btn) {
+          if (k === themeKey) btn.classList.add("mc-btn-purple");
+          else btn.classList.remove("mc-btn-purple");
+        }
+      });
+      saveState();
+    }
+
+    function updateCertificateName(val) {
+      appState.heroName = val.trim() || "Steve";
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+      saveState();
+    }
+
+    function launchVictoryConfetti() {
+      playFanfareSound();
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+      }
+    }
+
+    function switchSection(secId) {
+      playClickSound();
+      const sections = ["hub", "grammar", "games", "shop", "badges", "finale"];
+      sections.forEach((s) => {
+        const el = document.getElementById(`sec-${s}`);
+        const navBtn = document.getElementById(`nav-${s}`);
+        if (s === secId) {
+          el.classList.remove("hidden");
+          if (navBtn) navBtn.classList.add("mc-btn-purple");
+        } else {
+          el.classList.add("hidden");
+          if (navBtn) navBtn.classList.remove("mc-btn-purple");
+        }
+      });
+
+      if (secId === "shop") {
+        renderShopCatalog();
+        renderRoomFurniture();
+      }
+      if (secId === "finale" && appState.unlockedBadges.length >= GAME_DATA.badges.length) {
+        launchVictoryConfetti();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      renderMaterialsGrid();
+      renderShopCatalog();
+      renderRoomFurniture();
+      renderBadgesGrid();
+      setCertificateTheme(appState.certTheme || "bg1");
+      startStandardGameRound(1);
+
+      const now = new Date();
+      document.getElementById("cert-date-display").textContent = now.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    });
+  </script>
+</body>
+</html>
