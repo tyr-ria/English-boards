@@ -158,6 +158,14 @@
                             class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-400/70 focus:ring-1 focus:ring-sky-400/40 transition"
                         />
                     </div>
+                    <a
+                        href="code_artifact.html"
+                        class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-xs sm:text-sm font-semibold text-sky-300 hover:text-white transition shrink-0"
+                        title="Відкрити корейсько-український словник та розумний перекладач"
+                    >
+                        <i class="fa-solid fa-language text-sky-400"></i>
+                        <span class="hidden sm:inline">Korean Dict + AI</span>
+                    </a>
                     <button
                         type="button"
                         id="lock-hub-btn"
@@ -177,7 +185,7 @@
                     <!-- Tabs injected by JS; see THEME_CATEGORIES below to add future themes -->
                 </div>
                 <div class="text-xs text-slate-400 shrink-0">
-                    Showing <span id="visible-count" class="text-white font-semibold">13</span> of <span id="total-count" class="text-slate-300">13</span> lessons
+                    Showing <span id="visible-count" class="text-white font-semibold">14</span> of <span id="total-count" class="text-slate-300">14</span> lessons
                 </div>
             </div>
         </section>
@@ -378,6 +386,7 @@
             { id: 'pets', label: 'Pets & Animals', icon: 'fa-paw', type: 'theme' },
             { id: 'minecraft', label: 'Minecraft', icon: 'fa-cubes', type: 'theme' },
             { id: 'art', label: 'Art & Colors', icon: 'fa-palette', type: 'theme' },
+            { id: 'korean', label: 'Korean Dictionary', icon: 'fa-language', type: 'theme' },
             { id: 'simple', label: 'Simple Tenses', icon: 'fa-bolt', type: 'aspect' },
             { id: 'continuous', label: 'Continuous Tenses', icon: 'fa-wave-square', type: 'aspect' },
             { id: 'present', label: 'Present', icon: 'fa-circle-dot', type: 'timePeriod' },
@@ -427,6 +436,14 @@
                 dotClass: 'bg-violet-400 shadow-[0_0_8px_#a855f7]',
                 borderClass: 'border-violet-500/30',
                 badgeClass: 'bg-violet-500/15 text-violet-300 border-violet-500/35',
+            },
+            korean: {
+                id: 'korean',
+                heading: 'Korean-Ukrainian Dictionary & AI Translator — Тимчасовий розділ',
+                sublabel: '649 Expressions + Gemini Smart Translator',
+                dotClass: 'bg-sky-400 shadow-[0_0_8px_#38bdf8]',
+                borderClass: 'border-sky-500/30',
+                badgeClass: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/35',
             },
         };
 
@@ -722,6 +739,30 @@
                 imageUrl: 'https://i.postimg.cc/5tHGjLC3/Withered-Foxy-removebg-preview.png',
                 paletteKey: 'future',
             },
+
+            // --- TEMPORARY KOREAN-UKRAINIAN DICTIONARY + AI TRANSLATOR ---
+            {
+                id: 'korean-ukrainian-dictionary',
+                href: 'code_artifact.html',
+                theme: 'korean',
+                themeLabel: 'Korean Hub • Temporary Add-on',
+                timePeriod: 'korean',
+                timePeriodLabel: 'KOREAN • UKRAINIAN',
+                aspect: 'korean',
+                aspectLabel: 'Dictionary & Smart Translator',
+                nightBadge: '649 Entries + AI',
+                tenseName: 'Корейсько-український словник',
+                subtitle: 'Експрес-пошук + Розумний перекладач (Gemini API)',
+                level: 'TOPIK / General',
+                formula: '649 слів і конструкцій • Підсвітка бази',
+                description: 'Великий корейсько-український словник із пошуком по 7 категоріях та інтегрованим ШІ-перекладачем (UA ⇄ KO), який першочергово підставляє ваші слова й граматику та підсвічує збіги.',
+                modules: ['Експрес-пошук', '7 категорій', 'Розумний перекладач', 'Підсвітка лексики й граматики'],
+                icon: 'fa-language',
+                characterName: 'Korean Dictionary',
+                emoji: '🇰🇷',
+                imageUrl: '',
+                paletteKey: 'korean',
+            },
         ];
 
         // Unified Card Palettes matching each time-period pair
@@ -815,6 +856,16 @@
                 btnBg: 'bg-gradient-to-r from-violet-500 to-sky-500 hover:from-violet-400 hover:to-sky-400 text-white',
                 glowBg: 'from-violet-500/14 via-indigo-500/5 to-transparent',
                 iconColor: 'text-violet-400',
+            },
+            korean: {
+                cardBorder: 'border-sky-500/30 hover:border-indigo-400/75 hover:shadow-[0_0_28px_rgba(56,189,248,0.22)]',
+                topStrip: 'bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400',
+                periodPill: 'bg-sky-500/15 text-sky-300 border-sky-500/40',
+                nightPill: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/40',
+                formulaText: 'text-sky-300',
+                btnBg: 'bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-white',
+                glowBg: 'from-sky-500/14 via-indigo-500/5 to-transparent',
+                iconColor: 'text-sky-400',
             },
         };
 
@@ -1012,7 +1063,7 @@
             const shouldGroupByPeriod = distinctPeriods.length > 1 && filtered.length > 3;
 
             if (shouldGroupByPeriod) {
-                const orderedPeriods = ['vocabulary', 'present', 'past', 'future'].filter((p) => distinctPeriods.includes(p));
+                const orderedPeriods = ['vocabulary', 'present', 'past', 'future', 'korean'].filter((p) => distinctPeriods.includes(p));
                 container.innerHTML = orderedPeriods.map((periodKey) => {
                     const meta = TIME_PERIOD_META[periodKey];
                     const periodLessons = filtered.filter((l) => l.timePeriod === periodKey);

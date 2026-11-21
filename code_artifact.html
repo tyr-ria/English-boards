@@ -1,0 +1,3220 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Великий корейсько-український словник</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-hover: #273549;
+  --border: #334155;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #38bdf8;
+  --primary-glow: rgba(56, 189, 248, 0.15);
+
+  --badge-career: #10b981;
+  --badge-career-bg: rgba(16, 185, 129, 0.12);
+  --badge-ai: #38bdf8;
+  --badge-ai-bg: rgba(56, 189, 248, 0.12);
+  --badge-economy: #f59e0b;
+  --badge-economy-bg: rgba(245, 158, 11, 0.12);
+  --badge-society: #f43f5e;
+  --badge-society-bg: rgba(244, 63, 94, 0.12);
+  --badge-growth: #a855f7;
+  --badge-growth-bg: rgba(168, 85, 247, 0.12);
+  --badge-health: #14b8a6;
+  --badge-health-bg: rgba(20, 184, 166, 0.12);
+  --badge-grammar: #818cf8;
+  --badge-grammar-bg: rgba(129, 140, 248, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
+  padding: 24px 16px 60px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.header-top-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.back-portal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.back-portal-link:hover {
+  color: var(--text-main);
+  border-color: var(--primary);
+}
+
+.title-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  background: var(--primary-glow);
+  color: var(--primary);
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.control-hub {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.search-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 52px 16px 48px;
+  background: #0b1120;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.15s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #334155;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.clear-btn:hover {
+  background: #475569;
+  color: #fff;
+}
+
+.clear-btn:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+.clear-btn.visible {
+  display: flex;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #0b1120;
+  color: var(--text-muted);
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.pill:hover {
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.pill.active {
+  background: var(--primary);
+  color: #0f172a;
+  border-color: var(--primary);
+  font-weight: 700;
+}
+
+.stats-counter {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #10b981;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  transition: transform 0.25s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+#toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.card:active {
+  background: var(--surface-hover);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.card-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.badge-career { color: var(--badge-career); background: var(--badge-career-bg); border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-ai { color: var(--badge-ai); background: var(--badge-ai-bg); border: 1px solid rgba(56, 189, 248, 0.3); }
+.badge-economy { color: var(--badge-economy); background: var(--badge-economy-bg); border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-society { color: var(--badge-society); background: var(--badge-society-bg); border: 1px solid rgba(244, 63, 94, 0.3); }
+.badge-growth { color: var(--badge-growth); background: var(--badge-growth-bg); border: 1px solid rgba(168, 85, 247, 0.3); }
+.badge-health { color: var(--badge-health); background: var(--badge-health-bg); border: 1px solid rgba(20, 184, 166, 0.3); }
+.badge-grammar { color: var(--badge-grammar); background: var(--badge-grammar-bg); border: 1px solid rgba(129, 140, 248, 0.3); }
+
+.copy-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.korean-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.ua-text {
+  font-size: 15px;
+  color: #94a3b8;
+  font-weight: 500;
+  line-height: 1.4;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+/* Навігація між вкладками */
+.nav-tabs {
+  display: inline-flex;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 6px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.nav-tab {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.nav-tab:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-tab.active {
+  background: var(--primary);
+  color: #0f172a;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
+}
+
+.nav-tab-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.2);
+  font-weight: 800;
+}
+
+.nav-tab:not(.active) .nav-tab-badge {
+  background: #0b1120;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.hidden-view {
+  display: none !important;
+}
+
+/* Секція розумного перекладача */
+.translator-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.api-settings-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 20px;
+}
+
+.api-settings-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.api-settings-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.api-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.3px;
+}
+
+.api-status-badge.saved {
+  color: var(--badge-career);
+  background: var(--badge-career-bg);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.api-status-badge.missing {
+  color: var(--badge-economy);
+  background: var(--badge-economy-bg);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.api-help-link {
+  font-size: 12px;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.api-help-link:hover {
+  text-decoration: underline;
+}
+
+.api-controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.api-input-group {
+  position: relative;
+  flex: 1 1 280px;
+  display: flex;
+  align-items: center;
+}
+
+.api-input {
+  width: 100%;
+  padding: 10px 40px 10px 14px;
+  background: #0b1120;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.api-input:focus {
+  border-color: var(--primary);
+}
+
+.eye-toggle-btn {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 15px;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.eye-toggle-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.model-select {
+  padding: 10px 12px;
+  background: #0b1120;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.model-select:focus {
+  border-color: var(--primary);
+}
+
+.btn-secondary,
+.btn-danger-ghost,
+.btn-primary {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #0f172a;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #7dd3fc;
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #0b1120;
+  color: var(--text-main);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-danger-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.btn-danger-ghost:hover {
+  color: var(--badge-society);
+  border-color: rgba(244, 63, 94, 0.45);
+  background: var(--badge-society-bg);
+}
+
+.translator-controls {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.controls-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
+}
+
+.segmented-control {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  background: #0b1120;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.seg-btn {
+  padding: 8px 13px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seg-btn:hover {
+  color: var(--text-main);
+}
+
+.seg-btn.active {
+  background: var(--surface-hover);
+  color: var(--primary);
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.4);
+}
+
+.seg-btn.active-grammar {
+  background: rgba(129, 140, 248, 0.18);
+  color: #c7d2fe;
+  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.45);
+}
+
+.swap-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-main);
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.swap-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: rotate(180deg);
+}
+
+.examples-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.example-chip {
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #0b1120;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.example-chip:hover {
+  border-color: var(--primary);
+  color: var(--text-main);
+}
+
+.translator-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.translator-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #0b1120;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.mini-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--text-main);
+}
+
+.mini-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mini-btn.active {
+  background: var(--primary-glow);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: var(--primary);
+}
+
+.translator-textarea {
+  width: 100%;
+  min-height: 210px;
+  padding: 16px;
+  background: #0b1120;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  color: var(--text-main);
+  font-size: 16px;
+  line-height: 1.65;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.translator-textarea:focus {
+  border-color: var(--primary);
+}
+
+.panel-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.char-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.translate-submit-btn {
+  padding: 11px 22px;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.translate-submit-btn:hover:not(:disabled) {
+  background: #7dd3fc;
+  transform: translateY(-1px);
+}
+
+.translate-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.output-surface {
+  position: relative;
+  min-height: 210px;
+  padding: 16px;
+  background: #0b1120;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--text-main);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.output-placeholder {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 174px;
+  gap: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(56, 189, 248, 0.2);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hl-vocab,
+.hl-grammar {
+  border-radius: 6px;
+  padding: 2px 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-weight: 600;
+}
+
+.hl-vocab {
+  background: rgba(56, 189, 248, 0.18);
+  color: #bae6fd;
+  border-bottom: 2px solid var(--primary);
+}
+
+.hl-vocab:hover {
+  background: rgba(56, 189, 248, 0.32);
+}
+
+.hl-grammar {
+  background: rgba(129, 140, 248, 0.22);
+  color: #e0e7ff;
+  border-bottom: 2px solid var(--badge-grammar);
+}
+
+.hl-grammar:hover {
+  background: rgba(129, 140, 248, 0.36);
+}
+
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.legend-dot.vocab {
+  background: var(--primary);
+}
+
+.legend-dot.grammar {
+  background: var(--badge-grammar);
+}
+
+.explanation-box {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #cbd5e1;
+}
+
+.error-banner {
+  background: var(--badge-society-bg);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #fda4af;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Блок «Використано зі словника» */
+.used-dict-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.used-dict-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.used-dict-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.used-dict-summary {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.used-dict-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.used-item-card {
+  background: #0b1120;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.used-item-card.type-vocab {
+  border-left: 4px solid var(--primary);
+}
+
+.used-item-card.type-grammar {
+  border-left: 4px solid var(--badge-grammar);
+}
+
+.used-item-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.used-item-card.flash-focus {
+  box-shadow: 0 0 0 2px var(--primary), 0 8px 24px rgba(56, 189, 248, 0.25);
+}
+
+.used-item-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.type-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.type-tag.vocab {
+  color: var(--primary);
+  background: var(--badge-ai-bg);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.type-tag.grammar {
+  color: var(--badge-grammar);
+  background: var(--badge-grammar-bg);
+  border: 1px solid rgba(129, 140, 248, 0.4);
+}
+
+.used-ko {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.used-ua {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.used-matched-form {
+  font-size: 12px;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 5px 9px;
+}
+
+.used-item-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.used-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 18px 8px;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .translator-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .cards-grid { grid-template-columns: 1fr; }
+  .used-dict-grid { grid-template-columns: 1fr; }
+  h1 { font-size: 22px; }
+  .korean-text { font-size: 18px; }
+  .nav-tab { font-size: 13px; padding: 9px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-top-links">
+      <a href="index.html" class="back-portal-link">← На головну (Portal)</a>
+      <div class="title-badge">ЕКСПРЕС-ПОШУК ТА ШІ-ПЕРЕКЛАД</div>
+    </div>
+    <h1>Великий корейсько-український словник</h1>
+    <p class="subtitle">Торкніться картки, щоб скопіювати корейський вираз, або перейдіть до розумного перекладача</p>
+
+    <nav class="nav-tabs" aria-label="Розділи сайту">
+      <button type="button" id="tabDictBtn" class="nav-tab active" data-tab="dictionary">
+        <span>📚 Словник</span>
+        <span class="nav-tab-badge" id="dictTabCount">649</span>
+      </button>
+      <button type="button" id="tabTranslatorBtn" class="nav-tab" data-tab="translator">
+        <span>✨ Розумний перекладач</span>
+      </button>
+    </nav>
+  </header>
+
+  <section id="dictionarySection">
+    <div class="control-hub">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Пошук корейською або українською...">
+        <button type="button" id="clearBtn" class="clear-btn" title="Очистити поле">✕</button>
+      </div>
+
+      <div class="filters-row">
+        <div class="category-pills" id="pillsContainer"></div>
+        <div class="stats-counter" id="statsCounter"></div>
+      </div>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+  </section>
+
+  <section id="translatorSection" class="translator-section hidden-view" aria-label="Розумний перекладач">
+    <div class="api-settings-card">
+      <div class="api-settings-top">
+        <div class="api-settings-title">
+          <span>🔑 Налаштування Gemini API</span>
+          <span id="apiStatusBadge" class="api-status-badge missing">Ключ не задано</span>
+        </div>
+        <a class="api-help-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
+          Отримати безкоштовний ключ у Google AI Studio ↗
+        </a>
+      </div>
+      <div class="api-controls-row">
+        <div class="api-input-group">
+          <input type="password" id="apiKeyInput" class="api-input" placeholder="Вставте ваш Gemini API ключ (AIza...)" autocomplete="off">
+          <button type="button" id="toggleApiKeyVisBtn" class="eye-toggle-btn" title="Показати або приховати ключ">👁️</button>
+        </div>
+        <select id="geminiModelSelect" class="model-select" title="Модель Gemini">
+          <option value="gemini-3.8-flash" selected>gemini-3.8-flash (Рекомендована)</option>
+          <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Найшвидша)</option>
+          <option value="gemini-4-argon">gemini-4-argon (Найпотужніша)</option>
+        </select>
+        <button type="button" id="saveApiKeyBtn" class="btn-primary">Зберегти ключ</button>
+        <button type="button" id="clearApiKeyBtn" class="btn-danger-ghost">Видалити</button>
+      </div>
+    </div>
+
+    <div class="translator-controls">
+      <div class="controls-top-row">
+        <div class="control-group">
+          <span class="control-label">Напрямок:</span>
+          <div class="segmented-control">
+            <button type="button" id="dirUaKoBtn" class="seg-btn active" data-dir="ua-to-ko">🇺🇦 Українська ➔ 🇰🇷 Корейська</button>
+            <button type="button" id="swapDirBtn" class="swap-btn" title="Поміняти мови місцями">⇄</button>
+            <button type="button" id="dirKoUaBtn" class="seg-btn" data-dir="ko-to-ua">🇰🇷 Корейська ➔ 🇺🇦 Українська</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Режим бази:</span>
+          <div class="segmented-control">
+            <button type="button" id="modeStrictBtn" class="seg-btn active-grammar" data-mode="strict">🎯 Максимально використовувати мій словник</button>
+            <button type="button" id="modeNormalBtn" class="seg-btn" data-mode="normal">⚡ Звичайний переклад</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="examples-row" id="examplesRow"></div>
+    </div>
+
+    <div id="translatorError" class="error-banner hidden-view"></div>
+
+    <div class="translator-grid">
+      <div class="translator-panel">
+        <div class="panel-header">
+          <span class="panel-title" id="sourceLangTitle">🇺🇦 Вхідний текст (Українська)</span>
+          <div class="panel-actions">
+            <button type="button" id="clearSourceBtn" class="mini-btn">✕ Очистити</button>
+          </div>
+        </div>
+        <textarea id="sourceText" class="translator-textarea" placeholder="Введіть український текст для перекладу з пріоритетом вашого словника..."></textarea>
+        <div class="panel-footer">
+          <span class="char-hint"><span id="sourceCharCount">0</span> символів • Ctrl+Enter для перекладу</span>
+          <button type="button" id="translateBtn" class="translate-submit-btn">
+            <span>✨ Перекласти</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="translator-panel">
+        <div class="panel-header">
+          <span class="panel-title" id="targetLangTitle">🇰🇷 Результат перекладу (Корейська)</span>
+          <div class="panel-actions">
+            <button type="button" id="toggleHighlightBtn" class="mini-btn active" title="Перемкнути підсвітку">🎨 Підсвітка</button>
+            <button type="button" id="copyTranslationBtn" class="mini-btn" disabled>📋 Копіювати</button>
+          </div>
+        </div>
+
+        <div id="translationOutput" class="output-surface">
+          <div class="output-placeholder">Тут з'явиться переклад із кольоровою підсвіткою слів та граматичних конструкцій із вашої бази.</div>
+        </div>
+
+        <div class="legend-row">
+          <div class="legend-items">
+            <span class="legend-item"><span class="legend-dot vocab"></span> Лексика зі словника</span>
+            <span class="legend-item"><span class="legend-dot grammar"></span> Граматика та конструкції</span>
+          </div>
+        </div>
+
+        <div id="explanationBox" class="explanation-box hidden-view"></div>
+      </div>
+    </div>
+
+    <div class="used-dict-panel">
+      <div class="used-dict-header">
+        <div class="used-dict-title">📖 Використано зі словника</div>
+        <div class="used-dict-summary" id="usedDictSummary">Зробіть переклад, щоб побачити знайдені слова та конструкції</div>
+      </div>
+      <div id="usedItemsContainer" class="used-dict-grid">
+        <div class="used-empty">Після перекладу тут з'явиться детальний розбір слів та конструкцій із вашої бази.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="toast">Скопійовано!</div>
+
+<script>
+// Метадані 7 тематичних категорій
+const CATEGORIES = [
+  { id: 'career', label: "💼 Кар'єра, Резюме та Робота", short: "Кар'єра та Робота" },
+  { id: 'ai', label: "🤖 ШІ, Технології та Майбутнє", short: "ШІ та Технології" },
+  { id: 'economy', label: "📈 Економіка, Бізнес та Фінанси", short: "Економіка та Фінанси" },
+  { id: 'society', label: "🏙️ Суспільство, Демографія та Житло", short: "Суспільство та Житло" },
+  { id: 'growth', label: "🌱 Саморозвиток та Ефективність", short: "Саморозвиток" },
+  { id: 'health', label: "🩺 Здоров'я, Психіка та Детокс", short: "Здоров'я та Детокс" },
+  { id: 'grammar', label: "🗣️ Конструкції, Вирази та Ідіоми", short: "Конструкції та Ідіоми" }
+];
+
+const CAT_MAP = {};
+CATEGORIES.forEach(c => { CAT_MAP[c.id] = c.short; });
+
+// Повна база унікальних слів та виразів: [корейською, українською, код категорії]
+const RAW_DATA = [
+  // 1. Кар'єра, Резюме та Робота (career)
+  ["이력서", "резюме", "career"],
+  ["취업", "вперше влаштовуватись на роботу / працевлаштування", "career"],
+  ["정보", "інформація", "career"],
+  ["기재하다", "вписувати, записувати", "career"],
+  ["지원하다", "подавати заявку на щось, претендувати", "career"],
+  ["제출하다", "представляти, пропонувати, вносити, подавати", "career"],
+  ["문서", "документ", "career"],
+  ["요구하다", "вимагати", "career"],
+  ["양식", "форма, стиль, манера", "career"],
+  ["다르다", "відмінний", "career"],
+  ["사항", "пункт", "career"],
+  ["경력", "досвід роботи, кар'єра, стаж", "career"],
+  ["자격증", "сертифікат, свідоцтво, ліцензія", "career"],
+  ["봉사활동", "волонтерська діяльність", "career"],
+  ["나열하다", "розставити/розкласти по порядку, стати до ладу", "career"],
+  ["스펙", "спеціалізація", "career"],
+  ["화려하다", "розкішний, пишний", "career"],
+  ["포장하다", "упаковувати", "career"],
+  ["경험", "досвід", "career"],
+  ["서술하다", "оповідати, описувати", "career"],
+  ["지원자", "заявник, кандидат, претендент", "career"],
+  ["선택하다", "обирати", "career"],
+  ["조합하다", "об'єднувати, комбінувати", "career"],
+  ["의미 있는 스펙", "набір необхідних навичок", "career"],
+  ["쌓다", "накопичувати", "career"],
+  ["치열하다", "різкий, запеклий, лютий, напружений", "career"],
+  ["경쟁", "суперництво, конкуренція", "career"],
+  ["살아남다", "виживати (у конкурентній боротьбі)", "career"],
+  ["투자하다", "інвестувати, вкладати щось", "career"],
+  ["안간힘을 쓰다", "докладати зусиль", "career"],
+  ["자격증을 따다", "отримати диплом/свідоцтво про кваліфікацію", "career"],
+  ["어학", "мовознавство, лінгвістика", "career"],
+  ["집중하다", "зосереджуватись", "career"],
+  ["유리하다", "вигідний, корисний, сприятливий", "career"],
+  ["인사 담당자", "головний HR менеджер", "career"],
+  ["구직자", "претендент на посаду, людина, яка шукає роботу", "career"],
+  ["무작정", "сліпо, бездумно, без певної мети", "career"],
+  ["일관되다", "послідовний", "career"],
+  ["조언하다", "радити, рекомендувати, вчити", "career"],
+  ["연관되다", "мати відношення, бути взаємопов'язаним", "career"],
+  ["어필하다", "залучати, притягувати", "career"],
+  ["바람직하다", "бажаний", "career"],
+  ["방향", "напрямок", "career"],
+  ["정리", "систематизація, організація, класифікація; правда, істина", "career"],
+  ["차근차근", "ретельно, детально", "career"],
+  ["실제로", "насправді, в дійсності", "career"],
+  ["신입생", "першачок, той, хто тільки поступив на перший курс", "career"],
+  ["빈칸을 채워보다", "заповнити пропущені місця", "career"],
+  ["점수", "оцінка", "career"],
+  ["당연하다", "закономірний, відповідний", "career"],
+  ["갖취다", "володіти", "career"],
+  ["고민하다", "мучитися, страждати", "career"],
+  ["구체적인", "конкретність, точність, реальність", "career"],
+  ["기준", "критерій, стандарт, норма", "career"],
+  ["구체화하다", "конкретизувати, реалізувати", "career"],
+  ["첫걸음", "перші кроки", "career"],
+  ["일정표", "путівник, дороговказ; щоденний розклад, план на день", "career"],
+  ["인재", "кваліфікована людина", "career"],
+  ["작성하다", "оформляти (документи), створювати (програми), складати (резюме)", "career"],
+  ["한국고용정보원", "корейська інформаційна служба зайнятості", "career"],
+  ["직업 분류", "класифікація професій", "career"],
+  ["전문화", "спеціалізація", "career"],
+  ["세분화", "сегментація", "career"],
+  ["수제 맥주 제조 전문가", "спеціаліст з виготовлення крафтового пива", "career"],
+  ["사립탐정", "детектив", "career"],
+  ["음악치료사", "музичний терапевт", "career"],
+  ["카이로프랙틱 닥터", "лікар хіропрактик", "career"],
+  ["직종의 고용", "найм в сфері (такій-то)", "career"],
+  ["노년 플래너", "планувальники старості", "career"],
+  ["직업의 세분화", "сегментація професій", "career"],
+  ["직업이 사라지다", "професія зникає", "career"],
+  ["분석전문가", "аналітик", "career"],
+  ["한국 국가자격청", "корейське національне агентство кваліфікацій", "career"],
+  ["유망하다", "актуальний, перспективний", "career"],
+  ["취직하다", "влаштуватися на роботу", "career"],
+  ["채용", "найм, набір працівників", "career"],
+  ["구직", "пошук роботи", "career"],
+  ["입사하다", "вступити на роботу", "career"],
+  ["퇴사하다", "звільнитися", "career"],
+  ["이직하다", "змінити місце роботи", "career"],
+  ["신입 사원", "новий працівник", "career"],
+  ["경력 사원", "досвідчений працівник", "career"],
+  ["채용 공고", "оголошення про вакансію", "career"],
+  ["자기소개서", "мотиваційний лист", "career"],
+  ["면접", "співбесіда", "career"],
+  ["면접관", "інтерв'юер", "career"],
+  ["합격하다", "пройти відбір", "career"],
+  ["불합격하다", "не пройти відбір", "career"],
+  ["경쟁률", "рівень конкуренції", "career"],
+  ["자격 요건", "кваліфікаційні вимоги", "career"],
+  ["직무", "посадові обов'язки", "career"],
+  ["직무 경험", "досвід роботи за спеціальністю", "career"],
+  ["직장", "місце роботи", "career"],
+  ["직장인", "працююча людина", "career"],
+  ["근무하다", "працювати", "career"],
+  ["근무 시간", "робочий час", "career"],
+  ["정규직", "штатний працівник", "career"],
+  ["계약직", "працівник за контрактом", "career"],
+  ["인턴", "стажер", "career"],
+  ["인턴십", "стажування", "career"],
+  ["월급", "місячна зарплата", "career"],
+  ["연봉", "річна зарплата", "career"],
+  ["복리 후생", "соціальний пакет", "career"],
+  ["승진하다", "отримати підвищення", "career"],
+  ["업무량", "обсяг роботи", "career"],
+  ["야근하다", "працювати понаднормово", "career"],
+  ["회식", "корпоративна вечеря", "career"],
+  ["좋은 직장을 구하다", "знайти хорошу роботу", "career"],
+  ["첫 출근을 앞두다", "готуватися до першого виходу на роботу", "career"],
+  ["새로운 환경", "нове середовище", "career"],
+  ["긴장과 걱정", "нервове напруження та занепокоєння", "career"],
+  ["자연스러운 일", "природна річ", "career"],
+  ["완벽한 모습을 보여주다", "показати ідеальний образ", "career"],
+  ["지나치게 긴장하다", "надмірно нервувати", "career"],
+  ["자신의 장점", "власні переваги", "career"],
+  ["침착하고 단정한 태도", "спокійна й охайна поведінка", "career"],
+  ["주변의 상황", "ситуація навколо", "career"],
+  ["주의 깊게 듣다", "уважно слухати", "career"],
+  ["메모하다", "робити нотатки", "career"],
+  ["새로운 업무", "нова робота / нові робочі завдання", "career"],
+  ["조직의 분위기", "атмосфера організації", "career"],
+  ["차분하게 파악하다", "спокійно розібратися", "career"],
+  ["성실하게 수행하다", "старанно виконувати", "career"],
+  ["지나치게 두려워하다", "надмірно боятися", "career"],
+  ["자신감을 가지다", "мати впевненість у собі", "career"],
+  ["예의 바르게 행동하다", "поводитися ввічливо", "career"],
+  ["맡은 일을 성실하게 수행하다", "сумлінно виконувати доручену роботу", "career"],
+  ["첫날의 모습", "вигляд / поведінка в перший день", "career"],
+  ["앞으로의 직장 생활", "подальше трудове життя", "career"],
+  ["첫인상을 만들다", "створювати перше враження", "career"],
+  ["중요한 기회", "важлива можливість", "career"],
+  ["자신을 믿다", "вірити в себе", "career"],
+  ["준비된 모습", "підготовлений вигляд", "career"],
+  ["새로운 시작을 맞이하다", "зустріти новий початок", "career"],
+  ["근무 분위기", "робоча атмосфера", "career"],
+  ["깊은 인상을 주다", "справити глибоке враження", "career"],
+  ["꼭 해야 할 일", "те, що обов'язково потрібно зробити", "career"],
+  ["호기심", "цікавість, допитливість", "career"],
+  ["배우려는 열정", "прагнення / жага до навчання", "career"],
+  ["심지어", "більш того", "career"],
+  ["임원", "керівник, член правління", "career"],
+  ["질문 목록", "список запитань", "career"],
+  ["기본적인", "основний", "career"],
+  ["삼가다", "уникати, бути обережним", "career"],
+  ["경력직", "працівник із досвідом", "career"],
+  ["이전 직장", "попереднє місце роботи", "career"],
+  ["간단하고도 명확히", "коротко й чітко", "career"],
+  ["미리 준비하다", "підготувати заздалегідь", "career"],
+  ["통근길", "дорога на роботу / маршрут до роботи", "career"],
+  ["대비책", "запобіжний захід, план підготовки", "career"],
+  ["출근시간", "час приходу на роботу", "career"],
+  ["교통량", "інтенсивність руху", "career"],
+  ["러시아워", "година пік", "career"],
+  ["변수가 생기다", "виникнути непередбачуваній зміні / змінній", "career"],
+  ["무조건", "безумовно, за будь-яких умов", "career"],
+  ["지정된 출근시간", "визначений час приходу на роботу", "career"],
+  ["생산성을 낮추다", "знижувати продуктивність", "career"],
+  ["차분하고 자연스럽게", "поводитися спокійно й природно", "career"],
+  ["능력을 증명하다", "довести свої здібності", "career"],
+  ["인정받다", "отримати визнання, бути визнаним", "career"],
+  ["부담감을 갖다", "відчувати тягар / психологічний тиск", "career"],
+  ["적응하다", "адаптуватися, пристосовуватися", "career"],
+  ["비품", "канцелярське / офісне приладдя", "career"],
+  ["회의실", "переговорна кімната", "career"],
+  ["수락하다", "прийняти, погодитися", "career"],
+  ["관찰하다", "спостерігати", "career"],
+  ["채용 기록", "дані про прийом на роботу", "career"],
+  ["지원서", "заява про працевлаштування", "career"],
+  ["취업 준비", "підготовка до працевлаштування", "career"],
+  ["업무 강도", "інтенсивність роботи", "career"],
+  ["경력 계획", "план кар'єри", "career"],
+  ["유연한 근무 환경", "гнучкі умови праці", "career"],
+  ["경력 단절", "перерва в кар'єрі", "career"],
+  ["조직 문화", "корпоративна культура", "career"],
+  ["안정적인 일자리", "стабільне робоче місце", "career"],
+
+  // 2. ШІ, Технології та Майбутнє (ai)
+  ["영상 판독", "інтерпретація медичних зображень", "ai"],
+  ["인공지능", "штучний інтелект", "ai"],
+  ["이상 소견", "ознака патології", "ai"],
+  ["의료진", "медичний персонал", "ai"],
+  ["우선순위", "пріоритет", "ai"],
+  ["정상으로 분류하다", "класифікувати як норму", "ai"],
+  ["진료", "надання медичної допомоги", "ai"],
+  ["불이익", "несприятливий наслідок", "ai"],
+  ["효용", "користь", "ai"],
+  ["혜택", "перевага", "ai"],
+  ["생성형 인공지능", "генеративний штучний інтелект", "ai"],
+  ["난이도", "рівень складності", "ai"],
+  ["맞춤형 연습", "індивідуально підібрані вправи", "ai"],
+  ["자동 자막", "автоматичні субтитри", "ai"],
+  ["접근성", "доступність", "ai"],
+  ["고유 명사", "власна назва", "ai"],
+  ["문맥", "контекст", "ai"],
+  ["초안", "чернетка", "ai"],
+  ["피드백", "зворотний зв'язок", "ai"],
+  ["받아들이다", "приймати", "ai"],
+  ["표현을 선택하다", "обирати мовний вираз", "ai"],
+  ["수정 근거", "обґрунтування правки", "ai"],
+  ["비판적 사고", "критичне мислення", "ai"],
+  ["학습자의 주도성", "суб'єктність учня", "ai"],
+  ["사실관계", "фактичні обставини", "ai"],
+  ["환각 현상", "явище галюцинації ШІ", "ai"],
+  ["출력", "згенерований результат", "ai"],
+  ["출처를 확인하다", "перевіряти джерело", "ai"],
+  ["원문", "оригінальний текст", "ai"],
+  ["검증하다", "перевіряти достовірність", "ai"],
+  ["학습 데이터", "навчальні дані", "ai"],
+  ["편향", "упередженість", "ai"],
+  ["역량", "компетентність", "ai"],
+  ["차별적 관행", "дискримінаційна практика", "ai"],
+  ["평균 정확도", "середня точність", "ai"],
+  ["집단별 오류율", "частота помилок за групами", "ai"],
+  ["이의를 제기하다", "подавати заперечення", "ai"],
+  ["목소리를 모방하다", "імітувати голос", "ai"],
+  ["합성 음성", "синтезований голос", "ai"],
+  ["사칭", "видавання себе за іншу особу", "ai"],
+  ["금전적 피해", "фінансові збитки", "ai"],
+  ["악용", "зловживання", "ai"],
+  ["본인 여부", "справжність особи", "ai"],
+  ["업무 자동화", "автоматизація робочих процесів", "ai"],
+  ["반복 작업", "повторювана робота", "ai"],
+  ["상담원", "оператор служби підтримки", "ai"],
+  ["생산성 향상", "зростання продуктивності", "ai"],
+  ["업무 부담", "робоче навантаження", "ai"],
+  ["재교육", "перенавчання", "ai"],
+  ["전환 비용", "витрати переходу", "ai"],
+  ["개인정보 보호", "захист персональних даних", "ai"],
+  ["오류를 분석하다", "аналізувати помилки", "ai"],
+  ["저장되다", "зберігатися", "ai"],
+  ["식별 정보", "ідентифікаційні дані", "ai"],
+  ["보관되다", "зберігатися протягом певного часу", "ai"],
+  ["이용 목적", "мета використання", "ai"],
+  ["접근 권한", "право доступу", "ai"],
+  ["감독 방식", "спосіб нагляду", "ai"],
+  ["일정 조정", "узгодження розкладу", "ai"],
+  ["장학금 심사", "розгляд заявок на стипендію", "ai"],
+  ["파급력", "масштаб наслідків", "ai"],
+  ["위험 평가", "оцінювання ризиків", "ai"],
+  ["민원", "офіційна скарга", "ai"],
+  ["기록하다", "фіксувати", "ai"],
+  ["중단하다", "призупиняти", "ai"],
+  ["책임 소재", "розподіл відповідальності", "ai"],
+  ["편의성", "зручність", "ai"],
+  ["사회적 비용", "суспільні витрати", "ai"],
+  ["투명성", "прозорість", "ai"],
+  ["한계", "обмеження", "ai"],
+  ["구제 절차", "процедура захисту порушених прав", "ai"],
+  ["판단 기준", "критерій оцінювання", "ai"],
+  ["기술 진보", "технічний прогрес", "ai"],
+  ["첨단기술", "передові технології", "ai"],
+  ["가상현실 레크리에이션 설계자", "планувальники/дизайнери дозвілля у віртуальній реальності", "ai"],
+  ["가상 현실", "віртуальна реальність", "ai"],
+  ["증강 현실", "доповнена реальність", "ai"],
+  ["반도체", "напівпровідник", "ai"],
+  ["친환경 기술", "екологічно чисті технології", "ai"],
+  ["기술 혁신", "технологічна інновація", "ai"],
+  ["전기자동차", "електромобіль", "ai"],
+  ["첨단 반도체", "передові напівпровідники", "ai"],
+  ["첨단 산업", "високотехнологічна галузь", "ai"],
+  ["핵심 부품", "ключовий компонент", "ai"],
+  ["메모리 반도체", "пам'яттєві напівпровідники", "ai"],
+  ["높은 기술력", "високий рівень технологій", "ai"],
+  ["생활가전", "побутова техніка", "ai"],
+  ["고성능 컴퓨팅", "високопродуктивні обчислення", "ai"],
+  ["에너지 솔루션", "енергетичні рішення", "ai"],
+  ["데이터센터용", "призначений для дата-центрів", "ai"],
+  ["사물인터넷", "Інтернет речей (IoT)", "ai"],
+  ["차세대", "наступного покоління", "ai"],
+  ["스마트 홈 생태계", "екосистема розумного дому", "ai"],
+  ["전장 솔루션", "рішення для автомобільної електроніки", "ai"],
+  ["디지털 도구", "цифровий інструмент", "ai"],
+  ["온라인 강의", "онлайн-лекція", "ai"],
+
+  // 3. Економіка, Бізнес та Фінанси (economy)
+  ["발간하다", "видавати", "economy"],
+  ["통계학", "статистичний", "economy"],
+  ["정착하다", "міцно закріпитися, впровадитися", "economy"],
+  ["향상(시키다/...되다)", "покращити/покращитись", "economy"],
+  ["다양화", "різноманіття, диверсифікація", "economy"],
+  ["활성화되다", "активізуватися", "economy"],
+  ["요인", "фактор", "economy"],
+  ["경쟁 심화", "посилення конкуренції", "economy"],
+  ["활용하다", "застосовувати, використовувати", "economy"],
+  ["증가", "збільшення", "economy"],
+  ["예상하다", "передбачати", "economy"],
+  ["계획을 수립하다", "будувати плани", "economy"],
+  ["중시하다", "надавати значення", "economy"],
+  ["경향", "тенденція", "economy"],
+  ["변화", "зміни", "economy"],
+  ["등장하다", "з'являтися", "economy"],
+  ["몰아내다", "витісняти", "economy"],
+  ["예측", "прогноз", "economy"],
+  ["기존", "існуючий", "economy"],
+  ["경제를 이끄는", "вести економіку, бути рушієм економіки", "economy"],
+  ["대규모", "масштабний, великого масштабу", "economy"],
+  ["생산 능력", "виробничі потужності", "economy"],
+  ["고성능", "високопродуктивний, високопотужний", "economy"],
+  ["확대되다", "розширюватися, збільшуватися", "economy"],
+  ["선점하다", "зайняти позицію першим, випередити", "economy"],
+  ["연구개발", "дослідження та розробки (R&D)", "economy"],
+  ["인력", "персонал, кадри, робоча сила", "economy"],
+  ["확보하다", "забезпечити, залучити, здобути", "economy"],
+  ["생산 시설", "виробничі потужності / виробничі об'єкти", "economy"],
+  ["지속적으로", "постійно, безперервно", "economy"],
+  ["확충하다", "розширювати, нарощувати", "economy"],
+  ["생태계", "екосистема", "economy"],
+  ["구축하다", "створювати, будувати", "economy"],
+  ["보급", "поширення, впровадження", "economy"],
+  ["사업 영역", "сфера діяльності", "economy"],
+  ["변화에 대응하다", "реагувати на зміни, адаптуватися до змін", "economy"],
+  ["대표하다", "представляти", "economy"],
+  ["해외 시장에 진출하다", "виходити на закордонний ринок", "economy"],
+  ["글로벌 기업", "глобальна компанія", "economy"],
+  ["긍정적인 영향", "позитивний вплив", "economy"],
+  ["성장", "зростання", "economy"],
+  ["제조업체", "виробник, промислове підприємство", "economy"],
+  ["영향을 미치다", "впливати", "economy"],
+  ["매출 규모", "обсяг продажів", "economy"],
+  ["생산하다", "виробляти", "economy"],
+  ["수출 확대", "розширення експорту", "economy"],
+  ["전반", "загалом, вся сфера", "economy"],
+  ["자동차 부품", "автомобільні комплектуючі", "economy"],
+  ["주도하다", "очолювати, вести за собою", "economy"],
+  ["경쟁력", "конкурентоспроможність", "economy"],
+  ["차지하다", "займати (позицію, частку)", "economy"],
+  ["예상되다", "очікуватися, прогнозуватися", "economy"],
+  ["없어서는 안 되다", "бути незамінним", "economy"],
+  ["상당하다", "бути значним", "economy"],
+  ["산업 경쟁력", "конкурентоспроможність промисловості", "economy"],
+  ["역할을 하다", "відігравати роль", "economy"],
+  ["글로벌 시장", "глобальний ринок", "economy"],
+  ["수요가 증가하다", "попит зростає", "economy"],
+  ["효율적이다", "бути ефективним", "economy"],
+  ["지속적이다", "бути постійним, безперервним", "economy"],
+  ["연구개발 인력", "кадри/персонал у сфері досліджень і розробок", "economy"],
+  ["투자", "інвестиція", "economy"],
+  ["끊임없이", "безперервно, невпинно", "economy"],
+  ["파악하다", "з'ясовувати, визначати", "economy"],
+  ["소비자의 요구", "потреби споживачів", "economy"],
+  ["생활 방식", "спосіб життя", "economy"],
+  ["막대한", "величезний, колосальний", "economy"],
+  ["출시하다", "випускати на ринок", "economy"],
+  ["일자리를 창출하다", "створювати робочі місця", "economy"],
+  ["협력업체", "компанія-партнер, підрядник", "economy"],
+  ["관련 산업", "пов'язана галузь", "economy"],
+  ["산업 생태계", "промислова екосистема", "economy"],
+  ["적극적으로", "активно", "economy"],
+  ["안정성", "стабільність", "economy"],
+  ["친환경 제품", "екологічно чиста продукція", "economy"],
+  ["국제적인 신뢰", "міжнародна довіра", "economy"],
+  ["에너지 효율", "енергоефективність", "economy"],
+  ["브랜드 가치", "цінність бренду", "economy"],
+  ["대응하다", "реагувати, адаптуватися до", "economy"],
+  ["사용되다", "використовуватися", "economy"],
+  ["산업 구조", "структура промисловості", "economy"],
+  ["경제 성장", "економічне зростання", "economy"],
+  ["국가 재정", "державні фінанси", "economy"],
+  ["인력 확보", "забезпечення кадрами", "economy"],
+  ["임금", "заробітна плата", "economy"],
+  ["대기업", "велика компанія", "economy"],
+  ["중소기업", "мале або середнє підприємство", "economy"],
+  ["경제적 부담", "фінансове навантаження, фінансовий тягар", "economy"],
+  ["경제력", "фінансова спроможність", "economy"],
+  ["저축", "заощадження", "economy"],
+  ["경제적 불안", "економічна нестабільність", "economy"],
+  ["가계부채", "борг домогосподарств", "economy"],
+  ["변동성", "мінливість, волатильність", "economy"],
+  ["물가", "ціни, рівень цін", "economy"],
+  ["지표", "показник", "economy"],
+  ["대출 금리", "відсоткова ставка за кредитом", "economy"],
+  ["생활비", "витрати на життя", "economy"],
+  ["불확실성", "невизначеність", "economy"],
+  ["자산 가치", "вартість активів", "economy"],
+  ["급락하다", "різко падати", "economy"],
+  ["지출", "витрати", "economy"],
+  ["위축되다", "скорочуватися, згортатися", "economy"],
+  ["채무", "борг, зобов'язання", "economy"],
+  ["재정 지원", "фінансова підтримка", "economy"],
+  ["금융 교육", "фінансова освіта", "economy"],
+  ["고용 시장", "ринок праці", "economy"],
+  ["소비가 위축되다", "споживання скорочується", "economy"],
+  ["매출", "обсяг продажів", "economy"],
+  ["투자 위험", "інвестиційний ризик", "economy"],
+  ["과도한 채무", "надмірна заборгованість", "economy"],
+
+  // 4. Суспільство, Демографія та Житло (society)
+  ["생활 수준의 향상", "покращення рівня життя", "society"],
+  ["고령화", "старіння населення", "society"],
+  ["저출산", "низький рівень народжуваності", "society"],
+  ["삶의 질 향상", "покращення рівня життя", "society"],
+  ["복지 관련", "пов'язані з добробутом", "society"],
+  ["생활 수준", "рівень життя", "society"],
+  ["주거비", "витрати на житло", "society"],
+  ["교육비", "витрати на освіту", "society"],
+  ["취업 문제", "проблема працевлаштування", "society"],
+  ["밀접하게", "тісно, нерозривно", "society"],
+  ["출산율", "рівень народжуваності", "society"],
+  ["출산을 미루다", "відкладати народження дітей", "society"],
+  ["포기하다", "відмовлятися", "society"],
+  ["양육비", "витрати на виховання дітей", "society"],
+  ["고용 환경", "ситуація на ринку праці, умови працевлаштування", "society"],
+  ["사회적 부담", "соціальне навантаження", "society"],
+  ["노년 인구", "літнє населення", "society"],
+  ["연금", "пенсія; пенсійна система", "society"],
+  ["돌봄 서비스", "послуги догляду", "society"],
+  ["생산 가능 인구", "працездатне населення", "society"],
+  ["노동력 부족", "нестача робочої сили", "society"],
+  ["세대 간", "між поколіннями", "society"],
+  ["집값", "ціни на житло", "society"],
+  ["전세금", "застава за житло за системою чонсе", "society"],
+  ["월세", "щомісячна орендна плата", "society"],
+  ["주거 공간", "житловий простір", "society"],
+  ["삶의 질", "якість життя", "society"],
+  ["사회 구조", "суспільна структура", "society"],
+  ["교육 경쟁", "освітня конкуренція", "society"],
+  ["사교육", "приватне додаткове навчання", "society"],
+  ["심리적 압박", "психологічний тиск", "society"],
+  ["학력 중심", "орієнтований на диплом", "society"],
+  ["적성", "здібності, схильності", "society"],
+  ["흥미", "інтерес", "society"],
+  ["비정규직", "нестандартна/тимчасова зайнятість", "society"],
+  ["노동 환경", "умови праці", "society"],
+  ["직업교육", "професійна освіта", "society"],
+  ["수도권", "столичний регіон", "society"],
+  ["지방", "регіони за межами столиці", "society"],
+  ["인구 감소", "скорочення населення", "society"],
+  ["생활 인프라", "життєва інфраструктура", "society"],
+  ["인구 집중", "концентрація населення", "society"],
+  ["교통 혼잡", "транспортні затори", "society"],
+  ["기후 변화", "зміна клімату", "society"],
+  ["온실가스 배출", "викиди парникових газів", "society"],
+  ["미세먼지", "дрібнодисперсний пил", "society"],
+  ["지속 가능한 발전", "сталий розвиток", "society"],
+  ["선택지", "опція, варіант вибору", "society"],
+  ["현실적인", "реальний", "society"],
+  ["부담", "тягар, навантаження", "society"],
+  ["불안감", "тривога, відчуття невпевненості", "society"],
+  ["안정적인", "стабільний", "society"],
+  ["심리적 스트레스", "психологічний стрес", "society"],
+  ["균형", "баланс, рівновага", "society"],
+  ["성장 가능성", "можливість розвитку", "society"],
+  ["제한적이다", "бути обмеженим", "society"],
+  ["감수하다", "змиритися, прийняти", "society"],
+  ["장기적인", "довгостроковий", "society"],
+  ["사회적 지위", "суспільний статус", "society"],
+  ["고려하다", "враховувати", "society"],
+  ["경향을 보이다", "виявляти тенденцію", "society"],
+  ["인식", "сприйняття, ставлення", "society"],
+  ["출산", "народження дитини", "society"],
+  ["확산되다", "поширюватися", "society"],
+  ["간과하다", "не брати до уваги", "society"],
+  ["주거 문제", "житлова проблема", "society"],
+  ["내 집 마련", "придбання власного житла", "society"],
+  ["주거 비용", "витрати на житло", "society"],
+  ["주거 불안", "нестабільність житлових умов", "society"],
+  ["독립적인 생활", "самостійне життя", "society"],
+  ["기반", "основа", "society"],
+  ["밀접하게 연결되다", "бути тісно пов'язаним", "society"],
+  ["공정한", "справедливий", "society"],
+  ["주거 정책", "житлова політика", "society"],
+  ["돌봄 지원", "підтримка у сфері догляду", "society"],
+  ["마련되다", "бути створеним, забезпеченим", "society"],
+  ["가능성", "можливість, потенціал", "society"],
+  ["설계하다", "планувати, проєктувати", "society"],
+  ["사회적 지원", "соціальна підтримка", "society"],
+  ["미루다", "відкладати", "society"],
+  ["감소", "зменшення, скорочення", "society"],
+  ["여건", "умови, обставини", "society"],
+  ["존중하다", "поважати", "society"],
+  ["책임을 나누다", "розділяти відповідальність", "society"],
+  ["간주하다", "вважати, розглядати як", "society"],
+  ["사회적 압박", "соціальний тиск", "society"],
+  ["주택 가격", "вартість житла", "society"],
+  ["독립하다", "жити самостійно", "society"],
+  ["병행하다", "поєднувати", "society"],
+  ["복합적으로", "комплексно", "society"],
+  ["악순환", "замкнене коло проблем", "society"],
+  ["사회적 기대", "суспільні очікування", "society"],
+  ["좌절감", "відчуття розчарування", "society"],
+  ["고립감", "відчуття ізольованості", "society"],
+  ["구조적인 해결책", "структурне рішення", "society"],
+  ["책임을 돌리다", "перекладати відповідальність", "society"],
+  ["구성원", "член спільноти", "society"],
+  ["이용하다", "користуватися", "society"],
+  ["제도", "система, механізм", "society"],
+  ["가치를 결정하다", "визначати цінність", "society"],
+  ["사회적 안전망", "соціальна система захисту", "society"],
+  ["보장하다", "гарантувати", "society"],
+  ["존엄성", "гідність", "society"],
+  ["지속 가능하다", "бути сталим, життєздатним", "society"],
+  ["전문적인 상담", "професійна консультація", "society"],
+  ["실질적인 지원", "практична підтримка", "society"],
+  ["도움을 요청하다", "просити про допомогу", "society"],
+  ["위기 상황", "кризова ситуація", "society"],
+  ["관심을 기울이다", "приділяти увагу", "society"],
+  ["실패", "невдача", "society"],
+  ["기회를 보장하다", "гарантувати можливість", "society"],
+  ["삶을 꾸리다", "влаштовувати життя", "society"],
+  ["사회적 기준", "суспільний стандарт", "society"],
+
+  // 5. Саморозвиток та Ефективність (growth)
+  ["자기개발", "саморозвиток", "growth"],
+  ["자기 계발", "саморозвиток", "growth"],
+  ["빠르게 변하다", "швидко змінюватися", "growth"],
+  ["중요하게 여기다", "вважати важливим", "growth"],
+  ["필수 과정", "необхідний етап", "growth"],
+  ["배움의 방향", "напрям навчання", "growth"],
+  ["능력을 키우다", "розвивати здібності", "growth"],
+  ["기회를 잡다", "скористатися можливістю", "growth"],
+  ["비교하다", "порівнювати", "growth"],
+  ["강점", "сильна сторона", "growth"],
+  ["약점", "слабка сторона", "growth"],
+  ["관심 분야", "сфера інтересів", "growth"],
+  ["가치관", "система цінностей", "growth"],
+  ["차분히 살펴보다", "спокійно розглянути", "growth"],
+  ["뚜렷하다", "чіткий, виразний", "growth"],
+  ["장기적인 계획", "довгостроковий план", "growth"],
+  ["노력", "зусилля", "growth"],
+  ["의미 있는 변화", "значущі зміни", "growth"],
+  ["저절로", "само собою", "growth"],
+  ["꾸준히", "послідовно, регулярно", "growth"],
+  ["뒤따르다", "наставати слідом", "growth"],
+  ["실제 상황", "реальна ситуація", "growth"],
+  ["적용하다", "застосовувати", "growth"],
+  ["되돌아보다", "аналізувати, озиратися назад", "growth"],
+  ["능력", "здібність, компетентність", "growth"],
+  ["직업 생활", "професійне життя", "growth"],
+  ["의견을 듣다", "слухати думку", "growth"],
+  ["분명하게 전달하다", "чітко передавати", "growth"],
+  ["요구되다", "вимагатися", "growth"],
+  ["동료", "колега", "growth"],
+  ["협력하다", "співпрацювати", "growth"],
+  ["피드백을 받아들이다", "сприймати зворотний зв'язок", "growth"],
+  ["개선하다", "удосконалювати", "growth"],
+  ["유연하게 적응하다", "гнучко пристосовуватися", "growth"],
+  ["책임", "відповідальність", "growth"],
+  ["순조롭다", "проходити гладко", "growth"],
+  ["기대한 결과", "очікуваний результат", "growth"],
+  ["뒤처지다", "відставати", "growth"],
+  ["능력의 한계", "межа здібностей", "growth"],
+  ["신호", "сигнал", "growth"],
+  ["현실에 맞다", "відповідати реальності", "growth"],
+  ["방법을 바꾸다", "змінювати спосіб", "growth"],
+  ["넘어지다", "падати", "growth"],
+  ["다시 일어서다", "знову підніматися", "growth"],
+  ["시간 관리", "управління часом", "growth"],
+  ["무리하다", "надмірно напружуватися", "growth"],
+  ["일정한 시간을 정하다", "виділяти певний час", "growth"],
+  ["진행 상황", "перебіг роботи", "growth"],
+  ["부족한 부분", "слабкі місця", "growth"],
+  ["규칙적인 생활", "регулярний спосіб життя", "growth"],
+  ["이어 가다", "продовжувати", "growth"],
+  ["평생 이어지다", "тривати все життя", "growth"],
+  ["조건이 갖추어지다", "умови складаються", "growth"],
+  ["기회를 놓치다", "втратити можливість", "growth"],
+  ["목표를 조정하다", "коригувати мету", "growth"],
+  ["도전 정신", "дух виклику", "growth"],
+  ["직면하다", "стикатися з", "growth"],
+  ["편리함", "зручність/зручності", "growth"],
+  ["효율적으로", "ефективно", "growth"],
+  ["발생하다", "виникати", "growth"],
+  ["업무를 처리하다", "справлятися з роботою", "growth"],
+  ["긍정적인", "позитивний", "growth"],
+  ["촉진하다", "сприяти", "growth"],
+  ["필수적이다", "обов'язковий", "growth"],
+  ["지속적인", "тривалий", "growth"],
+
+  // 6. Здоров'я, Психіка та Детокс (health)
+  ["정신 건강", "психічне здоров'я", "health"],
+  ["불면", "безсоння", "health"],
+  ["우울감", "пригнічений настрій", "health"],
+  ["의존도", "залежність", "health"],
+  ["부작용", "побічна дія", "health"],
+  ["과도한", "надмірний", "health"],
+  ["손상되다", "пошкодитись", "health"],
+  ["뇌의 활동이 저하되다", "активність мозку знижується", "health"],
+  ["집중력이 약화되다", "концентрація послаблюється", "health"],
+  ["조치를 취하다", "вжити заходів, прийняти міри", "health"],
+  ["제한하다", "обмежувати", "health"],
+  ["휴식을 취하다", "відпочити", "health"],
+  ["명상", "медитація", "health"],
+  ["정신적인", "психологічний", "health"],
+  ["디톡스", "детокс", "health"],
+  ["신체적", "фізичний", "health"],
+  ["부정적인", "негативний", "health"],
+  ["일정 기간 동안", "впродовж певного періоду часу", "health"],
+  ["차단하다", "блокувати, ізолювати", "health"],
+  ["변화를 경험하다", "відчути зміни", "health"],
+  ["창의적인 사고", "творче мислення", "health"],
+  ["과사용", "надмірне використання", "health"],
+  ["악화시키다", "погіршувати", "health"],
+  ["자존감이 낮아지다", "знижується самооцінка", "health"],
+  ["정보 과부(하다)", "інформаційне перенавантаження", "health"],
+  ["저하시키다", "знижувати", "health"],
+  ["수면 장애", "порушення сну", "health"],
+  ["분비", "розподіл", "health"],
+  ["억제하다", "пригнічувати, стримувати", "health"],
+  ["만성적인 피로", "хронічна втома", "health"],
+  ["면역(력)", "імунітет", "health"],
+  ["만성질환", "хронічне захворювання", "health"],
+  ["통증", "біль", "health"],
+  ["비만", "ожиріння", "health"],
+  ["당뇨병", "цукровий діабет", "health"],
+  ["손목터널증후군", "синдром зап'ястного каналу", "health"],
+  ["근골격계 질환", "захворювання опорно-рухового апарату", "health"],
+  ["인지 능력 저하", "пониження когнітивних здібностей", "health"],
+  ["뇌 정보 처리", "опрацювання інформації мозком", "health"],
+
+  // 7. Конструкції, Вирази та Ідіоми (grammar)
+  ["V라고 권하다", "пропонувати, наполегливо рекомендувати", "grammar"],
+  ["과유불급 (過猶不及)", "надмірність так само шкідлива, як і недостатність", "grammar"],
+  ["유비무환 (有備無患)", "хто завчасно підготувався, той убезпечив себе від лиха", "grammar"],
+  ["발 벗고 나서다", "рішуче взятися до справи", "grammar"],
+  ["손을 놓다", "припинити займатися справою, усунутися від неї", "grammar"],
+  ["...에 이르다", "доходити до, досягати", "grammar"],
+  ["...로 이어지면서", "призводити до", "grammar"],
+  ["(으)로 꼽히다", "рахуватися, вважатися", "grammar"],
+  ["ㄹ/을 것으로 전망되다", "очікується, що...", "grammar"],
+  ["(으)로 이어질 수 있다", "може призвести до...", "grammar"],
+  ["최근 5 년 간의", "за останні 5 років", "grammar"],
+  ["N+ 에 대한 수요가 높아지다/줄어들다", "попит на щось зростає/зменшується", "grammar"],
+  ["N+(으)로 인해서", "через/в результаті", "grammar"],
+  ["N+ㄹ/을 통해", "завдяки", "grammar"],
+  ["V+ㅁ에 따라", "по мірі того, як", "grammar"],
+  ["향후 5 년은", "в найближчі 5 років", "grammar"],
+  ["수요가 많다/높다", "користуватися попитом", "grammar"],
+  ["로/으로 전환되다", "трансформуватися в...", "grammar"],
+  ["10년안에", "через 10 років", "grammar"],
+  ["도움이 되다/유용하다", "бути корисним", "grammar"],
+  ["시간이 걸리다/필요하다", "потрібно/займати час", "grammar"],
+  ["시간/돈을 낭비하다", "впусту витрачати час/гроші", "grammar"],
+  ["비용이/돈이 많이-적게 들다", "багато витрат/грошей йде на...", "grammar"],
+  ["좋다/나쁘다", "добрий/поганий при/для", "grammar"],
+  ["효과가 있다/훌륭하다", "ефективно при...", "grammar"],
+  ["어려움이 있다", "мати складнощі в/при", "grammar"],
+  ["충분히 + 강하다/똑똑하지 않다", "не достатньо сильний/розумний", "grammar"],
+  ["중요하다/별로 중요하지 않다", "важливо/зовсім не важливо при/для", "grammar"],
+  ["중요한 역할을 하다", "відігравати важливу роль", "grammar"],
+  ["편리하다 - 불편하다", "зручно при...", "grammar"],
+  ["성공하다/실패하다", "досягти успіху/зазнати поразки в", "grammar"],
+  ["반대하다/동의하다", "бути проти чого/погоджуватися щодо", "grammar"],
+  ["많은 노력을 기울여야 하다", "докласти багато зусиль для", "grammar"],
+  ["최고이다", "найкращий в/для", "grammar"],
+  ["익숙해지다/익숙하지 않다", "звикнути/не звикнути", "grammar"],
+  ["기여를 하다", "зробити внесок в...", "grammar"],
+  ["매우 보수적이다/활동적이다/소극적이다", "дуже консервативний/активний в...", "grammar"],
+  ["관심이 있다/없다", "цікавитися/не цікавитися", "grammar"],
+  ["자아실현 - 흥미로워져야 하다", "потрібно цікавитися", "grammar"],
+  ["중점을 두어야 하다", "приділити особливу увагу", "grammar"],
+  ["평생을 바치다/일생을 보내다", "присвятити/віддати все життя заради", "grammar"],
+  ["문제를 겪다", "мати складнощі з", "grammar"],
+  ["(거의) 준비가 다 됐어요", "бути (майже) готовим до...", "grammar"],
+  ["몰두하고 있다", "заглибитися в...", "grammar"],
+  ["지장이 되다", "бути перешкодою на шляху до", "grammar"],
+  ["손해 볼 것은 없다", "не буде нічого поганого в тому, щоб", "grammar"],
+  ["(크게/결정적인) 영향을 주다/미치다", "впливати на/мати вирішальний вплив на...", "grammar"],
+  ["결정적인 요소이다", "вирішальний фактор при...", "grammar"],
+  ["최선을 다하다", "зробити все можливе для...", "grammar"],
+  ["N+을/를 유발하다", "викликати, провокувати", "grammar"],
+  ["N+을/를 초래하다", "призводити до, спричиняти", "grammar"]
+];
+
+// Класифікація запису на лексику (vocab) або граматику/конструкцію (grammar)
+function detectItemType(ko, catId) {
+  if (catId === 'grammar') return 'grammar';
+  if (/([NV]\+|\.\.\.|\(으\)|ㄹ\/을|기\s|게\s)/.test(ko)) return 'grammar';
+  return 'vocab';
+}
+
+// Перетворюємо компактний масив у робочі об'єкти
+const items = RAW_DATA.map(([ko, ua, cat_id], id) => ({
+  id,
+  ko,
+  ua,
+  cat_id,
+  cat: CAT_MAP[cat_id] || cat_id,
+  type: detectItemType(ko, cat_id)
+}));
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const cardsGrid = document.getElementById('cardsGrid');
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
+const pillsContainer = document.getElementById('pillsContainer');
+const statsCounter = document.getElementById('statsCounter');
+const toast = document.getElementById('toast');
+const dictTabCount = document.getElementById('dictTabCount');
+
+if (dictTabCount) {
+  dictTabCount.textContent = items.length;
+}
+
+let activeCategory = 'all';
+let searchQuery = '';
+
+// Генеруємо кнопки категорій з автоматичним підрахунком слів
+function buildCategoryPills() {
+  const counts = { all: items.length };
+  items.forEach(item => {
+    counts[item.cat_id] = (counts[item.cat_id] || 0) + 1;
+  });
+
+  let html = '<button type="button" class="pill active" data-cat="all">Усі (' + counts.all + ')</button>';
+  CATEGORIES.forEach(cat => {
+    const count = counts[cat.id] || 0;
+    html += '<button type="button" class="pill" data-cat="' + cat.id + '">' + escapeHtml(cat.label) + ' (' + count + ')</button>';
+  });
+  pillsContainer.innerHTML = html;
+
+  pillsContainer.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      pillsContainer.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeCategory = pill.getAttribute('data-cat');
+      renderCards();
+    });
+  });
+}
+
+function toggleClearBtn() {
+  if (searchInput.value.length > 0) {
+    clearBtn.classList.add('visible');
+  } else {
+    clearBtn.classList.remove('visible');
+  }
+}
+
+function clearSearch() {
+  searchInput.value = '';
+  searchQuery = '';
+  toggleClearBtn();
+  renderCards();
+  searchInput.focus();
+}
+
+function renderCards() {
+  const query = searchQuery.trim().toLowerCase();
+
+  const filtered = items.filter(item => {
+    const matchCat = (activeCategory === 'all' || item.cat_id === activeCategory);
+    if (!matchCat) return false;
+    if (!query) return true;
+
+    const content = (item.ko + ' ' + item.ua + ' ' + item.cat).toLowerCase();
+    return content.indexOf(query) !== -1;
+  });
+
+  statsCounter.textContent = 'Показано ' + filtered.length + ' з ' + items.length;
+
+  if (filtered.length === 0) {
+    cardsGrid.innerHTML = '<div class="empty-state"><h3>Нічого не знайдено</h3><p>Спробуйте змінити пошуковий запит або категорію</p></div>';
+    return;
+  }
+
+  let html = '';
+  for (let i = 0; i < filtered.length; i++) {
+    const item = filtered[i];
+    html += '<div class="card" data-copy="' + escapeHtml(item.ko) + '">' +
+      '<div class="card-top">' +
+        '<span class="card-badge badge-' + item.cat_id + '">' + escapeHtml(item.cat) + '</span>' +
+        '<span class="copy-hint">копіювати</span>' +
+      '</div>' +
+      '<div class="korean-text">' + escapeHtml(item.ko) + '</div>' +
+      '<div class="ua-text">' + escapeHtml(item.ua) + '</div>' +
+    '</div>';
+  }
+  cardsGrid.innerHTML = html;
+}
+
+let toastTimer = null;
+function showToast(message) {
+  toast.textContent = message || 'Скопійовано!';
+  toast.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 1500);
+}
+
+function copyText(text, toastMessage) {
+  fallbackCopy(text, toastMessage);
+}
+
+function fallbackCopy(text, toastMessage) {
+  const el = document.createElement('textarea');
+  el.value = text;
+  el.setAttribute('readonly', '');
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';
+  document.body.appendChild(el);
+
+  if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    el.setSelectionRange(0, 999999);
+  } else {
+    el.select();
+  }
+
+  try {
+    const copied = document.execCommand('copy');
+    if (copied) {
+      showToast(toastMessage);
+    } else if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => showToast(toastMessage)).catch(() => {});
+    }
+  } catch (err) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => showToast(toastMessage)).catch(() => {});
+    }
+  }
+  document.body.removeChild(el);
+}
+
+cardsGrid.addEventListener('click', (e) => {
+  const card = e.target.closest('.card');
+  if (card && card.dataset.copy) {
+    copyText(card.dataset.copy);
+  }
+});
+
+['input', 'keyup', 'change'].forEach(evtName => {
+  searchInput.addEventListener(evtName, (e) => {
+    searchQuery = e.target.value;
+    toggleClearBtn();
+    renderCards();
+  });
+});
+
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    clearSearch();
+  }
+});
+
+clearBtn.addEventListener('click', clearSearch);
+
+buildCategoryPills();
+renderCards();
+
+// =========================================================================
+// НАВІГАЦІЯ ВКЛАДКАМИ ТА «РОЗУМНИЙ ПЕРЕКЛАДАЧ» (GEMINI API)
+// =========================================================================
+
+const LS_API_KEY = 'korean_dict_gemini_api_key';
+const LS_MODEL_KEY = 'korean_dict_gemini_model';
+const ALLOWED_MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-4-argon'];
+
+const tabDictBtn = document.getElementById('tabDictBtn');
+const tabTranslatorBtn = document.getElementById('tabTranslatorBtn');
+const dictionarySection = document.getElementById('dictionarySection');
+const translatorSection = document.getElementById('translatorSection');
+
+const apiKeyInput = document.getElementById('apiKeyInput');
+const toggleApiKeyVisBtn = document.getElementById('toggleApiKeyVisBtn');
+const geminiModelSelect = document.getElementById('geminiModelSelect');
+const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
+const apiStatusBadge = document.getElementById('apiStatusBadge');
+
+const dirUaKoBtn = document.getElementById('dirUaKoBtn');
+const dirKoUaBtn = document.getElementById('dirKoUaBtn');
+const swapDirBtn = document.getElementById('swapDirBtn');
+const modeStrictBtn = document.getElementById('modeStrictBtn');
+const modeNormalBtn = document.getElementById('modeNormalBtn');
+const examplesRow = document.getElementById('examplesRow');
+
+const sourceLangTitle = document.getElementById('sourceLangTitle');
+const targetLangTitle = document.getElementById('targetLangTitle');
+const sourceText = document.getElementById('sourceText');
+const sourceCharCount = document.getElementById('sourceCharCount');
+const clearSourceBtn = document.getElementById('clearSourceBtn');
+const translateBtn = document.getElementById('translateBtn');
+
+const translationOutput = document.getElementById('translationOutput');
+const toggleHighlightBtn = document.getElementById('toggleHighlightBtn');
+const copyTranslationBtn = document.getElementById('copyTranslationBtn');
+const explanationBox = document.getElementById('explanationBox');
+const translatorError = document.getElementById('translatorError');
+const usedDictSummary = document.getElementById('usedDictSummary');
+const usedItemsContainer = document.getElementById('usedItemsContainer');
+
+let translatorDirection = 'ua-to-ko'; // 'ua-to-ko' | 'ko-to-ua'
+let translatorMode = 'strict'; // 'strict' | 'normal'
+let highlightEnabled = true;
+let isTranslating = false;
+let lastTranslationState = null; // { translation, resolvedItems, explanation }
+
+const EXAMPLES_BY_DIR = {
+  'ua-to-ko': [
+    {
+      label: '🤖 ШІ та кар’єра',
+      text: 'Очікується, що в найближчі 5 років попит на штучний інтелект зростатиме, тому потрібно приділити особливу увагу підготовці до працевлаштування.'
+    },
+    {
+      label: '🩺 Детокс і здоров’я',
+      text: 'Надмірне використання смартфонів може призвести до хронічної втоми, порушення сну та зниження концентрації, тож варто вжити заходів і відпочити.'
+    },
+    {
+      label: '💼 Співбесіда та резюме',
+      text: 'Щоб знайти хорошу роботу, претендент повинен заздалегідь підготувати резюме, отримати сертифікат і докласти багато зусиль на співбесіді.'
+    }
+  ],
+  'ko-to-ua': [
+    {
+      label: '🤖 AI та майбутнє',
+      text: '향후 5 년은 인공지능에 대한 수요가 높아질 것으로 전망되므로 취업 준비에 중점을 두어야 합니다.'
+    },
+    {
+      label: '🩺 Здоров’я та детокс',
+      text: '과도한 스마트폰 사용은 만성적인 피로와 수면 장애를 유발할 수 있어서 휴식을 취하는 조치를 취해야 합니다.'
+    },
+    {
+      label: '💼 Пошук роботи',
+      text: '좋은 직장을 구하기 위해 지원자는 이력서와 자격증을 미리 준비하고 면접에서 최선을 다해야 합니다.'
+    }
+  ]
+};
+
+function safeStorageGet(key) {
+  try {
+    return localStorage.getItem(key) || '';
+  } catch (e) {
+    return '';
+  }
+}
+
+function safeStorageSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function safeStorageRemove(key) {
+  try {
+    localStorage.removeItem(key);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function switchTab(tabName) {
+  const isDict = tabName === 'dictionary';
+  tabDictBtn.classList.toggle('active', isDict);
+  tabTranslatorBtn.classList.toggle('active', !isDict);
+  dictionarySection.classList.toggle('hidden-view', !isDict);
+  translatorSection.classList.toggle('hidden-view', isDict);
+}
+
+function jumpToDictionary(koQuery) {
+  switchTab('dictionary');
+  activeCategory = 'all';
+  pillsContainer.querySelectorAll('.pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-cat') === 'all');
+  });
+  searchInput.value = koQuery;
+  searchQuery = koQuery;
+  toggleClearBtn();
+  renderCards();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateApiStatusUI() {
+  const savedKey = safeStorageGet(LS_API_KEY).trim();
+  if (savedKey) {
+    apiStatusBadge.textContent = 'Ключ збережено';
+    apiStatusBadge.className = 'api-status-badge saved';
+  } else {
+    apiStatusBadge.textContent = 'Ключ не задано';
+    apiStatusBadge.className = 'api-status-badge missing';
+  }
+}
+
+function loadApiSettings() {
+  const savedKey = safeStorageGet(LS_API_KEY);
+  if (savedKey) {
+    apiKeyInput.value = savedKey;
+  }
+  const savedModel = safeStorageGet(LS_MODEL_KEY);
+  if (ALLOWED_MODELS.includes(savedModel)) {
+    geminiModelSelect.value = savedModel;
+  } else {
+    geminiModelSelect.value = 'gemini-3.8-flash';
+  }
+  updateApiStatusUI();
+}
+
+function saveApiKey() {
+  const val = apiKeyInput.value.trim();
+  if (!val) {
+    showError('Введіть Gemini API ключ перед збереженням.');
+    apiKeyInput.focus();
+    return;
+  }
+  safeStorageSet(LS_API_KEY, val);
+  safeStorageSet(LS_MODEL_KEY, geminiModelSelect.value);
+  hideError();
+  updateApiStatusUI();
+  showToast('API-ключ збережено!');
+}
+
+function clearApiKey() {
+  apiKeyInput.value = '';
+  safeStorageRemove(LS_API_KEY);
+  updateApiStatusUI();
+  showToast('API-ключ видалено');
+}
+
+function renderExamples() {
+  const list = EXAMPLES_BY_DIR[translatorDirection] || [];
+  let html = '<span class="control-label">Приклади:</span>';
+  list.forEach((ex, idx) => {
+    html += '<button type="button" class="example-chip" data-ex-idx="' + idx + '">' + escapeHtml(ex.label) + '</button>';
+  });
+  examplesRow.innerHTML = html;
+}
+
+function updateDirectionUI() {
+  const isUaToKo = translatorDirection === 'ua-to-ko';
+  dirUaKoBtn.classList.toggle('active', isUaToKo);
+  dirKoUaBtn.classList.toggle('active', !isUaToKo);
+
+  if (isUaToKo) {
+    sourceLangTitle.textContent = '🇺🇦 Вхідний текст (Українська)';
+    targetLangTitle.textContent = '🇰🇷 Результат перекладу (Корейська)';
+    sourceText.placeholder = 'Введіть український текст для перекладу з пріоритетом вашого словника...';
+  } else {
+    sourceLangTitle.textContent = '🇰🇷 Вхідний текст (Корейська)';
+    targetLangTitle.textContent = '🇺🇦 Результат перекладу (Українська)';
+    sourceText.placeholder = 'Введіть корейський текст — перекладач розпізнає слова й граматику з вашої бази...';
+  }
+  renderExamples();
+}
+
+function updateModeUI() {
+  const isStrict = translatorMode === 'strict';
+  modeStrictBtn.classList.toggle('active-grammar', isStrict);
+  modeNormalBtn.classList.toggle('active', !isStrict);
+}
+
+function showError(msg) {
+  translatorError.textContent = msg;
+  translatorError.classList.remove('hidden-view');
+}
+
+function hideError() {
+  translatorError.textContent = '';
+  translatorError.classList.add('hidden-view');
+}
+
+// =========================================================================
+// ПІДГОТОВКА ТА КЛАСИФІКАЦІЯ СЛОВНИКА ДЛЯ ПРОМПТУ Й ПІДСВІТКИ
+// =========================================================================
+
+function normalizeWhitespace(str) {
+  return String(str || '').replace(/\s+/g, ' ').trim();
+}
+
+const KO_GENERIC_VERBS = new Set([
+  '하다', '되다', '있다', '없다', '않다', '이다', '주다', '미치다',
+  '들다', '쓰다', '내다', '보다', '지다', '나다', '받다', '가다',
+  '오다', '만들다', '가지다', '싶다', '같다', '좋다', '나쁘다', '많다', '높다'
+]);
+
+function extractKoreanVariants(koRaw) {
+  let cleaned = koRaw
+    .replace(/\([^)]*[\u4e00-\u9fff]+[^)]*\)/g, '') // прибираємо ханчу (過猶不及)
+    .replace(/\(으\)/g, '으')
+    .replace(/\(거의\)/g, '')
+    .replace(/\(크게\/결정적인\)/g, '')
+    .replace(/\(하다\)/g, '하다')
+    .replace(/\(력\)/g, '력')
+    .replace(/\.\.\./g, ' ')
+    .replace(/[NV]\s*\+\s*/g, ' ')
+    .replace(/\+/g, ' ')
+    .replace(/ㄹ\/을/g, '을')
+    .replace(/은\/는|이\/가|을\/를|과\/와|로\/으로/g, ' ');
+
+  const rawParts = cleaned.split(/[\/\-]/).map(s => normalizeWhitespace(s)).filter(Boolean);
+  const variants = new Set();
+
+  rawParts.forEach(part => {
+    if (part.length >= 2 && !KO_GENERIC_VERBS.has(part)) {
+      variants.add(part);
+    }
+    const words = part.split(' ').filter(Boolean);
+    if (words.length >= 2) {
+      const lastWord = words[words.length - 1];
+      if (lastWord.length >= 3 && !KO_GENERIC_VERBS.has(lastWord)) {
+        variants.add(lastWord);
+      }
+    }
+  });
+
+  // Корені дієслів/прикметників (без 다/하다/되다)
+  const stems = [];
+  variants.forEach(v => {
+    if (v.endsWith('하다') && v.length > 3) {
+      stems.push(v.slice(0, -2));
+    } else if (v.endsWith('되다') && v.length > 3) {
+      stems.push(v.slice(0, -2));
+    } else if (v.endsWith('다') && v.length >= 3) {
+      const stem = v.slice(0, -1);
+      if (stem.length >= 2) stems.push(stem);
+    } else if (v.length >= 2) {
+      stems.push(v);
+    }
+  });
+
+  return Array.from(new Set([...variants, ...stems])).filter(s => s.length >= 2 && !KO_GENERIC_VERBS.has(s));
+}
+
+function extractUkrainianVariants(uaRaw) {
+  return uaRaw
+    .split(/[,;\/]/)
+    .map(s => s.replace(/\([^)]*\)/g, '').replace(/\.\.\./g, '').trim().toLowerCase())
+    .filter(s => s.length >= 3);
+}
+
+const UA_STOPWORDS = new Set([
+  'для', 'про', 'при', 'без', 'над', 'під', 'між', 'через', 'після', 'перед',
+  'щоб', 'який', 'яка', 'яке', 'які', 'того', 'тому', 'бути', 'мати', 'щось',
+  'цього', 'цієї', 'себе', 'свої', 'свій', 'свою', 'дуже', 'більш', 'менш',
+  'або', 'але', 'так', 'якщо', 'коли', 'вони', 'вона', 'воно', 'його', 'її'
+]);
+
+function getUkrainianStems(text) {
+  const words = text.toLowerCase().match(/[а-яіїєґ']{3,}/g) || [];
+  const stems = [];
+  words.forEach(w => {
+    if (UA_STOPWORDS.has(w)) return;
+    stems.push(w);
+    if (w.length >= 5) {
+      stems.push(w.slice(0, Math.max(4, w.length - 2)));
+    }
+  });
+  return Array.from(new Set(stems));
+}
+
+function findPriorityCandidates(text, direction) {
+  const lowerText = text.toLowerCase();
+  const uaStems = direction === 'ua-to-ko' ? getUkrainianStems(text) : [];
+  const scored = [];
+
+  items.forEach(item => {
+    let score = 0;
+    if (direction === 'ko-to-ua') {
+      const koVariants = extractKoreanVariants(item.ko);
+      koVariants.forEach(v => {
+        if (lowerText.includes(v.toLowerCase())) {
+          score += v.length * 3;
+        }
+      });
+    } else {
+      const uaVariants = extractUkrainianVariants(item.ua);
+      uaVariants.forEach(uv => {
+        if (lowerText.includes(uv)) {
+          score += uv.length * 4;
+        } else {
+          const uvWords = uv.match(/[а-яіїєґ']{3,}/g) || [];
+          uvWords.forEach(uvw => {
+            if (UA_STOPWORDS.has(uvw)) return;
+            const prefix = uvw.length >= 5 ? uvw.slice(0, Math.max(4, uvw.length - 2)) : uvw;
+            for (let i = 0; i < uaStems.length; i++) {
+              if (uaStems[i] === uvw || uaStems[i].startsWith(prefix) || uvw.startsWith(uaStems[i])) {
+                score += prefix.length;
+                break;
+              }
+            }
+          });
+        }
+      });
+    }
+
+    if (item.type === 'grammar' && score > 0) {
+      score += 5;
+    }
+
+    if (score > 0) {
+      scored.push({ item, score });
+    }
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, 60).map(s => s.item);
+}
+
+function buildPrompts(text, direction, mode) {
+  const priorityItems = findPriorityCandidates(text, direction);
+  const grammarItems = items.filter(i => i.type === 'grammar');
+  const vocabItems = items.filter(i => i.type === 'vocab');
+
+  const priorityBlock = priorityItems.length
+    ? priorityItems.map(i => '- [' + i.type + '] ' + i.ko + ' = ' + i.ua).join('\n')
+    : '(прямих лексичних збігів за коренями не виявлено, перевір повний список на синоніми та граматику)';
+
+  const grammarBlock = grammarItems.map(i => '- ' + i.ko + ' = ' + i.ua).join('\n');
+  const vocabBlock = vocabItems.map(i => i.ko + ' | ' + i.ua).join('\n');
+
+  const dirLabel = direction === 'ua-to-ko'
+    ? 'з УКРАЇНСЬКОЇ на КОРЕЙСЬКУ'
+    : 'з КОРЕЙСЬКОЇ на УКРАЇНСЬКУ';
+
+  const modeRules = mode === 'strict'
+    ? [
+        'РЕЖИМ: «МАКСИМАЛЬНО ВИКОРИСТОВУВАТИ МІЙ СЛОВНИК».',
+        '1. Твій головний пріоритет — використати в перекладі якомога більше слів, сталих виразів і граматичних конструкцій із наведеного словника користувача.',
+        '2. Якщо думку можна передати синонімом зі словника або підвести під граматичну конструкцію зі словника (навіть із легким адаптуванням стилю, але без спотворення змісту), ОБОВ’ЯЗКОВО обирай саме варіант зі словника!',
+        '3. Відмінюй і поєднуй слова та конструкції зі словника граматично правильно відповідно до контексту речення.'
+      ].join('\n')
+    : [
+        'РЕЖИМ: «ЗВИЧАЙНИЙ ПЕРЕКЛАД».',
+        '1. Перекладай максимально природно й стилістично точно.',
+        '2. Де словникові слова чи граматичні конструкції доречно підходять за змістом, віддавай їм перевагу та обов’язково фіксуй усі збіги в масиві used_items.'
+      ].join('\n');
+
+  const systemInstruction = [
+    'Ти — професійний корейсько-український перекладач і методист із вивчення корейської мови.',
+    'Завдання: перекласти текст ' + dirLabel + ' та проаналізувати використані одиниці зі словника користувача.',
+    '',
+    modeRules,
+    '',
+    'ПРАВИЛА ФОРМАТУВАННЯ JSON-ВІДПОВІДІ:',
+    '- Повертай ЛИШЕ валідний JSON за схемою: { "translation": string, "used_items": [...], "explanation": string }.',
+    '- У полі "used_items" вказуй ТІЛЬКИ ті слова/конструкції, які реально є у словнику користувача нижче та фактично присутні в твоєму перекладі.',
+    '- "dict_ko": ТОЧНИЙ рядок корейською зі словника (без змін!).',
+    '- "dict_ua": ТОЧНИЙ рядок українською зі словника.',
+    '- "matched_in_translation": ТОЧНИЙ безперервний фрагмент (підрядок) саме з твого поля "translation", у тій формі (відмінку, часі чи словосполученні), як він вжитий у готовому перекладі!',
+    '- "type": "grammar" для конструкцій/ідіом із блоку ГРАМАТИКА, або "vocab" для лексики.',
+    '- "explanation": 1-2 стислі речення українською з поясненням, які конструкції та вирази зі словника були залучені.',
+    '',
+    '=== ПРІОРИТЕТНІ КАНДИДАТИ ДЛЯ ЦЬОГО ТЕКСТУ ===',
+    priorityBlock,
+    '',
+    '=== УСІ ГРАМАТИЧНІ КОНСТРУКЦІЇ ТА ІДІОМИ СЛОВНИКА (type: "grammar") ===',
+    grammarBlock,
+    '',
+    '=== ПОВНИЙ СЛОВНИК ЛЕКСИКИ (type: "vocab", формат: корейською | українською) ===',
+    vocabBlock
+  ].join('\n');
+
+  const userPrompt = 'Переклади ' + dirLabel + ' та поверни JSON:\n\n' + text;
+  return { systemInstruction, userPrompt };
+}
+
+// =========================================================================
+// ВЗАЄМОДІЯ З GEMINI API (INTERACTIONS API + FALLBACK GENERATECONTENT)
+// =========================================================================
+
+const RESPONSE_SCHEMA_INTERACTIONS = {
+  type: 'object',
+  properties: {
+    translation: { type: 'string' },
+    used_items: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          dict_ko: { type: 'string' },
+          dict_ua: { type: 'string' },
+          matched_in_translation: { type: 'string' },
+          type: { type: 'string', enum: ['vocab', 'grammar'] }
+        },
+        required: ['dict_ko', 'dict_ua', 'matched_in_translation', 'type']
+      }
+    },
+    explanation: { type: 'string' }
+  },
+  required: ['translation', 'used_items', 'explanation']
+};
+
+const RESPONSE_SCHEMA_GENERATE_CONTENT = {
+  type: 'OBJECT',
+  properties: {
+    translation: { type: 'STRING' },
+    used_items: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          dict_ko: { type: 'STRING' },
+          dict_ua: { type: 'STRING' },
+          matched_in_translation: { type: 'STRING' },
+          type: { type: 'STRING', enum: ['vocab', 'grammar'] }
+        },
+        required: ['dict_ko', 'dict_ua', 'matched_in_translation', 'type']
+      }
+    },
+    explanation: { type: 'STRING' }
+  },
+  required: ['translation', 'used_items', 'explanation']
+};
+
+function extractTextFromApiResponse(data) {
+  if (!data || typeof data !== 'object') return '';
+
+  if (typeof data.output_text === 'string' && data.output_text.trim()) {
+    return data.output_text;
+  }
+
+  // Interactions API: steps[] -> model_output -> content[]
+  if (Array.isArray(data.steps)) {
+    const modelSteps = data.steps.filter(s => s && s.type === 'model_output');
+    const stepTexts = [];
+    modelSteps.forEach(step => {
+      if (typeof step.text === 'string') {
+        stepTexts.push(step.text);
+      } else if (Array.isArray(step.content)) {
+        step.content.forEach(part => {
+          if (part && typeof part.text === 'string') {
+            stepTexts.push(part.text);
+          }
+        });
+      }
+    });
+    if (stepTexts.length) return stepTexts.join('');
+  }
+
+  // Interactions API (alt): outputs[]
+  if (Array.isArray(data.outputs) && data.outputs.length) {
+    const outTexts = data.outputs
+      .map(o => (typeof o.text === 'string' ? o.text : ''))
+      .filter(Boolean);
+    if (outTexts.length) return outTexts.join('');
+  }
+
+  // generateContent API: candidates[0].content.parts[]
+  if (Array.isArray(data.candidates) && data.candidates[0] && data.candidates[0].content) {
+    const parts = data.candidates[0].content.parts || [];
+    const partTexts = parts.map(p => (p && typeof p.text === 'string' ? p.text : '')).filter(Boolean);
+    if (partTexts.length) return partTexts.join('');
+  }
+
+  return '';
+}
+
+function parseModelJson(rawText) {
+  const cleaned = String(rawText || '')
+    .trim()
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+    }
+    throw new Error('Не вдалося розпізнати JSON-відповідь від моделі.');
+  }
+}
+
+function formatApiError(status, errBody) {
+  const apiMsg = (errBody && errBody.error && errBody.error.message) ? errBody.error.message : '';
+  if (status === 401 || status === 403) {
+    return 'Помилка доступу (' + status + '): перевірте правильність Gemini API ключа. ' + apiMsg;
+  }
+  if (status === 429) {
+    return 'Перевищено ліміт запитів (429). Зачекайте трохи або спробуйте іншу модель. ' + apiMsg;
+  }
+  return 'Помилка Gemini API (' + status + '): ' + (apiMsg || 'невідома помилка сервера.');
+}
+
+async function callGeminiApi(apiKey, model, systemInstruction, userPrompt) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-goog-api-key': apiKey
+  };
+
+  // 1. Основний запит через Interactions API
+  const interactionsRes = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model,
+      system_instruction: systemInstruction,
+      input: userPrompt,
+      store: false,
+      response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: RESPONSE_SCHEMA_INTERACTIONS
+      }
+    })
+  });
+
+  if (interactionsRes.ok) {
+    const data = await interactionsRes.json();
+    const rawText = extractTextFromApiResponse(data);
+    if (!rawText) {
+      throw new Error('Модель повернула порожню відповідь.');
+    }
+    return parseModelJson(rawText);
+  }
+
+  let errBody = null;
+  try {
+    errBody = await interactionsRes.json();
+  } catch (e) {}
+
+  // Не повторюємо запит при помилках авторизації або квоти
+  if (interactionsRes.status === 401 || interactionsRes.status === 403 || interactionsRes.status === 429) {
+    throw new Error(formatApiError(interactionsRes.status, errBody));
+  }
+
+  // 2. Автоматичний fallback на :generateContent (без застарілого temperature)
+  if (interactionsRes.status === 400 || interactionsRes.status === 404) {
+    const gcUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent';
+    const gcRes = await fetch(gcUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: RESPONSE_SCHEMA_GENERATE_CONTENT
+        }
+      })
+    });
+
+    if (gcRes.ok) {
+      const gcData = await gcRes.json();
+      const rawText = extractTextFromApiResponse(gcData);
+      if (!rawText) {
+        throw new Error('Модель повернула порожню відповідь.');
+      }
+      return parseModelJson(rawText);
+    }
+
+    let gcErr = null;
+    try {
+      gcErr = await gcRes.json();
+    } catch (e) {}
+    throw new Error(formatApiError(gcRes.status, gcErr));
+  }
+
+  throw new Error(formatApiError(interactionsRes.status, errBody));
+}
+
+// =========================================================================
+// ВЕРИФІКАЦІЯ, КЛІЄНТСЬКИЙ СКАНЕР ТА ПІДСВІТКА РЕЗУЛЬТАТУ
+// =========================================================================
+
+const DICT_BY_KO = new Map();
+const DICT_BY_NORM_KO = new Map();
+const DICT_BY_UA = new Map();
+
+items.forEach(item => {
+  DICT_BY_KO.set(item.ko, item);
+  DICT_BY_NORM_KO.set(normalizeWhitespace(item.ko).toLowerCase(), item);
+  DICT_BY_UA.set(normalizeWhitespace(item.ua).toLowerCase(), item);
+});
+
+function resolveDictionaryItem(rawItem) {
+  if (!rawItem || typeof rawItem !== 'object') return null;
+  const ko = normalizeWhitespace(rawItem.dict_ko);
+  const ua = normalizeWhitespace(rawItem.dict_ua);
+
+  let found = DICT_BY_KO.get(rawItem.dict_ko) ||
+    DICT_BY_KO.get(ko) ||
+    DICT_BY_NORM_KO.get(ko.toLowerCase()) ||
+    DICT_BY_UA.get(ua.toLowerCase());
+
+  if (!found && ko) {
+    const cleanKo = ko.replace(/\s+/g, '');
+    found = items.find(it => it.ko.replace(/\s+/g, '') === cleanKo);
+  }
+  return found || null;
+}
+
+function expandToKoreanWordBoundary(text, startIdx, matchLen) {
+  let start = startIdx;
+  let end = startIdx + matchLen;
+  const isHangul = ch => /[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]/.test(ch);
+
+  while (start > 0 && isHangul(text[start - 1])) {
+    // Якщо попереду пробіл не стоїть, не розширюємо вліво для багатоскладових слів, хіба що корінь приєднався до основи
+    break;
+  }
+  while (end < text.length && isHangul(text[end])) {
+    end++;
+  }
+  return { start, end, text: text.slice(start, end) };
+}
+
+function findSpanInTranslation(translation, preferredMatch, item, direction) {
+  const pref = normalizeWhitespace(preferredMatch);
+  if (pref && pref.length >= 2) {
+    const exactIdx = translation.indexOf(pref);
+    if (exactIdx !== -1) {
+      return { start: exactIdx, end: exactIdx + pref.length, matchedText: translation.slice(exactIdx, exactIdx + pref.length) };
+    }
+    const lowerIdx = translation.toLowerCase().indexOf(pref.toLowerCase());
+    if (lowerIdx !== -1) {
+      return { start: lowerIdx, end: lowerIdx + pref.length, matchedText: translation.slice(lowerIdx, lowerIdx + pref.length) };
+    }
+  }
+
+  if (direction === 'ua-to-ko') {
+    const koVariants = extractKoreanVariants(item.ko).sort((a, b) => b.length - a.length);
+    for (let i = 0; i < koVariants.length; i++) {
+      const v = koVariants[i];
+      const idx = translation.indexOf(v);
+      if (idx !== -1) {
+        const expanded = expandToKoreanWordBoundary(translation, idx, v.length);
+        return { start: expanded.start, end: expanded.end, matchedText: expanded.text };
+      }
+    }
+  } else {
+    const uaVariants = extractUkrainianVariants(item.ua).sort((a, b) => b.length - a.length);
+    const lowerTrans = translation.toLowerCase();
+    for (let i = 0; i < uaVariants.length; i++) {
+      const uv = uaVariants[i];
+      if (uv.length < 4) continue;
+      const idx = lowerTrans.indexOf(uv);
+      if (idx !== -1) {
+        return { start: idx, end: idx + uv.length, matchedText: translation.slice(idx, idx + uv.length) };
+      }
+    }
+  }
+
+  return null;
+}
+
+function buildResolvedMatches(translation, modelUsedItems, direction) {
+  const byId = new Map();
+
+  // 1. Звіряємо відповідь моделі з реальним масивом items
+  if (Array.isArray(modelUsedItems)) {
+    modelUsedItems.forEach(raw => {
+      const dictItem = resolveDictionaryItem(raw);
+      if (!dictItem) return;
+
+      const span = findSpanInTranslation(translation, raw.matched_in_translation, dictItem, direction);
+      const existing = byId.get(dictItem.id);
+      if (!existing) {
+        byId.set(dictItem.id, {
+          item: dictItem,
+          type: dictItem.type, // пріоритет канонічної класифікації зі словника
+          matchedText: span ? span.matchedText : (normalizeWhitespace(raw.matched_in_translation) || ''),
+          span
+        });
+      } else if (!existing.span && span) {
+        existing.span = span;
+        existing.matchedText = span.matchedText;
+      }
+    });
+  }
+
+  // 2. Клієнтський до-сканер по тексту перекладу, щоб гарантовано підсвітити точні збіги зі словника
+  if (direction === 'ua-to-ko') {
+    items.forEach(item => {
+      if (byId.has(item.id)) return;
+      const variants = extractKoreanVariants(item.ko).sort((a, b) => b.length - a.length);
+      for (let i = 0; i < variants.length; i++) {
+        const v = variants[i];
+        if (v.length < 2) continue;
+        const idx = translation.indexOf(v);
+        if (idx !== -1) {
+          // Перевіряємо межу початку слова (пробіл або початок рядка/розділовий знак), щоб уникнути випадкових збігів усередині іншого слова
+          const prevChar = idx > 0 ? translation[idx - 1] : '';
+          if (!prevChar || !/[\uac00-\ud7af]/.test(prevChar)) {
+            const expanded = expandToKoreanWordBoundary(translation, idx, v.length);
+            byId.set(item.id, {
+              item,
+              type: item.type,
+              matchedText: expanded.text,
+              span: { start: expanded.start, end: expanded.end, matchedText: expanded.text }
+            });
+            break;
+          }
+        }
+      }
+    });
+  } else {
+    const lowerTrans = translation.toLowerCase();
+    items.forEach(item => {
+      if (byId.has(item.id)) return;
+      const uaVariants = extractUkrainianVariants(item.ua).sort((a, b) => b.length - a.length);
+      for (let i = 0; i < uaVariants.length; i++) {
+        const uv = uaVariants[i];
+        if (uv.length < 5) continue;
+        const idx = lowerTrans.indexOf(uv);
+        if (idx !== -1) {
+          const prevChar = idx > 0 ? lowerTrans[idx - 1] : '';
+          const nextChar = idx + uv.length < lowerTrans.length ? lowerTrans[idx + uv.length] : '';
+          const isLetter = ch => /[а-яіїєґa-z]/i.test(ch);
+          if (!isLetter(prevChar) && !isLetter(nextChar)) {
+            const slice = translation.slice(idx, idx + uv.length);
+            byId.set(item.id, {
+              item,
+              type: item.type,
+              matchedText: slice,
+              span: { start: idx, end: idx + uv.length, matchedText: slice }
+            });
+            break;
+          }
+        }
+      }
+    });
+  }
+
+  return Array.from(byId.values());
+}
+
+function renderHighlightedTranslation(translation, resolvedItems) {
+  if (!highlightEnabled) {
+    return escapeHtml(translation);
+  }
+
+  const candidateSpans = [];
+  resolvedItems.forEach(entry => {
+    if (entry.span && entry.span.end > entry.span.start) {
+      candidateSpans.push({
+        start: entry.span.start,
+        end: entry.span.end,
+        type: entry.type,
+        item: entry.item
+      });
+    }
+  });
+
+  // Сортуємо за довжиною спаданням (довші фрази перекривають коротші), при рівності — пріоритет граматиці
+  candidateSpans.sort((a, b) => {
+    const lenDiff = (b.end - b.start) - (a.end - a.start);
+    if (lenDiff !== 0) return lenDiff;
+    if (a.type === b.type) return a.start - b.start;
+    return a.type === 'grammar' ? -1 : 1;
+  });
+
+  const accepted = [];
+  candidateSpans.forEach(cand => {
+    const overlaps = accepted.some(acc => !(cand.end <= acc.start || cand.start >= acc.end));
+    if (!overlaps) {
+      accepted.push(cand);
+    }
+  });
+
+  accepted.sort((a, b) => a.start - b.start);
+
+  let html = '';
+  let cursor = 0;
+  accepted.forEach(seg => {
+    if (seg.start > cursor) {
+      html += escapeHtml(translation.slice(cursor, seg.start));
+    }
+    const cls = seg.type === 'grammar' ? 'hl-grammar' : 'hl-vocab';
+    const title = seg.item.ko + ' — ' + seg.item.ua;
+    html += '<mark class="' + cls + '" data-item-id="' + seg.item.id + '" title="' + escapeHtml(title) + '">' +
+      escapeHtml(translation.slice(seg.start, seg.end)) +
+    '</mark>';
+    cursor = seg.end;
+  });
+
+  if (cursor < translation.length) {
+    html += escapeHtml(translation.slice(cursor));
+  }
+
+  return html;
+}
+
+function renderUsedItemsPanel(resolvedItems) {
+  if (!resolvedItems.length) {
+    usedDictSummary.textContent = 'Прямих збігів зі словником не знайдено';
+    usedItemsContainer.innerHTML = '<div class="used-empty">У цьому перекладі не використано виразів із вашої бази (або спробуйте режим «Максимально використовувати мій словник»).</div>';
+    return;
+  }
+
+  const vocabCount = resolvedItems.filter(r => r.type === 'vocab').length;
+  const grammarCount = resolvedItems.filter(r => r.type === 'grammar').length;
+  usedDictSummary.textContent = 'Знайдено ' + resolvedItems.length + ' збігів: ' + vocabCount + ' лексика • ' + grammarCount + ' граматика';
+
+  // Спочатку показуємо граматичні конструкції, далі лексику
+  const sorted = [...resolvedItems].sort((a, b) => {
+    if (a.type === b.type) return 0;
+    return a.type === 'grammar' ? -1 : 1;
+  });
+
+  let html = '';
+  sorted.forEach(entry => {
+    const it = entry.item;
+    const isGrammar = entry.type === 'grammar';
+    const typeLabel = isGrammar ? 'Граматика / конструкція' : 'Лексика';
+    const matchedBadge = entry.matchedText
+      ? '<div class="used-matched-form">У тексті: <strong>«' + escapeHtml(entry.matchedText) + '»</strong></div>'
+      : '';
+
+    html += '<div class="used-item-card type-' + entry.type + '" data-used-id="' + it.id + '">' +
+      '<div class="used-item-top">' +
+        '<span class="type-tag ' + entry.type + '">' + typeLabel + '</span>' +
+        '<span class="card-badge badge-' + it.cat_id + '">' + escapeHtml(it.cat) + '</span>' +
+      '</div>' +
+      '<div class="used-ko">' + escapeHtml(it.ko) + '</div>' +
+      '<div class="used-ua">' + escapeHtml(it.ua) + '</div>' +
+      matchedBadge +
+      '<div class="used-item-actions">' +
+        '<button type="button" class="mini-btn js-copy-used" data-copy="' + escapeHtml(it.ko) + '">📋 Копіювати</button>' +
+        '<button type="button" class="mini-btn js-find-used" data-ko="' + escapeHtml(it.ko) + '">🔍 У словник</button>' +
+      '</div>' +
+    '</div>';
+  });
+
+  usedItemsContainer.innerHTML = html;
+}
+
+function renderTranslationResult() {
+  if (!lastTranslationState) return;
+  const { translation, resolvedItems, explanation } = lastTranslationState;
+
+  translationOutput.innerHTML = renderHighlightedTranslation(translation, resolvedItems);
+  copyTranslationBtn.disabled = !translation;
+
+  if (explanation) {
+    explanationBox.innerHTML = '<strong>💡 Коментар ШІ:</strong> ' + escapeHtml(explanation);
+    explanationBox.classList.remove('hidden-view');
+  } else {
+    explanationBox.classList.add('hidden-view');
+  }
+
+  renderUsedItemsPanel(resolvedItems);
+}
+
+function setLoadingState(loading) {
+  isTranslating = loading;
+  translateBtn.disabled = loading;
+  translateBtn.innerHTML = loading
+    ? '<span>⏳ Перекладаємо...</span>'
+    : '<span>✨ Перекласти</span>';
+
+  if (loading) {
+    copyTranslationBtn.disabled = true;
+    explanationBox.classList.add('hidden-view');
+    translationOutput.innerHTML = '<div class="loading-state">' +
+      '<div class="spinner"></div>' +
+      '<div>Аналізуємо ' + items.length + ' записів словника та формуємо переклад через Gemini API...</div>' +
+    '</div>';
+  }
+}
+
+async function handleTranslate() {
+  if (isTranslating) return;
+
+  const text = sourceText.value.trim();
+  if (!text) {
+    showError('Введіть текст для перекладу.');
+    sourceText.focus();
+    return;
+  }
+
+  // Беремо ключ з поля вводу або з localStorage
+  const apiKey = apiKeyInput.value.trim() || safeStorageGet(LS_API_KEY).trim();
+  if (!apiKey) {
+    showError('Будь ласка, вставте ваш Gemini API ключ у полі налаштувань зверху та натисніть «Зберегти ключ».');
+    apiKeyInput.focus();
+    return;
+  }
+
+  // Якщо користувач вставив ключ у поле, але забув натиснути "Зберегти", зберігаємо автоматично
+  if (apiKeyInput.value.trim() && apiKeyInput.value.trim() !== safeStorageGet(LS_API_KEY).trim()) {
+    safeStorageSet(LS_API_KEY, apiKeyInput.value.trim());
+    updateApiStatusUI();
+  }
+
+  const selectedModel = geminiModelSelect.value || 'gemini-3.8-flash';
+  hideError();
+  setLoadingState(true);
+
+  try {
+    const { systemInstruction, userPrompt } = buildPrompts(text, translatorDirection, translatorMode);
+    const result = await callGeminiApi(apiKey, selectedModel, systemInstruction, userPrompt);
+
+    const translation = String(result.translation || '').trim();
+    if (!translation) {
+      throw new Error('Модель не повернула текст перекладу.');
+    }
+
+    const resolvedItems = buildResolvedMatches(translation, result.used_items, translatorDirection);
+    lastTranslationState = {
+      translation,
+      resolvedItems,
+      explanation: String(result.explanation || '').trim()
+    };
+    renderTranslationResult();
+  } catch (err) {
+    lastTranslationState = null;
+    translationOutput.innerHTML = '<div class="output-placeholder">Не вдалося виконати переклад. Перевірте повідомлення про помилку вище.</div>';
+    showError(err && err.message ? err.message : 'Сталася невідома помилка під час запиту до Gemini API.');
+  } finally {
+    setLoadingState(false);
+  }
+}
+
+// Слухачі подій вкладок та перекладача
+tabDictBtn.addEventListener('click', () => switchTab('dictionary'));
+tabTranslatorBtn.addEventListener('click', () => switchTab('translator'));
+
+toggleApiKeyVisBtn.addEventListener('click', () => {
+  apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
+});
+
+saveApiKeyBtn.addEventListener('click', saveApiKey);
+clearApiKeyBtn.addEventListener('click', clearApiKey);
+apiKeyInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') saveApiKey();
+});
+
+geminiModelSelect.addEventListener('change', () => {
+  safeStorageSet(LS_MODEL_KEY, geminiModelSelect.value);
+});
+
+dirUaKoBtn.addEventListener('click', () => {
+  translatorDirection = 'ua-to-ko';
+  updateDirectionUI();
+});
+
+dirKoUaBtn.addEventListener('click', () => {
+  translatorDirection = 'ko-to-ua';
+  updateDirectionUI();
+});
+
+swapDirBtn.addEventListener('click', () => {
+  translatorDirection = translatorDirection === 'ua-to-ko' ? 'ko-to-ua' : 'ua-to-ko';
+  if (lastTranslationState && lastTranslationState.translation) {
+    sourceText.value = lastTranslationState.translation;
+    sourceCharCount.textContent = sourceText.value.length;
+    lastTranslationState = null;
+    translationOutput.innerHTML = '<div class="output-placeholder">Напрямок змінено. Натисніть «Перекласти» для зворотного перекладу.</div>';
+    explanationBox.classList.add('hidden-view');
+    copyTranslationBtn.disabled = true;
+    usedDictSummary.textContent = 'Зробіть переклад, щоб побачити знайдені слова та конструкції';
+    usedItemsContainer.innerHTML = '<div class="used-empty">Натисніть «Перекласти», щоб побачити розбір.</div>';
+  }
+  updateDirectionUI();
+});
+
+modeStrictBtn.addEventListener('click', () => {
+  translatorMode = 'strict';
+  updateModeUI();
+});
+
+modeNormalBtn.addEventListener('click', () => {
+  translatorMode = 'normal';
+  updateModeUI();
+});
+
+examplesRow.addEventListener('click', (e) => {
+  const chip = e.target.closest('.example-chip');
+  if (!chip) return;
+  const idx = Number(chip.getAttribute('data-ex-idx'));
+  const list = EXAMPLES_BY_DIR[translatorDirection] || [];
+  if (list[idx]) {
+    sourceText.value = list[idx].text;
+    sourceCharCount.textContent = sourceText.value.length;
+    hideError();
+    sourceText.focus();
+  }
+});
+
+sourceText.addEventListener('input', () => {
+  sourceCharCount.textContent = sourceText.value.length;
+});
+
+sourceText.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    handleTranslate();
+  }
+});
+
+clearSourceBtn.addEventListener('click', () => {
+  sourceText.value = '';
+  sourceCharCount.textContent = '0';
+  hideError();
+  sourceText.focus();
+});
+
+translateBtn.addEventListener('click', handleTranslate);
+
+toggleHighlightBtn.addEventListener('click', () => {
+  highlightEnabled = !highlightEnabled;
+  toggleHighlightBtn.classList.toggle('active', highlightEnabled);
+  if (lastTranslationState) {
+    translationOutput.innerHTML = renderHighlightedTranslation(
+      lastTranslationState.translation,
+      lastTranslationState.resolvedItems
+    );
+  }
+});
+
+copyTranslationBtn.addEventListener('click', () => {
+  if (lastTranslationState && lastTranslationState.translation) {
+    copyText(lastTranslationState.translation, 'Переклад скопійовано!');
+  }
+});
+
+translationOutput.addEventListener('click', (e) => {
+  const mark = e.target.closest('mark[data-item-id]');
+  if (!mark) return;
+  const itemId = mark.getAttribute('data-item-id');
+  const card = usedItemsContainer.querySelector('[data-used-id="' + itemId + '"]');
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    card.classList.remove('flash-focus');
+    void card.offsetWidth;
+    card.classList.add('flash-focus');
+    setTimeout(() => card.classList.remove('flash-focus'), 1400);
+  }
+});
+
+usedItemsContainer.addEventListener('click', (e) => {
+  const copyBtn = e.target.closest('.js-copy-used');
+  if (copyBtn) {
+    copyText(copyBtn.getAttribute('data-copy'));
+    return;
+  }
+  const findBtn = e.target.closest('.js-find-used');
+  if (findBtn) {
+    jumpToDictionary(findBtn.getAttribute('data-ko'));
+  }
+});
+
+loadApiSettings();
+updateDirectionUI();
+updateModeUI();
+</script>
+</body>
+</html>
