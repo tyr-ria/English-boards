@@ -95,22 +95,126 @@
             filter: brightness(0) opacity(0.7);
         }
 
+        /* Certificate Background & Safe-Zone Layout (2752 x 1536 => 43:24) */
+        .zoo-cert-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 43 / 24;
+            overflow: hidden;
+            container-type: inline-size;
+            background-color: #fbf7eb;
+        }
+        .zoo-cert-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            pointer-events: none;
+            user-select: none;
+        }
+        .zoo-cert-safe-zone {
+            position: absolute;
+            top: 30%;
+            bottom: 11%;
+            left: 23%;
+            right: 23%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            z-index: 10;
+            padding: 0.4% 0;
+            box-sizing: border-box;
+        }
+        .zoo-cert-title {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            color: #7c4a14;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: 2.75cqw;
+            line-height: 1.08;
+            margin: 0;
+        }
+        .zoo-cert-subtitle {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            color: #166534;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 1.5cqw;
+            line-height: 1.15;
+            margin: 0.6% 0 0 0;
+        }
+        .zoo-cert-lead {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            color: #57534e;
+            font-size: 1.35cqw;
+            line-height: 1.2;
+            margin: 0 0 1.2% 0;
+        }
+        .zoo-cert-name {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            color: #166534;
+            font-size: 3.3cqw;
+            line-height: 1.12;
+            border-bottom: 0.35cqw solid #eab308;
+            padding: 0 4% 0.6%;
+            min-width: 46%;
+            max-width: 96%;
+            margin: 0 auto;
+            overflow-wrap: anywhere;
+        }
+        .zoo-cert-desc {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            color: #374151;
+            font-size: 1.3cqw;
+            line-height: 1.38;
+            max-width: 84%;
+            margin: 0 auto;
+        }
+        .zoo-cert-sig {
+            border-top: 0.2cqw solid #854d0e;
+            padding-top: 0.8%;
+            width: 42%;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            color: #854d0e;
+            font-size: 1.35cqw;
+            line-height: 1.2;
+        }
+
         /* Certificate Print Styles */
         @media print {
+            @page {
+                size: landscape;
+                margin: 0;
+            }
             body * { visibility: hidden; }
             #certificate-area, #certificate-area * { visibility: visible; }
             #certificate-area {
-                display: block !important;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                position: fixed;
+                inset: 0;
+                width: 100vw;
                 height: 100vh;
                 margin: 0;
-                padding: 0;
+                padding: 8mm;
+                box-sizing: border-box;
                 background: white !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
+            }
+            #certificate-area .zoo-cert-frame {
+                width: min(100%, calc((100vh - 16mm) * 43 / 24));
+                max-height: 100%;
             }
             .no-print { display: none !important; }
         }
@@ -385,33 +489,26 @@
                         </div>
 
                         <!-- On-Screen Beautiful Certificate Preview -->
-                        <div class="w-full max-w-3xl mx-auto border-8 border-double border-zoo-darkGreen bg-green-50 p-8 rounded-3xl relative shadow-2xl overflow-hidden" id="cert-preview">
-                            <!-- Background Decor -->
-                            <img src="Animals/hippo.png" alt="Hippo" class="w-14 h-14 object-contain opacity-50 absolute top-4 left-4 pointer-events-none">
-                            <img src="Animals/tiger.png" alt="Tiger" class="w-14 h-14 object-contain opacity-50 absolute top-4 right-4 pointer-events-none">
-                            <img src="Animals/elephant.png" alt="Elephant" class="w-14 h-14 object-contain opacity-50 absolute bottom-4 left-4 pointer-events-none">
-                            <img src="Animals/lion.png" alt="Lion" class="w-14 h-14 object-contain opacity-50 absolute bottom-4 right-4 pointer-events-none">
-                            
-                            <div class="text-center relative z-10 py-10">
-                                <i class="fa-solid fa-award text-zoo-yellow text-7xl drop-shadow-lg mb-4"></i>
-                                <h1 class="font-heading text-4xl md:text-5xl text-zoo-brown uppercase tracking-widest mb-2">Certificate of Achievement</h1>
-                                <h2 class="font-body text-xl text-zoo-darkGreen font-bold mb-8 uppercase tracking-widest">Zookeeper Academy</h2>
-                                
-                                <p class="text-lg text-gray-600 font-bold mb-4">This proudly certifies that</p>
-                                
-                                <div id="cert-name-preview" class="font-heading text-4xl text-zoo-darkGreen border-b-4 border-zoo-yellow inline-block px-10 pb-2 mb-8 font-bold min-w-[200px]">
-                                    Student Name
+                        <div id="cert-preview" class="zoo-cert-frame max-w-4xl mx-auto rounded-2xl shadow-2xl border-4 border-amber-200">
+                            <img src="Certificates/Zookeeper%20Certificate.jpg" alt="Zookeeper Certificate Background" class="zoo-cert-bg">
+                            <div class="zoo-cert-safe-zone">
+                                <div class="w-full">
+                                    <h1 class="zoo-cert-title">Certificate of Achievement</h1>
+                                    <h2 class="zoo-cert-subtitle">Zookeeper Academy</h2>
                                 </div>
-                                
-                                <p class="text-lg text-gray-700 max-w-lg mx-auto font-bold leading-relaxed mb-8">
-                                    Has successfully completed all missions, learned the English names of zoo animals, and proven to be an excellent Zookeeper Assistant!
-                                </p>
-                                
-                                <div class="flex justify-center mt-4">
-                                    <div class="text-center border-t-2 border-zoo-brown pt-2 w-48">
-                                        <p class="font-body font-bold text-zoo-brown text-xl">Master Zookeeper</p>
+
+                                <div class="w-full flex flex-col items-center">
+                                    <p class="zoo-cert-lead">This proudly certifies that</p>
+                                    <div id="cert-name-preview" class="zoo-cert-name">
+                                        Student Name
                                     </div>
                                 </div>
+
+                                <p class="zoo-cert-desc">
+                                    Has successfully completed all missions, learned the English names of zoo animals, and proven to be an excellent Zookeeper Assistant!
+                                </p>
+
+                                <div class="zoo-cert-sig">Master Zookeeper</div>
                             </div>
                         </div>
                     </div>
@@ -427,30 +524,26 @@
 
     <!-- ================= PRINTABLE CERTIFICATE (Hidden unless printing) ================= -->
     <div id="certificate-area" class="hidden">
-        <div style="border: 15px double #166534; padding: 50px; text-align: center; border-radius: 30px; background-color: #f0fdf4; height: 95vh; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; box-sizing: border-box;">
-            <img src="Animals/hippo.png" alt="Hippo" style="position: absolute; top: 30px; left: 30px; width: 80px; height: 80px; object-fit: contain;">
-            <img src="Animals/tiger.png" alt="Tiger" style="position: absolute; top: 30px; right: 30px; width: 80px; height: 80px; object-fit: contain;">
-            <img src="Animals/elephant.png" alt="Elephant" style="position: absolute; bottom: 30px; left: 30px; width: 80px; height: 80px; object-fit: contain;">
-            <img src="Animals/lion.png" alt="Lion" style="position: absolute; bottom: 30px; right: 30px; width: 80px; height: 80px; object-fit: contain;">
-            
-            <div style="font-size: 80px; margin-bottom: 20px; color: #facc15; text-shadow: 2px 2px 0px #b45309;">🌟</div>
-            <h1 style="font-family: 'Fredoka', sans-serif; color: #854d0e; font-size: 60px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">Certificate of Achievement</h1>
-            <h2 style="font-family: 'Nunito', sans-serif; color: #166534; font-size: 28px; margin-bottom: 40px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px;">Zookeeper Academy</h2>
-            
-            <p style="font-family: 'Nunito', sans-serif; font-size: 24px; color: #4b5563; margin-bottom: 20px; font-weight: bold;">This proudly certifies that</p>
-            
-            <div id="cert-name-print" style="font-family: 'Fredoka', sans-serif; font-size: 56px; color: #166534; border-bottom: 4px solid #facc15; display: inline-block; padding: 0 50px; margin-bottom: 40px; font-weight: bold;">
-                Student Name
-            </div>
-            
-            <p style="font-family: 'Nunito', sans-serif; font-size: 24px; color: #374151; max-width: 700px; margin: 0 auto 50px auto; line-height: 1.6; font-weight: bold;">
-                Has successfully completed all missions, learned the English names of zoo animals, and proven to be an excellent Zookeeper Assistant!
-            </p>
-            
-            <div style="display: flex; justify-content: space-around; margin-top: 40px;">
-                <div style="text-align: center;">
-                    <div style="border-top: 3px solid #854d0e; padding-top: 15px; font-family: 'Nunito', sans-serif; font-weight: 900; color: #854d0e; font-size: 24px; width: 250px;">Master Zookeeper</div>
+        <div class="zoo-cert-frame">
+            <img src="Certificates/Zookeeper%20Certificate.jpg" alt="Zookeeper Certificate Background" class="zoo-cert-bg">
+            <div class="zoo-cert-safe-zone">
+                <div class="w-full">
+                    <h1 class="zoo-cert-title">Certificate of Achievement</h1>
+                    <h2 class="zoo-cert-subtitle">Zookeeper Academy</h2>
                 </div>
+
+                <div class="w-full flex flex-col items-center">
+                    <p class="zoo-cert-lead">This proudly certifies that</p>
+                    <div id="cert-name-print" class="zoo-cert-name">
+                        Student Name
+                    </div>
+                </div>
+
+                <p class="zoo-cert-desc">
+                    Has successfully completed all missions, learned the English names of zoo animals, and proven to be an excellent Zookeeper Assistant!
+                </p>
+
+                <div class="zoo-cert-sig">Master Zookeeper</div>
             </div>
         </div>
     </div>
