@@ -185,7 +185,7 @@
                     <!-- Tabs injected by JS; see THEME_CATEGORIES below to add future themes -->
                 </div>
                 <div class="text-xs text-slate-400 shrink-0">
-                    Showing <span id="visible-count" class="text-white font-semibold">14</span> of <span id="total-count" class="text-slate-300">14</span> lessons
+                    Showing <span id="visible-count" class="text-white font-semibold">15</span> of <span id="total-count" class="text-slate-300">15</span> lessons
                 </div>
             </div>
         </section>
@@ -581,8 +581,7 @@
                 modules: ['10 Materials Cards', 'Affirmative Crafter', 'Negative Shield', 'Question Bridge', 'Mixed Blitz', 'Furnace Lab', 'Diamond Shop'],
                 icon: 'fa-cubes',
                 characterName: 'Steve & Crafting Table',
-                emoji: '⛏️',
-                imageUrl: 'https://i.postimg.cc/fbHCJjGR/crafting-table-icon-removebg-preview.png',
+                imageUrl: 'Minecraft/crafting_table_icon-removebg-preview.png',
                 paletteKey: 'minecraft',
             },
             {
@@ -603,9 +602,29 @@
                 modules: ['10 Tools & Weapons', 'Affirmative (+)', 'Negative (-)', 'Questions (?)', 'Mixed Blitz', 'Enchanting Table', 'Room Builder'],
                 icon: 'fa-wand-magic-sparkles',
                 characterName: 'Alex & Enchanting Table',
-                emoji: '⚔️',
-                imageUrl: 'https://i.postimg.cc/YqHvSDHQ/enchantment-table-removebg-preview.png',
+                imageUrl: 'Minecraft/enchantment_table-removebg-preview.png',
                 paletteKey: 'minecraft_enchant',
+            },
+            {
+                id: 'minecraft-present-simple-vs-continuous-quest',
+                href: 'minecraft_present_simple_vs_continuous_quest.html',
+                theme: 'minecraft',
+                themeLabel: 'Minecraft • Harvest Festival',
+                timePeriod: 'present',
+                timePeriodLabel: 'PRESENT TIME',
+                aspect: 'simple-vs-continuous',
+                aspectLabel: 'Simple vs Continuous',
+                nightBadge: 'Harvest Festival',
+                tenseName: 'Minecraft Present Simple vs Continuous',
+                subtitle: 'The Great Harvest Festival • Food & Farm',
+                level: 'Beginner (A0–A1)',
+                formula: 'V(s/es) vs am / is / are + V-ing',
+                description: 'Celebrate the Great Harvest Festival with Steve, Alex, and the Villager! Learn 10 food & farming words, compare Every Day habits vs Right Now actions through the Farmer’s Spyglass, and open 8 cozy tables in the Farm Bakery & Cafe!',
+                modules: ['10 Food & Farm Cards', 'Affirmative (+)', 'Negative (-)', 'Questions (?)', 'Mixed Blitz', "Farmer's Spyglass", 'Bakery & Cafe'],
+                icon: 'fa-wheat-awn',
+                characterName: 'Villager & Honey Bottle',
+                imageUrl: 'Minecraft/honey_bottle.png',
+                paletteKey: 'minecraft_harvest',
             },
 
             // --- PAST GROUP (Archive Amber, Nature Teal & Moonlight Blue) ---
@@ -669,8 +688,7 @@
                 modules: ['10 Nature Cards', '6 Magic Verbs', 'Affirmative Explorer', 'Negative Shield', 'Cave Questions', 'Cave Detective', 'Rescue Mobs'],
                 icon: 'fa-compass',
                 characterName: 'Steve & Nether Star',
-                emoji: '🧭',
-                imageUrl: 'https://i.postimg.cc/VvZbghx8/nether-star.png',
+                imageUrl: 'Minecraft/nether_star.png',
                 paletteKey: 'minecraft_nature',
             },
             {
@@ -691,8 +709,7 @@
                 modules: ['10 Farm Animals', 'Affirmative Patrol', 'Negative Shield', 'Lantern Questions', 'Mixed Blitz', 'River Bridge', 'Photo Album'],
                 icon: 'fa-moon',
                 characterName: 'Moonlight Lantern & Pig',
-                emoji: '🌙',
-                imageUrl: 'https://i.postimg.cc/76fV7J4Q/Lantern-removebg-preview.png',
+                imageUrl: 'Minecraft/Lantern-removebg-preview.png',
                 paletteKey: 'minecraft_moonlight',
             },
 
@@ -827,6 +844,16 @@
                 glowBg: 'from-blue-500/14 via-emerald-500/5 to-transparent',
                 iconColor: 'text-sky-400',
             },
+            minecraft_harvest: {
+                cardBorder: 'border-amber-500/35 hover:border-lime-400/75 hover:shadow-[0_0_28px_rgba(217,119,6,0.25)]',
+                topStrip: 'bg-gradient-to-r from-amber-500 via-lime-500 to-rose-500',
+                periodPill: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
+                nightPill: 'bg-lime-500/15 text-lime-300 border-lime-500/40',
+                formulaText: 'text-amber-300',
+                btnBg: 'bg-gradient-to-r from-amber-500 via-lime-500 to-rose-500 hover:from-amber-400 hover:via-lime-400 hover:to-rose-400 text-zinc-950',
+                glowBg: 'from-amber-500/14 via-lime-500/6 to-transparent',
+                iconColor: 'text-amber-400',
+            },
             present: {
                 cardBorder: 'border-emerald-500/25 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(34,211,238,0.16)]',
                 topStrip: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400',
@@ -872,10 +899,14 @@
         let activeCategory = 'all';
         let searchQuery = '';
 
+        function matchesAspect(lesson, aspectId) {
+            return lesson.aspect === aspectId || (lesson.aspect === 'simple-vs-continuous' && (aspectId === 'simple' || aspectId === 'continuous'));
+        }
+
         function getCategoryCount(cat) {
             if (cat.type === 'all') return LESSONS_DATA.length;
             if (cat.type === 'theme') return LESSONS_DATA.filter((l) => l.theme === cat.id).length;
-            if (cat.type === 'aspect') return LESSONS_DATA.filter((l) => l.aspect === cat.id).length;
+            if (cat.type === 'aspect') return LESSONS_DATA.filter((l) => matchesAspect(l, cat.id)).length;
             if (cat.type === 'timePeriod') return LESSONS_DATA.filter((l) => l.timePeriod === cat.id).length;
             return 0;
         }
@@ -1023,7 +1054,7 @@
             const filtered = LESSONS_DATA.filter((lesson) => {
                 let matchesCategory = true;
                 if (selectedCat.type === 'theme') matchesCategory = lesson.theme === selectedCat.id;
-                if (selectedCat.type === 'aspect') matchesCategory = lesson.aspect === selectedCat.id;
+                if (selectedCat.type === 'aspect') matchesCategory = matchesAspect(lesson, selectedCat.id);
                 if (selectedCat.type === 'timePeriod') matchesCategory = lesson.timePeriod === selectedCat.id;
 
                 const q = searchQuery.trim().toLowerCase();

@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft English Quest: The Great Harvest Festival (Present Simple vs Present Continuous)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts: Fredoka & Press Start 2P -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* =====================================================================
+       THEME VARIABLES (:root) — Variant A: Golden Harvest & Honey Farm
+       ===================================================================== */
+    :root {
+      --primary: #d97706;
+      --primary-dark: #92400e;
+      --primary-light: #fbbf24;
+      --secondary: #65a30d;
+      --secondary-dark: #3f6212;
+      --secondary-light: #a3e635;
+      --accent: #e11d48;
+      --accent-dark: #9f1239;
+      --accent-light: #fb7185;
+      --background: #1c1512;
+      --panel: #2b211c;
+      --stone: #78716c;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--background);
+      background-image:
+        radial-gradient(#2d221c 15%, transparent 16%),
+        radial-gradient(#382921 15%, transparent 16%);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      color: #fefce8;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    .pixel-font {
+      font-family: 'Press Start 2P', monospace;
+      line-height: 1.5;
+    }
+
+    /* Minecraft 3D Beveled UI Panels */
+    .mc-panel {
+      background-color: #e7dec8;
+      border: 4px solid #fffbeb;
+      border-right-color: #785c38;
+      border-bottom-color: #785c38;
+      box-shadow: 0 8px 0 #120c09;
+      color: #1c1917;
+    }
+
+    .mc-panel-dark {
+      background-color: var(--panel);
+      border: 4px solid #6b5241;
+      border-right-color: #120c09;
+      border-bottom-color: #120c09;
+      box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8);
+      color: #fefce8;
+    }
+
+    /* Minecraft 3D Buttons */
+    .mc-btn {
+      font-family: 'Press Start 2P', monospace;
+      background-color: var(--stone);
+      border: 3px solid #f5f5f4;
+      border-right-color: #44403c;
+      border-bottom-color: #44403c;
+      color: #ffffff;
+      text-shadow: 2px 2px #1c1917;
+      transition: transform 0.06s, filter 0.1s;
+      cursor: pointer;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mc-btn:hover {
+      filter: brightness(1.12);
+    }
+
+    .mc-btn:active {
+      transform: translateY(2px);
+      border-top-color: #44403c;
+      border-left-color: #44403c;
+      border-right-color: #f5f5f4;
+      border-bottom-color: #f5f5f4;
+    }
+
+    .mc-btn-amber {
+      background-color: var(--primary);
+      border-color: #fde68a var(--primary-dark) var(--primary-dark) #fde68a;
+    }
+
+    .mc-btn-green {
+      background-color: var(--secondary);
+      border-color: var(--secondary-light) var(--secondary-dark) var(--secondary-dark) var(--secondary-light);
+    }
+
+    .mc-btn-berry {
+      background-color: var(--accent);
+      border-color: #fda4af var(--accent-dark) var(--accent-dark) #fda4af;
+    }
+
+    .mc-btn-danger {
+      background-color: #dc2626;
+      border-color: #fca5a5 #7f1d1d #7f1d1d #fca5a5;
+    }
+
+    /* Inventory Slot */
+    .mc-slot {
+      background-color: #57493f;
+      border: 3px solid #1c1512;
+      border-right-color: #d6c8b8;
+      border-bottom-color: #d6c8b8;
+      box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.7);
+      border-radius: 4px;
+    }
+
+    /* 3D Flip Card for Vocabulary */
+    .flip-card {
+      perspective: 1000px;
+      height: 290px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(251, 191, 36, 0.45); }
+      50% { box-shadow: 0 0 22px rgba(163, 230, 53, 0.85); }
+    }
+    .animate-glow {
+      animation: pulseGlow 2.2s infinite ease-in-out;
+    }
+
+    @keyframes popBounce {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.16) translateY(-6px); }
+      75% { transform: scale(0.96); }
+      100% { transform: scale(1); }
+    }
+    .animate-pop-bounce {
+      animation: popBounce 0.5s ease-out;
+    }
+
+    /* Live Voice Active Indicator */
+    .voice-wave {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .voice-wave span {
+      width: 4px;
+      height: 14px;
+      background-color: var(--primary-light);
+      animation: waveBounce 0.6s infinite ease-in-out;
+    }
+    .voice-wave span:nth-child(2) { animation-delay: 0.15s; }
+    .voice-wave span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes waveBounce {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.25); }
+    }
+
+    /* Game 5: Spyglass Active Lens & Diary Glow */
+    @keyframes activeLensPulse {
+      0%, 100% { box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.4), 0 0 18px rgba(251, 191, 36, 0.25); }
+      50% { box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.9), 0 0 26px rgba(251, 191, 36, 0.6); }
+    }
+    .spyglass-active-panel {
+      animation: activeLensPulse 1.8s infinite ease-in-out;
+    }
+
+    /* Section 4: Farm Bakery & Cafe Table Hover */
+    .cafe-table-unlocked {
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .cafe-table-unlocked:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 0 22px rgba(251, 191, 36, 0.55);
+    }
+
+    /* Print Media: Isolate ONLY the Certificate */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-certificate-container, #printable-certificate-container * {
+        visibility: visible !important;
+      }
+      #printable-certificate-container, #printable-certificate {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #printable-certificate-container {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-12">
+
+  <!-- ======================================================================= -->
+  <!-- TOP STICKY HUD                                                          -->
+  <!-- ======================================================================= -->
+  <header class="sticky top-0 z-40 bg-[#18110e]/95 backdrop-blur-md border-b-4 border-[var(--primary)] px-3 py-2.5 shadow-2xl no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+
+      <!-- Brand & Quest Info -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchSection('hub')">
+        <img src="Minecraft/honey_bottle.png" alt="Honey Bottle" class="w-10 h-10 object-contain animate-float">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="pixel-font text-xs sm:text-sm md:text-base text-[var(--primary-light)] tracking-wide">MINECRAFT ENGLISH</h1>
+            <span class="bg-[var(--secondary)] text-white text-[10px] font-bold px-2 py-0.5 rounded border border-[var(--secondary-light)]">Beginner A0-A1</span>
+          </div>
+          <p class="text-xs text-amber-100 font-semibold">Present Simple vs Present Continuous • Food &amp; Farm</p>
+        </div>
+      </div>
+
+      <!-- HUD Right Controls -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+
+        <!-- Live TTS Speech Indicator -->
+        <div id="speech-indicator" class="hidden items-center gap-2 bg-amber-950 border-2 border-[var(--primary-light)] px-3 py-1.5 rounded-lg text-xs font-bold text-amber-200">
+          <div class="voice-wave"><span></span><span></span><span></span></div>
+          <span>Speaking...</span>
+        </div>
+
+        <!-- Diamonds Counter -->
+        <div class="mc-slot px-3 py-1.5 flex items-center gap-2 bg-stone-900">
+          <img src="Minecraft/Diamond-removebg-preview.png" alt="Diamond" class="w-6 h-6 object-contain">
+          <span class="pixel-font text-xs text-amber-300" id="hud-diamonds">0</span>
+        </div>
+
+        <!-- Badges Progress -->
+        <button onclick="switchSection('badges')" class="mc-btn mc-btn-berry px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-2">
+          <img src="Minecraft/Enchanted_golden_apple-removebg-preview.png" alt="Badge" class="w-5 h-5 object-contain">
+          <span>Badges: <span id="hud-badges">0/8</span></span>
+        </button>
+
+        <!-- Quick Bakery Cafe Button -->
+        <button onclick="switchSection('bakery')" class="mc-btn mc-btn-green px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-1.5" title="Open Farm Bakery & Cafe">
+          <img src="Minecraft/cake.png" alt="Cafe" class="w-5 h-5 object-contain">
+          <span>Bakery Cafe</span>
+        </button>
+
+        <!-- Sound FX Toggle -->
+        <button onclick="toggleSoundFX()" id="sound-toggle-btn" class="mc-btn px-3 py-1.5 text-xs" title="Toggle Sound Effects">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 6 Navigation Tabs -->
+    <nav class="max-w-7xl mx-auto mt-2.5 flex gap-2 overflow-x-auto pb-1">
+      <button onclick="switchSection('hub')" id="nav-hub" class="mc-btn mc-btn-amber px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/carrot.png" class="w-5 h-5 object-contain" alt="Food">
+        <span>1. Story &amp; Food</span>
+      </button>
+      <button onclick="switchSection('grammar')" id="nav-grammar" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/bookshelf-removebg-preview.png" class="w-5 h-5 object-contain" alt="Grammar">
+        <span>2. Grammar Rules</span>
+      </button>
+      <button onclick="switchSection('games')" id="nav-games" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+        <span>3. 5 Mini-Games</span>
+      </button>
+      <button onclick="switchSection('bakery')" id="nav-bakery" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/cake.png" class="w-5 h-5 object-contain" alt="Bakery">
+        <span>4. Bakery Cafe</span>
+      </button>
+      <button onclick="switchSection('badges')" id="nav-badges" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+        <span>5. Trophy Chest</span>
+      </button>
+      <button onclick="switchSection('finale')" id="nav-finale" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/enchanted_book.png" class="w-5 h-5 object-contain" alt="Finale">
+        <span>6. Harvest License</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- MAIN WORKSPACE                                                          -->
+  <!-- ======================================================================= -->
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 pt-6 flex-1">
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 1: STORY & 10 FOOD VOCABULARY CARDS                           -->
+    <!-- ===================================================================== -->
+    <section id="sec-hub" class="space-y-6">
+
+      <!-- Story Intro Banner -->
+      <div class="mc-panel p-5 sm:p-6 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+          <div class="lg:col-span-3 flex justify-center items-center gap-2">
+            <img src="Minecraft/Steve-removebg-preview.png" alt="Steve" class="w-20 sm:w-24 h-24 object-contain animate-float drop-shadow-xl">
+            <img src="Minecraft/Alex-removebg-preview.png" alt="Alex" class="w-20 sm:w-24 h-24 object-contain animate-float drop-shadow-xl" style="animation-delay: 0.35s;">
+            <img src="Minecraft/Villager-removebg-preview.png" alt="Villager" class="w-20 sm:w-24 h-24 object-contain animate-float drop-shadow-xl" style="animation-delay: 0.7s;">
+          </div>
+
+          <div class="lg:col-span-9 space-y-3">
+            <div class="inline-flex items-center gap-2 bg-[var(--primary)] text-white px-3 py-1 text-xs font-bold border-2 border-black">
+              <img src="Minecraft/wheat.png" alt="Wheat" class="w-4 h-4 object-contain"> <span>THE GREAT HARVEST FESTIVAL</span>
+            </div>
+            <h2 class="pixel-font text-sm sm:text-lg text-stone-900">Every Day Habits vs Right Now Actions!</h2>
+            <p id="story-intro-text" class="text-base sm:text-lg text-stone-800 font-semibold leading-relaxed">
+              Welcome to the Great Harvest Festival! Every morning, Steve and Alex work on their sunny farm: cows give milk, chickens lay eggs, and bees make sweet honey. Look through your spyglass right now! Today is a party day! Alex is baking a big cake, the pig is eating a carrot, and the Villager is opening the Farm Bakery Cafe!
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="speakText(GAME_DATA.story.intro)" class="mc-btn mc-btn-amber px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-volume-high"></i> <span>Listen to Story</span>
+              </button>
+              <button onclick="switchSection('grammar')" class="mc-btn mc-btn-green px-4 py-2 text-xs gap-2">
+                <span>Open Grammar Rules</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Visual Support Checklist -->
+      <div class="mc-panel-dark p-4 flex flex-wrap items-center justify-between gap-4 border-4 border-[var(--primary)]">
+        <div class="flex items-center gap-3">
+          <img src="Minecraft/wheat.png" alt="Wheat" class="w-9 h-9 object-contain">
+          <div>
+            <h3 class="pixel-font text-xs text-[var(--primary-light)]">HARVEST BASKET CHECKLIST:</h3>
+            <p class="text-xs text-amber-100">Tap all 10 Food &amp; Farm cards below! Flip each card to see the Ukrainian word and earn +2 Diamonds!</p>
+          </div>
+        </div>
+        <div class="bg-stone-950 border-2 border-stone-600 px-4 py-2 text-xs font-bold text-[var(--secondary-light)]">
+          Words Inspected: <span id="words-explored-count">0 / 10</span>
+        </div>
+      </div>
+
+      <!-- 10 Vocabulary Flip Cards Grid -->
+      <div id="vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <!-- Populated from GAME_DATA.vocabulary -->
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 2: GRAMMAR RULES (PRESENT SIMPLE vs PRESENT CONTINUOUS)       -->
+    <!-- ===================================================================== -->
+    <section id="sec-grammar" class="hidden space-y-6">
+
+      <!-- PART A: When do we use Present Simple vs Present Continuous? -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="Minecraft/bookshelf-removebg-preview.png" alt="Bookshelf" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-stone-900">WHEN DO WE USE EACH TENSE?</h2>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">Compare <b>EVERY DAY (Present Simple)</b> and <b>RIGHT NOW (Present Continuous)</b>!</p>
+            </div>
+          </div>
+          <button onclick="speakText('Use Present Simple for habits every day, like: The cow gives milk every day. Use Present Continuous for actions happening right now, like: Look! The pig is eating a carrot now!')" class="mc-btn mc-btn-amber px-3 py-2 text-xs gap-2">
+            <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <!-- Card 1: Present Simple -->
+          <div class="bg-lime-50 border-4 border-[var(--secondary)] p-4 flex flex-col justify-between rounded">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--secondary)] text-white px-2 py-1">1. PRESENT SIMPLE</span>
+                <img src="Minecraft/clock.png" alt="Clock" class="w-10 h-10 object-contain">
+              </div>
+              <p class="text-sm text-stone-800 font-bold mb-3">Habits, routines, and things that happen <b>every day</b> or <b>usually</b>!</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-lime-400 rounded">
+                <div class="flex items-center justify-between gap-2">
+                  <span>"The cow <b class="text-lime-700">gives</b> milk every day."</span>
+                  <button onclick="speakText('The cow gives milk every day.')" class="text-stone-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>"Steve usually <b class="text-lime-700">plants</b> seeds."</span>
+                  <button onclick="speakText('Steve usually plants seeds.')" class="text-stone-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-lime-800">
+              Think of a Farm Diary (Routine)!
+            </div>
+          </div>
+
+          <!-- Card 2: Present Continuous -->
+          <div class="bg-rose-50 border-4 border-[var(--accent)] p-4 flex flex-col justify-between rounded">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--accent)] text-white px-2 py-1">2. PRESENT CONTINUOUS</span>
+                <img src="Minecraft/spyglass.png" alt="Spyglass" class="w-10 h-10 object-contain">
+              </div>
+              <p class="text-sm text-stone-800 font-bold mb-3">Actions happening <b>right now</b> at this very second in front of our eyes!</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-rose-400 rounded">
+                <div class="flex items-center justify-between gap-2">
+                  <span>"Look! Alex <b class="text-rose-700">is baking</b> a cake now!"</span>
+                  <button onclick="speakText('Look! Alex is baking a cake now!')" class="text-stone-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between gap-2 border-t pt-1">
+                  <span>"The pigs <b class="text-rose-700">are eating</b> carrots right now."</span>
+                  <button onclick="speakText('The pigs are eating carrots right now.')" class="text-stone-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-rose-800">
+              Think of a Live Spyglass Camera!
+            </div>
+          </div>
+
+          <!-- Card 3: Clue Words -->
+          <div class="bg-amber-50 border-4 border-[var(--primary)] p-4 flex flex-col justify-between rounded">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-[var(--primary)] text-white px-2 py-1">3. TIME CLUE WORDS</span>
+                <img src="Minecraft/Lantern-removebg-preview.png" alt="Lantern" class="w-10 h-10 object-contain">
+              </div>
+              <p class="text-sm text-stone-800 font-bold mb-2">Spot the secret clue words to pick the right tense:</p>
+              <div class="space-y-2 text-xs sm:text-sm bg-white p-3 border-2 border-amber-400 rounded">
+                <div>
+                  <span class="font-extrabold text-lime-700 block">EVERY DAY (Simple):</span>
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-semibold">every day, every morning, usually, always, often, on Sundays</span>
+                    <button onclick="speakText('every day, every morning, usually, always, often, on Sundays')" class="text-stone-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                  </div>
+                </div>
+                <div class="border-t pt-2">
+                  <span class="font-extrabold text-rose-700 block">RIGHT NOW (Continuous):</span>
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-semibold">now, right now, Look!, Listen!, at the moment, today</span>
+                    <button onclick="speakText('now, right now, Look, Listen, at the moment, today')" class="text-stone-600 hover:text-black shrink-0"><i class="fa-solid fa-volume-high"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-amber-900">
+              Always check the clue word first!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PART B: How to Build Sentences (+, -, ?) -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex items-center gap-3 border-b-4 border-stone-400 pb-3">
+          <img src="Minecraft/crafting_table_icon-removebg-preview.png" alt="Crafting Table" class="w-11 h-11 object-contain">
+          <div>
+            <h2 class="pixel-font text-sm sm:text-lg text-stone-900">HOW TO BUILD SENTENCES (+ / - / ?)</h2>
+            <p class="text-xs sm:text-sm text-stone-700 font-semibold">Compare both teams side-by-side! Never mix <b>do/does</b> with <b>am/is/are + -ing</b>!</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+          <!-- 1. AFFIRMATIVE (+) -->
+          <div class="bg-amber-50 border-4 border-amber-700 p-4 space-y-3 rounded">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-amber-700 text-white px-2.5 py-1">AFFIRMATIVE (+)</span>
+              <img src="Minecraft/carrot.png" alt="Carrot" class="w-9 h-9 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-lime-600 space-y-1.5 text-xs sm:text-sm rounded">
+              <div class="pixel-font text-[9px] text-lime-800">PRESENT SIMPLE:</div>
+              <div class="font-bold text-stone-800">I / You / We / They + <b class="text-lime-700">Verb</b></div>
+              <div class="font-bold text-stone-800">He / She / It + <b class="text-lime-700">Verb-s / -es</b></div>
+              <div class="flex items-center justify-between bg-lime-50 p-1.5 rounded text-xs">
+                <span>• He <b class="text-lime-700">eats</b> a carrot every day.</span>
+                <button onclick="speakText('He eats a carrot every day.')" class="text-lime-800"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+
+            <div class="bg-white p-3 border-2 border-rose-600 space-y-1.5 text-xs sm:text-sm rounded">
+              <div class="pixel-font text-[9px] text-rose-800">PRESENT CONTINUOUS:</div>
+              <div class="font-bold text-stone-800">I <b class="text-rose-700">am</b> | He/She/It <b class="text-rose-700">is</b> | You/We/They <b class="text-rose-700">are</b> + <b>V-ing</b></div>
+              <div class="flex items-center justify-between bg-rose-50 p-1.5 rounded text-xs">
+                <span>• He <b class="text-rose-700">is eating</b> a carrot right now.</span>
+                <button onclick="speakText('He is eating a carrot right now.')" class="text-rose-800"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. NEGATIVE (-) -->
+          <div class="bg-rose-50 border-4 border-rose-700 p-4 space-y-3 rounded">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-rose-700 text-white px-2.5 py-1">NEGATIVE (-)</span>
+              <img src="Minecraft/Shield-removebg-preview.png" alt="Shield" class="w-9 h-9 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-lime-600 space-y-1.5 text-xs sm:text-sm rounded">
+              <div class="pixel-font text-[9px] text-lime-800">PRESENT SIMPLE:</div>
+              <div class="font-bold text-stone-800">I / You / We / They + <b class="text-lime-700">don't</b> + <b>Verb</b></div>
+              <div class="font-bold text-stone-800">He / She / It + <b class="text-lime-700">doesn't</b> + <b>Verb</b></div>
+              <div class="flex items-center justify-between bg-lime-50 p-1.5 rounded text-xs">
+                <span>• She <b class="text-lime-700">doesn't bake</b> pie every day.</span>
+                <button onclick="speakText('She does not bake pie every day.')" class="text-lime-800"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+
+            <div class="bg-white p-3 border-2 border-rose-600 space-y-1.5 text-xs sm:text-sm rounded">
+              <div class="pixel-font text-[9px] text-rose-800">PRESENT CONTINUOUS:</div>
+              <div class="font-bold text-stone-800"><b class="text-rose-700">am not / isn't / aren't</b> + <b>V-ing</b></div>
+              <div class="flex items-center justify-between bg-rose-50 p-1.5 rounded text-xs">
+                <span>• She <b class="text-rose-700">isn't baking</b> pie right now.</span>
+                <button onclick="speakText('She is not baking pie right now.')" class="text-rose-800"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. QUESTIONS (?) -->
+          <div class="bg-lime-50 border-4 border-lime-700 p-4 space-y-3 rounded">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-lime-700 text-white px-2.5 py-1">QUESTIONS (?)</span>
+              <img src="Minecraft/cake.png" alt="Cake" class="w-9 h-9 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-lime-600 space-y-1.5 text-xs sm:text-sm rounded">
+              <div class="pixel-font text-[9px] text-lime-800">PRESENT SIMPLE:</div>
+              <div class="font-bold text-stone-800"><b class="text-lime-700">Do</b> + I/You/We/They + <b>Verb</b>?</div>
+              <div class="font-bold text-stone-800"><b class="text-lime-700">Does</b> + He/She/It + <b>Verb</b>?</div>
+              <div class="flex items-center justify-between bg-lime-50 p-1.5 rounded text-xs">
+                <span>• <b class="text-lime-700">Does</b> the bee make honey?</span>
+                <button onclick="speakText('Does the bee make honey?')" class="text-lime-800"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+
+            <div class="bg-white p-3 border-2 border-rose-600 space-y-1.5 text-xs sm:text-sm rounded">
+              <div class="pixel-font text-[9px] text-rose-800">PRESENT CONTINUOUS:</div>
+              <div class="font-bold text-stone-800"><b class="text-rose-700">Am / Is / Are</b> + Hero + <b>V-ing</b>?</div>
+              <div class="flex items-center justify-between bg-rose-50 p-1.5 rounded text-xs">
+                <span>• <b class="text-rose-700">Is</b> the bee making honey now?</span>
+                <button onclick="speakText('Is the bee making honey now?')" class="text-rose-800"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Golden Tip Bar -->
+        <div class="bg-stone-900 text-amber-100 p-4 border-4 border-stone-700 rounded flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <img src="Minecraft/Enchanted_golden_apple-removebg-preview.png" alt="Golden Apple" class="w-10 h-10 object-contain shrink-0">
+            <div class="text-xs sm:text-sm font-semibold">
+              <span class="pixel-font text-[10px] text-[var(--primary-light)] block mb-1">GOLDEN RULE FOR HEROES:</span>
+              Never mix the two teams! <b>Every Day Team</b> uses <b>V / V-s / don't / doesn't / do / does</b>. <b>Right Now Team</b> uses <b>am / is / are + V-ing</b>!
+            </div>
+          </div>
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-amber px-5 py-3 text-xs shrink-0 gap-2">
+            <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Sword">
+            <span>ENTER 5 MINI-GAMES!</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 3: 5 MINI-GAMES ARENA                                         -->
+    <!-- ===================================================================== -->
+    <section id="sec-games" class="hidden space-y-6">
+
+      <!-- Mini-Game Selector Sub-Nav -->
+      <div class="mc-panel-dark p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <span class="pixel-font text-xs text-[var(--primary-light)]">CHOOSE YOUR HARVEST TRAINING GAME:</span>
+          <span class="text-xs text-amber-100">Fresh random questions every round!</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          <button onclick="selectMiniGame(1)" id="gbtn-1" class="mc-btn mc-btn-amber p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/carrot.png" class="w-6 h-6 object-contain" alt="G1">
+            <div class="text-left">
+              <div>Game 1: Affirmative</div>
+              <div class="text-[9px] text-amber-100 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(2)" id="gbtn-2" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/Shield-removebg-preview.png" class="w-6 h-6 object-contain" alt="G2">
+            <div class="text-left">
+              <div>Game 2: Negative</div>
+              <div class="text-[9px] text-stone-200 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(3)" id="gbtn-3" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/cake.png" class="w-6 h-6 object-contain" alt="G3">
+            <div class="text-left">
+              <div>Game 3: Questions</div>
+              <div class="text-[9px] text-stone-200 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(4)" id="gbtn-4" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="G4">
+            <div class="text-left">
+              <div>Game 4: Mixed Blitz</div>
+              <div class="text-[9px] text-stone-200 font-sans">15 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(5)" id="gbtn-5" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/spyglass.png" class="w-6 h-6 object-contain" alt="G5">
+            <div class="text-left">
+              <div>Game 5: Spyglass</div>
+              <div class="text-[9px] text-amber-200 font-sans">Diary vs Live! (40)</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- GAMES 1–4 STANDARD ENGINE -->
+      <div id="standard-game-wrapper" class="mc-panel p-5 sm:p-6">
+
+        <!-- Header Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img id="active-game-icon" src="Minecraft/carrot.png" alt="Icon" class="w-11 h-11 object-contain">
+            <div>
+              <h3 id="active-game-title" class="pixel-font text-xs sm:text-base text-stone-900">Game 1: Affirmative Harvest (+)</h3>
+              <p id="active-game-subtitle" class="text-xs sm:text-sm text-stone-700 font-semibold">Spot the time clue: Every Day (V / V-s) vs Right Now (am / is / are + V-ing)!</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="bg-stone-900 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Task <span id="game-q-num" class="text-[var(--primary-light)]">1</span> / <span id="game-q-total">10</span>
+            </div>
+            <div class="bg-stone-900 text-[var(--secondary-light)] px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Score: <span id="game-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Stage -->
+        <div id="question-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img id="question-mob-img" src="Minecraft/carrot.png" alt="Mob" class="w-16 h-16 sm:w-20 sm:h-20 object-contain animate-float bg-stone-950/90 p-2 border-2 border-stone-600 rounded">
+              <div>
+                <span id="question-mode-tag" class="inline-block bg-[var(--primary)] text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded">AFFIRMATIVE (+)</span>
+                <h4 id="question-prompt-text" class="text-lg sm:text-2xl font-bold text-white leading-snug">Loading task...</h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakCurrentQuestion()" class="mc-btn px-3 py-2 text-xs" title="Listen">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Options -->
+          <div id="mc-options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <!-- Buttons injected dynamically -->
+          </div>
+
+          <!-- Click-to-Place Word Order (Scramble) -->
+          <div id="scramble-container" class="hidden space-y-4 pt-2">
+            <div class="text-xs text-amber-300 font-bold">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Tap blocks below in order to craft the sentence! (Tap a placed block to remove it)
+            </div>
+
+            <div id="scramble-target-slots" class="min-h-[64px] bg-stone-950 border-4 border-dashed border-amber-400 p-3 flex flex-wrap items-center gap-2 rounded"></div>
+            <div id="scramble-word-bank" class="flex flex-wrap gap-2 pt-1"></div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="checkScrambleAnswer()" id="scramble-submit-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs gap-2">
+                <i class="fa-solid fa-hammer"></i> <span>CRAFT SENTENCE</span>
+              </button>
+              <button onclick="resetScrambleWords()" class="mc-btn px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-rotate-left"></i> <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feedback Alert & Next Button -->
+          <div id="game-feedback-bar" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded">
+            <div id="game-feedback-msg" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextGameQuestion()" id="game-next-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs shrink-0">
+              <span>NEXT TASK</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Round Complete Summary Screen -->
+        <div id="round-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="Minecraft/Enchanted_golden_apple-removebg-preview.png" alt="Victory" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-[var(--secondary-light)]">HARVEST ROUND COMPLETE!</h3>
+          <p id="round-result-summary" class="text-base sm:text-lg text-amber-100 font-bold"></p>
+
+          <div class="flex flex-wrap justify-center gap-4 pt-2">
+            <button onclick="replayCurrentGame()" class="mc-btn mc-btn-amber px-5 py-3 text-xs sm:text-sm flex items-center gap-3">
+              <img src="Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png" alt="Totem of Undying" class="w-8 h-8 object-contain">
+              <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- GAME 5 (VARIANT B): FARMER'S SPYGLASS — HABIT DIARY vs LIVE CAMERA  -->
+      <!-- =================================================================== -->
+      <div id="game5-custom-wrapper" class="hidden mc-panel p-5 sm:p-6 space-y-5">
+
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="Minecraft/spyglass.png" alt="Spyglass" class="w-12 h-12 object-contain">
+            <div>
+              <h3 class="pixel-font text-xs sm:text-base text-stone-900">Game 5: Farmer's Spyglass — Habit Diary vs Live Camera!</h3>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">Look at both windows! Complete the missing verb in the <b>Farm Habit Diary (Every Day)</b> OR the <b>Live Spyglass Camera (Right Now!)</b>!</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-stone-900 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Scene <span id="g5-progress" class="text-[var(--primary-light)]">1 / 10</span>
+            </div>
+            <div class="bg-stone-900 text-[var(--secondary-light)] px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              First-Try: <span id="g5-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spyglass Dual-Window Stage -->
+        <div id="g5-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+
+          <!-- Hero & Food Spotlight Strip -->
+          <div class="flex flex-wrap items-center justify-between gap-4 bg-stone-950/90 border-4 border-stone-700 p-4 rounded-lg">
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2 bg-stone-900 p-2 border-2 border-amber-500 rounded">
+                <img id="g5-mob-img" src="Minecraft/Steve-removebg-preview.png" alt="Hero" class="w-14 h-14 object-contain animate-float">
+                <img id="g5-food-img" src="Minecraft/carrot.png" alt="Food" class="w-12 h-12 object-contain">
+              </div>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap mb-1">
+                  <span id="g5-target-badge" class="pixel-font text-[9px] bg-amber-600 text-white px-2.5 py-1 rounded">TARGET: LIVE SPYGLASS</span>
+                  <span id="g5-polarity-badge" class="pixel-font text-[9px] bg-stone-700 text-amber-200 px-2 py-1 rounded">AFFIRMATIVE (+)</span>
+                </div>
+                <p id="g5-instruction-text" class="text-sm sm:text-base font-bold text-amber-100">Read the Habit Diary, then look through the Spyglass to complete what is happening RIGHT NOW!</p>
+              </div>
+            </div>
+            <button onclick="speakG5Prompt()" class="mc-btn px-3 py-2 text-xs shrink-0" title="Listen to both sentences">
+              <i class="fa-solid fa-volume-high mr-1"></i> Listen
+            </button>
+          </div>
+
+          <!-- Dual Side-by-Side Comparison Windows -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- LEFT WINDOW: FARM HABIT DIARY (PRESENT SIMPLE) -->
+            <div id="g5-diary-card" class="bg-lime-950/60 border-4 border-lime-600 p-4 sm:p-5 rounded-lg space-y-3 transition-all">
+              <div class="flex items-center justify-between border-b-2 border-lime-700/70 pb-2">
+                <div class="flex items-center gap-2">
+                  <img src="Minecraft/enchanted_book.png" alt="Diary" class="w-8 h-8 object-contain">
+                  <div>
+                    <div class="pixel-font text-[10px] text-lime-300">FARM HABIT DIARY</div>
+                    <div class="text-[11px] font-bold text-lime-200">Usually / Every Day (Present Simple)</div>
+                  </div>
+                </div>
+                <img src="Minecraft/clock.png" alt="Clock" class="w-7 h-7 object-contain">
+              </div>
+              <div class="min-h-[76px] flex items-center bg-stone-950/80 border-2 border-lime-700/60 p-3.5 rounded">
+                <p id="g5-diary-text" class="text-base sm:text-lg font-bold text-white leading-snug"></p>
+              </div>
+              <div id="g5-diary-status" class="text-xs font-bold text-lime-300"></div>
+            </div>
+
+            <!-- RIGHT WINDOW: LIVE SPYGLASS CAMERA (PRESENT CONTINUOUS) -->
+            <div id="g5-spyglass-card" class="bg-rose-950/60 border-4 border-rose-600 p-4 sm:p-5 rounded-lg space-y-3 transition-all">
+              <div class="flex items-center justify-between border-b-2 border-rose-700/70 pb-2">
+                <div class="flex items-center gap-2">
+                  <img src="Minecraft/spyglass.png" alt="Spyglass" class="w-8 h-8 object-contain">
+                  <div>
+                    <div class="pixel-font text-[10px] text-rose-300">SPYGLASS LIVE</div>
+                    <div class="text-[11px] font-bold text-rose-200">Look! Right Now! (Present Continuous)</div>
+                  </div>
+                </div>
+                <span class="bg-rose-600 text-white pixel-font text-[8px] px-2 py-1 rounded animate-pulse">LIVE</span>
+              </div>
+              <div class="min-h-[76px] flex items-center bg-stone-950/80 border-2 border-rose-700/60 p-3.5 rounded">
+                <p id="g5-spyglass-text" class="text-base sm:text-lg font-bold text-white leading-snug"></p>
+              </div>
+              <div id="g5-spyglass-status" class="text-xs font-bold text-rose-300"></div>
+            </div>
+
+          </div>
+
+          <!-- 3 Verb Choices -->
+          <div id="g5-choices-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <!-- Buttons injected dynamically -->
+          </div>
+
+          <!-- Feedback & Next -->
+          <div id="g5-feedback" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded">
+            <div id="g5-feedback-text" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextG5Question()" id="g5-next-btn" class="mc-btn mc-btn-green px-5 py-2 text-xs shrink-0">
+              <span>NEXT SCENE</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Game 5 Complete Screen -->
+        <div id="g5-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="Minecraft/spyglass.png" alt="Victory Spyglass" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-[var(--primary-light)]">SPYGLASS MISSION COMPLETE!</h3>
+          <p id="g5-final-summary" class="text-base text-amber-100 font-bold">You compared all 10 Habit Diary &amp; Spyglass Live scenes!</p>
+          <button onclick="replayGame5()" class="mc-btn mc-btn-amber px-5 py-3 text-xs sm:text-sm flex items-center gap-3 mx-auto">
+            <img src="Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png" alt="Totem" class="w-8 h-8 object-contain">
+            <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 4 (VARIANT 2): MINECRAFT FARM BAKERY & CAFE                   -->
+    <!-- ===================================================================== -->
+    <section id="sec-bakery" class="hidden space-y-6">
+
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-4">
+          <div class="flex items-center gap-4">
+            <img src="Minecraft/Minecraft_furnace-removebg-preview.png" alt="Bakery Oven" class="w-14 h-14 object-contain bg-stone-900 p-2 border-2 border-stone-600 animate-float rounded">
+            <div>
+              <div class="inline-block bg-[var(--primary)] text-white pixel-font text-[9px] px-2 py-0.5 mb-1">INTERACTIVE HARVEST REWARD ZONE</div>
+              <h2 class="pixel-font text-sm sm:text-lg text-stone-900">MINECRAFT FARM BAKERY &amp; CAFE</h2>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">Spend Diamonds to open all 8 cozy Bakery Tables! Tap any open table to serve guests and hear their <b>Every Day vs Right Now</b> story!</p>
+            </div>
+          </div>
+
+          <div class="mc-slot bg-stone-950 px-5 py-3 flex items-center gap-3 border-4 border-[var(--primary-light)]">
+            <img src="Minecraft/Diamond-removebg-preview.png" alt="Diamond" class="w-8 h-8 object-contain animate-bounce">
+            <div>
+              <div class="text-[10px] text-amber-300 font-bold uppercase">Your Diamonds</div>
+              <div class="pixel-font text-sm sm:text-base text-white"><span id="bakery-diamonds-balance">0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bakery Progress & Spotlight -->
+        <div class="mt-4 mc-panel-dark p-4 border-4 border-[var(--secondary)] flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <img src="Minecraft/cake.png" alt="Cake" class="w-7 h-7 object-contain">
+            <span class="pixel-font text-xs text-[var(--secondary-light)]">CAFE TABLES OPENED: <span id="bakery-count-label">0 / 8</span></span>
+          </div>
+          <span class="text-xs text-amber-100">Open at least 2 tables (or collect 50 Diamonds) to earn the <b>Master Cafe Chef</b> badge!</span>
+        </div>
+
+        <!-- Live Cafe Floor Banner (Interactive Quick View of All 8 Booths) -->
+        <div class="mt-5 mc-panel-dark p-4 sm:p-5 border-4 border-amber-700 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="pixel-font text-[10px] sm:text-xs text-amber-300 flex items-center gap-2"><img src="Minecraft/cake.png" alt="Cake" class="w-4 h-4 object-contain"> LIVE BAKERY FLOOR (TAP AN UNLOCKED GUEST TO HEAR THEM!)</span>
+            <span id="cafe-spotlight-status" class="text-xs text-lime-300 font-bold">Select any unlocked table below!</span>
+          </div>
+          <div id="cafe-floor-strip" class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+            <!-- Populated from GAME_DATA.bakeryStations -->
+          </div>
+          <div id="cafe-spotlight-box" class="hidden bg-stone-950/90 border-2 border-[var(--primary-light)] p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1.5 bg-stone-900 p-2 rounded border border-amber-500">
+                <img id="spot-guest-img" src="Minecraft/Bee-removebg-preview.png" alt="Guest" class="w-12 h-12 object-contain">
+                <img id="spot-dish-img" src="Minecraft/honey_bottle.png" alt="Dish" class="w-10 h-10 object-contain">
+              </div>
+              <div>
+                <h4 id="spot-title" class="pixel-font text-xs text-amber-300"></h4>
+                <p id="spot-simple" class="text-xs sm:text-sm text-lime-300 font-bold mt-1"></p>
+                <p id="spot-continuous" class="text-xs sm:text-sm text-rose-300 font-bold"></p>
+              </div>
+            </div>
+            <button id="spot-speak-btn" class="mc-btn mc-btn-amber px-4 py-2 text-xs gap-2 shrink-0">
+              <i class="fa-solid fa-volume-high"></i> <span>Speak Order</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 8 Detailed Bakery Station Cards Grid -->
+        <div id="bakery-grid" class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Populated from GAME_DATA.bakeryStations -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 5: ACHIEVEMENTS / TROPHY CHEST (8 BADGES)                     -->
+    <!-- ===================================================================== -->
+    <section id="sec-badges" class="hidden space-y-6">
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-stone-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img src="Minecraft/chest-removebg-preview.png" alt="Chest" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-stone-900">HARVEST TROPHY CHEST (8 BADGES)</h2>
+              <p class="text-xs sm:text-sm text-stone-700 font-semibold">Collect ALL 8 badges to unlock the Warden's Official Harvest &amp; Time Master License!</p>
+            </div>
+          </div>
+
+          <!-- Inline Reset Progress Controls -->
+          <div class="flex items-center gap-2">
+            <button id="reset-init-btn" onclick="showResetConfirm()" class="mc-btn mc-btn-danger px-3 py-1.5 text-[10px]">
+              Reset Progress
+            </button>
+            <div id="reset-confirm-box" class="hidden items-center gap-2 bg-red-950 border-2 border-red-400 px-3 py-1.5 rounded">
+              <span class="text-xs font-bold text-red-200">Reset all?</span>
+              <button onclick="confirmResetProgress()" class="mc-btn mc-btn-danger px-2.5 py-1 text-[10px]" style="min-height:34px;">Yes</button>
+              <button onclick="cancelResetConfirm()" class="mc-btn px-2.5 py-1 text-[10px]" style="min-height:34px;">No</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Populated from GAME_DATA.badges -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECTION 6: GRAND FINALE (WARDEN LOCK + PRINTABLE HARVEST LICENSE)     -->
+    <!-- ===================================================================== -->
+    <section id="sec-finale" class="hidden space-y-6">
+
+      <!-- WARDEN LOCKED SCREEN (Shown until 8/8 badges) -->
+      <div id="finale-locked-banner" class="mc-panel-dark p-8 sm:p-12 text-center space-y-6 border-4 border-[var(--accent)]">
+        <div class="relative inline-block">
+          <img src="Minecraft/Warden-removebg-preview.png" alt="Warden" class="w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain animate-float">
+          <span class="absolute -top-2 -right-2 bg-rose-700 text-white pixel-font text-[10px] px-2.5 py-1 border-2 border-white">🔒 SEALED</span>
+        </div>
+
+        <h3 class="pixel-font text-base sm:text-2xl text-[var(--primary-light)]">THE WARDEN GUARDS YOUR HARVEST LICENSE!</h3>
+        <p class="text-sm sm:text-base text-amber-100 max-w-xl mx-auto font-semibold leading-relaxed">
+          Unlock <b>ALL 8 Achievements</b> in the Trophy Chest to unseal your official printable <b>Present Simple vs Present Continuous Harvest Chef License</b>!
+        </p>
+
+        <div class="max-w-md mx-auto bg-stone-950 border-4 border-stone-700 p-4 space-y-2 rounded">
+          <div class="flex justify-between text-xs font-bold text-[var(--primary-light)]">
+            <span>BADGES COLLECTED:</span>
+            <span id="finale-lock-progress-text">0 / 8</span>
+          </div>
+          <div class="w-full h-5 bg-stone-800 border-2 border-black overflow-hidden rounded">
+            <div id="finale-lock-bar" class="h-full bg-gradient-to-r from-[var(--primary)] via-[var(--secondary)] to-[var(--accent)] transition-all duration-500" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-amber px-5 py-3 text-xs gap-2">
+            <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+            <span>PLAY MINI-GAMES</span>
+          </button>
+          <button onclick="switchSection('badges')" class="mc-btn mc-btn-green px-5 py-3 text-xs gap-2">
+            <img src="Minecraft/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+            <span>CHECK BADGES</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- UNLOCKED CERTIFICATE SECTION -->
+      <div id="finale-unlocked-content" class="hidden space-y-6">
+
+        <!-- Customizer Bar (Hidden on print) -->
+        <div class="mc-panel p-5 no-print space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label for="student-name-input" class="pixel-font text-xs text-stone-900">HARVEST CHEF NAME:</label>
+              <input id="student-name-input" type="text" value="Harvest Hero" oninput="updateCertificateName(this.value)" class="px-3 py-2 border-4 border-stone-700 bg-white text-stone-900 font-bold text-base focus:outline-none rounded">
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="launchVictoryConfetti()" class="mc-btn mc-btn-amber px-4 py-2 text-xs gap-2">
+                <span>🎆</span> <span>Celebrate!</span>
+              </button>
+              <button onclick="window.print()" class="mc-btn mc-btn-green px-5 py-2.5 text-xs sm:text-sm gap-2">
+                <i class="fa-solid fa-print"></i> <span>Print / Save as PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3 Custom Background Pickers -->
+          <div class="border-t-2 border-stone-400 pt-3 flex flex-wrap items-center justify-between gap-3">
+            <span class="pixel-font text-[10px] sm:text-xs text-stone-800">CHOOSE LICENSE BACKGROUND:</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCertificateTheme('bg1')" id="theme-btn-bg1" class="mc-btn mc-btn-amber px-3 py-1.5 text-[10px] gap-2">
+                <img src="Minecraft/wheat.png" class="w-4 h-4 object-contain" alt="Wheat"> <span>1. Golden Wheat Field</span>
+              </button>
+              <button onclick="setCertificateTheme('bg2')" id="theme-btn-bg2" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <img src="Minecraft/Minecraft_flower_-removebg-preview.png" class="w-4 h-4 object-contain" alt="Flower"> <span>2. Sunny Farm Meadow</span>
+              </button>
+              <button onclick="setCertificateTheme('bg3')" id="theme-btn-bg3" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <img src="Minecraft/Tree-removebg-preview.png" class="w-4 h-4 object-contain" alt="Tree"> <span>3. Whispering Oak Forest</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRINTABLE CERTIFICATE -->
+        <div id="printable-certificate-container" class="w-full flex justify-center">
+          <div id="printable-certificate" class="mc-panel p-6 sm:p-10 border-8 border-[var(--primary)] text-stone-900 relative overflow-hidden shadow-2xl bg-cover bg-center w-full max-w-4xl" style="background-image: url('Minecraft/Minecraft_Wheat_Field.jpg');">
+
+            <div class="absolute inset-0 bg-amber-50/60 backdrop-blur-[2px]"></div>
+
+            <div class="bg-[#fffdf7]/95 border-4 border-dashed border-[var(--primary-dark)] p-6 sm:p-8 text-center space-y-5 relative shadow-xl z-10 w-full rounded">
+
+              <!-- Top Row -->
+              <div class="flex items-center justify-between sm:px-6">
+                <img src="Minecraft/Steve-removebg-preview.png" alt="Steve" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+                <div class="text-center">
+                  <div class="inline-block bg-[var(--primary)] text-white pixel-font text-[9px] sm:text-[10px] px-3 py-1 mb-2 rounded">OFFICIAL GREAT HARVEST FESTIVAL LICENSE</div>
+                  <h2 class="pixel-font text-base sm:text-2xl md:text-3xl text-amber-900">MASTER OF TIME &amp; HARVEST</h2>
+                </div>
+                <img src="Minecraft/Alex-removebg-preview.png" alt="Alex" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+              </div>
+
+              <p class="text-xs sm:text-base font-bold text-stone-600 uppercase tracking-widest">This official license is proudly awarded to:</p>
+
+              <div id="cert-hero-name" class="pixel-font text-xl sm:text-3xl text-lime-900 border-b-4 border-[var(--primary)] inline-block px-8 py-2 bg-white/95 rounded">
+                Harvest Hero
+              </div>
+
+              <p class="text-sm sm:text-base text-stone-800 max-w-2xl mx-auto font-semibold leading-relaxed">
+                For mastering <b>Present Simple (Every Day)</b> vs <b>Present Continuous (Right Now)</b> in +, -, and ?, spotting all Spyglass Time Clues, and running the <b>Minecraft Farm Bakery &amp; Cafe</b>!
+              </p>
+
+              <!-- 10 Food Icons Strip -->
+              <div class="flex flex-wrap items-center justify-center gap-2.5 py-2.5 bg-amber-900/10 rounded-xl px-4">
+                <img src="Minecraft/carrot.png" class="w-8 h-8 object-contain" alt="Carrot">
+                <img src="Minecraft/potato.png" class="w-8 h-8 object-contain" alt="Potato">
+                <img src="Minecraft/cake.png" class="w-8 h-8 object-contain" alt="Cake">
+                <img src="Minecraft/cookie.png" class="w-8 h-8 object-contain" alt="Cookie">
+                <img src="Minecraft/milk_bucket.png" class="w-8 h-8 object-contain" alt="Milk">
+                <img src="Minecraft/egg.png" class="w-8 h-8 object-contain" alt="Egg">
+                <img src="Minecraft/honey_bottle.png" class="w-8 h-8 object-contain" alt="Honey">
+                <img src="Minecraft/melon_slice.png" class="w-8 h-8 object-contain" alt="Melon">
+                <img src="Minecraft/pumpkin.png" class="w-8 h-8 object-contain" alt="Pumpkin">
+                <img src="Minecraft/wheat_seeds.png" class="w-8 h-8 object-contain" alt="Seeds">
+              </div>
+
+              <div class="grid grid-cols-3 items-center pt-4 border-t-2 border-stone-300 text-xs sm:text-sm font-bold text-stone-700">
+                <div>
+                  <div class="text-stone-900 font-extrabold">Steve, Alex &amp; Villager</div>
+                  <div class="text-[11px] text-stone-500">Harvest Festival Hosts</div>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="Minecraft/honey_bottle.png" alt="Seal" class="w-11 h-11 object-contain">
+                  <span class="pixel-font text-[8px] text-amber-800 mt-1">GOLDEN HARVEST SEAL</span>
+                </div>
+                <div>
+                  <div id="cert-date-display" class="text-stone-900 font-extrabold">2026</div>
+                  <div class="text-[11px] text-stone-500">Date of Completion</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================================= -->
+  <!-- JAVASCRIPT ENGINE & CENTRALIZED GAME_DATA                               -->
+  <!-- ======================================================================= -->
+  <script>
+    /* =========================================================================
+       1. CENTRALIZED GAME_DATA CONFIGURATION
+       ========================================================================= */
+    const STORAGE_KEY = "mc_ps_vs_pc_harvest_v1";
+
+    const GAME_DATA = {
+      story: {
+        intro: "Welcome to the Great Harvest Festival! Every morning, Steve and Alex work on their sunny farm: cows give milk, chickens lay eggs, and bees make sweet honey. Look through your spyglass right now! Today is a party day! Alex is baking a big cake, the pig is eating a carrot, and the Villager is opening the Farm Bakery Cafe!"
+      },
+
+      assets: {
+        totem: "Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png",
+        steve: "Minecraft/Steve-removebg-preview.png",
+        alex: "Minecraft/Alex-removebg-preview.png",
+        villager: "Minecraft/Villager-removebg-preview.png",
+        golem: "Minecraft/Iron_Golem_with_flower-removebg-preview.png",
+        copperGolem: "Minecraft/Coppe_golem-removebg-preview.png",
+        pig: "Minecraft/Minecraft_Pig-removebg-preview.png",
+        cow: "Minecraft/Minecraft_Cow-removebg-preview.png",
+        sheep: "Minecraft/Sheep-removebg-preview.png",
+        chicken: "Minecraft/Chicken-removebg-preview.png",
+        bee: "Minecraft/Bee-removebg-preview.png",
+        fox: "Minecraft/Fox-removebg-preview.png",
+        foxSleeping: "Minecraft/Fox_sleeping-removebg-preview.png",
+        cat: "Minecraft/Kitty-removebg-preview.png",
+        catAdult: "Minecraft/Cat-removebg-preview.png",
+        dog: "Minecraft/Puppy-removebg-preview.png",
+        parrot: "Minecraft/Parrot-removebg-preview.png",
+        axolotl: "Minecraft/axolotl-removebg-preview.png",
+        horse: "Minecraft/Minecraft_Horse-removebg-preview.png",
+        creeper: "Minecraft/Creeper-removebg-preview.png",
+        zombie: "Minecraft/Zombie-removebg-preview.png",
+        enderman: "Minecraft/Enderman-removebg-preview.png",
+        slime: "Minecraft/Slime-removebg-preview.png",
+        carrot: "Minecraft/carrot.png",
+        potato: "Minecraft/potato.png",
+        bakedPotato: "Minecraft/baked_potato.png",
+        cake: "Minecraft/cake.png",
+        cookie: "Minecraft/cookie.png",
+        milk: "Minecraft/milk_bucket.png",
+        egg: "Minecraft/egg.png",
+        honey: "Minecraft/honey_bottle.png",
+        melon: "Minecraft/melon_slice.png",
+        pumpkin: "Minecraft/pumpkin.png",
+        pumpkinPie: "Minecraft/pumpkin_pie.png",
+        seeds: "Minecraft/wheat_seeds.png",
+        wheat: "Minecraft/wheat.png",
+        bread: "Minecraft/bread.png",
+        goldenCarrot: "Minecraft/golden_carrot.png",
+        goldenApple: "Minecraft/golden_apple.png",
+        berries: "Minecraft/sweet_berries.png",
+        salmon: "Minecraft/cooked_salmon.png",
+        chickenFood: "Minecraft/cooked_chicken.png",
+        porkchop: "Minecraft/cooked_porkchop.png",
+        steak: "Minecraft/Steak-removebg-preview.png"
+      },
+
+      certWallpapers: {
+        bg1: "Minecraft/Minecraft_Wheat_Field.jpg",
+        bg2: "Minecraft/Minecraft_field.jpg",
+        bg3: "Minecraft/Minecraft_Forest.jpg"
+      },
+
+      // 10 Food & Farming Vocabulary Flashcards
+      vocabulary: [
+        { id: "carrot", word: "Carrot", ua: "морква", img: "Minecraft/carrot.png", example: "The pig eats a carrot every day. Look! It is eating a carrot now!" },
+        { id: "potato", word: "Potato", ua: "картопля", img: "Minecraft/potato.png", example: "Steve usually plants potatoes. Right now he is baking a hot potato!" },
+        { id: "cake", word: "Cake", ua: "торт", img: "Minecraft/cake.png", example: "Alex bakes a cake on Sundays. Look! She is making a big cake now!" },
+        { id: "cookie", word: "Cookie", ua: "печиво", img: "Minecraft/cookie.png", example: "We often share cookies with friends. I am eating a sweet cookie now!" },
+        { id: "milk", word: "Milk", ua: "молоко", img: "Minecraft/milk_bucket.png", example: "The cow gives milk every day. Steve is drinking fresh milk right now!" },
+        { id: "egg", word: "Egg", ua: "яйце", img: "Minecraft/egg.png", example: "The chicken lays an egg every morning. Look! Alex is holding an egg!" },
+        { id: "honey", word: "Honey", ua: "мед", img: "Minecraft/honey_bottle.png", example: "Bees always make sweet honey. Look! A bee is flying to the honey!" },
+        { id: "melon", word: "Melon", ua: "кавун", img: "Minecraft/melon_slice.png", example: "Villagers grow melons in summer. We are cutting a juicy melon now!" },
+        { id: "pumpkin", word: "Pumpkin", ua: "гарбуз", img: "Minecraft/pumpkin.png", example: "Pumpkins grow on our farm every year. Steve is carrying a pumpkin now!" },
+        { id: "seed", word: "Seed", ua: "насіння", img: "Minecraft/wheat_seeds.png", example: "The parrot likes seeds very much. Listen! It is asking for seeds now!" }
+      ],
+
+      // Section 4 (Variant 2): 8 Interactive Tables in the Farm Bakery & Cafe
+      bakeryStations: [
+        {
+          id: "cafe_bee",
+          title: "Sunny Honey Tea Counter",
+          guestName: "Buzzing Bee",
+          dishName: "Sweet Honey Bottle",
+          cost: 12,
+          guestImg: "Minecraft/Bee-removebg-preview.png",
+          dishImg: "Minecraft/honey_bottle.png",
+          simpleLine: "Every Day: The bee always makes sweet honey in summer.",
+          continuousLine: "Right Now: Look! It is sipping warm honey tea at our cafe!"
+        },
+        {
+          id: "cafe_pig",
+          title: "Crunchy Carrot Booth",
+          guestName: "Pink Piggy",
+          dishName: "Golden Carrot",
+          cost: 15,
+          guestImg: "Minecraft/Minecraft_Pig-removebg-preview.png",
+          dishImg: "Minecraft/golden_carrot.png",
+          simpleLine: "Every Day: The pig usually eats orange carrots on the farm.",
+          continuousLine: "Right Now: Look! It is crunching a shiny golden carrot!"
+        },
+        {
+          id: "cafe_kitty",
+          title: "Dairy & Cookie Corner",
+          guestName: "Cozy Kitty",
+          dishName: "Milk & Cookie",
+          cost: 18,
+          guestImg: "Minecraft/Kitty-removebg-preview.png",
+          dishImg: "Minecraft/cookie.png",
+          simpleLine: "Every Day: The kitty drinks fresh milk every morning.",
+          continuousLine: "Right Now: Right now she is eating a chocolate cookie too!"
+        },
+        {
+          id: "cafe_villager",
+          title: "Hot Baked Potato Oven",
+          guestName: "Farmer Villager",
+          dishName: "Baked Potato & Bread",
+          cost: 20,
+          guestImg: "Minecraft/Villager-removebg-preview.png",
+          dishImg: "Minecraft/baked_potato.png",
+          simpleLine: "Every Day: The villager bakes warm bread every day.",
+          continuousLine: "Right Now: Listen! He is blowing on a hot baked potato!"
+        },
+        {
+          id: "cafe_fox",
+          title: "Sweet Pumpkin Pie Table",
+          guestName: "Red Fox",
+          dishName: "Pumpkin Pie",
+          cost: 22,
+          guestImg: "Minecraft/Fox-removebg-preview.png",
+          dishImg: "Minecraft/pumpkin_pie.png",
+          simpleLine: "Every Day: The fox usually picks sweet berries in the forest.",
+          continuousLine: "Right Now: Look! It is tasting a warm pumpkin pie!"
+        },
+        {
+          id: "cafe_golem",
+          title: "Royal Birthday Cake Stage",
+          guestName: "Iron Golem",
+          dishName: "Festival Cake",
+          cost: 25,
+          guestImg: "Minecraft/Iron_Golem_with_flower-removebg-preview.png",
+          dishImg: "Minecraft/cake.png",
+          simpleLine: "Every Day: The Iron Golem guards our village every day.",
+          continuousLine: "Right Now: Right now he is sharing a big cake with Alex!"
+        },
+        {
+          id: "cafe_axolotl",
+          title: "Melon & Salmon Deck",
+          guestName: "Pink Axolotl",
+          dishName: "Juicy Melon & Salmon",
+          cost: 28,
+          guestImg: "Minecraft/axolotl-removebg-preview.png",
+          dishImg: "Minecraft/melon_slice.png",
+          simpleLine: "Every Day: The axolotl swims in cool water every day.",
+          continuousLine: "Right Now: Look! It is enjoying a juicy melon slice now!"
+        },
+        {
+          id: "cafe_parrot",
+          title: "Seed & Egg Breakfast Bar",
+          guestName: "Colorful Parrot",
+          dishName: "Seeds & Egg Muffin",
+          cost: 30,
+          guestImg: "Minecraft/Parrot-removebg-preview.png",
+          dishImg: "Minecraft/wheat_seeds.png",
+          simpleLine: "Every Day: The parrot loves wheat seeds every morning.",
+          continuousLine: "Right Now: Listen! It is singing and dancing on the table!"
+        }
+      ],
+
+      // =========================================================================
+      // GAME 1 POOL: AFFIRMATIVE (+) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =========================================================================
+      game1Pool: [
+        { type: "mc", q: "The pig ___ a crunchy carrot every morning.", ans: "eats", options: ["eats", "is eating", "eat"], mob: "pig" },
+        { type: "mc", q: "Look! The pig ___ a big carrot right now!", ans: "is eating", options: ["is eating", "eats", "eat"], mob: "carrot" },
+        { type: "mc", q: "The cow ___ fresh milk every day.", ans: "gives", options: ["gives", "is giving", "give"], mob: "cow" },
+        { type: "mc", q: "Right now Steve ___ fresh milk in the kitchen.", ans: "is drinking", options: ["is drinking", "drinks", "drink"], mob: "milk" },
+        { type: "mc", q: "Alex usually ___ a sweet cake on Sundays.", ans: "bakes", options: ["bakes", "is baking", "bake"], mob: "alex" },
+        { type: "mc", q: "Look! Alex ___ a birthday cake at the moment!", ans: "is baking", options: ["is baking", "bakes", "bake"], mob: "cake" },
+        { type: "mc", q: "Chickens always ___ white eggs on our farm.", ans: "lay", options: ["lay", "are laying", "lays"], mob: "chicken" },
+        { type: "mc", q: "Listen! The chicken ___ near the eggs right now!", ans: "is clucking", options: ["is clucking", "clucks", "cluck"], mob: "egg" },
+        { type: "mc", q: "Bees ___ golden honey every summer.", ans: "make", options: ["make", "are making", "makes"], mob: "bee" },
+        { type: "mc", q: "Look! Two bees ___ to the honey bottle now!", ans: "are flying", options: ["are flying", "fly", "flies"], mob: "honey" },
+        { type: "mc", q: "Steve ___ potato seeds in the garden every spring.", ans: "plants", options: ["plants", "is planting", "plant"], mob: "steve" },
+        { type: "mc", q: "At the moment, Steve ___ a hot baked potato.", ans: "is eating", options: ["is eating", "eats", "eat"], mob: "bakedPotato" },
+        { type: "mc", q: "We often ___ chocolate cookies after school.", ans: "share", options: ["share", "are sharing", "shares"], mob: "cookie" },
+        { type: "mc", q: "Look! I ___ a warm cookie right now!", ans: "am holding", options: ["am holding", "hold", "holds"], mob: "cookie" },
+        { type: "mc", q: "Villagers ___ green melons in their gardens every year.", ans: "grow", options: ["grow", "are growing", "grows"], mob: "villager" },
+        { type: "mc", q: "Right now we ___ a juicy melon slice!", ans: "are cutting", options: ["are cutting", "cut", "cuts"], mob: "melon" },
+        { type: "mc", q: "Big orange pumpkins ___ on our farm every autumn.", ans: "grow", options: ["grow", "are growing", "grows"], mob: "pumpkin" },
+        { type: "mc", q: "Look! Alex ___ a heavy pumpkin to the barn now!", ans: "is carrying", options: ["is carrying", "carries", "carry"], mob: "pumpkin" },
+        { type: "mc", q: "The parrot ___ wheat seeds every day.", ans: "loves", options: ["loves", "is loving", "love"], mob: "parrot" },
+        { type: "mc", q: "Right now the little parrot ___ wheat seeds from my hand.", ans: "is pecking", options: ["is pecking", "pecks", "peck"], mob: "seeds" },
+        { type: "mc", q: "I always ___ warm bread for breakfast.", ans: "eat", options: ["eat", "am eating", "eats"], mob: "bread" },
+        { type: "mc", q: "Look! The villager ___ fresh bread right now!", ans: "is baking", options: ["is baking", "bakes", "bake"], mob: "bread" },
+        { type: "mc", q: "The red fox usually ___ sweet berries in the woods.", ans: "finds", options: ["finds", "is finding", "find"], mob: "fox" },
+        { type: "mc", q: "Look! The red fox ___ sweet berries right now!", ans: "is picking", options: ["is picking", "picks", "pick"], mob: "berries" },
+        { type: "mc", q: "The kitty ___ milk from a blue bowl every morning.", ans: "drinks", options: ["drinks", "is drinking", "drink"], mob: "cat" },
+        { type: "mc", q: "Shh! The baby fox ___ near the pumpkins right now.", ans: "is sleeping", options: ["is sleeping", "sleeps", "sleep"], mob: "foxSleeping" },
+        { type: "mc", q: "My puppy ___ after a ball every afternoon.", ans: "runs", options: ["runs", "is running", "run"], mob: "dog" },
+        { type: "mc", q: "Look! Two puppies ___ in the wheat field now!", ans: "are running", options: ["are running", "run", "runs"], mob: "dog" },
+        { type: "mc", q: "The Iron Golem ___ the village every day.", ans: "guards", options: ["guards", "is guarding", "guard"], mob: "golem" },
+        { type: "mc", q: "Right now the Iron Golem ___ a flower to Alex!", ans: "is giving", options: ["is giving", "gives", "give"], mob: "golem" },
+        { type: "mc", q: "Horses usually ___ tall grass on the farm.", ans: "eat", options: ["eat", "are eating", "eats"], mob: "horse" },
+        { type: "mc", q: "Look! The brown horse ___ over the fence right now!", ans: "is jumping", options: ["is jumping", "jumps", "jump"], mob: "horse" },
+        { type: "mc", q: "The pink axolotl ___ in cool water every day.", ans: "swims", options: ["swims", "is swimming", "swim"], mob: "axolotl" },
+        { type: "mc", q: "Look! The pink axolotl ___ cooked salmon now!", ans: "is eating", options: ["is eating", "eats", "eat"], mob: "salmon" },
+        { type: "mc", q: "We always ___ pumpkin pie for the Harvest Festival.", ans: "make", options: ["make", "are making", "makes"], mob: "pumpkinPie" },
+        // 15 Scramble Questions (articles/possessives grouped!)
+        { type: "scramble", prompt: "Put the words in order (Present Simple - Every Day):", words: ["The pig", "eats", "a carrot", "every day."], ans: "The pig eats a carrot every day.", mob: "pig" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Now):", words: ["Look!", "The pig", "is eating", "a carrot", "now."], ans: "Look! The pig is eating a carrot now.", mob: "carrot" },
+        { type: "scramble", prompt: "Put the words in order (Present Simple - Every Morning):", words: ["The cow", "gives", "fresh milk", "every morning."], ans: "The cow gives fresh milk every morning.", mob: "cow" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Right Now):", words: ["Steve", "is drinking", "cold milk", "right now."], ans: "Steve is drinking cold milk right now.", mob: "milk" },
+        { type: "scramble", prompt: "Put the words in order (Present Simple - Usually):", words: ["Alex", "usually", "bakes", "a big cake."], ans: "Alex usually bakes a big cake.", mob: "alex" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Now):", words: ["Alex", "is making", "a sweet cake", "now."], ans: "Alex is making a sweet cake now.", mob: "cake" },
+        { type: "scramble", prompt: "Put the words in order (Present Simple - Always):", words: ["Bees", "always", "make", "sweet honey."], ans: "Bees always make sweet honey.", mob: "bee" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Look!):", words: ["Look!", "The bee", "is flying", "to the honey."], ans: "Look! The bee is flying to the honey.", mob: "honey" },
+        { type: "scramble", prompt: "Put the words in order (Present Simple - Often):", words: ["We", "often", "eat", "cookies", "at school."], ans: "We often eat cookies at school.", mob: "cookie" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Right Now):", words: ["I", "am eating", "a cookie", "right now."], ans: "I am eating a cookie right now.", mob: "cookie" },
+        { type: "scramble", prompt: "Put the words in order (Present Simple - Every Day):", words: ["The chicken", "lays", "an egg", "every day."], ans: "The chicken lays an egg every day.", mob: "chicken" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Today):", words: ["Steve", "is planting", "wheat seeds", "today."], ans: "Steve is planting wheat seeds today.", mob: "seeds" },
+        { type: "scramble", prompt: "Put the words in order (Present Simple - Every Year):", words: ["Villagers", "grow", "pumpkins", "every year."], ans: "Villagers grow pumpkins every year.", mob: "pumpkin" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Look!):", words: ["Look!", "They", "are cutting", "a melon", "now."], ans: "Look! They are cutting a melon now.", mob: "melon" },
+        { type: "scramble", prompt: "Put the words in order (Present Continuous - Right Now):", words: ["The villager", "is baking", "a hot potato", "right now."], ans: "The villager is baking a hot potato right now.", mob: "bakedPotato" }
+      ],
+
+      // =========================================================================
+      // GAME 2 POOL: NEGATIVE (-) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =========================================================================
+      game2Pool: [
+        { type: "mc", q: "The pig ___ cookies every day. It likes carrots!", ans: "doesn't eat", options: ["doesn't eat", "isn't eating", "don't eat"], mob: "pig" },
+        { type: "mc", q: "Look! The pig ___ its carrot right now. It is sleeping!", ans: "isn't eating", options: ["isn't eating", "doesn't eat", "aren't eating"], mob: "pig" },
+        { type: "mc", q: "Chickens ___ milk every morning. Cows give milk!", ans: "don't give", options: ["don't give", "aren't giving", "doesn't give"], mob: "chicken" },
+        { type: "mc", q: "Right now Alex ___ milk. She is eating a melon!", ans: "isn't drinking", options: ["isn't drinking", "doesn't drink", "aren't drinking"], mob: "alex" },
+        { type: "mc", q: "Steve ___ cakes every day, only on holidays.", ans: "doesn't bake", options: ["doesn't bake", "isn't baking", "don't bake"], mob: "steve" },
+        { type: "mc", q: "Look at the kitchen! We ___ a cake right now.", ans: "aren't baking", options: ["aren't baking", "don't bake", "isn't baking"], mob: "cake" },
+        { type: "mc", q: "Zombies ___ wheat seeds on our farm every day.", ans: "don't plant", options: ["don't plant", "aren't planting", "doesn't plant"], mob: "zombie" },
+        { type: "mc", q: "Good news! The zombie ___ our carrots right now!", ans: "isn't stealing", options: ["isn't stealing", "doesn't steal", "aren't stealing"], mob: "zombie" },
+        { type: "mc", q: "Bees usually ___ at night; they sleep in their hive.", ans: "don't fly", options: ["don't fly", "aren't flying", "doesn't fly"], mob: "bee" },
+        { type: "mc", q: "Look! The bee ___ honey right now; it is resting on a flower.", ans: "isn't making", options: ["isn't making", "doesn't make", "aren't making"], mob: "bee" },
+        { type: "mc", q: "I ___ potatoes for breakfast every morning.", ans: "don't eat", options: ["don't eat", "am not eating", "doesn't eat"], mob: "potato" },
+        { type: "mc", q: "I ___ a potato right now; I am eating sweet honey!", ans: "am not eating", options: ["am not eating", "don't eat", "isn't eating"], mob: "honey" },
+        { type: "mc", q: "The red fox ___ eggs from the coop every day because the golem guards it.", ans: "doesn't take", options: ["doesn't take", "isn't taking", "don't take"], mob: "fox" },
+        { type: "mc", q: "Shh! The fox ___ berries right now; it is sleeping!", ans: "isn't eating", options: ["isn't eating", "doesn't eat", "aren't eating"], mob: "foxSleeping" },
+        { type: "mc", q: "Cows ___ eggs on the farm!", ans: "don't lay", options: ["don't lay", "aren't laying", "doesn't lay"], mob: "cow" },
+        { type: "mc", q: "Look! The brown cow ___ grass right now; it is drinking water.", ans: "isn't eating", options: ["isn't eating", "doesn't eat", "aren't eating"], mob: "cow" },
+        { type: "mc", q: "The parrot ___ big pumpkins every day. It eats tiny seeds!", ans: "doesn't eat", options: ["doesn't eat", "isn't eating", "don't eat"], mob: "parrot" },
+        { type: "mc", q: "Listen! The parrot ___ right now. It is quiet.", ans: "isn't singing", options: ["isn't singing", "doesn't sing", "aren't singing"], mob: "parrot" },
+        { type: "mc", q: "We ___ watermelons in winter because it is too cold.", ans: "don't grow", options: ["don't grow", "aren't growing", "doesn't grow"], mob: "melon" },
+        { type: "mc", q: "Right now Steve and Alex ___ melons; they are harvesting wheat.", ans: "aren't cutting", options: ["aren't cutting", "don't cut", "isn't cutting"], mob: "wheat" },
+        { type: "mc", q: "The kitty ___ spicy food; she always drinks milk.", ans: "doesn't like", options: ["doesn't like", "isn't liking", "don't like"], mob: "cat" },
+        { type: "mc", q: "Look! My cat ___ milk right now; she is chasing a butterfly.", ans: "isn't drinking", options: ["isn't drinking", "doesn't drink", "aren't drinking"], mob: "catAdult" },
+        { type: "mc", q: "Sheep ___ meat; they always eat green grass.", ans: "don't eat", options: ["don't eat", "aren't eating", "doesn't eat"], mob: "sheep" },
+        { type: "mc", q: "Look! The white sheep ___ right now; it is standing near Steve.", ans: "isn't sleeping", options: ["isn't sleeping", "doesn't sleep", "aren't sleeping"], mob: "sheep" },
+        { type: "mc", q: "Creepers ___ in our Farm Bakery Cafe every day!", ans: "don't help", options: ["don't help", "aren't helping", "doesn't help"], mob: "creeper" },
+        { type: "mc", q: "Don't worry! The Creeper ___ near our pumpkin patch right now.", ans: "isn't walking", options: ["isn't walking", "doesn't walk", "aren't walking"], mob: "creeper" },
+        { type: "mc", q: "My dog ___ honey bottles every morning.", ans: "doesn't drink", options: ["doesn't drink", "isn't drinking", "don't drink"], mob: "dog" },
+        { type: "mc", q: "Right now the puppies ___ cookies; they are chewing bones.", ans: "aren't eating", options: ["aren't eating", "don't eat", "isn't eating"], mob: "dog" },
+        { type: "mc", q: "The Villager ___ bread on Mondays because the shop is closed.", ans: "doesn't sell", options: ["doesn't sell", "isn't selling", "don't sell"], mob: "villager" },
+        { type: "mc", q: "Look! The Villager ___ potatoes right now; he is resting.", ans: "isn't baking", options: ["isn't baking", "doesn't bake", "aren't baking"], mob: "villager" },
+        { type: "mc", q: "I ___ seeds every day; the farmer does that!", ans: "don't plant", options: ["don't plant", "am not planting", "doesn't plant"], mob: "seeds" },
+        { type: "mc", q: "I ___ a pumpkin pie right now; I am making cookies.", ans: "am not baking", options: ["am not baking", "don't bake", "isn't baking"], mob: "pumpkinPie" },
+        { type: "mc", q: "Horses ___ eggs for breakfast every morning.", ans: "don't eat", options: ["don't eat", "aren't eating", "doesn't eat"], mob: "horse" },
+        { type: "mc", q: "Look! The horse ___ fast right now; it is eating a golden carrot.", ans: "isn't running", options: ["isn't running", "doesn't run", "aren't running"], mob: "goldenCarrot" },
+        { type: "mc", q: "The axolotl ___ on dry sand every day.", ans: "doesn't live", options: ["doesn't live", "isn't living", "don't live"], mob: "axolotl" },
+        // 15 Scramble Questions
+        { type: "scramble", prompt: "Put the words in order (Negative - Every Day):", words: ["The pig", "doesn't", "eat", "cookies", "every day."], ans: "The pig doesn't eat cookies every day.", mob: "pig" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Right Now):", words: ["The pig", "isn't", "eating", "a carrot", "right now."], ans: "The pig isn't eating a carrot right now.", mob: "carrot" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Every Morning):", words: ["I", "don't", "drink", "milk", "every morning."], ans: "I don't drink milk every morning.", mob: "milk" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Now):", words: ["I", "am not", "drinking", "milk", "now."], ans: "I am not drinking milk now.", mob: "milk" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Every Day):", words: ["Alex", "doesn't", "bake", "a cake", "every day."], ans: "Alex doesn't bake a cake every day.", mob: "alex" },
+        { type: "scramble", prompt: "Put the words in order (Negative - At the moment):", words: ["Alex", "isn't", "baking", "a cake", "at the moment."], ans: "Alex isn't baking a cake at the moment.", mob: "cake" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Usually):", words: ["Cows", "don't", "lay", "eggs", "on farms."], ans: "Cows don't lay eggs on farms.", mob: "cow" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Right Now):", words: ["The chickens", "aren't", "eating", "seeds", "right now."], ans: "The chickens aren't eating seeds right now.", mob: "chicken" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Every Year):", words: ["We", "don't", "grow", "melons", "in winter."], ans: "We don't grow melons in winter.", mob: "melon" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Look!):", words: ["Look!", "The fox", "isn't", "eating", "berries."], ans: "Look! The fox isn't eating berries.", mob: "fox" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Every Night):", words: ["Bees", "don't", "make", "honey", "at night."], ans: "Bees don't make honey at night.", mob: "bee" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Right Now):", words: ["Steve", "isn't", "carrying", "a pumpkin", "right now."], ans: "Steve isn't carrying a pumpkin right now.", mob: "pumpkin" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Usually):", words: ["The parrot", "doesn't", "eat", "potatoes", "every day."], ans: "The parrot doesn't eat potatoes every day.", mob: "parrot" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Today):", words: ["They", "aren't", "selling", "bread", "today."], ans: "They aren't selling bread today.", mob: "bread" },
+        { type: "scramble", prompt: "Put the words in order (Negative - Right Now):", words: ["My cat", "isn't", "sleeping", "on the table", "now."], ans: "My cat isn't sleeping on the table now.", mob: "cat" }
+      ],
+
+      // =========================================================================
+      // GAME 3 POOL: QUESTIONS (?) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =========================================================================
+      game3Pool: [
+        { type: "mc", q: "___ the pig eat carrots every day?", ans: "Does", options: ["Does", "Is", "Do"], mob: "pig" },
+        { type: "mc", q: "Look! ___ the pig eating a carrot right now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "carrot" },
+        { type: "mc", q: "___ you drink warm milk every morning?", ans: "Do", options: ["Do", "Are", "Does"], mob: "milk" },
+        { type: "mc", q: "___ you drinking fresh milk right now?", ans: "Are", options: ["Are", "Do", "Is"], mob: "milk" },
+        { type: "mc", q: "___ Alex bake cakes every weekend?", ans: "Does", options: ["Does", "Is", "Do"], mob: "alex" },
+        { type: "mc", q: "Look in the kitchen! ___ Alex baking a cake now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "cake" },
+        { type: "mc", q: "___ chickens lay eggs every morning?", ans: "Do", options: ["Do", "Are", "Does"], mob: "chicken" },
+        { type: "mc", q: "___ the white chicken sitting on its eggs right now?", ans: "Is", options: ["Is", "Does", "Do"], mob: "egg" },
+        { type: "mc", q: "___ bees always make sweet honey?", ans: "Do", options: ["Do", "Are", "Does"], mob: "bee" },
+        { type: "mc", q: "Look! ___ the bees flying near the honey bottle now?", ans: "Are", options: ["Are", "Do", "Is"], mob: "honey" },
+        { type: "mc", q: "___ Steve plant potatoes every spring?", ans: "Does", options: ["Does", "Is", "Do"], mob: "steve" },
+        { type: "mc", q: "___ Steve baking a hot potato in the oven right now?", ans: "Is", options: ["Is", "Does", "Do"], mob: "bakedPotato" },
+        { type: "mc", q: "___ we usually share cookies with our friends?", ans: "Do", options: ["Do", "Are", "Does"], mob: "cookie" },
+        { type: "mc", q: "___ they eating sweet cookies at the moment?", ans: "Are", options: ["Are", "Do", "Is"], mob: "cookie" },
+        { type: "mc", q: "___ villagers grow melons on their farm every year?", ans: "Do", options: ["Do", "Are", "Does"], mob: "villager" },
+        { type: "mc", q: "___ the villager cutting a juicy melon right now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "melon" },
+        { type: "mc", q: "___ pumpkins grow on your farm every autumn?", ans: "Do", options: ["Do", "Are", "Does"], mob: "pumpkin" },
+        { type: "mc", q: "Look! ___ Alex carrying a giant pumpkin right now?", ans: "Is", options: ["Is", "Does", "Do"], mob: "pumpkin" },
+        { type: "mc", q: "___ the parrot like wheat seeds every day?", ans: "Does", options: ["Does", "Is", "Do"], mob: "parrot" },
+        { type: "mc", q: "Listen! ___ the parrot asking for seeds right now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "seeds" },
+        { type: "mc", q: "What ___ you usually eat for breakfast?", ans: "do", options: ["do", "are", "does"], mob: "bread" },
+        { type: "mc", q: "What ___ you eating right now?", ans: "are", options: ["are", "do", "is"], mob: "pumpkinPie" },
+        { type: "mc", q: "Where ___ the cow sleep every night?", ans: "does", options: ["does", "is", "do"], mob: "cow" },
+        { type: "mc", q: "Where ___ the cows walking right now?", ans: "are", options: ["are", "do", "is"], mob: "cow" },
+        { type: "mc", q: "___ the red fox pick berries every day?", ans: "Does", options: ["Does", "Is", "Do"], mob: "fox" },
+        { type: "mc", q: "Shh! ___ the fox sleeping under the tree right now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "foxSleeping" },
+        { type: "mc", q: "___ I always water the seeds on Sundays?", ans: "Do", options: ["Do", "Am", "Does"], mob: "seeds" },
+        { type: "mc", q: "___ I holding a golden carrot right now?", ans: "Am", options: ["Am", "Do", "Is"], mob: "goldenCarrot" },
+        { type: "mc", q: "___ the kitty drink milk every morning?", ans: "Does", options: ["Does", "Is", "Do"], mob: "cat" },
+        { type: "mc", q: "Look! ___ the kitty playing with a cookie now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "cat" },
+        { type: "mc", q: "___ your friends visit the Bakery Cafe every Friday?", ans: "Do", options: ["Do", "Are", "Does"], mob: "villager" },
+        { type: "mc", q: "___ your friends eating pumpkin pie at the cafe right now?", ans: "Are", options: ["Are", "Do", "Is"], mob: "pumpkinPie" },
+        { type: "mc", q: "___ the Iron Golem protect the village every day?", ans: "Does", options: ["Does", "Is", "Do"], mob: "golem" },
+        { type: "mc", q: "Look! ___ the Iron Golem holding a cake now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "golem" },
+        { type: "mc", q: "___ the axolotl swim in the river every day?", ans: "Does", options: ["Does", "Is", "Do"], mob: "axolotl" },
+        // 15 Scramble Questions
+        { type: "scramble", prompt: "Put the words in order (Question - Every Day):", words: ["Does", "the pig", "eat", "carrots", "every day?"], ans: "Does the pig eat carrots every day?", mob: "pig" },
+        { type: "scramble", prompt: "Put the words in order (Question - Right Now):", words: ["Is", "the pig", "eating", "a carrot", "right now?"], ans: "Is the pig eating a carrot right now?", mob: "carrot" },
+        { type: "scramble", prompt: "Put the words in order (Question - Every Morning):", words: ["Do", "you", "drink", "milk", "every morning?"], ans: "Do you drink milk every morning?", mob: "milk" },
+        { type: "scramble", prompt: "Put the words in order (Question - Now):", words: ["Are", "you", "drinking", "milk", "now?"], ans: "Are you drinking milk now?", mob: "milk" },
+        { type: "scramble", prompt: "Put the words in order (Question - On Sundays):", words: ["Does", "Alex", "bake", "a cake", "on Sundays?"], ans: "Does Alex bake a cake on Sundays?", mob: "alex" },
+        { type: "scramble", prompt: "Put the words in order (Question - Right Now):", words: ["Is", "Alex", "baking", "a cake", "right now?"], ans: "Is Alex baking a cake right now?", mob: "cake" },
+        { type: "scramble", prompt: "Put the words in order (Question - Every Day):", words: ["Do", "bees", "make", "sweet honey", "every day?"], ans: "Do bees make sweet honey every day?", mob: "bee" },
+        { type: "scramble", prompt: "Put the words in order (Question - Now):", words: ["Are", "the bees", "flying", "to the honey", "now?"], ans: "Are the bees flying to the honey now?", mob: "honey" },
+        { type: "scramble", prompt: "Put the words in order (Question - Often):", words: ["Do", "they", "eat", "cookies", "often?"], ans: "Do they eat cookies often?", mob: "cookie" },
+        { type: "scramble", prompt: "Put the words in order (Question - At the moment):", words: ["Are", "they", "eating", "cookies", "at the moment?"], ans: "Are they eating cookies at the moment?", mob: "cookie" },
+        { type: "scramble", prompt: "Put the words in order (Question - Every Morning):", words: ["Does", "the cow", "give", "milk", "every morning?"], ans: "Does the cow give milk every morning?", mob: "cow" },
+        { type: "scramble", prompt: "Put the words in order (Question - Right Now):", words: ["Is", "Steve", "planting", "wheat seeds", "right now?"], ans: "Is Steve planting wheat seeds right now?", mob: "seeds" },
+        { type: "scramble", prompt: "Put the words in order (Question - Every Day):", words: ["Does", "the parrot", "like", "seeds", "every day?"], ans: "Does the parrot like seeds every day?", mob: "parrot" },
+        { type: "scramble", prompt: "Put the words in order (Question - Right Now):", words: ["Is", "the villager", "cutting", "a melon", "right now?"], ans: "Is the villager cutting a melon right now?", mob: "melon" },
+        { type: "scramble", prompt: "Put the words in order (Question - Today):", words: ["Are", "we", "making", "pumpkin pie", "today?"], ans: "Are we making pumpkin pie today?", mob: "pumpkinPie" }
+      ],
+
+      // =========================================================================
+      // GAME 4 POOL: MIXED BLITZ (+, -, ?) — 50 UNIQUE QUESTIONS (35 MC + 15 SCRAMBLE)
+      // =========================================================================
+      game4Pool: [
+        { type: "mc", q: "Every morning, Steve ___ fresh eggs from the chicken coop.", ans: "collects", options: ["collects", "is collecting", "collect"], mob: "egg" },
+        { type: "mc", q: "Look! Right now Alex ___ sweet honey onto her bread!", ans: "is putting", options: ["is putting", "puts", "put"], mob: "honey" },
+        { type: "mc", q: "The cow ___ cookies every day; it prefers green grass.", ans: "doesn't eat", options: ["doesn't eat", "isn't eating", "don't eat"], mob: "cow" },
+        { type: "mc", q: "Shh! The puppies ___ cookies right now; they are sleeping.", ans: "aren't eating", options: ["aren't eating", "don't eat", "isn't eating"], mob: "dog" },
+        { type: "mc", q: "___ the villager bake fresh bread every morning?", ans: "Does", options: ["Does", "Is", "Do"], mob: "bread" },
+        { type: "mc", q: "Look! ___ Steve eating a baked potato right now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "bakedPotato" },
+        { type: "mc", q: "We always ___ pumpkin pie at the Harvest Festival.", ans: "enjoy", options: ["enjoy", "are enjoying", "enjoys"], mob: "pumpkinPie" },
+        { type: "mc", q: "At the moment, I ___ a slice of juicy watermelon!", ans: "am eating", options: ["am eating", "eat", "eats"], mob: "melon" },
+        { type: "mc", q: "My parrot ___ milk every morning; it drinks clean water.", ans: "doesn't drink", options: ["doesn't drink", "isn't drinking", "don't drink"], mob: "parrot" },
+        { type: "mc", q: "___ you planting carrot seeds in the garden right now?", ans: "Are", options: ["Are", "Do", "Is"], mob: "seeds" },
+        { type: "mc", q: "Bees usually ___ around bright flowers in summer.", ans: "dance", options: ["dance", "are dancing", "dances"], mob: "bee" },
+        { type: "mc", q: "Listen! The chickens ___ loudly because it is feeding time now!", ans: "are clucking", options: ["are clucking", "cluck", "clucks"], mob: "chicken" },
+        { type: "mc", q: "I ___ potatoes on Sundays; my brother cooks them.", ans: "don't cook", options: ["don't cook", "am not cooking", "doesn't cook"], mob: "potato" },
+        { type: "mc", q: "Look! The kitty ___ a sweet cookie right now!", ans: "isn't eating", options: ["isn't eating", "doesn't eat", "aren't eating"], mob: "cat" },
+        { type: "mc", q: "___ the cows give delicious milk every day?", ans: "Do", options: ["Do", "Are", "Does"], mob: "milk" },
+        { type: "mc", q: "Look! The Iron Golem ___ a big pumpkin right now!", ans: "is holding", options: ["is holding", "holds", "hold"], mob: "golem" },
+        { type: "mc", q: "The red fox often ___ berries behind the oak trees.", ans: "finds", options: ["finds", "is finding", "find"], mob: "berries" },
+        { type: "mc", q: "I ___ a birthday cake right now; I am baking cookies!", ans: "am not making", options: ["am not making", "don't make", "isn't making"], mob: "cake" },
+        { type: "mc", q: "___ your horse eat golden carrots every week?", ans: "Does", options: ["Does", "Is", "Do"], mob: "horse" },
+        { type: "mc", q: "Look! Two pigs ___ after a carrot right now!", ans: "are running", options: ["are running", "run", "runs"], mob: "pig" },
+        { type: "mc", q: "The villagers ___ melons in winter because of the snow.", ans: "don't grow", options: ["don't grow", "aren't growing", "doesn't grow"], mob: "melon" },
+        { type: "mc", q: "___ the bee making honey inside the hive right now?", ans: "Is", options: ["Is", "Does", "Are"], mob: "bee" },
+        { type: "mc", q: "Every evening, Steve ___ his wooden farm tools.", ans: "cleans", options: ["cleans", "is cleaning", "clean"], mob: "steve" },
+        { type: "mc", q: "Right now Alex ___ sweet eggs into a big bowl.", ans: "is cracking", options: ["is cracking", "cracks", "crack"], mob: "egg" },
+        { type: "mc", q: "Zombies ___ our bakery cakes because the door is locked!", ans: "don't eat", options: ["don't eat", "aren't eating", "doesn't eat"], mob: "zombie" },
+        { type: "mc", q: "___ you usually put honey in your warm milk?", ans: "Do", options: ["Do", "Are", "Does"], mob: "honey" },
+        { type: "mc", q: "Look! The axolotl ___ in the pond at the moment!", ans: "is swimming", options: ["is swimming", "swims", "swim"], mob: "axolotl" },
+        { type: "mc", q: "The villager ___ potatoes right now; he is serving a cake.", ans: "isn't peeling", options: ["isn't peeling", "doesn't peel", "aren't peeling"], mob: "villager" },
+        { type: "mc", q: "Sheep always ___ together on the green hill.", ans: "walk", options: ["walk", "are walking", "walks"], mob: "sheep" },
+        { type: "mc", q: "___ Alex and Steve decorating the cafe right now?", ans: "Are", options: ["Are", "Do", "Is"], mob: "alex" },
+        { type: "mc", q: "My little cat ___ a golden apple every day.", ans: "doesn't eat", options: ["doesn't eat", "isn't eating", "don't eat"], mob: "goldenApple" },
+        { type: "mc", q: "Look! I ___ warm bread in the furnace right now!", ans: "am baking", options: ["am baking", "bake", "bakes"], mob: "bread" },
+        { type: "mc", q: "___ the parrot fly over the wheat field every morning?", ans: "Does", options: ["Does", "Is", "Do"], mob: "parrot" },
+        { type: "mc", q: "They ___ pumpkins right now; they are watering the seeds.", ans: "aren't picking", options: ["aren't picking", "don't pick", "isn't picking"], mob: "pumpkin" },
+        { type: "mc", q: "Farmers usually ___ wheat in golden sunshine.", ans: "harvest", options: ["harvest", "are harvesting", "harvests"], mob: "wheat" },
+        // 15 Scramble Questions (mixed +, -, ?)
+        { type: "scramble", prompt: "Blitz Order (Affirmative - Every Day):", words: ["Steve", "waters", "the seeds", "every day."], ans: "Steve waters the seeds every day.", mob: "seeds" },
+        { type: "scramble", prompt: "Blitz Order (Affirmative - Right Now):", words: ["Look!", "Alex", "is eating", "pumpkin pie", "now."], ans: "Look! Alex is eating pumpkin pie now.", mob: "pumpkinPie" },
+        { type: "scramble", prompt: "Blitz Order (Negative - Every Day):", words: ["The pig", "doesn't", "drink", "milk", "every day."], ans: "The pig doesn't drink milk every day.", mob: "pig" },
+        { type: "scramble", prompt: "Blitz Order (Negative - Right Now):", words: ["We", "aren't", "cutting", "a melon", "right now."], ans: "We aren't cutting a melon right now.", mob: "melon" },
+        { type: "scramble", prompt: "Blitz Order (Question - Every Morning):", words: ["Does", "the chicken", "lay", "eggs", "every morning?"], ans: "Does the chicken lay eggs every morning?", mob: "egg" },
+        { type: "scramble", prompt: "Blitz Order (Question - Now):", words: ["Is", "the bee", "making", "honey", "now?"], ans: "Is the bee making honey now?", mob: "honey" },
+        { type: "scramble", prompt: "Blitz Order (Affirmative - Always):", words: ["The cow", "always", "eats", "green grass."], ans: "The cow always eats green grass.", mob: "cow" },
+        { type: "scramble", prompt: "Blitz Order (Affirmative - At the moment):", words: ["The villager", "is baking", "cookies", "at the moment."], ans: "The villager is baking cookies at the moment.", mob: "cookie" },
+        { type: "scramble", prompt: "Blitz Order (Negative - Every Day):", words: ["Parrots", "don't", "eat", "pumpkins", "every day."], ans: "Parrots don't eat pumpkins every day.", mob: "parrot" },
+        { type: "scramble", prompt: "Blitz Order (Negative - Right Now):", words: ["Steve", "isn't", "eating", "a potato", "right now."], ans: "Steve isn't eating a potato right now.", mob: "potato" },
+        { type: "scramble", prompt: "Blitz Order (Question - Usually):", words: ["Do", "you", "eat", "bread", "every morning?"], ans: "Do you eat bread every morning?", mob: "bread" },
+        { type: "scramble", prompt: "Blitz Order (Question - Look!):", words: ["Are", "the pigs", "eating", "carrots", "right now?"], ans: "Are the pigs eating carrots right now?", mob: "carrot" },
+        { type: "scramble", prompt: "Blitz Order (Affirmative - Every Sunday):", words: ["Alex", "makes", "a big cake", "every Sunday."], ans: "Alex makes a big cake every Sunday.", mob: "cake" },
+        { type: "scramble", prompt: "Blitz Order (Negative - Right Now):", words: ["I", "am not", "holding", "an egg", "now."], ans: "I am not holding an egg now.", mob: "egg" },
+        { type: "scramble", prompt: "Blitz Order (Question - Right Now):", words: ["Is", "the fox", "sleeping", "under the tree", "now?"], ans: "Is the fox sleeping under the tree now?", mob: "foxSleeping" }
+      ],
+
+      // =========================================================================
+      // GAME 5 POOL (VARIANT B): FARMER'S SPYGLASS (HABIT DIARY vs LIVE CAMERA)
+      // 40 UNIQUE PAIRED SCENES (20 filling Spyglass Live, 20 filling Habit Diary)
+      // =========================================================================
+      game5Pool: [
+        // 1-20: Diary is complete, Student fills the LIVE SPYGLASS CAMERA (Present Continuous)
+        {
+          mob: "pig", food: "carrot", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The pig usually eats carrots in the barn every day.",
+          spyglassSentence: "Look! Right now the pig ___ a shiny golden carrot!",
+          ans: "is eating", options: ["is eating", "eats", "eat"],
+          reasonUA: "У вікні Підзорної Труби написано «Look! Right now» — дія відбувається прямо зараз, тому обираємо Present Continuous (is eating)!"
+        },
+        {
+          mob: "alex", food: "cake", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "Alex always bakes a cake on Sundays.",
+          spyglassSentence: "Look through the spyglass! Alex ___ a festival cake right now!",
+          ans: "is baking", options: ["is baking", "bakes", "bake"],
+          reasonUA: "«Right now» означає прямо зараз на наших очах! Потрібен Present Continuous: is baking."
+        },
+        {
+          mob: "cow", food: "milk", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The brown cow gives fresh milk every morning.",
+          spyglassSentence: "Look! Right now Steve ___ fresh milk into a bucket!",
+          ans: "is pouring", options: ["is pouring", "pours", "pour"],
+          reasonUA: "Ми бачимо дію прямо зараз (Look! Right now), тому використовуємо is pouring."
+        },
+        {
+          mob: "bee", food: "honey", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "Bees always make sweet honey in summer.",
+          spyglassSentence: "Look! Two bees ___ around the honey bottle right now!",
+          ans: "are flying", options: ["are flying", "fly", "flies"],
+          reasonUA: "Дві бджоли (множина + прямо зараз): у Present Continuous ставимо are + flying!"
+        },
+        {
+          mob: "steve", food: "bakedPotato", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "Steve usually plants potatoes in the field.",
+          spyglassSentence: "Look! At the moment Steve ___ a hot baked potato!",
+          ans: "is eating", options: ["is eating", "eats", "eat"],
+          reasonUA: "Маркер «At the moment» показує дію в цю секунду — is eating!"
+        },
+        {
+          mob: "cat", food: "cookie", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The kitty drinks warm milk every morning.",
+          spyglassSentence: "Look! Right now the kitty ___ a sweet cookie too!",
+          ans: "is nibbling", options: ["is nibbling", "nibbles", "nibble"],
+          reasonUA: "«Look! Right now» у прямому ефірі вимагає am/is/are + V-ing (is nibbling)."
+        },
+        {
+          mob: "villager", food: "melon", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "Villagers grow green melons every summer.",
+          spyglassSentence: "Look! The villagers ___ a giant juicy melon right now!",
+          ans: "are cutting", options: ["are cutting", "cut", "cuts"],
+          reasonUA: "Villagers (множина) + прямо зараз (right now) = are cutting!"
+        },
+        {
+          mob: "chicken", food: "egg", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The white chicken lays an egg every morning.",
+          spyglassSentence: "Listen! Right now the chicken ___ happily near its nest!",
+          ans: "is clucking", options: ["is clucking", "clucks", "cluck"],
+          reasonUA: "«Listen! Right now» — дія відбувається прямо в цю мить (is clucking)."
+        },
+        {
+          mob: "parrot", food: "seeds", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The parrot loves wheat seeds every day.",
+          spyglassSentence: "Look! Right now the parrot ___ wheat seeds from Alex's hand!",
+          ans: "is taking", options: ["is taking", "takes", "take"],
+          reasonUA: "У підзорній трубі ми бачимо дію зараз (right now), тому — is taking!"
+        },
+        {
+          mob: "golem", food: "pumpkin", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The Iron Golem guards the village every day.",
+          spyglassSentence: "Look! Right now the Iron Golem ___ a giant pumpkin!",
+          ans: "is carrying", options: ["is carrying", "carries", "carry"],
+          reasonUA: "Зараз Голем несе гарбуз (right now) — потрібен Present Continuous: is carrying."
+        },
+        {
+          mob: "fox", food: "pumpkinPie", targetPanel: "spyglass", polarity: "-",
+          diarySentence: "The red fox usually looks for berries in the forest.",
+          spyglassSentence: "Good news! Look! The fox ___ our pumpkin pie right now!",
+          ans: "isn't stealing", options: ["isn't stealing", "doesn't steal", "aren't stealing"],
+          reasonUA: "Лисичка одна (he/she/it) + прямо зараз (right now) у запереченні — isn't stealing!"
+        },
+        {
+          mob: "zombie", food: "carrot", targetPanel: "spyglass", polarity: "-",
+          diarySentence: "Zombies often walk near dark caves at night.",
+          spyglassSentence: "Look! The zombies ___ our carrot garden right now!",
+          ans: "aren't touching", options: ["aren't touching", "don't touch", "isn't touching"],
+          reasonUA: "Zombies (множина) + right now у запереченні — aren't touching!"
+        },
+        {
+          mob: "steve", food: "milk", targetPanel: "spyglass", polarity: "-",
+          diarySentence: "Steve drinks a cup of milk every evening.",
+          spyglassSentence: "Look! Steve ___ milk right now; he is drinking honey tea!",
+          ans: "isn't drinking", options: ["isn't drinking", "doesn't drink", "am not drinking"],
+          reasonUA: "Steve = 1 герой, і дія не відбувається right now — тому isn't drinking!"
+        },
+        {
+          mob: "dog", food: "cookie", targetPanel: "spyglass", polarity: "-",
+          diarySentence: "The puppies play in the yard every afternoon.",
+          spyglassSentence: "Look! The puppies ___ cookies right now; they are chasing a ball!",
+          ans: "aren't eating", options: ["aren't eating", "don't eat", "isn't eating"],
+          reasonUA: "Puppies (множина) + right now — у запереченні Present Continuous ставимо aren't eating!"
+        },
+        {
+          mob: "alex", food: "potato", targetPanel: "spyglass", polarity: "-",
+          diarySentence: "I usually peel potatoes with Alex on Saturdays.",
+          spyglassSentence: "Look! I ___ potatoes right now; I am decorating the cake!",
+          ans: "am not peeling", options: ["am not peeling", "don't peel", "isn't peeling"],
+          reasonUA: "З займенником «I» у запереченні прямо зараз (right now) завжди вживаємо am not + V-ing!"
+        },
+        {
+          mob: "villager", food: "bread", targetPanel: "spyglass", polarity: "?",
+          diarySentence: "The villager always bakes warm bread at 7 o'clock.",
+          spyglassSentence: "Look in the window! ___ the villager baking bread right now?",
+          ans: "Is", options: ["Is", "Does", "Are"],
+          reasonUA: "У питанні прямо зараз (right now) для 1 героя (the villager) ставимо на початку Is!"
+        },
+        {
+          mob: "bee", food: "honey", targetPanel: "spyglass", polarity: "?",
+          diarySentence: "Bees usually visit flowers every sunny morning.",
+          spyglassSentence: "Look! ___ the bees drinking sweet honey right now?",
+          ans: "Are", options: ["Are", "Do", "Is"],
+          reasonUA: "The bees (множина) + right now — питання у Present Continuous починається з Are!"
+        },
+        {
+          mob: "pig", food: "melon", targetPanel: "spyglass", polarity: "?",
+          diarySentence: "The little pig eats sweet snacks on festival days.",
+          spyglassSentence: "___ the pig eating a melon slice right now?",
+          ans: "Is", options: ["Is", "Does", "Do"],
+          reasonUA: "«Right now» + 1 свинка (the pig) = питання починається з Is!"
+        },
+        {
+          mob: "axolotl", food: "salmon", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The axolotl swims in cool rivers every day.",
+          spyglassSentence: "Look! Right now the axolotl ___ cooked salmon at our cafe!",
+          ans: "is enjoying", options: ["is enjoying", "enjoys", "enjoy"],
+          reasonUA: "У підзорній трубі (Look! Right now) дія триває зараз — is enjoying!"
+        },
+        {
+          mob: "horse", food: "goldenCarrot", targetPanel: "spyglass", polarity: "+",
+          diarySentence: "The horse runs around the field every morning.",
+          spyglassSentence: "Look! Right now the horse ___ a shiny golden carrot!",
+          ans: "is munching", options: ["is munching", "munches", "munch"],
+          reasonUA: "«Look! Right now» — кінь хрумає моркву прямо зараз, тому is munching!"
+        },
+
+        // 21-40: Spyglass Live is complete, Student fills the FARM HABIT DIARY (Present Simple)
+        {
+          mob: "cow", food: "milk", targetPanel: "diary", polarity: "+",
+          diarySentence: "Every morning the cow ___ fresh milk on our farm.",
+          spyglassSentence: "Look! Right now the cow is resting under the oak tree.",
+          ans: "gives", options: ["gives", "is giving", "give"],
+          reasonUA: "У Щоденнику Звичок написано «Every morning» (щоранку)! Це Present Simple: для 1 корови додаємо -s (gives)."
+        },
+        {
+          mob: "pig", food: "carrot", targetPanel: "diary", polarity: "+",
+          diarySentence: "The pig usually ___ crunchy carrots in its wooden barn.",
+          spyglassSentence: "Look! Right now the pig is sleeping near the fence.",
+          ans: "eats", options: ["eats", "is eating", "eat"],
+          reasonUA: "У Щоденнику є слово-маркер «usually» (зазвичай). Для 1 свинки у Present Simple беремо eats!"
+        },
+        {
+          mob: "alex", food: "cake", targetPanel: "diary", polarity: "+",
+          diarySentence: "Alex always ___ a delicious cake on Sundays.",
+          spyglassSentence: "Look! Right now Alex is watering the wheat seeds.",
+          ans: "bakes", options: ["bakes", "is baking", "bake"],
+          reasonUA: "Слово «always» і «on Sundays» — це звичка (Present Simple)! Для Alex додаємо -s: bakes."
+        },
+        {
+          mob: "bee", food: "honey", targetPanel: "diary", polarity: "+",
+          diarySentence: "Honey bees ___ sweet honey every summer.",
+          spyglassSentence: "Look! Right now one bee is sitting on a blue flower.",
+          ans: "make", options: ["make", "are making", "makes"],
+          reasonUA: "«Every summer» — регулярна дія (Present Simple). Bees (множина) — без закінчення -s: make!"
+        },
+        {
+          mob: "chicken", food: "egg", targetPanel: "diary", polarity: "+",
+          diarySentence: "Our chicken ___ a fresh egg every day.",
+          spyglassSentence: "Look! Right now the chicken is running after a seed.",
+          ans: "lays", options: ["lays", "is laying", "lay"],
+          reasonUA: "«Every day» у Щоденнику = Present Simple. 1 курка (it) ➔ lays!"
+        },
+        {
+          mob: "steve", food: "seeds", targetPanel: "diary", polarity: "+",
+          diarySentence: "Steve often ___ wheat seeds in the sunny morning.",
+          spyglassSentence: "Look! Right now Steve is eating a warm cookie.",
+          ans: "plants", options: ["plants", "is planting", "plant"],
+          reasonUA: "Слово «often» (часто) — це маркер Present Simple! Для Steve ставимо plants."
+        },
+        {
+          mob: "villager", food: "bread", targetPanel: "diary", polarity: "+",
+          diarySentence: "The baker villager ___ warm bread every day.",
+          spyglassSentence: "Look! Right now the villager is counting shiny diamonds.",
+          ans: "sells", options: ["sells", "is selling", "sell"],
+          reasonUA: "У Щоденнику є «every day» — звичка в Present Simple: sells!"
+        },
+        {
+          mob: "parrot", food: "seeds", targetPanel: "diary", polarity: "+",
+          diarySentence: "My colorful parrot always ___ wheat seeds for breakfast.",
+          spyglassSentence: "Listen! Right now the parrot is singing a funny song!",
+          ans: "loves", options: ["loves", "is loving", "love"],
+          reasonUA: "«Always» показує постійну звичку/смак (Present Simple) ➔ loves!"
+        },
+        {
+          mob: "fox", food: "berries", targetPanel: "diary", polarity: "+",
+          diarySentence: "The red fox usually ___ sweet berries in the woods.",
+          spyglassSentence: "Look! Right now the fox is tasting pumpkin pie at our cafe.",
+          ans: "picks", options: ["picks", "is picking", "pick"],
+          reasonUA: "У Щоденнику Звичок слово «usually» вимагає Present Simple: picks!"
+        },
+        {
+          mob: "dog", food: "cookie", targetPanel: "diary", polarity: "+",
+          diarySentence: "We often ___ tasty cookies after lunch.",
+          spyglassSentence: "Look! Right now we are cutting a giant watermelon!",
+          ans: "share", options: ["share", "are sharing", "shares"],
+          reasonUA: "«Often» — маркер Present Simple. З «We» беремо чисте дієслово share!"
+        },
+        {
+          mob: "cow", food: "egg", targetPanel: "diary", polarity: "-",
+          diarySentence: "Cows ___ eggs on a farm! Chickens lay eggs.",
+          spyglassSentence: "Look! Right now the cow is chewing green grass.",
+          ans: "don't lay", options: ["don't lay", "aren't laying", "doesn't lay"],
+          reasonUA: "Це постійний факт у Щоденнику (Present Simple). Для множини «Cows» заперечення — don't lay!"
+        },
+        {
+          mob: "parrot", food: "pumpkin", targetPanel: "diary", polarity: "-",
+          diarySentence: "The parrot ___ giant pumpkins every day.",
+          spyglassSentence: "Look! Right now the parrot is sitting on Steve's shoulder.",
+          ans: "doesn't eat", options: ["doesn't eat", "isn't eating", "don't eat"],
+          reasonUA: "«Every day» у Щоденнику = Present Simple. Для 1 папуги (it) беремо doesn't eat!"
+        },
+        {
+          mob: "steve", food: "cake", targetPanel: "diary", polarity: "-",
+          diarySentence: "Steve ___ birthday cakes every morning.",
+          spyglassSentence: "Look! Right now Steve is making a huge cake for the festival!",
+          ans: "doesn't make", options: ["doesn't make", "isn't making", "don't make"],
+          reasonUA: "У Щоденнику «every morning» — це регулярність (Present Simple), тому doesn't make!"
+        },
+        {
+          mob: "sheep", food: "potato", targetPanel: "diary", polarity: "-",
+          diarySentence: "Sheep usually ___ hot baked potatoes.",
+          spyglassSentence: "Look! Right now the white sheep is jumping near the barn.",
+          ans: "don't eat", options: ["don't eat", "aren't eating", "doesn't eat"],
+          reasonUA: "«Usually» = Present Simple. Слово «Sheep» тут у множині (вівці) ➔ don't eat!"
+        },
+        {
+          mob: "cat", food: "melon", targetPanel: "diary", polarity: "-",
+          diarySentence: "My kitty ___ melon slices every day; she prefers milk.",
+          spyglassSentence: "Look! Right now the kitty is playing with a wool ball.",
+          ans: "doesn't like", options: ["doesn't like", "isn't liking", "don't like"],
+          reasonUA: "У Щоденнику описано звичку «every day» (Present Simple) ➔ doesn't like!"
+        },
+        {
+          mob: "pig", food: "carrot", targetPanel: "diary", polarity: "?",
+          diarySentence: "___ the pig eat carrots every single day?",
+          spyglassSentence: "Look! Right now the pig is eating a big pumpkin!",
+          ans: "Does", options: ["Does", "Is", "Do"],
+          reasonUA: "У Щоденнику є «every single day» — питання у Present Simple для 1 свинки починається з Does!"
+        },
+        {
+          mob: "bee", food: "honey", targetPanel: "diary", polarity: "?",
+          diarySentence: "___ bees always make honey in their hives?",
+          spyglassSentence: "Look! Right now the bees are flying into the bakery.",
+          ans: "Do", options: ["Do", "Are", "Does"],
+          reasonUA: "«Always» у Щоденнику = Present Simple. Для множини «bees» питання починається з Do!"
+        },
+        {
+          mob: "alex", food: "cookie", targetPanel: "diary", polarity: "?",
+          diarySentence: "___ Alex bake chocolate cookies every Friday?",
+          spyglassSentence: "Look! Right now Alex is carrying a basket of fresh eggs.",
+          ans: "Does", options: ["Does", "Is", "Do"],
+          reasonUA: "«Every Friday» — регулярна дія в Present Simple! Для Alex беремо Does."
+        },
+        {
+          mob: "villager", food: "pumpkin", targetPanel: "diary", polarity: "?",
+          diarySentence: "___ the villagers grow pumpkins in autumn every year?",
+          spyglassSentence: "Look! Right now the villagers are decorating the cafe!",
+          ans: "Do", options: ["Do", "Are", "Does"],
+          reasonUA: "«Every year» + множина «villagers» = питання в Present Simple починається з Do!"
+        },
+        {
+          mob: "golem", food: "goldenApple", targetPanel: "diary", polarity: "+",
+          diarySentence: "Every afternoon, the Iron Golem ___ near the wheat field.",
+          spyglassSentence: "Look! Right now the Iron Golem is eating cake with Steve!",
+          ans: "walks", options: ["walks", "is walking", "walk"],
+          reasonUA: "«Every afternoon» у Щоденнику Звичок — це Present Simple: для 1 Голема додаємо -s (walks)!"
+        }
+      ],
+
+      // 8 Thematic Badges
+      badges: [
+        { id: "b_vocab", title: "Seed Inspector", desc: "Inspect all 10 Food & Farm cards in Section 1.", img: "Minecraft/wheat_seeds.png" },
+        { id: "b_game1", title: "Sunny Farmer", desc: "Complete Game 1 (Affirmative +).", img: "Minecraft/carrot.png" },
+        { id: "b_game2", title: "Crop Guardian", desc: "Complete Game 2 (Negative -).", img: "Minecraft/Shield-removebg-preview.png" },
+        { id: "b_game3", title: "Curious Baker", desc: "Complete Game 3 (Questions ?).", img: "Minecraft/cake.png" },
+        { id: "b_game4", title: "Harvest Blitz Hero", desc: "Complete all 15 tasks in Game 4 (Mixed Blitz).", img: "Minecraft/Diamond_Sword-removebg-preview.png" },
+        { id: "b_game5", title: "Spyglass Watcher", desc: "Complete all 10 scenes in Game 5 (Farmer's Spyglass).", img: "Minecraft/spyglass.png" },
+        { id: "b_totem", title: "Undying Harvester", desc: "Use the Totem of Undying to replay any game!", img: "Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png" },
+        { id: "b_bakery", title: "Master Cafe Chef", desc: "Open 2 tables in the Bakery Cafe (or earn 50 Diamonds)!", img: "Minecraft/pumpkin_pie.png" }
+      ]
+    };
+
+    /* =========================================================================
+       2. PERSISTENT STATE & PROGRESS MANAGEMENT
+       ========================================================================= */
+    let appState = {
+      diamonds: 0,
+      totalDiamondsEarned: 0,
+      exploredWords: [],
+      unlockedTables: [],
+      unlockedBadges: [],
+      heroName: "Harvest Hero",
+      certTheme: "bg1",
+      soundFX: true
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState = { ...appState, ...parsed };
+        }
+      } catch (e) {
+        console.warn("Storage unavailable:", e);
+      }
+      if (typeof appState.totalDiamondsEarned !== "number") appState.totalDiamondsEarned = appState.diamonds || 0;
+      if (!Array.isArray(appState.exploredWords)) appState.exploredWords = [];
+      if (!Array.isArray(appState.unlockedTables)) appState.unlockedTables = [];
+      if (!Array.isArray(appState.unlockedBadges)) appState.unlockedBadges = [];
+      updateAllUI();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {}
+      updateAllUI();
+    }
+
+    function addDiamonds(amount) {
+      appState.diamonds += amount;
+      appState.totalDiamondsEarned += amount;
+      if (appState.totalDiamondsEarned >= 50) {
+        unlockBadge("b_bakery");
+      }
+      saveState();
+    }
+
+    function unlockBadge(badgeId) {
+      if (!appState.unlockedBadges.includes(badgeId)) {
+        appState.unlockedBadges.push(badgeId);
+        playFanfareSound();
+        saveState();
+        renderBadgesGrid();
+      }
+    }
+
+    function updateAllUI() {
+      document.getElementById("hud-diamonds").textContent = appState.diamonds;
+      const bakeryBalEl = document.getElementById("bakery-diamonds-balance");
+      if (bakeryBalEl) bakeryBalEl.textContent = appState.diamonds;
+
+      const badgeCount = appState.unlockedBadges.length;
+      document.getElementById("hud-badges").textContent = `${badgeCount}/8`;
+      document.getElementById("words-explored-count").textContent = `${appState.exploredWords.length} / 10`;
+
+      const lockText = document.getElementById("finale-lock-progress-text");
+      const lockBar = document.getElementById("finale-lock-bar");
+      if (lockText && lockBar) {
+        lockText.textContent = `${badgeCount} / 8`;
+        lockBar.style.width = `${(badgeCount / 8) * 100}%`;
+      }
+
+      const lockedBanner = document.getElementById("finale-locked-banner");
+      const unlockedContent = document.getElementById("finale-unlocked-content");
+      if (badgeCount >= 8) {
+        lockedBanner.classList.add("hidden");
+        unlockedContent.classList.remove("hidden");
+      } else {
+        lockedBanner.classList.remove("hidden");
+        unlockedContent.classList.add("hidden");
+      }
+
+      const nameInput = document.getElementById("student-name-input");
+      const certName = document.getElementById("cert-hero-name");
+      if (nameInput && certName) {
+        nameInput.value = appState.heroName;
+        certName.textContent = appState.heroName || "Harvest Hero";
+      }
+    }
+
+    // Inline Reset Progress Handlers
+    function showResetConfirm() {
+      playClickSound();
+      document.getElementById("reset-init-btn").classList.add("hidden");
+      const box = document.getElementById("reset-confirm-box");
+      box.classList.remove("hidden");
+      box.classList.add("flex");
+    }
+
+    function cancelResetConfirm() {
+      playClickSound();
+      document.getElementById("reset-init-btn").classList.remove("hidden");
+      const box = document.getElementById("reset-confirm-box");
+      box.classList.add("hidden");
+      box.classList.remove("flex");
+    }
+
+    function confirmResetProgress() {
+      playErrorSound();
+      localStorage.removeItem(STORAGE_KEY);
+      appState = {
+        diamonds: 0,
+        totalDiamondsEarned: 0,
+        exploredWords: [],
+        unlockedTables: [],
+        unlockedBadges: [],
+        heroName: "Harvest Hero",
+        certTheme: "bg1",
+        soundFX: appState.soundFX
+      };
+      cancelResetConfirm();
+      saveState();
+      renderVocabGrid();
+      renderBakerySection();
+      renderBadgesGrid();
+      setCertificateTheme("bg1");
+      switchSection("hub");
+    }
+
+    /* =========================================================================
+       3. AUDIO SYSTEM (8-BIT WEB AUDIO + WEB SPEECH API)
+       ========================================================================= */
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSoundFX() {
+      appState.soundFX = !appState.soundFX;
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.innerHTML = appState.soundFX
+        ? '<i class="fa-solid fa-volume-high"></i>'
+        : '<i class="fa-solid fa-volume-xmark"></i>';
+      if (appState.soundFX) playClickSound();
+      saveState();
+    }
+
+    function playTone(freq, duration = 0.12, type = "square", vol = 0.12) {
+      if (!appState.soundFX) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playClickSound() {
+      playTone(480, 0.06, "square", 0.08);
+    }
+
+    function playSuccessSound() {
+      playTone(523.25, 0.1, "triangle", 0.16);
+      setTimeout(() => playTone(659.25, 0.12, "triangle", 0.16), 90);
+      setTimeout(() => playTone(783.99, 0.2, "triangle", 0.18), 180);
+    }
+
+    function playErrorSound() {
+      playTone(185, 0.16, "sawtooth", 0.14);
+      setTimeout(() => playTone(135, 0.22, "sawtooth", 0.14), 140);
+    }
+
+    function playFanfareSound() {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((n, idx) => {
+        setTimeout(() => playTone(n, 0.18, "triangle", 0.18), idx * 100);
+      });
+    }
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const indicator = document.getElementById("speech-indicator");
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      utter.rate = 0.88;
+      utter.pitch = 1.05;
+
+      utter.onstart = () => {
+        indicator.classList.remove("hidden");
+        indicator.classList.add("flex");
+      };
+      utter.onend = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+      utter.onerror = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* =========================================================================
+       4. UTILITY: FISHER-YATES SHUFFLE
+       ========================================================================= */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /* =========================================================================
+       5. SECTION 1 RENDERER (10 FOOD & FARM FLASHCARDS)
+       ========================================================================= */
+    function renderVocabGrid() {
+      const grid = document.getElementById("vocab-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.vocabulary.forEach((item) => {
+        const isExplored = appState.exploredWords.includes(item.id);
+        const card = document.createElement("div");
+        card.className = "flip-card cursor-pointer";
+        const safeSpeak = `${item.word}. ${item.example}`.replace(/'/g, "\\'");
+
+        card.innerHTML = `
+          <div class="flip-card-inner" id="flip-${item.id}">
+            <!-- FRONT: Image, English word, Contrast example, Audio -->
+            <div class="flip-card-front mc-panel">
+              <div class="w-full flex justify-between items-center">
+                <span class="pixel-font text-[8px] bg-stone-900 text-[var(--primary-light)] px-2 py-0.5 rounded">${isExplored ? '✓ HARVESTED' : 'FOOD ITEM'}</span>
+                <button onclick="event.stopPropagation(); speakText('${safeSpeak}')" class="mc-btn mc-btn-amber px-2.5 py-1 text-xs" style="min-height:34px;" title="Listen">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+              <img src="${item.img}" alt="${item.word}" class="w-16 h-16 object-contain my-1 drop-shadow-md">
+              <div class="text-center">
+                <h4 class="pixel-font text-xs sm:text-sm text-stone-900">${item.word}</h4>
+                <p class="text-[11px] text-stone-700 font-semibold mt-1 leading-tight">"${item.example}"</p>
+              </div>
+              <div class="text-[10px] font-bold text-amber-800 uppercase tracking-wider">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip
+              </div>
+            </div>
+
+            <!-- BACK: Ukrainian Translation -->
+            <div class="flip-card-back mc-panel-dark border-4 border-[var(--primary)]">
+              <span class="pixel-font text-[9px] text-[var(--primary-light)]">UKRAINIAN</span>
+              <img src="${item.img}" alt="${item.word}" class="w-16 h-16 object-contain">
+              <div class="text-center">
+                <div class="text-xs text-stone-400 uppercase font-bold">${item.word}</div>
+                <div class="text-2xl font-extrabold text-[var(--primary-light)] mt-1">${item.ua}</div>
+              </div>
+              <div class="text-[10px] text-stone-300">
+                <i class="fa-solid fa-rotate mr-1"></i> Tap to flip back
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          playClickSound();
+          card.classList.toggle("flipped");
+          if (!appState.exploredWords.includes(item.id)) {
+            appState.exploredWords.push(item.id);
+            addDiamonds(2);
+            if (appState.exploredWords.length >= 10) {
+              unlockBadge("b_vocab");
+            }
+            saveState();
+            const badgeTag = card.querySelector(".flip-card-front span.pixel-font");
+            if (badgeTag) badgeTag.textContent = "✓ HARVESTED";
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       6. MINI-GAMES ENGINE (GAMES 1–4)
+       ========================================================================= */
+    let currentGameNum = 1;
+    let activeRoundQuestions = [];
+    let currentQIndex = 0;
+    let currentRoundScore = 0;
+    let questionMistakeMade = false;
+    let questionResolved = false;
+    let scramblePlacedWords = [];
+    let scrambleBankWords = [];
+
+    function selectMiniGame(gameNum) {
+      playClickSound();
+      currentGameNum = gameNum;
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`gbtn-${i}`);
+        if (i === gameNum) {
+          btn.classList.add("mc-btn-amber");
+        } else {
+          btn.classList.remove("mc-btn-amber");
+        }
+      }
+
+      if (gameNum === 5) {
+        document.getElementById("standard-game-wrapper").classList.add("hidden");
+        document.getElementById("game5-custom-wrapper").classList.remove("hidden");
+        startGame5Spyglass();
+      } else {
+        document.getElementById("game5-custom-wrapper").classList.add("hidden");
+        document.getElementById("standard-game-wrapper").classList.remove("hidden");
+        startStandardGameRound(gameNum);
+      }
+    }
+
+    function startStandardGameRound(gameNum) {
+      currentQIndex = 0;
+      currentRoundScore = 0;
+
+      const titleEl = document.getElementById("active-game-title");
+      const subEl = document.getElementById("active-game-subtitle");
+      const iconEl = document.getElementById("active-game-icon");
+
+      if (gameNum === 1) {
+        titleEl.textContent = "Game 1: Affirmative Harvest (+)";
+        subEl.textContent = "10 random tasks from a 50-question pool! Choose Every Day (V/V-s) or Right Now (am/is/are + V-ing)!";
+        iconEl.src = GAME_DATA.assets.carrot;
+        activeRoundQuestions = shuffleArray(GAME_DATA.game1Pool).slice(0, 10);
+      } else if (gameNum === 2) {
+        titleEl.textContent = "Game 2: Negative Crop Shield (-)";
+        subEl.textContent = "10 random tasks from a 50-question pool! Compare don't / doesn't vs am not / isn't / aren't + V-ing!";
+        iconEl.src = "Minecraft/Shield-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game2Pool).slice(0, 10);
+      } else if (gameNum === 3) {
+        titleEl.textContent = "Game 3: Bakery Questions (?)";
+        subEl.textContent = "10 random tasks from a 50-question pool! Start with Do / Does or Am / Is / Are!";
+        iconEl.src = GAME_DATA.assets.cake;
+        activeRoundQuestions = shuffleArray(GAME_DATA.game3Pool).slice(0, 10);
+      } else if (gameNum === 4) {
+        titleEl.textContent = "Game 4: Harvest Mixed Blitz (+ / - / ?)";
+        subEl.textContent = "15 random tasks from a 50-question pool! Every Day vs Right Now in all sentence forms!";
+        iconEl.src = "Minecraft/Diamond_Sword-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game4Pool).slice(0, 15);
+      }
+
+      document.getElementById("round-complete-screen").classList.add("hidden");
+      document.getElementById("question-stage").classList.remove("hidden");
+      document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
+
+      renderCurrentStandardQuestion();
+    }
+
+    function renderCurrentStandardQuestion() {
+      questionMistakeMade = false;
+      questionResolved = false;
+
+      const qObj = activeRoundQuestions[currentQIndex];
+      document.getElementById("game-q-num").textContent = currentQIndex + 1;
+      document.getElementById("game-score-val").textContent = currentRoundScore;
+
+      document.getElementById("game-next-btn").classList.add("hidden");
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+
+      const mobImg = GAME_DATA.assets[qObj.mob] || GAME_DATA.assets.steve;
+      document.getElementById("question-mob-img").src = mobImg;
+
+      const tagEl = document.getElementById("question-mode-tag");
+      if (currentGameNum === 1) {
+        tagEl.textContent = "AFFIRMATIVE (+)";
+        tagEl.className = "inline-block bg-[var(--primary)] text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      } else if (currentGameNum === 2) {
+        tagEl.textContent = "NEGATIVE (-)";
+        tagEl.className = "inline-block bg-[var(--accent)] text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      } else if (currentGameNum === 3) {
+        tagEl.textContent = "QUESTION (?)";
+        tagEl.className = "inline-block bg-[var(--secondary)] text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      } else {
+        tagEl.textContent = "MIXED BLITZ";
+        tagEl.className = "inline-block bg-amber-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1 rounded";
+      }
+
+      const mcContainer = document.getElementById("mc-options-container");
+      const scrambleContainer = document.getElementById("scramble-container");
+
+      if (qObj.type === "scramble") {
+        mcContainer.classList.add("hidden");
+        scrambleContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.prompt;
+        document.getElementById("scramble-submit-btn").classList.remove("opacity-50");
+
+        scramblePlacedWords = [];
+        scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+        renderScrambleUI();
+      } else {
+        scrambleContainer.classList.add("hidden");
+        mcContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.q;
+
+        const shuffledOpts = shuffleArray(qObj.options);
+        mcContainer.innerHTML = "";
+        shuffledOpts.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "mc-btn py-3.5 px-4 text-sm sm:text-base font-bold transition-all";
+          btn.textContent = opt;
+          btn.onclick = () => handleMCChoice(opt, btn);
+          mcContainer.appendChild(btn);
+        });
+      }
+    }
+
+    // Simple Ukrainian explanations for Present Simple vs Present Continuous mistakes
+    function explainWrongChoiceUA(qObj, selectedOpt) {
+      const qLower = qObj.q.toLowerCase();
+      const sel = selectedOpt.toLowerCase();
+      const ans = qObj.ans.toLowerCase();
+
+      const hasNowClue = /right now|now|look!|listen!|at the moment|today/.test(qLower);
+      const hasSimpleClue = /every |usually|always|often|on sundays|on saturdays|on mondays|on fridays|in winter|at night/.test(qLower);
+
+      const ansIsContinuous = /\b(am|is|are)\b|\b(am not|isn't|aren't)\b/.test(ans);
+      const selIsContinuous = /\b(am|is|are)\b|\b(am not|isn't|aren't)\b/.test(sel);
+
+      // Question auxiliaries (Do/Does vs Am/Is/Are)
+      if (["do", "does", "am", "is", "are"].includes(ans)) {
+        if (ans === "is" || ans === "are" || ans === "am") {
+          if (["do", "does"].includes(sel)) {
+            return `❌ «${selectedOpt}» — це Present Simple (щодня), а тут дія відбувається прямо зараз (є закінчення -ing)! Обирай Am / Is / Are.`;
+          }
+          return `❌ «${selectedOpt}» не підходить до цього героя! Для 1 героя (he/she/it) — Is, для I — Am, для you/we/they або множини — Are.`;
+        }
+        if (ans === "do" || ans === "does") {
+          if (["am", "is", "are"].includes(sel)) {
+            return `❌ «${selectedOpt}» вживається лише з -ing (прямо зараз)! А тут звичка в Present Simple — потрібне Do або Does.`;
+          }
+          return `❌ «${selectedOpt}» не підходить для цього героя! У Present Simple для 1 героя (he/she/it) ставимо Does, а для I/you/we/they чи множини — Do.`;
+        }
+      }
+
+      // Negative forms
+      if (ans.includes("don't") || ans.includes("doesn't") || ans.includes("am not") || ans.includes("isn't") || ans.includes("aren't")) {
+        if ((ans.includes("isn't") || ans.includes("aren't") || ans.includes("am not")) && (sel.includes("don't") || sel.includes("doesn't"))) {
+          return `❌ «${selectedOpt}» — це заперечення для звички (щодня), а у нас тут дія прямо зараз (Present Continuous)! Потрібне am not / isn't / aren't + -ing.`;
+        }
+        if ((ans.includes("don't") || ans.includes("doesn't")) && (sel.includes("isn't") || sel.includes("aren't") || sel.includes("am not"))) {
+          return `❌ «${selectedOpt}» означає «прямо зараз», а тут ідеться про регулярну звичку або факт (Present Simple)! Обирай don't або doesn't.`;
+        }
+        if (ans.includes("doesn't") && sel.includes("don't")) {
+          return `❌ «don't» не підходить для 1 героя (he/she/it)! У Present Simple для однини потрібне doesn't.`;
+        }
+        if (ans.includes("don't") && sel.includes("doesn't")) {
+          return `❌ «doesn't» ставиться лише для 1 героя (he/she/it), а тут I / you / we / they або множина — потрібне don't!`;
+        }
+        if (ans.includes("isn't") && sel.includes("aren't")) {
+          return `❌ «aren't» вживається для множини (або you/we/they), а тут 1 герой — потрібне isn't!`;
+        }
+        if (ans.includes("aren't") && sel.includes("isn't")) {
+          return `❌ «isn't» лише для 1 героя (he/she/it), а тут множина (або you/we/they) — потрібне aren't!`;
+        }
+      }
+
+      // Affirmative tense contrast
+      if (ansIsContinuous && !selIsContinuous) {
+        return `❌ «${selectedOpt}» — це Present Simple (щодня), а підказка в реченні (${hasNowClue ? "Look! / Listen! / right now / now / at the moment" : "дія зараз"}) вказує, що це відбувається ПРЯМО ЗАРАЗ! Потрібно am / is / are + -ing.`;
+      }
+      if (!ansIsContinuous && selIsContinuous) {
+        return `❌ «${selectedOpt}» — це Present Continuous (прямо зараз), але слово-підказка (${hasSimpleClue ? "every day / usually / always / often" : "регулярна звичка"}) показує, що це звичка в Present Simple!`;
+      }
+
+      // S-ending check in Present Simple
+      if (!ansIsContinuous && !selIsContinuous) {
+        if (ans.endsWith("s") && !sel.endsWith("s")) {
+          return `❌ У Present Simple для 1 героя (he / she / it — один Стів, одна свинка, одна корова) до дієслова треба додати закінчення -s / -es!`;
+        }
+        if (!ans.endsWith("s") && sel.endsWith("s")) {
+          return `❌ Для I / you / we / they або множини (наприклад, chickens, bees, villagers) закінчення -s до дієслова НЕ додається!`;
+        }
+      }
+
+      return `❌ Варіант «${selectedOpt}» тут не підходить. Подивися на слово-підказку (щодня чи прямо зараз) та на героя!`;
+    }
+
+    function explainScrambleMistakeUA(qObj) {
+      if (qObj.ans.includes("?")) {
+        return "❌ Неправильний порядок слів у питанні! Спочатку ставимо помічника (Do/Does або Am/Is/Are), далі ХТО (герой), потім дію, а слово часу (every day / right now?) — у кінці!";
+      }
+      if (qObj.ans.includes("don't") || qObj.ans.includes("doesn't") || qObj.ans.includes("am not") || qObj.ans.includes("isn't") || qObj.ans.includes("aren't")) {
+        return "❌ Неправильний порядок слів у запереченні! Спочатку ХТО (герой), потім заперечення (don't/doesn't або isn't/aren't/am not), далі дія та об'єкт!";
+      }
+      return "❌ Неправильний порядок слів! Спочатку постав «Look!» (якщо є), потім ХТО (герой), далі дієслово (або is/are + -ing), а потім предмет і час!";
+    }
+
+    function handleMCChoice(selectedOpt, btnEl) {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+
+      if (selectedOpt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        btnEl.classList.add("mc-btn-green");
+
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(5);
+        } else {
+          addDiamonds(2);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+
+        const fullSentence = qObj.q.replace("___", qObj.ans);
+        showFeedbackBar(true, `✅ Great job! "${fullSentence}"`);
+        speakText(fullSentence);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+      } else {
+        playErrorSound();
+        btnEl.classList.add("opacity-40", "pointer-events-none", "bg-rose-950", "text-rose-400");
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainWrongChoiceUA(qObj, selectedOpt));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function renderScrambleUI() {
+      const slotsEl = document.getElementById("scramble-target-slots");
+      const bankEl = document.getElementById("scramble-word-bank");
+
+      slotsEl.innerHTML = "";
+      if (scramblePlacedWords.length === 0) {
+        slotsEl.innerHTML = `<span class="text-xs text-stone-400 italic">Tap word blocks below to place them here...</span>`;
+      } else {
+        scramblePlacedWords.forEach((wObj, idx) => {
+          const b = document.createElement("button");
+          b.className = "mc-btn mc-btn-amber px-3 py-2 text-xs sm:text-sm";
+          b.textContent = wObj.text;
+          b.onclick = () => {
+            if (questionResolved) return;
+            playClickSound();
+            scramblePlacedWords.splice(idx, 1);
+            scrambleBankWords.push(wObj);
+            renderScrambleUI();
+          };
+          slotsEl.appendChild(b);
+        });
+      }
+
+      bankEl.innerHTML = "";
+      scrambleBankWords.forEach((wObj, idx) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn px-3 py-2 text-xs sm:text-sm";
+        b.textContent = wObj.text;
+        b.onclick = () => {
+          if (questionResolved) return;
+          playClickSound();
+          scrambleBankWords.splice(idx, 1);
+          scramblePlacedWords.push(wObj);
+          renderScrambleUI();
+        };
+        bankEl.appendChild(b);
+      });
+    }
+
+    function resetScrambleWords() {
+      if (questionResolved) return;
+      playClickSound();
+      const qObj = activeRoundQuestions[currentQIndex];
+      scramblePlacedWords = [];
+      scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+      renderScrambleUI();
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+    }
+
+    function checkScrambleAnswer() {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+      const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+
+      if (userAttempt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(5);
+        } else {
+          addDiamonds(2);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+        showFeedbackBar(true, `✅ Perfect Order! "${qObj.ans}"`);
+        speakText(qObj.ans);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+        document.getElementById("scramble-submit-btn").classList.add("opacity-50");
+      } else {
+        playErrorSound();
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainScrambleMistakeUA(qObj));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function showFeedbackBar(isCorrect, message) {
+      const bar = document.getElementById("game-feedback-bar");
+      const msgEl = document.getElementById("game-feedback-msg");
+      bar.classList.remove("hidden");
+      bar.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded ${
+        isCorrect ? "bg-lime-950 border-lime-400 text-lime-200" : "bg-rose-950 border-rose-400 text-rose-200"
+      }`;
+      msgEl.textContent = message;
+    }
+
+    function nextGameQuestion() {
+      playClickSound();
+      currentQIndex++;
+      if (currentQIndex >= activeRoundQuestions.length) {
+        finishStandardRound();
+      } else {
+        renderCurrentStandardQuestion();
+      }
+    }
+
+    function speakCurrentQuestion() {
+      const qObj = activeRoundQuestions[currentQIndex];
+      if (qObj.type === "scramble") {
+        speakText(qObj.prompt);
+      } else {
+        speakText(qObj.q.replace("___", "blank"));
+      }
+    }
+
+    function finishStandardRound() {
+      addDiamonds(15);
+      document.getElementById("question-stage").classList.add("hidden");
+      document.getElementById("round-complete-screen").classList.remove("hidden");
+      document.getElementById("round-result-summary").textContent =
+        `You scored ${currentRoundScore} / ${activeRoundQuestions.length} on the first try and earned +15 Bonus Diamonds!`;
+
+      if (currentGameNum === 1) unlockBadge("b_game1");
+      if (currentGameNum === 2) unlockBadge("b_game2");
+      if (currentGameNum === 3) unlockBadge("b_game3");
+      if (currentGameNum === 4) unlockBadge("b_game4");
+
+      playFanfareSound();
+    }
+
+    function replayCurrentGame() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startStandardGameRound(currentGameNum);
+    }
+
+    /* =========================================================================
+       7. GAME 5 (VARIANT B): FARMER'S SPYGLASS — HABIT DIARY vs LIVE CAMERA
+       ========================================================================= */
+    let g5Scenes = [];
+    let g5Index = 0;
+    let g5Score = 0;
+    let g5MistakeMade = false;
+    let g5Resolved = false;
+
+    function startGame5Spyglass() {
+      g5Scenes = shuffleArray(GAME_DATA.game5Pool).slice(0, 10);
+      g5Index = 0;
+      g5Score = 0;
+      document.getElementById("g5-complete-screen").classList.add("hidden");
+      document.getElementById("g5-stage").classList.remove("hidden");
+      renderG5Scene();
+    }
+
+    function replayGame5() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startGame5Spyglass();
+    }
+
+    function formatG5Text(sentence, resolved, ans) {
+      if (!sentence.includes("___")) return sentence;
+      if (resolved) {
+        return sentence.replace("___", `<span class="bg-amber-400 text-stone-950 px-2 py-0.5 rounded font-extrabold underline">${ans}</span>`);
+      }
+      return sentence.replace("___", `<span class="inline-block bg-stone-800 border-2 border-dashed border-amber-300 text-amber-300 px-3 py-0.5 rounded mx-1">???</span>`);
+    }
+
+    function renderG5Scene() {
+      g5MistakeMade = false;
+      g5Resolved = false;
+
+      const s = g5Scenes[g5Index];
+      document.getElementById("g5-progress").textContent = `${g5Index + 1} / ${g5Scenes.length}`;
+      document.getElementById("g5-score-val").textContent = g5Score;
+      document.getElementById("g5-mob-img").src = GAME_DATA.assets[s.mob] || GAME_DATA.assets.steve;
+      document.getElementById("g5-food-img").src = GAME_DATA.assets[s.food] || GAME_DATA.assets.carrot;
+
+      const targetBadge = document.getElementById("g5-target-badge");
+      const polBadge = document.getElementById("g5-polarity-badge");
+      const instEl = document.getElementById("g5-instruction-text");
+
+      const diaryCard = document.getElementById("g5-diary-card");
+      const spyCard = document.getElementById("g5-spyglass-card");
+      const diaryStatus = document.getElementById("g5-diary-status");
+      const spyStatus = document.getElementById("g5-spyglass-status");
+
+      if (s.polarity === "+") {
+        polBadge.textContent = "AFFIRMATIVE (+)";
+        polBadge.className = "pixel-font text-[9px] bg-amber-700 text-white px-2 py-1 rounded";
+      } else if (s.polarity === "-") {
+        polBadge.textContent = "NEGATIVE (-)";
+        polBadge.className = "pixel-font text-[9px] bg-rose-700 text-white px-2 py-1 rounded";
+      } else {
+        polBadge.textContent = "QUESTION (?)";
+        polBadge.className = "pixel-font text-[9px] bg-lime-700 text-white px-2 py-1 rounded";
+      }
+
+      if (s.targetPanel === "spyglass") {
+        targetBadge.textContent = "FILL LIVE SPYGLASS (NOW!)";
+        targetBadge.className = "pixel-font text-[9px] bg-[var(--accent)] text-white px-2.5 py-1 rounded";
+        instEl.textContent = "Read the Habit Diary on the left, then complete what is happening RIGHT NOW in the Spyglass!";
+        diaryCard.classList.remove("spyglass-active-panel");
+        spyCard.classList.add("spyglass-active-panel");
+        diaryStatus.textContent = "✓ Habit clue ready (Every Day)";
+        spyStatus.textContent = "Choose the Present Continuous form below!";
+      } else {
+        targetBadge.textContent = "FILL HABIT DIARY (EVERY DAY!)";
+        targetBadge.className = "pixel-font text-[9px] bg-[var(--secondary)] text-white px-2.5 py-1 rounded";
+        instEl.textContent = "See the Live Spyglass on the right, then complete the EVERY DAY habit in the Farm Diary!";
+        spyCard.classList.remove("spyglass-active-panel");
+        diaryCard.classList.add("spyglass-active-panel");
+        diaryStatus.textContent = "Choose the Present Simple form below!";
+        spyStatus.textContent = "✓ Live camera clue ready (Right Now)";
+      }
+
+      document.getElementById("g5-diary-text").innerHTML = formatG5Text(s.diarySentence, false, s.ans);
+      document.getElementById("g5-spyglass-text").innerHTML = formatG5Text(s.spyglassSentence, false, s.ans);
+
+      document.getElementById("g5-feedback").classList.add("hidden");
+      document.getElementById("g5-next-btn").classList.add("hidden");
+
+      const choicesBox = document.getElementById("g5-choices-container");
+      choicesBox.innerHTML = "";
+      shuffleArray(s.options).forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.className = "mc-btn mc-btn-amber py-3.5 px-4 text-sm sm:text-base font-bold";
+        btn.textContent = opt;
+        btn.onclick = () => handleG5Choice(opt, btn);
+        choicesBox.appendChild(btn);
+      });
+    }
+
+    function handleG5Choice(chosen, btnEl) {
+      if (g5Resolved) return;
+      const s = g5Scenes[g5Index];
+
+      if (chosen === s.ans) {
+        g5Resolved = true;
+        playSuccessSound();
+        btnEl.classList.remove("mc-btn-amber");
+        btnEl.classList.add("mc-btn-green");
+
+        document.getElementById("g5-diary-text").innerHTML = formatG5Text(s.diarySentence, true, s.ans);
+        document.getElementById("g5-spyglass-text").innerHTML = formatG5Text(s.spyglassSentence, true, s.ans);
+
+        if (!g5MistakeMade) {
+          g5Score++;
+          addDiamonds(5);
+        } else {
+          addDiamonds(2);
+        }
+        document.getElementById("g5-score-val").textContent = g5Score;
+
+        const completedLine = (s.targetPanel === "spyglass" ? s.spyglassSentence : s.diarySentence).replace("___", s.ans);
+        showG5Feedback(true, `✅ Spot on! "${completedLine}"`);
+        document.getElementById("g5-next-btn").classList.remove("hidden");
+        speakText(completedLine);
+      } else {
+        playErrorSound();
+        g5MistakeMade = true;
+        btnEl.classList.add("opacity-40", "pointer-events-none", "mc-btn-danger");
+        btnEl.classList.remove("mc-btn-amber");
+        showG5Feedback(false, `❌ «${chosen}» не підходить! ${s.reasonUA}`);
+      }
+    }
+
+    function showG5Feedback(isCorrect, text) {
+      const box = document.getElementById("g5-feedback");
+      box.classList.remove("hidden");
+      box.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 rounded ${
+        isCorrect ? "bg-lime-950 border-lime-400 text-lime-200" : "bg-rose-950 border-rose-400 text-rose-200"
+      }`;
+      document.getElementById("g5-feedback-text").textContent = text;
+    }
+
+    function speakG5Prompt() {
+      const s = g5Scenes[g5Index];
+      const d = g5Resolved ? s.diarySentence.replace("___", s.ans) : s.diarySentence.replace("___", "blank");
+      const sp = g5Resolved ? s.spyglassSentence.replace("___", s.ans) : s.spyglassSentence.replace("___", "blank");
+      speakText(`${d} ${sp}`);
+    }
+
+    function nextG5Question() {
+      playClickSound();
+      g5Index++;
+      if (g5Index >= g5Scenes.length) {
+        addDiamonds(15);
+        document.getElementById("g5-stage").classList.add("hidden");
+        document.getElementById("g5-complete-screen").classList.remove("hidden");
+        document.getElementById("g5-final-summary").textContent =
+          `You solved all 10 Farmer's Spyglass scenes (${g5Score} / 10 on the first try) and earned +15 Bonus Diamonds!`;
+        unlockBadge("b_game5");
+        playFanfareSound();
+      } else {
+        renderG5Scene();
+      }
+    }
+
+    /* =========================================================================
+       8. SECTION 4 (VARIANT 2): MINECRAFT FARM BAKERY & CAFE
+       ========================================================================= */
+    function renderBakerySection() {
+      const floorStrip = document.getElementById("cafe-floor-strip");
+      const grid = document.getElementById("bakery-grid");
+      const countLabel = document.getElementById("bakery-count-label");
+      if (!grid || !floorStrip) return;
+
+      countLabel.textContent = `${appState.unlockedTables.length} / ${GAME_DATA.bakeryStations.length}`;
+      floorStrip.innerHTML = "";
+      grid.innerHTML = "";
+
+      GAME_DATA.bakeryStations.forEach((station, idx) => {
+        const isUnlocked = appState.unlockedTables.includes(station.id);
+        const canAfford = appState.diamonds >= station.cost;
+
+        // Mini Cafe Floor Slot
+        const slotBtn = document.createElement("button");
+        slotBtn.className = `mc-slot p-2 flex flex-col items-center justify-center gap-1 transition-all ${
+          isUnlocked ? "bg-amber-950/80 border-amber-400 cursor-pointer hover:scale-105" : "opacity-45 cursor-default"
+        }`;
+        slotBtn.title = isUnlocked ? `Tap to hear ${station.guestName}!` : `${station.title} (Locked)`;
+        slotBtn.innerHTML = `
+          <div class="flex items-center gap-0.5">
+            <img src="${station.guestImg}" alt="${station.guestName}" class="w-7 h-7 object-contain ${isUnlocked ? "" : "grayscale"}">
+            <img src="${station.dishImg}" alt="${station.dishName}" class="w-5 h-5 object-contain ${isUnlocked ? "" : "grayscale"}">
+          </div>
+          <span class="pixel-font text-[8px] ${isUnlocked ? "text-amber-300" : "text-stone-400"}">#${idx + 1}</span>
+        `;
+        if (isUnlocked) {
+          slotBtn.onclick = () => spotlightCafeGuest(station.id, slotBtn);
+        }
+        floorStrip.appendChild(slotBtn);
+
+        // Detailed Bakery Station Card
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col justify-between border-4 rounded-lg ${
+          isUnlocked
+            ? "border-[var(--primary-light)] bg-stone-800 cafe-table-unlocked cursor-pointer"
+            : "border-stone-600 bg-stone-900/90"
+        }`;
+
+        if (isUnlocked) {
+          card.onclick = () => spotlightCafeGuest(station.id, card);
+        }
+
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between text-[10px] font-bold">
+              <span class="px-2 py-0.5 rounded ${isUnlocked ? "bg-[var(--secondary)] text-white" : "bg-stone-800 text-stone-400"}">
+                Table #${idx + 1}
+              </span>
+              <span class="${isUnlocked ? "text-lime-300" : "text-amber-300"}">
+                ${isUnlocked ? "✨ OPEN" : "🔒 LOCKED"}
+              </span>
+            </div>
+
+            <div class="relative w-full h-32 bg-stone-950 border-4 ${isUnlocked ? "border-amber-300" : "border-stone-700"} rounded flex items-center justify-center gap-3 p-2">
+              <img src="${station.guestImg}" alt="${station.guestName}" class="w-16 h-16 object-contain ${isUnlocked ? "animate-float" : "grayscale opacity-40"}">
+              <img src="${station.dishImg}" alt="${station.dishName}" class="w-12 h-12 object-contain ${isUnlocked ? "" : "grayscale opacity-40"}">
+            </div>
+
+            <div>
+              <h4 class="pixel-font text-xs ${isUnlocked ? "text-[var(--primary-light)]" : "text-stone-300"}">${station.title}</h4>
+              <div class="text-xs font-bold text-amber-200 mt-1">${station.guestName} • ${station.dishName}</div>
+              ${
+                isUnlocked
+                  ? `<div class="mt-2 space-y-1 text-xs bg-stone-950/70 p-2 rounded border border-stone-700">
+                       <p class="text-lime-300 font-semibold">${station.simpleLine}</p>
+                       <p class="text-rose-300 font-semibold">${station.continuousLine}</p>
+                     </div>`
+                  : `<p class="text-xs text-stone-400 italic mt-2">Open this bakery table with Diamonds to invite ${station.guestName} and serve ${station.dishName}!</p>`
+              }
+            </div>
+          </div>
+
+          <div class="mt-3 pt-2.5 border-t border-stone-700">
+            ${
+              isUnlocked
+                ? `<button onclick="event.stopPropagation(); spotlightCafeGuest('${station.id}', this.closest('.cafe-table-unlocked'))" class="mc-btn mc-btn-amber w-full py-2 text-[10px] gap-2">
+                     <i class="fa-solid fa-volume-high"></i> <span>SERVE &amp; LISTEN</span>
+                   </button>`
+                : `<button onclick="unlockBakeryTable('${station.id}')" class="mc-btn ${canAfford ? "mc-btn-green" : "opacity-50"} w-full py-2 text-[10px] flex items-center justify-center gap-1.5">
+                     <img src="Minecraft/Diamond-removebg-preview.png" class="w-4 h-4 object-contain" alt="D">
+                     <span>OPEN TABLE (${station.cost})</span>
+                   </button>`
+            }
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function spotlightCafeGuest(stationId, animEl) {
+      const station = GAME_DATA.bakeryStations.find(s => s.id === stationId);
+      if (!station) return;
+
+      playSuccessSound();
+      if (animEl) {
+        animEl.classList.remove("animate-pop-bounce");
+        void animEl.offsetWidth;
+        animEl.classList.add("animate-pop-bounce");
+      }
+
+      const box = document.getElementById("cafe-spotlight-box");
+      box.classList.remove("hidden");
+      document.getElementById("spot-guest-img").src = station.guestImg;
+      document.getElementById("spot-dish-img").src = station.dishImg;
+      document.getElementById("spot-title").textContent = `${station.title} — ${station.guestName}`;
+      document.getElementById("spot-simple").textContent = station.simpleLine;
+      document.getElementById("spot-continuous").textContent = station.continuousLine;
+      document.getElementById("cafe-spotlight-status").textContent = `Now serving ${station.guestName}!`;
+
+      const spokenOrder = `${station.simpleLine.replace("Every Day: ", "")} ${station.continuousLine.replace("Right Now: ", "")}`;
+      document.getElementById("spot-speak-btn").onclick = () => {
+        playClickSound();
+        speakText(spokenOrder);
+      };
+      speakText(spokenOrder);
+    }
+
+    function unlockBakeryTable(stationId) {
+      const station = GAME_DATA.bakeryStations.find(s => s.id === stationId);
+      if (!station || appState.unlockedTables.includes(stationId)) return;
+
+      if (appState.diamonds < station.cost) {
+        playErrorSound();
+        speakText("You need more diamonds! Play mini-games to earn diamonds.");
+        return;
+      }
+
+      appState.diamonds -= station.cost;
+      appState.unlockedTables.push(stationId);
+      playSuccessSound();
+      if (appState.unlockedTables.length >= 2) {
+        unlockBadge("b_bakery");
+      }
+      saveState();
+      renderBakerySection();
+      spotlightCafeGuest(stationId, null);
+    }
+
+    /* =========================================================================
+       9. BADGES, CERTIFICATE & NAVIGATION
+       ========================================================================= */
+    function renderBadgesGrid() {
+      const grid = document.getElementById("badges-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.badges.forEach((b) => {
+        const unlocked = appState.unlockedBadges.includes(b.id);
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 rounded ${
+          unlocked ? "border-[var(--primary-light)] bg-stone-800 animate-glow" : "border-stone-700 opacity-60"
+        }`;
+        card.innerHTML = `
+          <div class="w-16 h-16 mc-slot flex items-center justify-center p-2 mb-2 ${unlocked ? "bg-amber-950" : ""}">
+            <img src="${b.img}" alt="${b.title}" class="w-12 h-12 object-contain ${unlocked ? "" : "grayscale"}">
+          </div>
+          <div>
+            <h4 class="pixel-font text-xs ${unlocked ? "text-[var(--primary-light)]" : "text-stone-400"}">${b.title}</h4>
+            <p class="text-xs text-stone-300 mt-1">${b.desc}</p>
+          </div>
+          <div class="mt-3 pixel-font text-[9px] px-2.5 py-1 rounded ${unlocked ? "bg-[var(--secondary)] text-white" : "bg-stone-950 text-stone-500"}">
+            ${unlocked ? "✓ UNLOCKED" : "🔒 LOCKED"}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setCertificateTheme(themeKey) {
+      playClickSound();
+      const url = GAME_DATA.certWallpapers[themeKey] || GAME_DATA.certWallpapers.bg1;
+      appState.certTheme = themeKey;
+      const certEl = document.getElementById("printable-certificate");
+      if (certEl) {
+        certEl.style.backgroundImage = `url('${url}')`;
+      }
+
+      ["bg1", "bg2", "bg3"].forEach((k) => {
+        const btn = document.getElementById(`theme-btn-${k}`);
+        if (btn) {
+          if (k === themeKey) btn.classList.add("mc-btn-amber");
+          else btn.classList.remove("mc-btn-amber");
+        }
+      });
+      saveState();
+    }
+
+    function updateCertificateName(val) {
+      appState.heroName = val.trim() || "Harvest Hero";
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+      saveState();
+    }
+
+    function launchVictoryConfetti() {
+      playFanfareSound();
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 110,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function switchSection(secId) {
+      playClickSound();
+      const sections = ["hub", "grammar", "games", "bakery", "badges", "finale"];
+      sections.forEach((s) => {
+        const el = document.getElementById(`sec-${s}`);
+        const navBtn = document.getElementById(`nav-${s}`);
+        if (s === secId) {
+          el.classList.remove("hidden");
+          if (navBtn) navBtn.classList.add("mc-btn-amber");
+        } else {
+          el.classList.add("hidden");
+          if (navBtn) navBtn.classList.remove("mc-btn-amber");
+        }
+      });
+
+      if (secId === "bakery") {
+        renderBakerySection();
+      }
+      if (secId === "finale" && appState.unlockedBadges.length >= GAME_DATA.badges.length) {
+        launchVictoryConfetti();
+      }
+    }
+
+    /* =========================================================================
+       10. INITIALIZATION (ZERO AUTOPLAY)
+       ========================================================================= */
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      const soundBtn = document.getElementById("sound-toggle-btn");
+      if (soundBtn) {
+        soundBtn.innerHTML = appState.soundFX
+          ? '<i class="fa-solid fa-volume-high"></i>'
+          : '<i class="fa-solid fa-volume-xmark"></i>';
+      }
+      renderVocabGrid();
+      renderBakerySection();
+      renderBadgesGrid();
+      setCertificateTheme(appState.certTheme || "bg1");
+      startStandardGameRound(1);
+
+      const now = new Date();
+      document.getElementById("cert-date-display").textContent = now.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft English Quest: Future Expedition</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #075985;
+      --sapphire: #1e3a8a;
+      --sapphire-dark: #172554;
+      --amber: #f59e0b;
+      --amber-dark: #b45309;
+      --accent: #38bdf8;
+      --background: #0b1324;
+      --panel: #1e293b;
+      --stone: #525d73;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--background);
+      background-image:
+        radial-gradient(#172554 15%, transparent 16%),
+        radial-gradient(#172554 15%, transparent 16%);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      color: #f1f5f9;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    .pixel-font {
+      font-family: 'Press Start 2P', monospace;
+      line-height: 1.5;
+    }
+
+    /* Minecraft 3D Beveled UI Panel */
+    .mc-panel {
+      background-color: #d4dce8;
+      border: 4px solid #ffffff;
+      border-right-color: #475569;
+      border-bottom-color: #475569;
+      box-shadow: 0 8px 0 #060b14;
+      color: #0f172a;
+    }
+
+    .mc-panel-dark {
+      background-color: #162033;
+      border: 4px solid #3b4c6b;
+      border-right-color: #090e17;
+      border-bottom-color: #090e17;
+      box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.85);
+      color: #f1f5f9;
+    }
+
+    /* Minecraft 3D Button */
+    .mc-btn {
+      font-family: 'Press Start 2P', monospace;
+      background-color: var(--stone);
+      border: 3px solid #cbd5e1;
+      border-right-color: #1e293b;
+      border-bottom-color: #1e293b;
+      color: #ffffff;
+      text-shadow: 2px 2px #0f172a;
+      transition: transform 0.06s, filter 0.1s;
+      cursor: pointer;
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mc-btn:hover {
+      filter: brightness(1.12);
+    }
+
+    .mc-btn:active {
+      transform: translateY(2px);
+      border-top-color: #1e293b;
+      border-left-color: #1e293b;
+      border-right-color: #cbd5e1;
+      border-bottom-color: #cbd5e1;
+    }
+
+    .mc-btn-ocean {
+      background-color: var(--primary);
+      border-color: #7dd3fc var(--primary-dark) var(--primary-dark) #7dd3fc;
+    }
+
+    .mc-btn-sapphire {
+      background-color: var(--sapphire);
+      border-color: #60a5fa var(--sapphire-dark) var(--sapphire-dark) #60a5fa;
+    }
+
+    .mc-btn-emerald {
+      background-color: #16a34a;
+      border-color: #86efac #14532d #14532d #86efac;
+    }
+
+    .mc-btn-gold {
+      background-color: #d97706;
+      border-color: #fde047 #78350f #78350f #fde047;
+    }
+
+    .mc-btn-purple {
+      background-color: #7c3aed;
+      border-color: #c4b5fd #4c1d95 #4c1d95 #c4b5fd;
+    }
+
+    /* Inventory Slot */
+    .mc-slot {
+      background-color: #334155;
+      border: 3px solid #0f172a;
+      border-right-color: #94a3b8;
+      border-bottom-color: #94a3b8;
+      box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 3D Flip Card for Vocabulary */
+    .flip-card {
+      perspective: 1000px;
+      height: 248px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes crystalGlow {
+      0%, 100% { box-shadow: 0 0 14px #38bdf8, inset 0 0 12px #38bdf8; }
+      50% { box-shadow: 0 0 30px #f59e0b, inset 0 0 22px #f59e0b; }
+    }
+    .crystal-lit {
+      animation: crystalGlow 1.1s infinite ease-in-out;
+    }
+
+    /* Voice Active Indicator */
+    .voice-wave {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .voice-wave span {
+      width: 4px;
+      height: 14px;
+      background-color: var(--accent);
+      animation: waveBounce 0.6s infinite ease-in-out;
+    }
+    .voice-wave span:nth-child(2) { animation-delay: 0.15s; }
+    .voice-wave span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes waveBounce {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.2); }
+    }
+
+    /* Print Media Certificate Isolation */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-certificate-container, #printable-certificate-container * {
+        visibility: visible !important;
+      }
+      #printable-certificate-container, #printable-certificate {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #printable-certificate-container {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-12">
+
+  <!-- TOP STICKY HUD -->
+  <header class="sticky top-0 z-40 bg-[#081020]/95 backdrop-blur-md border-b-4 border-[#0284c7] px-3 py-2.5 shadow-2xl no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+
+      <!-- Brand -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchSection('hub')">
+        <img src="https://i.postimg.cc/KjYQk0qw/oak-boat.png" alt="Oak Boat" class="w-11 h-11 object-contain animate-float">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="pixel-font text-xs sm:text-sm md:text-base text-[#38bdf8] tracking-wide">FUTURE EXPEDITION</h1>
+            <span class="bg-[#d97706] text-white text-[10px] font-bold px-2 py-0.5 rounded border border-amber-300">Beginner A0-A1</span>
+          </div>
+          <p class="text-xs text-slate-300 font-semibold">Future Simple (will / won't) &amp; Items Quest</p>
+        </div>
+      </div>
+
+      <!-- Speech Status Indicator + Stats -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+
+        <!-- Live Speech Indicator -->
+        <div id="speech-indicator" class="hidden items-center gap-2 bg-sky-950 border-2 border-sky-400 px-3 py-1 rounded-lg text-xs font-bold text-sky-200">
+          <div class="voice-wave"><span></span><span></span><span></span></div>
+          <span>Speaking...</span>
+        </div>
+
+        <!-- Diamonds Counter -->
+        <div class="mc-slot px-3 py-1.5 flex items-center gap-2 bg-slate-800">
+          <img src="Minecraft/Diamond-removebg-preview.png" alt="Diamond" class="w-6 h-6 object-contain">
+          <span class="pixel-font text-xs text-sky-300" id="hud-diamonds">0</span>
+        </div>
+
+        <!-- Badges Progress Counter -->
+        <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-2">
+          <img src="Minecraft/Enchanted_golden_apple-removebg-preview.png" alt="Badge" class="w-5 h-5 object-contain">
+          <span>Badges: <span id="hud-badges">0/8</span></span>
+        </button>
+
+        <!-- Quick Vault Button -->
+        <button onclick="switchSection('vault')" class="mc-btn mc-btn-purple px-3 py-1.5 text-[10px] sm:text-xs flex items-center gap-1.5" title="Open Treasure Vault!">
+          <img src="Minecraft/Ender_Chest-removebg-preview.png" alt="Vault" class="w-5 h-5 object-contain">
+          <span>Vault</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button onclick="toggleSoundFX()" id="sound-toggle-btn" class="mc-btn px-3 py-1.5 text-xs" title="Toggle Sound Effects">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="max-w-7xl mx-auto mt-2.5 flex gap-2 overflow-x-auto pb-1">
+      <button onclick="switchSection('hub')" id="nav-hub" class="mc-btn mc-btn-ocean px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/x8dgJ6xZ/filled-map.png" class="w-5 h-5 object-contain" alt="Hub">
+        <span>1. Story &amp; Items</span>
+      </button>
+      <button onclick="switchSection('grammar')" id="nav-grammar" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="https://i.postimg.cc/5ytpYs7k/book.png" class="w-5 h-5 object-contain" alt="Rules">
+        <span>2. Grammar Rules</span>
+      </button>
+      <button onclick="switchSection('games')" id="nav-games" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+        <span>3. 5 Mini-Games</span>
+      </button>
+      <button onclick="switchSection('vault')" id="nav-vault" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/Ender_Chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Vault">
+        <span>4. Treasure Vault</span>
+      </button>
+      <button onclick="switchSection('badges')" id="nav-badges" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+        <span>5. Achievements</span>
+      </button>
+      <button onclick="switchSection('finale')" id="nav-finale" class="mc-btn px-3 py-2 text-[10px] sm:text-xs flex items-center gap-2 shrink-0">
+        <img src="Minecraft/EnderDragon-removebg-preview.png" class="w-5 h-5 object-contain" alt="Prize">
+        <span>6. Explorer License</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 pt-6 flex-1">
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: STORY HUB & 10 ITEMS/FOOD FLASHCARDS          -->
+    <!-- ======================================================== -->
+    <section id="sec-hub" class="space-y-6">
+
+      <!-- Story Intro Banner -->
+      <div class="mc-panel p-5 sm:p-6 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+          <div class="lg:col-span-3 flex justify-center items-center gap-3">
+            <img src="Minecraft/Steve-removebg-preview.png" alt="Steve" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl">
+            <img src="Minecraft/Alex-removebg-preview.png" alt="Alex" class="w-24 sm:w-28 h-28 object-contain animate-float drop-shadow-xl" style="animation-delay: 0.5s;">
+          </div>
+
+          <div class="lg:col-span-9 space-y-3">
+            <div class="inline-flex items-center gap-2 bg-[#0284c7] text-white px-3 py-1 text-xs font-bold border-2 border-slate-900">
+              <img src="Minecraft/compass.png" class="w-4 h-4 object-contain" alt="Compass"> <span>FUTURE EXPEDITION BRIEFING</span>
+            </div>
+            <h2 class="pixel-font text-sm sm:text-lg text-slate-900">Tomorrow We Sail to Treasure Island!</h2>
+            <p class="text-base sm:text-lg text-slate-800 font-semibold leading-relaxed">
+              Tomorrow morning, Steve and Alex <b>will sail</b> to the Secret Treasure Island! Help them pack 10 important items and food, read the treasure map, and predict future adventures using <b>Future Simple</b> (will / won't)!
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="speakText(GAME_DATA.story.intro)" class="mc-btn mc-btn-ocean px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-volume-high"></i> <span>Listen to Story</span>
+              </button>
+              <button onclick="switchSection('grammar')" class="mc-btn mc-btn-gold px-4 py-2 text-xs gap-2">
+                <span>Open Grammar Rules</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Progress Checklist -->
+      <div class="mc-panel-dark p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="https://i.postimg.cc/gj04XgSS/torch.png" alt="Torch" class="w-9 h-9 object-contain">
+          <div>
+            <h3 class="pixel-font text-xs text-amber-300">EXPEDITION PACKING LIST:</h3>
+            <p class="text-xs text-slate-300">Tap each card to learn all 10 Items &amp; Food. Flip a card to see its Ukrainian meaning and earn Diamonds!</p>
+          </div>
+        </div>
+        <div class="bg-slate-800 border-2 border-sky-500 px-4 py-2 text-xs font-bold text-sky-300">
+          Items Inspected: <span id="vocab-explored-count">0 / 10</span>
+        </div>
+      </div>
+
+      <!-- 10 Flip Cards Grid -->
+      <div id="vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <!-- Populated from GAME_DATA.vocabulary -->
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: FUTURE SIMPLE GRAMMAR RULES                   -->
+    <!-- ======================================================== -->
+    <section id="sec-grammar" class="hidden space-y-6">
+
+      <!-- Part A: When do we use Future Simple? -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="Minecraft/bookshelf-removebg-preview.png" alt="Bookshelf" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">WHEN DO WE USE FUTURE SIMPLE?</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">We use Future Simple (will / won't) to talk about the future!</p>
+            </div>
+          </div>
+          <button onclick="speakText('We use Future Simple with will and wont to talk about future plans, predictions, and promises.')" class="mc-btn mc-btn-ocean px-3 py-2 text-xs gap-2">
+            <i class="fa-solid fa-volume-high"></i> <span>Listen</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <!-- Usage 1: Future Plans & Decisions -->
+          <div class="bg-sky-50 border-4 border-sky-700 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-sky-700 text-white px-2 py-1">1. FUTURE PLANS</span>
+                <img src="https://i.postimg.cc/KjYQk0qw/oak-boat.png" alt="Boat" class="w-8 h-8 object-contain">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">Quick decisions and plans for tomorrow or later.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-sky-300">
+                <div class="flex items-center justify-between">
+                  <span>"We <b class="text-sky-700">will sail</b> tomorrow."</span>
+                  <button onclick="speakText('We will sail tomorrow.')" class="text-slate-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between border-t pt-1">
+                  <span>"I <b class="text-sky-700">will pack</b> fresh bread."</span>
+                  <button onclick="speakText('I will pack fresh bread.')" class="text-slate-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-slate-600">
+              Clue words: <span class="text-sky-800">tomorrow, tonight, next week</span>
+            </div>
+          </div>
+
+          <!-- Usage 2: Predictions -->
+          <div class="bg-amber-50 border-4 border-amber-600 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-amber-600 text-white px-2 py-1">2. PREDICTIONS</span>
+                <img src="Minecraft/clock.png" alt="Clock" class="w-8 h-8 object-contain">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">What we think or guess will happen soon!</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-amber-300">
+                <div class="flex items-center justify-between">
+                  <span>"They <b class="text-amber-700">will find</b> a secret chest."</span>
+                  <button onclick="speakText('They will find a secret chest.')" class="text-slate-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between border-t pt-1">
+                  <span>"A Creeper <b class="text-amber-700">won't like</b> our cat."</span>
+                  <button onclick="speakText('A Creeper will not like our cat.')" class="text-slate-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-slate-600">
+              Clue words: <span class="text-amber-800">soon, one day, in the future</span>
+            </div>
+          </div>
+
+          <!-- Usage 3: Promises & Offers -->
+          <div class="bg-indigo-50 border-4 border-indigo-700 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="pixel-font text-[10px] bg-indigo-700 text-white px-2 py-1">3. PROMISES</span>
+                <img src="https://i.postimg.cc/gj04XgSS/torch.png" alt="Torch" class="w-8 h-8 object-contain">
+              </div>
+              <p class="text-sm text-slate-700 font-bold mb-3">Promises to help friends and stay safe.</p>
+              <div class="space-y-2 text-sm bg-white p-3 border-2 border-indigo-300">
+                <div class="flex items-center justify-between">
+                  <span>"I <b class="text-indigo-700">will light</b> a bright torch!"</span>
+                  <button onclick="speakText('I will light a bright torch!')" class="text-slate-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between border-t pt-1">
+                  <span>"Steve <b class="text-indigo-700">won't forget</b> the map."</span>
+                  <button onclick="speakText('Steve will not forget the map.')" class="text-slate-600 hover:text-black"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-xs font-bold text-slate-600">
+              Super Easy Rule: <span class="text-indigo-800">WILL is the same for EVERYONE!</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Part B: How to Craft Sentences (+, -, ?) -->
+      <div class="mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex items-center gap-3 border-b-4 border-slate-400 pb-3">
+          <img src="Minecraft/crafting_table_icon-removebg-preview.png" alt="Crafting" class="w-11 h-11 object-contain">
+          <div>
+            <h2 class="pixel-font text-sm sm:text-lg text-slate-900">HOW TO CRAFT SENTENCES (+ / - / ?)</h2>
+            <p class="text-xs sm:text-sm text-slate-700 font-semibold">Magic Rule: After WILL or WON'T, the verb is ALWAYS in its base form (NO -s, NO -ing)!</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+          <!-- 1. AFFIRMATIVE (+) -->
+          <div class="bg-emerald-50 border-4 border-emerald-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-emerald-700 text-white px-2.5 py-1">+ AFFIRMATIVE (+)</span>
+              <img src="Minecraft/Iron_Golem_with_flower-removebg-preview.png" alt="Golem" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-emerald-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-emerald-200 px-1.5 py-0.5 rounded">I / You / He / She / It / We / They</span>
+              </div>
+              <div class="font-bold text-slate-900 text-base">
+                + <b class="text-emerald-700">will</b> + <b>Verb</b> (base)
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-emerald-100/80 p-3 border border-emerald-500">
+              <p class="font-bold text-emerald-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• I <b>will eat</b> a sweet apple.</span>
+                <button onclick="speakText('I will eat a sweet apple.')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Steve <b>will cook</b> tasty meat.</span>
+                <button onclick="speakText('Steve will cook tasty meat.')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Alex <b>will read</b> the map.</span>
+                <button onclick="speakText('Alex will read the map.')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• We <b>will sail</b> in a boat.</span>
+                <button onclick="speakText('We will sail in a boat.')" class="text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. NEGATIVE (-) -->
+          <div class="bg-rose-50 border-4 border-rose-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-rose-700 text-white px-2.5 py-1">- NEGATIVE (-)</span>
+              <img src="Minecraft/Creeper-removebg-preview.png" alt="Creeper" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-rose-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-slate-800">
+                <span class="inline-block bg-rose-200 px-1.5 py-0.5 rounded">All Subjects (I, He, We...)</span>
+              </div>
+              <div class="font-bold text-slate-900 text-base">
+                + <b class="text-rose-700">won't</b> (will not) + <b>Verb</b>
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-rose-100/80 p-3 border border-rose-400">
+              <p class="font-bold text-rose-950">Examples (won't = will not):</p>
+              <div class="flex items-center justify-between">
+                <span>• I <b>won't open</b> the oak door.</span>
+                <button onclick="speakText('I will not open the oak door.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Steve <b>won't forget</b> the map.</span>
+                <button onclick="speakText('Steve will not forget the map.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• We <b>won't eat</b> raw meat.</span>
+                <button onclick="speakText('We will not eat raw meat.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• Zombies <b>won't enter</b> our house.</span>
+                <button onclick="speakText('Zombies will not enter our house.')" class="text-rose-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. QUESTIONS (?) -->
+          <div class="bg-sky-50 border-4 border-sky-700 p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="pixel-font text-xs bg-sky-700 text-white px-2.5 py-1">? QUESTIONS (?)</span>
+              <img src="Minecraft/Parrot-removebg-preview.png" alt="Parrot" class="w-10 h-10 object-contain">
+            </div>
+
+            <div class="bg-white p-3 border-2 border-sky-600 space-y-2 text-xs sm:text-sm">
+              <div class="font-bold text-slate-800">
+                <b class="text-sky-700">Will</b> jumps to the front!
+              </div>
+              <div class="font-bold text-slate-900 text-base">
+                <b class="text-sky-700">Will</b> + Subject + <b>Verb</b>?
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs sm:text-sm bg-sky-100/80 p-3 border border-sky-400">
+              <p class="font-bold text-sky-950">Examples:</p>
+              <div class="flex items-center justify-between">
+                <span>• <b>Will</b> you <b>pack</b> fresh bread?</span>
+                <button onclick="speakText('Will you pack fresh bread?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Will</b> Steve <b>light</b> a torch?</span>
+                <button onclick="speakText('Will Steve light a torch?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Will</b> Alex <b>open</b> the chest?</span>
+                <button onclick="speakText('Will Alex open the chest?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>• <b>Will</b> we <b>sleep</b> in the bed?</span>
+                <button onclick="speakText('Will we sleep in the bed?')" class="text-sky-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="flex justify-center pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-ocean px-6 py-3 text-xs sm:text-sm gap-3">
+            <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="Sword">
+            <span>START THE 5 MINI-GAMES!</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 3: 5 MINI-GAMES ARENA                            -->
+    <!-- ======================================================== -->
+    <section id="sec-games" class="hidden space-y-6">
+
+      <!-- Mini-Game Selector Sub-Nav -->
+      <div class="mc-panel-dark p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <span class="pixel-font text-xs text-sky-300">CHOOSE YOUR EXPEDITION ARENA:</span>
+          <span class="text-xs text-slate-300">Every round picks new random tasks from a huge pool!</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          <button onclick="selectMiniGame(1)" id="gbtn-1" class="mc-btn mc-btn-ocean p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/KjYQk0qw/oak-boat.png" class="w-6 h-6 object-contain" alt="G1">
+            <div class="text-left">
+              <div>Game 1: Affirmative</div>
+              <div class="text-[9px] text-sky-200 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(2)" id="gbtn-2" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/Shield-removebg-preview.png" class="w-6 h-6 object-contain" alt="G2">
+            <div class="text-left">
+              <div>Game 2: Negative</div>
+              <div class="text-[9px] text-slate-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(3)" id="gbtn-3" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="https://i.postimg.cc/gj04XgSS/torch.png" class="w-6 h-6 object-contain" alt="G3">
+            <div class="text-left">
+              <div>Game 3: Questions</div>
+              <div class="text-[9px] text-slate-300 font-sans">10 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(4)" id="gbtn-4" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-6 h-6 object-contain" alt="G4">
+            <div class="text-left">
+              <div>Game 4: Mixed Blitz</div>
+              <div class="text-[9px] text-slate-300 font-sans">15 Tasks (Pool: 50)</div>
+            </div>
+          </button>
+          <button onclick="selectMiniGame(5)" id="gbtn-5" class="mc-btn p-2.5 text-[10px] flex items-center gap-2 justify-start">
+            <img src="Minecraft/clock.png" class="w-6 h-6 object-contain" alt="G5">
+            <div class="text-left">
+              <div>Game 5: Fortune Teller</div>
+              <div class="text-[9px] text-amber-200 font-sans">10 Visions (Pool: 40)</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ACTIVE GAME CONTAINER (Games 1-4 Standard Engine) -->
+      <div id="standard-game-wrapper" class="mc-panel p-5 sm:p-6">
+
+        <!-- Game Header Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img id="active-game-icon" src="https://i.postimg.cc/KjYQk0qw/oak-boat.png" alt="Icon" class="w-11 h-11 object-contain">
+            <div>
+              <h3 id="active-game-title" class="pixel-font text-xs sm:text-base text-slate-900">Game 1: Affirmative Crafter (+)</h3>
+              <p id="active-game-subtitle" class="text-xs sm:text-sm text-slate-700 font-semibold">Use WILL + base verb!</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-900 text-white px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Task <span id="game-q-num" class="text-sky-400">1</span> / <span id="game-q-total">10</span>
+            </div>
+            <div class="bg-slate-900 text-amber-300 px-3 py-1.5 border-2 border-black pixel-font text-xs">
+              Score: <span id="game-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Stage -->
+        <div id="question-stage" class="mc-panel-dark p-5 sm:p-6 space-y-5">
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img id="question-mob-img" src="Minecraft/Steve-removebg-preview.png" alt="Character" class="w-16 h-16 sm:w-20 sm:h-20 object-contain animate-float bg-slate-800/90 p-2 border-2 border-slate-600">
+              <div>
+                <span id="question-mode-tag" class="inline-block bg-emerald-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1">AFFIRMATIVE (+)</span>
+                <h4 id="question-prompt-text" class="text-lg sm:text-2xl font-bold text-white leading-snug">Steve ___ eat a sweet apple tomorrow.</h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakCurrentQuestion()" class="mc-btn px-3 py-2 text-xs" title="Listen to sentence">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Container -->
+          <div id="mc-options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          </div>
+
+          <!-- Word-Order Click-to-Place Container -->
+          <div id="scramble-container" class="hidden space-y-4 pt-2">
+            <div class="text-xs text-sky-300 font-bold">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Click word blocks below in the right order! (Click a placed word to remove it)
+            </div>
+
+            <!-- Target Sentence Slots -->
+            <div id="scramble-target-slots" class="min-h-[64px] bg-slate-900 border-4 border-dashed border-amber-400 p-3 flex flex-wrap items-center gap-2">
+            </div>
+
+            <!-- Word Bank -->
+            <div id="scramble-word-bank" class="flex flex-wrap gap-2 pt-1">
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="checkScrambleAnswer()" id="scramble-submit-btn" class="mc-btn mc-btn-emerald px-5 py-2 text-xs gap-2">
+                <i class="fa-solid fa-hammer"></i> <span>CRAFT SENTENCE</span>
+              </button>
+              <button onclick="resetScrambleWords()" class="mc-btn px-4 py-2 text-xs gap-2">
+                <i class="fa-solid fa-rotate-left"></i> <span>Clear Words</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feedback Alert & Next Button -->
+          <div id="game-feedback-bar" class="hidden p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div id="game-feedback-msg" class="text-sm sm:text-base font-bold"></div>
+            <button onclick="nextGameQuestion()" id="game-next-btn" class="mc-btn mc-btn-emerald px-5 py-2 text-xs shrink-0">
+              <span>NEXT TASK</span> <i class="fa-solid fa-forward ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Round Complete Summary Screen (With Totem of Undying Try Again Button!) -->
+        <div id="round-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="Minecraft/Enchanted_golden_apple-removebg-preview.png" alt="Victory" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-sky-300">ROUND COMPLETE!</h3>
+          <p id="round-result-summary" class="text-base sm:text-lg text-slate-200 font-bold">
+            You scored 10 / 10 and earned Diamonds!
+          </p>
+
+          <div class="flex flex-wrap justify-center gap-4 pt-2">
+            <button onclick="replayCurrentGame()" class="mc-btn mc-btn-gold px-5 py-3 text-xs sm:text-sm flex items-center gap-3">
+              <img src="Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png" alt="Totem of Undying" class="w-8 h-8 object-contain">
+              <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- GAME 5: VILLAGER'S FORTUNE TELLER                        -->
+      <!-- ======================================================== -->
+      <div id="game5-custom-wrapper" class="hidden mc-panel p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="Minecraft/Villager-removebg-preview.png" alt="Fortune Villager" class="w-12 h-12 object-contain">
+            <div>
+              <h3 class="pixel-font text-xs sm:text-base text-slate-900">Game 5: Villager's Fortune Teller</h3>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Look into the Crystal Ball! Predict what WILL or WON'T happen next and choose the right verb!</p>
+            </div>
+          </div>
+          <div class="bg-slate-900 text-amber-300 px-3 py-1.5 border-2 border-black pixel-font text-xs">
+            Visions: <span id="g5-progress">1 / 10</span>
+          </div>
+        </div>
+
+        <!-- Fortune Teller Stage with Custom Hut Backdrop -->
+        <div id="g5-stage" class="relative overflow-hidden border-4 border-indigo-900 shadow-2xl bg-cover bg-center" style="background-image: url('https://i.postimg.cc/C5DtLPzr/Gemini-Generated-Image-dpzus8dpzus8dpzu.jpg');">
+          <div class="bg-slate-950/80 backdrop-blur-[2px] p-5 sm:p-6 space-y-6">
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+              <!-- Left: Crystal Ball Vision -->
+              <div class="lg:col-span-5 flex flex-col items-center text-center space-y-4">
+                <div id="g5-crystal-ball" class="w-40 h-40 sm:w-44 sm:h-44 rounded-full bg-gradient-to-br from-sky-900/90 via-indigo-950/95 to-purple-950 border-4 border-sky-400 flex items-center justify-center p-5 shadow-2xl transition-all">
+                  <img id="g5-vision-img" src="https://i.postimg.cc/KjYQk0qw/oak-boat.png" alt="Vision" class="w-24 h-24 object-contain animate-float drop-shadow-xl">
+                </div>
+
+                <div class="bg-slate-900/95 border-2 border-amber-400 p-3.5 w-full space-y-2">
+                  <div class="pixel-font text-[10px] text-amber-300">CRYSTAL BALL CLUE #<span id="g5-vision-num">1</span></div>
+                  <p id="g5-clue-text" class="text-sm sm:text-base font-bold text-white leading-snug">
+                    Steve is holding an oak boat near the calm blue ocean.
+                  </p>
+                  <button onclick="speakG5Clue()" class="mc-btn mc-btn-ocean px-3 py-1.5 text-[10px] gap-1.5" style="min-height:36px;">
+                    <i class="fa-solid fa-volume-high"></i> <span>Listen to Clue</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Prediction Builder -->
+              <div class="lg:col-span-7 bg-slate-900/95 border-4 border-sky-600 p-5 space-y-5">
+                <div class="pixel-font text-xs text-sky-300 text-center">MAKE YOUR FUTURE PREDICTION!</div>
+
+                <!-- Live Preview Sentence -->
+                <div class="bg-slate-950 border-2 border-slate-700 p-4 text-center text-base sm:text-xl font-bold text-white leading-relaxed">
+                  <span id="g5-subj" class="text-amber-300">Steve</span>
+                  <span id="g5-preview-aux" class="inline-block px-2.5 py-0.5 mx-1 bg-slate-800 border-2 border-dashed border-sky-400 text-sky-300">___</span>
+                  <span id="g5-preview-verb" class="inline-block px-2.5 py-0.5 mx-1 bg-slate-800 border-2 border-dashed border-amber-400 text-amber-300">___</span>
+                  <span id="g5-rest" class="text-slate-200">across the sea soon.</span>
+                </div>
+
+                <!-- Step 1: Will or Won't -->
+                <div class="space-y-2">
+                  <div class="text-xs font-bold text-sky-300">STEP 1: Choose WILL (yes) or WON'T (no):</div>
+                  <div class="grid grid-cols-2 gap-3" id="g5-aux-buttons">
+                    <button onclick="selectG5Aux('will', this)" class="mc-btn py-3 text-xs sm:text-sm">WILL (+)</button>
+                    <button onclick="selectG5Aux(&quot;won't&quot;, this)" class="mc-btn py-3 text-xs sm:text-sm">WON'T (-)</button>
+                  </div>
+                </div>
+
+                <!-- Step 2: Base Verb -->
+                <div class="space-y-2">
+                  <div class="text-xs font-bold text-amber-300">STEP 2: Choose the correct verb form:</div>
+                  <div id="g5-verb-buttons" class="grid grid-cols-3 gap-2.5">
+                  </div>
+                </div>
+
+                <button onclick="checkG5Fortune()" id="g5-reveal-btn" class="mc-btn mc-btn-gold w-full py-3 text-xs sm:text-sm gap-2">
+                  <span>🔮 REVEAL FORTUNE!</span>
+                </button>
+
+                <div id="g5-feedback" class="hidden p-3.5 border-2 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <span id="g5-feedback-text"></span>
+                  <button onclick="nextG5Vision()" id="g5-next-btn" class="mc-btn mc-btn-emerald px-4 py-2 text-xs shrink-0">NEXT VISION</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Game 5 Complete Screen -->
+        <div id="g5-complete-screen" class="hidden mc-panel-dark p-6 sm:p-8 text-center space-y-5">
+          <img src="Minecraft/clock.png" alt="Golden Clock" class="w-20 h-20 mx-auto object-contain animate-bounce">
+          <h3 class="pixel-font text-base sm:text-xl text-amber-300">MASTER FORTUNE TELLER!</h3>
+          <p class="text-base text-slate-200 font-bold">You completed all 10 Crystal Ball predictions and earned Diamonds!</p>
+          <button onclick="replayG5Fortune()" class="mc-btn mc-btn-gold px-5 py-3 text-xs sm:text-sm flex items-center gap-3 mx-auto">
+            <img src="Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png" alt="Totem" class="w-8 h-8 object-contain">
+            <span>TRY AGAIN (NEW RANDOM QUESTIONS)</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 4: TREASURE CHEST VAULT (ARTIFACT COLLECTION)    -->
+    <!-- ======================================================== -->
+    <section id="sec-vault" class="hidden space-y-6">
+
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-4">
+          <div class="flex items-center gap-4">
+            <img src="Minecraft/Ender_Chest-removebg-preview.png" alt="Ender Chest" class="w-16 h-16 object-contain bg-slate-900 p-2 border-2 border-purple-500 animate-float">
+            <div>
+              <div class="inline-block bg-purple-900 text-purple-200 pixel-font text-[9px] px-2 py-0.5 mb-1">MYSTIC ENDER VAULT</div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">TREASURE CHEST VAULT</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Spend your Diamonds to collect legendary Expedition Artifacts! Click any unlocked artifact in your Vault to hear its future prophecy!</p>
+            </div>
+          </div>
+
+          <div class="mc-slot bg-slate-900 px-5 py-3 flex items-center gap-3 border-4 border-sky-400">
+            <img src="Minecraft/Diamond-removebg-preview.png" alt="Diamond" class="w-8 h-8 object-contain animate-bounce">
+            <div>
+              <div class="text-[10px] text-sky-300 font-bold uppercase">Your Diamonds</div>
+              <div class="pixel-font text-sm sm:text-base text-white"><span id="vault-diamonds-balance">0</span> Diamonds</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Treasure Vault Display -->
+        <div class="mt-5 mc-panel-dark p-5 relative overflow-hidden border-4 border-purple-500">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2">
+              <img src="Minecraft/Ender_Chest-removebg-preview.png" class="w-7 h-7 object-contain" alt="Ender Chest">
+              <span class="pixel-font text-xs text-purple-300">MY UNLOCKED ARTIFACTS (<span id="vault-owned-count">0</span> / 10)</span>
+            </div>
+            <span class="text-xs text-slate-300">Tap any artifact inside your chest to hear its Future Simple prophecy!</span>
+          </div>
+
+          <div id="my-vault-canvas" class="min-h-[160px] bg-gradient-to-b from-indigo-950/90 via-slate-900 to-purple-950/80 border-4 border-slate-700 p-4 flex flex-wrap items-center justify-center gap-5 rounded">
+          </div>
+        </div>
+
+        <!-- Artifact Catalog Grid -->
+        <div class="mt-6">
+          <h3 class="pixel-font text-xs sm:text-sm text-slate-900 mb-3">LEGENDARY EXPEDITION ARTIFACTS:</h3>
+          <div id="vault-items-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 5: ACHIEVEMENTS & TROPHY CHEST                   -->
+    <!-- ======================================================== -->
+    <section id="sec-badges" class="hidden space-y-6">
+      <div class="mc-panel p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-4 border-slate-400 pb-3 mb-5">
+          <div class="flex items-center gap-3">
+            <img src="Minecraft/chest-removebg-preview.png" alt="Chest" class="w-12 h-12 object-contain">
+            <div>
+              <h2 class="pixel-font text-sm sm:text-lg text-slate-900">EXPEDITION TROPHY CHEST (8 BADGES)</h2>
+              <p class="text-xs sm:text-sm text-slate-700 font-semibold">Unlock ALL 8 badges to unseal the Official Future Explorer License!</p>
+            </div>
+          </div>
+          <button onclick="resetAllSavedProgress()" class="mc-btn px-3 py-1.5 text-[10px] bg-rose-800">
+            Reset Progress
+          </button>
+        </div>
+
+        <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 6: GRAND FINALE & PRINTABLE EXPLORER LICENSE     -->
+    <!-- ======================================================== -->
+    <section id="sec-finale" class="hidden space-y-6">
+
+      <!-- WARDEN LOCK SCREEN (Shown until ALL 8/8 badges are unlocked!) -->
+      <div id="finale-locked-banner" class="mc-panel-dark p-8 sm:p-12 text-center space-y-6 border-4 border-amber-500">
+        <div class="relative inline-block">
+          <img src="Minecraft/Warden-removebg-preview.png" alt="Warden Guardian" class="w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain animate-float">
+          <span class="absolute -top-2 -right-2 bg-rose-700 text-white pixel-font text-[10px] px-2.5 py-1 border-2 border-white">🔒 SEALED</span>
+        </div>
+
+        <h3 class="pixel-font text-base sm:text-2xl text-amber-300">SHHH! THE GRAND PRIZE IS LOCKED!</h3>
+        <p class="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-semibold leading-relaxed">
+          The Warden guards the Secret Explorer License! Collect <b>ALL 8 Achievements</b> to unlock your printable Future Explorer Certificate!
+        </p>
+
+        <div class="max-w-md mx-auto bg-slate-900 border-4 border-slate-700 p-4 space-y-2">
+          <div class="flex justify-between text-xs font-bold text-sky-300">
+            <span>BADGES COLLECTED:</span>
+            <span id="finale-lock-progress-text">0 / 8</span>
+          </div>
+          <div class="w-full h-5 bg-slate-800 border-2 border-black overflow-hidden">
+            <div id="finale-lock-bar" class="h-full bg-gradient-to-r from-sky-500 to-amber-400 transition-all duration-500" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          <button onclick="switchSection('games')" class="mc-btn mc-btn-ocean px-5 py-3 text-xs gap-2">
+            <img src="Minecraft/Diamond_Sword-removebg-preview.png" class="w-5 h-5 object-contain" alt="Games">
+            <span>PLAY MINI-GAMES</span>
+          </button>
+          <button onclick="switchSection('badges')" class="mc-btn mc-btn-gold px-5 py-3 text-xs gap-2">
+            <img src="Minecraft/chest-removebg-preview.png" class="w-5 h-5 object-contain" alt="Badges">
+            <span>CHECK MISSING BADGES</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- UNLOCKED CERTIFICATE CONTAINER (Hidden until 8/8 badges!) -->
+      <div id="finale-unlocked-content" class="hidden space-y-6">
+
+        <!-- Customizer Controls & Wallpaper Selector (Hidden during Print) -->
+        <div class="mc-panel p-5 no-print space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label for="student-name-input" class="pixel-font text-xs text-slate-900">EXPLORER NAME:</label>
+              <input id="student-name-input" type="text" value="Future Explorer" oninput="updateCertificateName(this.value)" class="px-3 py-2 border-4 border-slate-700 bg-white text-slate-900 font-bold text-base focus:outline-none">
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="launchVictoryConfetti()" class="mc-btn mc-btn-gold px-4 py-2 text-xs gap-2">
+                <span>🎆</span> <span>Celebrate!</span>
+              </button>
+              <button onclick="window.print()" class="mc-btn mc-btn-ocean px-5 py-2.5 text-xs sm:text-sm gap-2">
+                <i class="fa-solid fa-print"></i> <span>Print / Save as PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Background Theme Picker -->
+          <div class="border-t-2 border-slate-400 pt-3 flex flex-wrap items-center justify-between gap-3">
+            <span class="pixel-font text-[10px] sm:text-xs text-slate-800">CHOOSE CERTIFICATE WALLPAPER:</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCertificateTheme('expedition')" id="theme-btn-expedition" class="mc-btn mc-btn-ocean px-3 py-1.5 text-[10px] gap-2">
+                <img src="Minecraft/compass.png" class="w-4 h-4 object-contain" alt="Compass"> <span>1. Expedition</span>
+              </button>
+              <button onclick="setCertificateTheme('aesthetic')" id="theme-btn-aesthetic" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>✨ 2. Aesthetic World</span>
+              </button>
+              <button onclick="setCertificateTheme('horizon')" id="theme-btn-horizon" class="mc-btn px-3 py-1.5 text-[10px] gap-2">
+                <span>🌅 3. Horizon View</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE PRINTABLE CERTIFICATE -->
+        <div id="printable-certificate-container" class="w-full flex justify-center">
+          <div id="printable-certificate" class="mc-panel p-6 sm:p-10 border-8 border-[#0284c7] text-slate-900 relative overflow-hidden shadow-2xl bg-cover bg-center w-full max-w-4xl" style="background-image: url('https://i.postimg.cc/fbKxcx9k/1089378597372476024.jpg');">
+
+            <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px]"></div>
+
+            <div class="bg-[#f8fafc]/95 border-4 border-dashed border-[#0284c7] p-6 sm:p-8 text-center space-y-5 relative shadow-xl z-10 w-full">
+
+              <!-- Top Icons -->
+              <div class="flex items-center justify-between sm:px-6">
+                <img src="Minecraft/Steve-removebg-preview.png" alt="Steve" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+                <div class="text-center">
+                  <div class="inline-block bg-[#0284c7] text-white pixel-font text-[10px] px-3 py-1 mb-2">OFFICIAL FUTURE EXPLORER LICENSE</div>
+                  <h2 class="pixel-font text-base sm:text-2xl text-[#1e3a8a]">MINECRAFT FUTURE MASTER</h2>
+                </div>
+                <img src="Minecraft/Alex-removebg-preview.png" alt="Alex" class="w-16 h-16 sm:w-20 sm:h-20 object-contain">
+              </div>
+
+              <p class="text-sm sm:text-base font-bold text-slate-600 uppercase tracking-widest">This legendary license is proudly awarded to:</p>
+
+              <div id="cert-hero-name" class="pixel-font text-xl sm:text-3xl text-[#b45309] border-b-4 border-[#0284c7] inline-block px-8 py-2 bg-white/90">
+                Future Explorer
+              </div>
+
+              <p class="text-sm sm:text-base text-slate-800 max-w-2xl mx-auto font-semibold leading-relaxed">
+                For bravery, wisdom, and awesome English skills in mastering the <b>Future Simple Tense</b> (will / won't / Will...?) and packing all <b>10 Expedition Items &amp; Food</b>: Apple, Bread, Meat, Bed, Door, Chest, Boat, Map, Book, and Torch!
+              </p>
+
+              <!-- 10 Items Icons Strip -->
+              <div class="flex flex-wrap items-center justify-center gap-3 py-2 bg-sky-900/10 rounded-xl px-4">
+                <img src="Minecraft/golden_apple.png" class="w-8 h-8 object-contain" alt="Apple">
+                <img src="Minecraft/bread.png" class="w-8 h-8 object-contain" alt="Bread">
+                <img src="Minecraft/cooked_porkchop.png" class="w-8 h-8 object-contain" alt="Meat">
+                <img src="https://i.postimg.cc/PJqKpS3S/red-bed.png" class="w-8 h-8 object-contain" alt="Bed">
+                <img src="https://i.postimg.cc/Wz4SF5WK/oak-door.png" class="w-8 h-8 object-contain" alt="Door">
+                <img src="Minecraft/chest-removebg-preview.png" class="w-8 h-8 object-contain" alt="Chest">
+                <img src="https://i.postimg.cc/KjYQk0qw/oak-boat.png" class="w-8 h-8 object-contain" alt="Boat">
+                <img src="https://i.postimg.cc/x8dgJ6xZ/filled-map.png" class="w-8 h-8 object-contain" alt="Map">
+                <img src="https://i.postimg.cc/5ytpYs7k/book.png" class="w-8 h-8 object-contain" alt="Book">
+                <img src="https://i.postimg.cc/gj04XgSS/torch.png" class="w-8 h-8 object-contain" alt="Torch">
+              </div>
+
+              <div class="grid grid-cols-3 items-center pt-4 border-t-2 border-slate-300 text-xs sm:text-sm font-bold text-slate-700">
+                <div>
+                  <div class="text-slate-900 font-extrabold">Steve &amp; Alex</div>
+                  <div class="text-[11px] text-slate-500">Expedition Captains</div>
+                </div>
+                <div class="flex flex-col items-center">
+                  <img src="Minecraft/compass.png" alt="Compass Seal" class="w-12 h-12 object-contain">
+                  <span class="pixel-font text-[8px] text-sky-800 mt-1">EXPEDITION SEAL</span>
+                </div>
+                <div>
+                  <div id="cert-date-display" class="text-slate-900 font-extrabold">2026</div>
+                  <div class="text-[11px] text-slate-500">Date of Completion</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT ENGINE & CONFIGURATION -->
+  <script>
+    /* =========================================================================
+       1. GAME_DATA CONFIGURATION (CENTRALIZED)
+       ========================================================================= */
+    const STORAGE_KEY = "mc_future_simple_quest_v1";
+
+    const GAME_DATA = {
+      story: {
+        intro: "Tomorrow morning, Steve and Alex will sail to the Secret Treasure Island! Help them pack food and gear, read the treasure map, and predict future adventures using Future Simple!"
+      },
+      assets: {
+        totem: "Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png",
+        steve: "Minecraft/Steve-removebg-preview.png",
+        alex: "Minecraft/Alex-removebg-preview.png",
+        villager: "Minecraft/Villager-removebg-preview.png",
+        golem: "Minecraft/Iron_Golem_with_flower-removebg-preview.png",
+        creeper: "Minecraft/Creeper-removebg-preview.png",
+        zombie: "Minecraft/Zombie-removebg-preview.png",
+        skeleton: "Minecraft/Skeleton-removebg-preview.png",
+        spider: "Minecraft/Spider-removebg-preview.png",
+        enderman: "Minecraft/Enderman-removebg-preview.png",
+        warden: "Minecraft/Warden-removebg-preview.png",
+        dragon: "Minecraft/EnderDragon-removebg-preview.png",
+        axolotl: "Minecraft/axolotl-removebg-preview.png",
+        bee: "Minecraft/Bee-removebg-preview.png",
+        cat: "Minecraft/Cat-removebg-preview.png",
+        wolf: "Minecraft/Wolf-removebg-preview.png",
+        fox: "Minecraft/Fox-removebg-preview.png",
+        parrot: "Minecraft/Parrot-removebg-preview.png",
+        pig: "Minecraft/Minecraft_Pig-removebg-preview.png",
+        cow: "Minecraft/Minecraft_Cow-removebg-preview.png",
+        squid: "Minecraft/squid-removebg-preview.png",
+        apple: "Minecraft/golden_apple.png",
+        bread: "Minecraft/bread.png",
+        meat: "Minecraft/cooked_porkchop.png",
+        bed: "https://i.postimg.cc/PJqKpS3S/red-bed.png",
+        door: "https://i.postimg.cc/Wz4SF5WK/oak-door.png",
+        chest: "Minecraft/chest-removebg-preview.png",
+        boat: "https://i.postimg.cc/KjYQk0qw/oak-boat.png",
+        map: "https://i.postimg.cc/x8dgJ6xZ/filled-map.png",
+        book: "https://i.postimg.cc/5ytpYs7k/book.png",
+        torch: "https://i.postimg.cc/gj04XgSS/torch.png",
+        ender_chest: "Minecraft/Ender_Chest-removebg-preview.png",
+        fortune_bg: "https://i.postimg.cc/C5DtLPzr/Gemini-Generated-Image-dpzus8dpzus8dpzu.jpg"
+      },
+      certWallpapers: {
+        expedition: "https://i.postimg.cc/fbKxcx9k/1089378597372476024.jpg",
+        aesthetic: "https://i.postimg.cc/3wBgXgvy/Aesthetic-Minecraft-Thumbnail.jpg",
+        horizon: "https://i.postimg.cc/yd80vkm1/Minecraft-Wallpaper-(2).jpg"
+      },
+      vocabulary: [
+        { id: "apple", word: "Apple", ua: "яблуко", img: "Minecraft/golden_apple.png", example: "Alex will eat a sweet apple tomorrow." },
+        { id: "bread", word: "Bread", ua: "хліб", img: "Minecraft/bread.png", example: "We will pack fresh bread for the trip." },
+        { id: "meat", word: "Meat", ua: "м'ясо", img: "Minecraft/cooked_porkchop.png", example: "Steve will cook tasty meat tonight." },
+        { id: "bed", word: "Bed", ua: "ліжко", img: "https://i.postimg.cc/PJqKpS3S/red-bed.png", example: "I will sleep in a red bed." },
+        { id: "door", word: "Door", ua: "двері", img: "https://i.postimg.cc/Wz4SF5WK/oak-door.png", example: "He will close the oak door at night." },
+        { id: "chest", word: "Chest", ua: "скриня", img: "Minecraft/chest-removebg-preview.png", example: "They will open the secret chest." },
+        { id: "boat", word: "Boat", ua: "човен", img: "https://i.postimg.cc/KjYQk0qw/oak-boat.png", example: "We will sail in an oak boat." },
+        { id: "map", word: "Map", ua: "карта", img: "https://i.postimg.cc/x8dgJ6xZ/filled-map.png", example: "She will read the treasure map." },
+        { id: "book", word: "Book", ua: "книга", img: "https://i.postimg.cc/5ytpYs7k/book.png", example: "I will write a story in my book." },
+        { id: "torch", word: "Torch", ua: "смолоскип", img: "https://i.postimg.cc/gj04XgSS/torch.png", example: "Steve will light a bright torch." }
+      ],
+      vaultItems: [
+        { id: "art_emerald", name: "Shiny Emerald", cost: 20, img: "Minecraft/emerald.png", sentence: "I will trade this shiny emerald with a friendly villager tomorrow!" },
+        { id: "art_clock", name: "Golden Clock", cost: 25, img: "Minecraft/clock.png", sentence: "This golden clock will tell us the time inside dark caves!" },
+        { id: "art_compass", name: "Explorer Compass", cost: 30, img: "Minecraft/compass.png", sentence: "Our magic compass will guide us safely back home!" },
+        { id: "art_spyglass", name: "Copper Spyglass", cost: 35, img: "Minecraft/spyglass.png", sentence: "Alex will look through the spyglass and spot the treasure island!" },
+        { id: "art_bottle", name: "Bottle o' Enchanting", cost: 40, img: "Minecraft/experience_bottle.png", sentence: "This magic bottle will give us extra XP for our next quest!" },
+        { id: "art_book", name: "Enchanted Book", cost: 50, img: "Minecraft/enchanted_book.png", sentence: "Steve will read the enchanted book and learn a secret spell!" },
+        { id: "art_heart", name: "Heart of the Sea", cost: 65, img: "Minecraft/heart_of_the_sea.png", sentence: "The Heart of the Sea will help us breathe deep under the ocean!" },
+        { id: "art_trident", name: "Ocean Trident", cost: 80, img: "Minecraft/trident.png", sentence: "We will use the mighty trident to protect our oak boat!" },
+        { id: "art_star", name: "Nether Star", cost: 100, img: "Minecraft/nether_star.png", sentence: "The bright Nether Star will light up our whole expedition camp!" },
+        { id: "art_egg", name: "Dragon Egg", cost: 140, img: "Minecraft/dragon_egg.png", sentence: "One day, this legendary Dragon Egg will become our greatest trophy!" }
+      ],
+      game1Pool: [
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["Steve", "will", "eat", "a sweet apple", "tomorrow", "."], ans: "Steve will eat a sweet apple tomorrow .", mob: "steve" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["We", "will", "sail", "in", "an oak boat", "."], ans: "We will sail in an oak boat .", mob: "boat" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["Alex", "will", "read", "the treasure map", "."], ans: "Alex will read the treasure map .", mob: "alex" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["I", "will", "sleep", "in", "my red bed", "tonight", "."], ans: "I will sleep in my red bed tonight .", mob: "bed" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["They", "will", "open", "the secret chest", "soon", "."], ans: "They will open the secret chest soon .", mob: "chest" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["He", "will", "close", "the oak door", "at night", "."], ans: "He will close the oak door at night .", mob: "door" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["She", "will", "light", "a bright torch", "."], ans: "She will light a bright torch .", mob: "torch" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["We", "will", "pack", "fresh bread", "tomorrow", "."], ans: "We will pack fresh bread tomorrow .", mob: "bread" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["Steve", "will", "cook", "tasty meat", "tonight", "."], ans: "Steve will cook tasty meat tonight .", mob: "meat" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["I", "will", "write", "in", "my book", "soon", "."], ans: "I will write in my book soon .", mob: "book" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["The villager", "will", "trade", "fresh bread", "."], ans: "The villager will trade fresh bread .", mob: "villager" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["My wolf", "will", "eat", "tasty meat", "."], ans: "My wolf will eat tasty meat .", mob: "wolf" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["You", "will", "find", "a hidden chest", "next week", "."], ans: "You will find a hidden chest next week .", mob: "chest" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["A parrot", "will", "fly", "over", "the boat", "."], ans: "A parrot will fly over the boat .", mob: "parrot" },
+        { type: "scramble", prompt: "Build the Future Simple sentence:", words: ["The Iron Golem", "will", "guard", "the oak door", "."], ans: "The Iron Golem will guard the oak door .", mob: "golem" },
+        { type: "mc", q: "Steve ___ eat a red apple tomorrow.", options: ["will", "is", "does"], ans: "will", mob: "apple" },
+        { type: "mc", q: "Alex will ___ the treasure map soon.", options: ["read", "reads", "reading"], ans: "read", mob: "map" },
+        { type: "mc", q: "We ___ sail in an oak boat next week.", options: ["will", "are", "do"], ans: "will", mob: "boat" },
+        { type: "mc", q: "I will ___ in my warm red bed tonight.", options: ["sleep", "sleeps", "sleeping"], ans: "sleep", mob: "bed" },
+        { type: "mc", q: "He will ___ the oak door before sunset.", options: ["close", "closes", "closing"], ans: "close", mob: "door" },
+        { type: "mc", q: "They ___ open the treasure chest tomorrow.", options: ["will", "were", "does"], ans: "will", mob: "chest" },
+        { type: "mc", q: "She will ___ a bright torch in the cave.", options: ["light", "lights", "lighting"], ans: "light", mob: "torch" },
+        { type: "mc", q: "You will ___ fresh bread for lunch.", options: ["bake", "bakes", "baking"], ans: "bake", mob: "bread" },
+        { type: "mc", q: "Steve will ___ meat on the campfire.", options: ["cook", "cooks", "cooking"], ans: "cook", mob: "meat" },
+        { type: "mc", q: "I ___ write a new story in my book.", options: ["will", "am", "do"], ans: "will", mob: "book" },
+        { type: "mc", q: "The villager will ___ us a map tomorrow.", options: ["give", "gives", "giving"], ans: "give", mob: "villager" },
+        { type: "mc", q: "My cat will ___ near the red bed.", options: ["sit", "sits", "sitting"], ans: "sit", mob: "cat" },
+        { type: "mc", q: "An axolotl ___ swim beside our boat.", options: ["will", "is", "does"], ans: "will", mob: "axolotl" },
+        { type: "mc", q: "A fox will ___ a sweet apple soon.", options: ["find", "finds", "finding"], ans: "find", mob: "fox" },
+        { type: "mc", q: "We will ___ torches inside our camp.", options: ["place", "places", "placing"], ans: "place", mob: "torch" },
+        { type: "mc", q: "Alex ___ pack bread and meat tonight.", options: ["will", "does", "is"], ans: "will", mob: "alex" },
+        { type: "mc", q: "He will ___ a strong oak boat tomorrow.", options: ["craft", "crafts", "crafting"], ans: "craft", mob: "boat" },
+        { type: "mc", q: "They will ___ diamonds in the chest.", options: ["keep", "keeps", "keeping"], ans: "keep", mob: "chest" },
+        { type: "mc", q: "She ___ draw a big island on the map.", options: ["will", "is", "does"], ans: "will", mob: "map" },
+        { type: "mc", q: "The Iron Golem will ___ our village tonight.", options: ["protect", "protects", "protecting"], ans: "protect", mob: "golem" },
+        { type: "mc", q: "I will ___ my magic book next Monday.", options: ["open", "opens", "opening"], ans: "open", mob: "book" },
+        { type: "mc", q: "Steve ___ carry ten torches into the mine.", options: ["will", "am", "are"], ans: "will", mob: "steve" },
+        { type: "mc", q: "My wolf will ___ tasty meat after the quest.", options: ["eat", "eats", "eating"], ans: "eat", mob: "wolf" },
+        { type: "mc", q: "We will ___ a cozy house with an oak door.", options: ["build", "builds", "building"], ans: "build", mob: "door" },
+        { type: "mc", q: "You ___ see the secret island very soon.", options: ["will", "are", "does"], ans: "will", mob: "map" },
+        { type: "mc", q: "A pink pig will ___ near our bread farm.", options: ["walk", "walks", "walking"], ans: "walk", mob: "pig" },
+        { type: "mc", q: "Bees will ___ around the apple tree tomorrow.", options: ["fly", "flies", "flying"], ans: "fly", mob: "bee" },
+        { type: "mc", q: "Alex will ___ her red bed inside the tent.", options: ["put", "puts", "putting"], ans: "put", mob: "bed" },
+        { type: "mc", q: "The squid ___ swim under our oak boat.", options: ["will", "is", "do"], ans: "will", mob: "squid" },
+        { type: "mc", q: "He will ___ a sweet apple to his horse.", options: ["give", "gives", "giving"], ans: "give", mob: "apple" },
+        { type: "mc", q: "We will ___ our expedition early tomorrow.", options: ["start", "starts", "starting"], ans: "start", mob: "steve" },
+        { type: "mc", q: "She will ___ the heavy chest with a key.", options: ["unlock", "unlocks", "unlocking"], ans: "unlock", mob: "chest" },
+        { type: "mc", q: "They ___ bring extra bread and apples.", options: ["will", "are", "does"], ans: "will", mob: "bread" },
+        { type: "mc", q: "Steve will ___ a map of the dark forest.", options: ["make", "makes", "making"], ans: "make", mob: "map" },
+        { type: "mc", q: "I will ___ a bright torch on the wall.", options: ["hang", "hangs", "hanging"], ans: "hang", mob: "torch" }
+      ],
+      game2Pool: [
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["Steve", "won't", "forget", "the treasure map", "."], ans: "Steve won't forget the treasure map .", mob: "map" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["I", "won't", "open", "the door", "at night", "."], ans: "I won't open the door at night .", mob: "door" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["Alex", "won't", "lose", "her magic book", "."], ans: "Alex won't lose her magic book .", mob: "book" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["We", "won't", "eat", "raw meat", "tonight", "."], ans: "We won't eat raw meat tonight .", mob: "meat" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["They", "won't", "sail", "in", "a storm", "."], ans: "They won't sail in a storm .", mob: "boat" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["A Creeper", "won't", "break", "our chest", "."], ans: "A Creeper won't break our chest .", mob: "creeper" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["He", "won't", "sleep", "without", "a red bed", "."], ans: "He won't sleep without a red bed .", mob: "bed" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["You", "won't", "walk", "without", "a torch", "."], ans: "You won't walk without a torch .", mob: "torch" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["Zombies", "won't", "enter", "the oak door", "."], ans: "Zombies won't enter the oak door .", mob: "zombie" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["She", "won't", "drop", "the fresh bread", "."], ans: "She won't drop the fresh bread .", mob: "bread" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["The cat", "won't", "eat", "an apple", "."], ans: "The cat won't eat an apple .", mob: "cat" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["We", "won't", "leave", "our boat", "behind", "."], ans: "We won't leave our boat behind .", mob: "boat" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["The Skeleton", "won't", "find", "our camp", "."], ans: "The Skeleton won't find our camp .", mob: "skeleton" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["I", "won't", "waste", "my torches", "tomorrow", "."], ans: "I won't waste my torches tomorrow .", mob: "torch" },
+        { type: "scramble", prompt: "Build the negative Future Simple sentence:", words: ["An Enderman", "won't", "swim", "near", "our boat", "."], ans: "An Enderman won't swim near our boat .", mob: "enderman" },
+        { type: "mc", q: "Steve ___ go into the dark cave without a torch.", options: ["won't", "don't", "isn't"], ans: "won't", mob: "torch" },
+        { type: "mc", q: "Alex won't ___ the treasure map at home.", options: ["leave", "leaves", "leaving"], ans: "leave", mob: "map" },
+        { type: "mc", q: "We ___ eat raw meat on our trip.", options: ["won't", "aren't", "doesn't"], ans: "won't", mob: "meat" },
+        { type: "mc", q: "I won't ___ the oak door for a Creeper!", options: ["open", "opens", "opening"], ans: "open", mob: "creeper" },
+        { type: "mc", q: "They ___ break our red bed tomorrow.", options: ["won't", "don't", "isn't"], ans: "won't", mob: "bed" },
+        { type: "mc", q: "He won't ___ in an oak boat on dry sand.", options: ["sail", "sails", "sailing"], ans: "sail", mob: "boat" },
+        { type: "mc", q: "A Zombie ___ like bright torches.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "zombie" },
+        { type: "mc", q: "She won't ___ her favorite book in the rain.", options: ["drop", "drops", "dropping"], ans: "drop", mob: "book" },
+        { type: "mc", q: "You ___ feel hungry with fresh bread and apples.", options: ["won't", "doesn't", "isn't"], ans: "won't", mob: "bread" },
+        { type: "mc", q: "The villager won't ___ the trapped chest.", options: ["touch", "touches", "touching"], ans: "touch", mob: "chest" },
+        { type: "mc", q: "Cats ___ run away from our cozy camp.", options: ["won't", "isn't", "doesn't"], ans: "won't", mob: "cat" },
+        { type: "mc", q: "Steve won't ___ his red bed in the Nether!", options: ["use", "uses", "using"], ans: "use", mob: "bed" },
+        { type: "mc", q: "We ___ get lost because we have a filled map.", options: ["won't", "aren't", "doesn't"], ans: "won't", mob: "map" },
+        { type: "mc", q: "My wolf won't ___ a sweet apple.", options: ["eat", "eats", "eating"], ans: "eat", mob: "wolf" },
+        { type: "mc", q: "An Enderman ___ jump into the ocean water.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "enderman" },
+        { type: "mc", q: "I won't ___ my torches in the river.", options: ["put", "puts", "putting"], ans: "put", mob: "torch" },
+        { type: "mc", q: "Alex ___ forget to pack tasty meat.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "alex" },
+        { type: "mc", q: "They won't ___ the heavy chest alone.", options: ["carry", "carries", "carrying"], ans: "carry", mob: "chest" },
+        { type: "mc", q: "The Iron Golem ___ hurt our friendly parrot.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "golem" },
+        { type: "mc", q: "He won't ___ out of the boat in deep water.", options: ["jump", "jumps", "jumping"], ans: "jump", mob: "boat" },
+        { type: "mc", q: "A Spider ___ open the closed oak door.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "spider" },
+        { type: "mc", q: "We won't ___ all our fresh bread on day one.", options: ["finish", "finishes", "finishing"], ans: "finish", mob: "bread" },
+        { type: "mc", q: "She ___ read the book in the dark.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "book" },
+        { type: "mc", q: "Pigs won't ___ spicy meat.", options: ["eat", "eats", "eating"], ans: "eat", mob: "pig" },
+        { type: "mc", q: "I ___ sleep until the sun goes down.", options: ["won't", "doesn't", "isn't"], ans: "won't", mob: "bed" },
+        { type: "mc", q: "Steve won't ___ the treasure chest unlocked.", options: ["leave", "leaves", "leaving"], ans: "leave", mob: "chest" },
+        { type: "mc", q: "Creepers ___ come near our cute cat.", options: ["won't", "isn't", "doesn't"], ans: "won't", mob: "creeper" },
+        { type: "mc", q: "You won't ___ a boat inside a small house.", options: ["need", "needs", "needing"], ans: "need", mob: "boat" },
+        { type: "mc", q: "Alex won't ___ her map to a Skeleton.", options: ["show", "shows", "showing"], ans: "show", mob: "skeleton" },
+        { type: "mc", q: "The bee ___ sting Steve tomorrow.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "bee" },
+        { type: "mc", q: "They won't ___ their torches during the bright day.", options: ["waste", "wastes", "wasting"], ans: "waste", mob: "torch" },
+        { type: "mc", q: "A cow ___ climb onto the red bed.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "cow" },
+        { type: "mc", q: "He won't ___ the oak door open at midnight.", options: ["keep", "keeps", "keeping"], ans: "keep", mob: "door" },
+        { type: "mc", q: "We ___ stop our adventure before we find the island!", options: ["won't", "doesn't", "isn't"], ans: "won't", mob: "steve" },
+        { type: "mc", q: "She won't ___ an old apple from the ground.", options: ["take", "takes", "taking"], ans: "take", mob: "apple" }
+      ],
+      game3Pool: [
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "Steve", "eat", "a sweet apple", "?"], ans: "Will Steve eat a sweet apple ?", mob: "apple" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "we", "sail", "in", "an oak boat", "?"], ans: "Will we sail in an oak boat ?", mob: "boat" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "Alex", "read", "the treasure map", "?"], ans: "Will Alex read the treasure map ?", mob: "map" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "you", "sleep", "in", "the red bed", "?"], ans: "Will you sleep in the red bed ?", mob: "bed" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "they", "open", "the secret chest", "?"], ans: "Will they open the secret chest ?", mob: "chest" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "he", "close", "the oak door", "?"], ans: "Will he close the oak door ?", mob: "door" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "she", "light", "a bright torch", "?"], ans: "Will she light a bright torch ?", mob: "torch" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "we", "pack", "fresh bread", "tomorrow", "?"], ans: "Will we pack fresh bread tomorrow ?", mob: "bread" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "Steve", "cook", "tasty meat", "tonight", "?"], ans: "Will Steve cook tasty meat tonight ?", mob: "meat" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "you", "write", "in", "your book", "?"], ans: "Will you write in your book ?", mob: "book" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "the villager", "sell", "fresh bread", "?"], ans: "Will the villager sell fresh bread ?", mob: "villager" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "your wolf", "guard", "our camp", "?"], ans: "Will your wolf guard our camp ?", mob: "wolf" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "an axolotl", "swim", "with", "us", "?"], ans: "Will an axolotl swim with us ?", mob: "axolotl" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "they", "find", "the hidden chest", "?"], ans: "Will they find the hidden chest ?", mob: "chest" },
+        { type: "scramble", prompt: "Put the words in order to ask a question:", words: ["Will", "she", "bring", "extra torches", "soon", "?"], ans: "Will she bring extra torches soon ?", mob: "torch" },
+        { type: "mc", q: "___ you pack fresh bread tomorrow?", options: ["Will", "Do", "Are"], ans: "Will", mob: "bread" },
+        { type: "mc", q: "Will Steve ___ the oak boat tonight?", options: ["craft", "crafts", "crafting"], ans: "craft", mob: "boat" },
+        { type: "mc", q: "___ Alex find the treasure chest soon?", options: ["Will", "Does", "Is"], ans: "Will", mob: "chest" },
+        { type: "mc", q: "Will they ___ the oak door before night?", options: ["close", "closes", "closing"], ans: "close", mob: "door" },
+        { type: "mc", q: "___ we need bright torches in the cave?", options: ["Will", "Are", "Do"], ans: "Will", mob: "torch" },
+        { type: "mc", q: "Will she ___ the treasure map carefully?", options: ["read", "reads", "reading"], ans: "read", mob: "map" },
+        { type: "mc", q: "___ he sleep in the red bed tonight?", options: ["Will", "Does", "Is"], ans: "Will", mob: "bed" },
+        { type: "mc", q: "Will I ___ a sweet apple on the island?", options: ["find", "finds", "finding"], ans: "find", mob: "apple" },
+        { type: "mc", q: "___ Steve cook tasty meat for dinner?", options: ["Will", "Does", "Is"], ans: "Will", mob: "meat" },
+        { type: "mc", q: "Will you ___ a story in your book?", options: ["write", "writes", "writing"], ans: "write", mob: "book" },
+        { type: "mc", q: "___ the Iron Golem protect our oak door?", options: ["Will", "Does", "Is"], ans: "Will", mob: "golem" },
+        { type: "mc", q: "Will a parrot ___ onto Steve's shoulder?", options: ["fly", "flies", "flying"], ans: "fly", mob: "parrot" },
+        { type: "mc", q: "___ villagers trade bread and apples tomorrow?", options: ["Will", "Are", "Do"], ans: "Will", mob: "villager" },
+        { type: "mc", q: "Will your cat ___ the Creepers away?", options: ["scare", "scares", "scaring"], ans: "scare", mob: "cat" },
+        { type: "mc", q: "___ we sail across the blue ocean next week?", options: ["Will", "Are", "Do"], ans: "Will", mob: "boat" },
+        { type: "mc", q: "Will Alex ___ a torch near the chest?", options: ["place", "places", "placing"], ans: "place", mob: "torch" },
+        { type: "mc", q: "___ a fox sleep under the apple tree?", options: ["Will", "Does", "Is"], ans: "Will", mob: "fox" },
+        { type: "mc", q: "Will they ___ the red bed inside the cabin?", options: ["put", "puts", "putting"], ans: "put", mob: "bed" },
+        { type: "mc", q: "___ he open the mystery book tonight?", options: ["Will", "Does", "Is"], ans: "Will", mob: "book" },
+        { type: "mc", q: "Will we ___ enough meat for the whole trip?", options: ["have", "has", "having"], ans: "have", mob: "meat" },
+        { type: "mc", q: "___ you draw a map of the new island?", options: ["Will", "Are", "Do"], ans: "Will", mob: "map" },
+        { type: "mc", q: "Will the wolf ___ tasty meat from Steve?", options: ["eat", "eats", "eating"], ans: "eat", mob: "wolf" },
+        { type: "mc", q: "___ the oak door stop the Zombies?", options: ["Will", "Does", "Is"], ans: "Will", mob: "zombie" },
+        { type: "mc", q: "Will she ___ fresh bread in the furnace?", options: ["bake", "bakes", "baking"], ans: "bake", mob: "bread" },
+        { type: "mc", q: "___ I see a glowing squid in the sea?", options: ["Will", "Am", "Do"], ans: "Will", mob: "squid" },
+        { type: "mc", q: "Will Steve ___ gold inside the chest?", options: ["discover", "discovers", "discovering"], ans: "discover", mob: "chest" },
+        { type: "mc", q: "___ bees visit the apple orchard tomorrow?", options: ["Will", "Are", "Do"], ans: "Will", mob: "bee" },
+        { type: "mc", q: "Will Alex ___ her bright torch in the tunnel?", options: ["hold", "holds", "holding"], ans: "hold", mob: "torch" },
+        { type: "mc", q: "___ they build a dock for our oak boat?", options: ["Will", "Are", "Do"], ans: "Will", mob: "boat" },
+        { type: "mc", q: "Will the villager ___ us a secret book?", options: ["give", "gives", "giving"], ans: "give", mob: "book" },
+        { type: "mc", q: "___ you share your sweet apple with Alex?", options: ["Will", "Are", "Do"], ans: "Will", mob: "apple" },
+        { type: "mc", q: "Will we ___ safe behind the oak door?", options: ["be", "is", "are"], ans: "be", mob: "door" },
+        { type: "mc", q: "___ Steve wake up early in his red bed?", options: ["Will", "Does", "Is"], ans: "Will", mob: "bed" },
+        { type: "mc", q: "Will they ___ the map before sailing?", options: ["check", "checks", "checking"], ans: "check", mob: "map" },
+        { type: "mc", q: "___ our expedition be fun tomorrow?", options: ["Will", "Is", "Does"], ans: "Will", mob: "steve" }
+      ],
+      game4Pool: [
+        { type: "scramble", prompt: "Build the affirmative sentence (+):", words: ["Steve", "will", "light", "a bright torch", "."], ans: "Steve will light a bright torch .", mob: "torch" },
+        { type: "scramble", prompt: "Build the negative sentence (-):", words: ["We", "won't", "forget", "the treasure map", "."], ans: "We won't forget the treasure map .", mob: "map" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Will", "Alex", "sail", "the oak boat", "?"], ans: "Will Alex sail the oak boat ?", mob: "boat" },
+        { type: "scramble", prompt: "Build the affirmative sentence (+):", words: ["I", "will", "pack", "fresh bread", "tomorrow", "."], ans: "I will pack fresh bread tomorrow .", mob: "bread" },
+        { type: "scramble", prompt: "Build the negative sentence (-):", words: ["He", "won't", "open", "the oak door", "."], ans: "He won't open the oak door .", mob: "door" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Will", "you", "eat", "a sweet apple", "?"], ans: "Will you eat a sweet apple ?", mob: "apple" },
+        { type: "scramble", prompt: "Build the affirmative sentence (+):", words: ["They", "will", "find", "a secret chest", "."], ans: "They will find a secret chest .", mob: "chest" },
+        { type: "scramble", prompt: "Build the negative sentence (-):", words: ["She", "won't", "eat", "raw meat", "."], ans: "She won't eat raw meat .", mob: "meat" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Will", "he", "sleep", "in", "his red bed", "?"], ans: "Will he sleep in his red bed ?", mob: "bed" },
+        { type: "scramble", prompt: "Build the affirmative sentence (+):", words: ["Alex", "will", "read", "her magic book", "."], ans: "Alex will read her magic book .", mob: "book" },
+        { type: "scramble", prompt: "Build the negative sentence (-):", words: ["A Creeper", "won't", "touch", "our boat", "."], ans: "A Creeper won't touch our boat .", mob: "creeper" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Will", "they", "cook", "tasty meat", "tonight", "?"], ans: "Will they cook tasty meat tonight ?", mob: "meat" },
+        { type: "scramble", prompt: "Build the affirmative sentence (+):", words: ["We", "will", "close", "the oak door", "soon", "."], ans: "We will close the oak door soon .", mob: "door" },
+        { type: "scramble", prompt: "Build the negative sentence (-):", words: ["I", "won't", "lose", "my bright torch", "."], ans: "I won't lose my bright torch .", mob: "torch" },
+        { type: "scramble", prompt: "Build the question (?):", words: ["Will", "Steve", "open", "the chest", "tomorrow", "?"], ans: "Will Steve open the chest tomorrow ?", mob: "chest" },
+        { type: "mc", q: "Steve ___ sail to the island tomorrow.", options: ["will", "is", "does"], ans: "will", mob: "boat" },
+        { type: "mc", q: "I ___ open the oak door for a Zombie!", options: ["won't", "don't", "isn't"], ans: "won't", mob: "zombie" },
+        { type: "mc", q: "___ Alex bring a filled map?", options: ["Will", "Does", "Is"], ans: "Will", mob: "map" },
+        { type: "mc", q: "We will ___ fresh bread in the morning.", options: ["eat", "eats", "eating"], ans: "eat", mob: "bread" },
+        { type: "mc", q: "He won't ___ his red bed in the cave.", options: ["forget", "forgets", "forgetting"], ans: "forget", mob: "bed" },
+        { type: "mc", q: "Will you ___ a bright torch tonight?", options: ["light", "lights", "lighting"], ans: "light", mob: "torch" },
+        { type: "mc", q: "Alex will ___ a story in her book.", options: ["write", "writes", "writing"], ans: "write", mob: "book" },
+        { type: "mc", q: "A cat ___ eat a hard apple.", options: ["won't", "don't", "aren't"], ans: "won't", mob: "cat" },
+        { type: "mc", q: "___ they open the trapped chest?", options: ["Will", "Do", "Are"], ans: "Will", mob: "chest" },
+        { type: "mc", q: "Steve will ___ tasty meat on the fire.", options: ["cook", "cooks", "cooking"], ans: "cook", mob: "meat" },
+        { type: "mc", q: "They won't ___ in a tiny boat during a storm.", options: ["sail", "sails", "sailing"], ans: "sail", mob: "boat" },
+        { type: "mc", q: "Will the villager ___ us a new map?", options: ["trade", "trades", "trading"], ans: "trade", mob: "villager" },
+        { type: "mc", q: "I ___ sleep early in my red bed tonight.", options: ["will", "am", "do"], ans: "will", mob: "bed" },
+        { type: "mc", q: "She ___ leave the oak door open at night.", options: ["won't", "doesn't", "isn't"], ans: "won't", mob: "door" },
+        { type: "mc", q: "___ my wolf like this tasty meat?", options: ["Will", "Does", "Is"], ans: "Will", mob: "wolf" },
+        { type: "mc", q: "You will ___ diamonds inside the chest soon!", options: ["find", "finds", "finding"], ans: "find", mob: "chest" },
+        { type: "mc", q: "An Enderman won't ___ near the ocean water.", options: ["swim", "swims", "swimming"], ans: "swim", mob: "enderman" },
+        { type: "mc", q: "Will we ___ sweet apples from the oak tree?", options: ["pick", "picks", "picking"], ans: "pick", mob: "apple" },
+        { type: "mc", q: "The Iron Golem ___ guard our camp tonight.", options: ["will", "is", "does"], ans: "will", mob: "golem" },
+        { type: "mc", q: "We won't ___ lost with our treasure map.", options: ["get", "gets", "getting"], ans: "get", mob: "map" },
+        { type: "mc", q: "___ Steve read the magic book tomorrow?", options: ["Will", "Does", "Is"], ans: "Will", mob: "book" },
+        { type: "mc", q: "Alex will ___ ten bright torches in her bag.", options: ["carry", "carries", "carrying"], ans: "carry", mob: "torch" },
+        { type: "mc", q: "Creepers ___ come close to our cute cat.", options: ["won't", "isn't", "doesn't"], ans: "won't", mob: "creeper" },
+        { type: "mc", q: "Will she ___ fresh bread for the journey?", options: ["pack", "packs", "packing"], ans: "pack", mob: "bread" },
+        { type: "mc", q: "He ___ craft an oak door next week.", options: ["will", "is", "does"], ans: "will", mob: "door" },
+        { type: "mc", q: "I won't ___ my boat on the rocky beach.", options: ["break", "breaks", "breaking"], ans: "break", mob: "boat" },
+        { type: "mc", q: "___ you share your bread and meat?", options: ["Will", "Do", "Are"], ans: "Will", mob: "meat" },
+        { type: "mc", q: "A parrot will ___ over the treasure island.", options: ["fly", "flies", "flying"], ans: "fly", mob: "parrot" },
+        { type: "mc", q: "Skeletons won't ___ into our locked house.", options: ["walk", "walks", "walking"], ans: "walk", mob: "skeleton" },
+        { type: "mc", q: "Will an axolotl ___ beside our oak boat?", options: ["swim", "swims", "swimming"], ans: "swim", mob: "axolotl" },
+        { type: "mc", q: "They ___ keep the gold safe in the chest.", options: ["will", "are", "do"], ans: "will", mob: "chest" },
+        { type: "mc", q: "She won't ___ her book in the dark cave.", options: ["read", "reads", "reading"], ans: "read", mob: "book" },
+        { type: "mc", q: "___ Steve eat a red apple after mining?", options: ["Will", "Does", "Is"], ans: "Will", mob: "apple" },
+        { type: "mc", q: "We will ___ warm near the bright torch.", options: ["stay", "stays", "staying"], ans: "stay", mob: "torch" },
+        { type: "mc", q: "Tomorrow ___ be a great day for our quest!", options: ["will", "is", "does"], ans: "will", mob: "steve" }
+      ],
+      game5Pool: [
+        { clue: "Steve is holding an oak boat near the calm blue ocean.", img: "boat", subject: "Steve", aux: "will", verb: "sail", verbOpts: ["sail", "sails", "sailing"], rest: "across the sea soon.", reasonUA: "У Стіва є човен біля океану, тому він попливе (will)!" },
+        { clue: "A Creeper sees a cute cat sitting near our oak door!", img: "creeper", subject: "The Creeper", aux: "won't", verb: "come", verbOpts: ["come", "comes", "coming"], rest: "near our door.", reasonUA: "Кріпери бояться котів, тому він НЕ підійде (won't)!" },
+        { clue: "It is very dark inside the stone cave. Alex has a torch.", img: "torch", subject: "Alex", aux: "will", verb: "light", verbOpts: ["light", "lights", "lighting"], rest: "her bright torch.", reasonUA: "У печері темно, тому Алекс запалить смолоскип (will)!" },
+        { clue: "Steve is very hungry and has a sweet red apple in his hand.", img: "apple", subject: "Steve", aux: "will", verb: "eat", verbOpts: ["eat", "eats", "eating"], rest: "the sweet apple.", reasonUA: "Стів голодний і тримає яблуко, тому він його з'їсть (will)!" },
+        { clue: "An Enderman stands next to deep ocean water. He hates water!", img: "enderman", subject: "The Enderman", aux: "won't", verb: "swim", verbOpts: ["swim", "swims", "swimming"], rest: "in the ocean.", reasonUA: "Ендермени ненавидять воду, тому він НЕ попливе (won't)!" },
+        { clue: "Night is falling and Steve is very sleepy next to his red bed.", img: "bed", subject: "Steve", aux: "will", verb: "sleep", verbOpts: ["sleep", "sleeps", "sleeping"], rest: "in his red bed.", reasonUA: "Стів хоче спати біля ліжка, тому він засне (will)!" },
+        { clue: "Alex found a golden key right next to a secret chest!", img: "chest", subject: "Alex", aux: "will", verb: "open", verbOpts: ["open", "opens", "opening"], rest: "the secret chest.", reasonUA: "Алекс знайшла ключ біля скрині, тому вона відкриє її (will)!" },
+        { clue: "Zombies are outside! We have a strong oak door.", img: "door", subject: "We", aux: "won't", verb: "open", verbOpts: ["open", "opens", "opening"], rest: "the door for Zombies.", reasonUA: "Ззовні зомбі, тому ми НЕ відкриємо двері (won't)!" },
+        { clue: "The meat is raw and cold. Steve has a hot campfire.", img: "meat", subject: "Steve", aux: "will", verb: "cook", verbOpts: ["cook", "cooks", "cooking"], rest: "the meat tonight.", reasonUA: "М'ясо сире, але є багаття, тому Стів його приготує (will)!" },
+        { clue: "Alex has a filled treasure map. She knows the exact way!", img: "map", subject: "Alex", aux: "won't", verb: "get", verbOpts: ["get", "gets", "getting"], rest: "lost on the island.", reasonUA: "У Алекс є карта, тому вона НЕ заблукає (won't)!" },
+        { clue: "The villager baked lots of warm fresh bread for the travelers.", img: "bread", subject: "We", aux: "will", verb: "pack", verbOpts: ["pack", "packs", "packing"], rest: "fresh bread for the trip.", reasonUA: "Хліб свіжий і теплий, тому ми візьмемо його в дорогу (will)!" },
+        { clue: "Steve wants to remember his adventure. He has a pen and a book.", img: "book", subject: "Steve", aux: "will", verb: "write", verbOpts: ["write", "writes", "writing"], rest: "a story in his book.", reasonUA: "Стів хоче записати пригоду, тому він напише історію (will)!" },
+        { clue: "The sun is rising! A Zombie is standing in the open field.", img: "zombie", subject: "The Zombie", aux: "won't", verb: "stay", verbOpts: ["stay", "stays", "staying"], rest: "in the bright sun.", reasonUA: "Зомбі горять на сонці, тому він НЕ залишиться там (won't)!" },
+        { clue: "A friendly wolf smells tasty cooked meat in Steve's hand.", img: "wolf", subject: "The wolf", aux: "will", verb: "eat", verbOpts: ["eat", "eats", "eating"], rest: "the tasty meat.", reasonUA: "Вовки обожнюють м'ясо, тому він його з'їсть (will)!" },
+        { clue: "It is a bright sunny morning. We don't need extra light outside.", img: "torch", subject: "We", aux: "won't", verb: "waste", verbOpts: ["waste", "wastes", "wasting"], rest: "our torches in the sun.", reasonUA: "Надворі світлий день, тому ми НЕ витрачатимемо смолоскипи (won't)!" },
+        { clue: "An Iron Golem sees a Skeleton near our village.", img: "golem", subject: "The Iron Golem", aux: "will", verb: "protect", verbOpts: ["protect", "protects", "protecting"], rest: "the villagers.", reasonUA: "Залізний Ґолем захищає село, тому він захистить жителів (will)!" },
+        { clue: "There is a huge storm with giant waves on the sea tonight.", img: "boat", subject: "Alex", aux: "won't", verb: "sail", verbOpts: ["sail", "sails", "sailing"], rest: "in the dangerous storm.", reasonUA: "На морі небезпечний шторм, тому Алекс НЕ попливе (won't)!" },
+        { clue: "A cute pink axolotl jumps into the cool ocean water.", img: "axolotl", subject: "The axolotl", aux: "will", verb: "swim", verbOpts: ["swim", "swims", "swimming"], rest: "beside our boat.", reasonUA: "Аксолотлі люблять воду, тому він попливе поруч (will)!" },
+        { clue: "A hungry pig looks at a heavy stone book. Pigs don't read!", img: "pig", subject: "The pig", aux: "won't", verb: "read", verbOpts: ["read", "reads", "reading"], rest: "the magic book.", reasonUA: "Свинки не вміють читати, тому вона НЕ читатиме книгу (won't)!" },
+        { clue: "Steve is tired after a long trip. He has a cozy red bed.", img: "bed", subject: "He", aux: "will", verb: "rest", verbOpts: ["rest", "rests", "resting"], rest: "in his red bed tonight.", reasonUA: "Стів втомився біля ліжка, тому він відпочине (will)!" },
+        { clue: "A Spider is trying to get in, but the oak door is locked tight!", img: "spider", subject: "The Spider", aux: "won't", verb: "enter", verbOpts: ["enter", "enters", "entering"], rest: "our safe house.", reasonUA: "Двері міцно зачинені, тому павук НЕ зайде (won't)!" },
+        { clue: "Alex puts a shiny treasure map on the crafting table.", img: "map", subject: "She", aux: "will", verb: "find", verbOpts: ["find", "finds", "finding"], rest: "the secret island.", reasonUA: "Алекс вивчає карту скарбів, тому вона знайде острів (will)!" },
+        { clue: "Steve's cat sees a big red apple, but cats prefer fish!", img: "cat", subject: "The cat", aux: "won't", verb: "eat", verbOpts: ["eat", "eats", "eating"], rest: "the red apple.", reasonUA: "Котики не їдять яблука, тому котик НЕ з'їсть його (won't)!" },
+        { clue: "A colorful parrot hears happy music near our camp.", img: "parrot", subject: "The parrot", aux: "will", verb: "dance", verbOpts: ["dance", "dances", "dancing"], rest: "on the chest.", reasonUA: "Папуги в Minecraft танцюють під музику, тому він потанцює (will)!" },
+        { clue: "Steve puts all his diamonds inside the chest and locks it.", img: "chest", subject: "Steve", aux: "won't", verb: "lose", verbOpts: ["lose", "loses", "losing"], rest: "his diamonds.", reasonUA: "Стів сховав діаманти в скриню, тому він НЕ загубить їх (won't)!" },
+        { clue: "A busy bee spots sweet flowers near the apple tree.", img: "bee", subject: "The bee", aux: "will", verb: "fly", verbOpts: ["fly", "flies", "flying"], rest: "to the apple tree.", reasonUA: "Бджілка бачить квіти, тому вона полетить туди (will)!" },
+        { clue: "The oak door is wide open and it is getting dark outside!", img: "door", subject: "Alex", aux: "will", verb: "close", verbOpts: ["close", "closes", "closing"], rest: "the oak door soon.", reasonUA: "Надворі темніє, тому Алекс зачинить двері (will)!" },
+        { clue: "The meat fell into the mud! It is dirty now.", img: "meat", subject: "We", aux: "won't", verb: "eat", verbOpts: ["eat", "eats", "eating"], rest: "dirty meat.", reasonUA: "М'ясо брудне, тому ми НЕ будемо його їсти (won't)!" },
+        { clue: "Alex loves reading magic stories before bedtime.", img: "book", subject: "Alex", aux: "will", verb: "read", verbOpts: ["read", "reads", "reading"], rest: "her book tonight.", reasonUA: "Алекс любить читати перед сном, тому вона почитає книгу (will)!" },
+        { clue: "A Skeleton has no boat and cannot sail across the ocean.", img: "skeleton", subject: "The Skeleton", aux: "won't", verb: "sail", verbOpts: ["sail", "sails", "sailing"], rest: "to our island.", reasonUA: "У скелета немає човна, тому він НЕ попливе (won't)!" },
+        { clue: "Steve has lots of wheat from the village farm.", img: "bread", subject: "Steve", aux: "will", verb: "make", verbOpts: ["make", "makes", "making"], rest: "fresh bread tomorrow.", reasonUA: "У Стіва є пшениця, тому він зробить хліб (will)!" },
+        { clue: "The cave is pitch black and full of bats. Alex has no torches!", img: "torch", subject: "Alex", aux: "won't", verb: "walk", verbOpts: ["walk", "walks", "walking"], rest: "into the dark cave.", reasonUA: "У Алекс немає смолоскипів, тому вона НЕ піде в темну печеру (won't)!" },
+        { clue: "A little red fox is sleepy under the oak tree.", img: "fox", subject: "The fox", aux: "will", verb: "sleep", verbOpts: ["sleep", "sleeps", "sleeping"], rest: "under the tree.", reasonUA: "Лисичка хоче спати, тому вона засне під деревом (will)!" },
+        { clue: "A gentle cow sees Steve's iron sword, but cows are peaceful!", img: "cow", subject: "The cow", aux: "won't", verb: "fight", verbOpts: ["fight", "fights", "fighting"], rest: "any mobs.", reasonUA: "Корови мирні моби, тому вона НЕ битиметься (won't)!" },
+        { clue: "Steve is packing apples, bread, and meat for the big trip.", img: "apple", subject: "We", aux: "won't", verb: "be", verbOpts: ["be", "is", "are"], rest: "hungry tomorrow.", reasonUA: "Стів узяв багато їжі, тому ми НЕ будемо голодні (won't)!" },
+        { clue: "The villager smiles and shows us a brand new map.", img: "villager", subject: "The villager", aux: "will", verb: "trade", verbOpts: ["trade", "trades", "trading"], rest: "the map with us.", reasonUA: "Житель усміхається і показує карту, тому він обміняє її (will)!" },
+        { clue: "Our oak boat is ready at the wooden dock!", img: "boat", subject: "They", aux: "will", verb: "start", verbOpts: ["start", "starts", "starting"], rest: "the ocean quest tomorrow.", reasonUA: "Човен уже готовий, тому вони почнуть подорож (will)!" },
+        { clue: "It is rainy and cold outside. Alex wants to keep her book dry.", img: "book", subject: "Alex", aux: "won't", verb: "leave", verbOpts: ["leave", "leaves", "leaving"], rest: "her book in the rain.", reasonUA: "Надворі дощ, тому Алекс НЕ залишить книгу мокнути (won't)!" },
+        { clue: "Steve puts ten bright torches around our expedition camp.", img: "torch", subject: "Monsters", aux: "won't", verb: "spawn", verbOpts: ["spawn", "spawns", "spawning"], rest: "inside our bright camp.", reasonUA: "У таборі світло від смолоскипів, тому монстри НЕ з'являться (won't)!" },
+        { clue: "The treasure chest is glowing with gold and diamonds!", img: "chest", subject: "We", aux: "will", verb: "celebrate", verbOpts: ["celebrate", "celebrates", "celebrating"], rest: "our big victory soon!", reasonUA: "Ми знайшли скарб, тому ми відсвяткуємо перемогу (will)!" }
+      ],
+      badges: [
+        { id: "b_vocab", title: "Expedition Planner", desc: "Inspect all 10 Expedition Items & Food in the Hub.", img: "https://i.postimg.cc/x8dgJ6xZ/filled-map.png" },
+        { id: "b_game1", title: "Future Builder", desc: "Complete a round of Game 1 (Affirmative).", img: "https://i.postimg.cc/KjYQk0qw/oak-boat.png" },
+        { id: "b_game2", title: "Safe Traveler", desc: "Complete a round of Game 2 (Negative).", img: "Minecraft/Shield-removebg-preview.png" },
+        { id: "b_game3", title: "Curious Explorer", desc: "Complete a round of Game 3 (Questions).", img: "https://i.postimg.cc/gj04XgSS/torch.png" },
+        { id: "b_game4", title: "Time Master", desc: "Complete the 15-task Mixed Blitz in Game 4.", img: "Minecraft/Diamond_Sword-removebg-preview.png" },
+        { id: "b_game5", title: "Crystal Prophet", desc: "Complete 10 predictions in Villager's Fortune Teller.", img: "Minecraft/clock.png" },
+        { id: "b_totem", title: "Undying Explorer", desc: "Use the Totem of Undying to replay any round!", img: "Minecraft/𝐓𝐨𝐭𝐞𝐦_𝐎𝐟_𝐔𝐧𝐝𝐲𝐢𝐧𝐠_𖦹______-removebg-preview.png" },
+        { id: "b_captain", title: "Expedition Captain", desc: "Earn 50 total Diamonds or unlock an artifact in the Vault!", img: "Minecraft/Ender_Chest-removebg-preview.png" }
+      ]
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT & LOCAL STORAGE
+       ========================================================================= */
+    let appState = {
+      diamonds: 0,
+      totalDiamondsEarned: 0,
+      exploredVocab: [],
+      unlockedBadges: [],
+      unlockedArtifacts: [],
+      certTheme: "expedition",
+      heroName: "Future Explorer",
+      soundFX: true
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState.diamonds = parsed.diamonds || 0;
+          appState.totalDiamondsEarned = parsed.totalDiamondsEarned || appState.diamonds;
+          appState.exploredVocab = parsed.exploredVocab || [];
+          appState.unlockedBadges = parsed.unlockedBadges || [];
+          appState.unlockedArtifacts = parsed.unlockedArtifacts || [];
+          appState.certTheme = parsed.certTheme || "expedition";
+          appState.heroName = parsed.heroName || "Future Explorer";
+        }
+      } catch (e) {
+        console.warn("Storage load error:", e);
+      }
+      updateHUD();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.warn("Storage save error:", e);
+      }
+      updateHUD();
+    }
+
+    function resetAllSavedProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      appState = {
+        diamonds: 0,
+        totalDiamondsEarned: 0,
+        exploredVocab: [],
+        unlockedBadges: [],
+        unlockedArtifacts: [],
+        certTheme: "expedition",
+        heroName: "Future Explorer",
+        soundFX: true
+      };
+      renderVocabGrid();
+      renderVault();
+      renderBadgesGrid();
+      setCertificateTheme("expedition");
+      updateHUD();
+    }
+
+    function addDiamonds(amount) {
+      appState.diamonds += amount;
+      appState.totalDiamondsEarned += amount;
+      if (appState.totalDiamondsEarned >= 50) {
+        unlockBadge("b_captain");
+      }
+      saveState();
+    }
+
+    function unlockBadge(badgeId) {
+      if (!appState.unlockedBadges.includes(badgeId)) {
+        appState.unlockedBadges.push(badgeId);
+        playFanfareSound();
+        saveState();
+        renderBadgesGrid();
+      }
+    }
+
+    function updateHUD() {
+      const unlockedCount = appState.unlockedBadges.length;
+      const totalBadges = GAME_DATA.badges.length;
+
+      document.getElementById("hud-diamonds").textContent = appState.diamonds;
+      const vaultBal = document.getElementById("vault-diamonds-balance");
+      if (vaultBal) vaultBal.textContent = appState.diamonds;
+
+      const vaultOwned = document.getElementById("vault-owned-count");
+      if (vaultOwned) vaultOwned.textContent = appState.unlockedArtifacts.length;
+
+      document.getElementById("hud-badges").textContent = `${unlockedCount}/${totalBadges}`;
+      document.getElementById("vocab-explored-count").textContent = `${appState.exploredVocab.length} / 10`;
+      document.getElementById("student-name-input").value = appState.heroName;
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+
+      const lockText = document.getElementById("finale-lock-progress-text");
+      const lockBar = document.getElementById("finale-lock-bar");
+      if (lockText && lockBar) {
+        lockText.textContent = `${unlockedCount} / ${totalBadges}`;
+        lockBar.style.width = `${Math.round((unlockedCount / totalBadges) * 100)}%`;
+      }
+
+      const lockedBanner = document.getElementById("finale-locked-banner");
+      const unlockedContent = document.getElementById("finale-unlocked-content");
+      if (unlockedCount >= totalBadges) {
+        lockedBanner.classList.add("hidden");
+        unlockedContent.classList.remove("hidden");
+      } else {
+        lockedBanner.classList.remove("hidden");
+        unlockedContent.classList.add("hidden");
+      }
+    }
+
+    /* =========================================================================
+       3. WEB AUDIO API & WEB SPEECH API
+       ========================================================================= */
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSoundFX() {
+      appState.soundFX = !appState.soundFX;
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.innerHTML = appState.soundFX ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+      if (appState.soundFX) playClickSound();
+    }
+
+    function playTone(freq, duration = 0.12, type = "square", vol = 0.12) {
+      if (!appState.soundFX) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(vol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playClickSound() {
+      playTone(460, 0.06, "square", 0.08);
+    }
+
+    function playSuccessSound() {
+      playTone(523.25, 0.1, "triangle", 0.16);
+      setTimeout(() => playTone(659.25, 0.12, "triangle", 0.16), 90);
+      setTimeout(() => playTone(783.99, 0.2, "triangle", 0.18), 180);
+    }
+
+    function playErrorSound() {
+      playTone(190, 0.16, "sawtooth", 0.14);
+      setTimeout(() => playTone(145, 0.22, "sawtooth", 0.14), 140);
+    }
+
+    function playFanfareSound() {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((n, idx) => {
+        setTimeout(() => playTone(n, 0.18, "triangle", 0.18), idx * 100);
+      });
+    }
+
+    function speakText(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const indicator = document.getElementById("speech-indicator");
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      utter.rate = 0.88;
+      utter.pitch = 1.05;
+
+      utter.onstart = () => {
+        indicator.classList.remove("hidden");
+        indicator.classList.add("flex");
+      };
+      utter.onend = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+      utter.onerror = () => {
+        indicator.classList.add("hidden");
+        indicator.classList.remove("flex");
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* =========================================================================
+       4. UTILITY: FISHER-YATES SHUFFLE
+       ========================================================================= */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /* =========================================================================
+       5. SECTION 1: VOCABULARY FLIP CARDS
+       ========================================================================= */
+    function renderVocabGrid() {
+      const grid = document.getElementById("vocab-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.vocabulary.forEach((item) => {
+        const isExplored = appState.exploredVocab.includes(item.id);
+        const card = document.createElement("div");
+        card.className = "flip-card cursor-pointer";
+        card.innerHTML = `
+          <div class="flip-card-inner" id="flip-${item.id}">
+            <!-- FRONT: English + Image + Audio -->
+            <div class="flip-card-front mc-panel justify-between">
+              <div class="w-full flex justify-between items-center">
+                <span class="pixel-font text-[9px] bg-slate-900 text-sky-300 px-2 py-0.5">${isExplored ? '✓ PACKED' : 'ITEM'}</span>
+                <button onclick="event.stopPropagation(); speakText('${item.word}. ${item.example.replace(/'/g, "\\'")}')" class="mc-btn px-2.5 py-1 text-xs" style="min-height:34px;" title="Listen">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+              <img src="${item.img}" alt="${item.word}" class="w-20 h-20 object-contain my-1 drop-shadow-md">
+              <div class="text-center">
+                <h4 class="pixel-font text-sm text-slate-900">${item.word}</h4>
+                <p class="text-[11px] text-slate-700 font-semibold mt-1 leading-tight">"${item.example}"</p>
+              </div>
+              <div class="text-[10px] font-bold text-sky-800 uppercase tracking-wider">
+                <i class="fa-solid fa-rotate mr-1"></i> Click to flip card
+              </div>
+            </div>
+
+            <!-- BACK: Ukrainian Translation -->
+            <div class="flip-card-back mc-panel-dark justify-between border-4 border-amber-400">
+              <span class="pixel-font text-[9px] text-amber-300">UKRAINIAN MEANING</span>
+              <img src="${item.img}" alt="${item.word}" class="w-16 h-16 object-contain">
+              <div class="text-center">
+                <div class="text-xs text-slate-400 uppercase font-bold">${item.word}</div>
+                <div class="text-2xl font-extrabold text-amber-300 mt-1">${item.ua}</div>
+              </div>
+              <div class="text-[10px] text-slate-300">
+                <i class="fa-solid fa-rotate mr-1"></i> Click to flip back
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          playClickSound();
+          card.classList.toggle("flipped");
+          if (!appState.exploredVocab.includes(item.id)) {
+            appState.exploredVocab.push(item.id);
+            addDiamonds(2);
+            if (appState.exploredVocab.length >= 10) {
+              unlockBadge("b_vocab");
+            }
+            saveState();
+            const badgeTag = card.querySelector(".flip-card-front span");
+            if (badgeTag) badgeTag.textContent = "✓ PACKED";
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       6. UKRAINIAN ERROR EXPLAINERS (NO HINTS, SIMPLE CLEAR EXPLANATIONS)
+       ========================================================================= */
+    function explainWrongChoiceUA(qObj, selectedOpt) {
+      const sel = selectedOpt.toLowerCase();
+      const ans = qObj.ans.toLowerCase();
+
+      if (ans === "will" && qObj.q && !qObj.q.startsWith("___")) {
+        if (sel === "is" || sel === "are" || sel === "am" || sel === "were") {
+          return `❌ Слово «${selectedOpt}» не передає майбутній час перед звичайною дією. У Future Simple для майбутньої дії завжди беремо помічника «will»!`;
+        }
+        return `❌ Слово «${selectedOpt}» вживається для теперішнього часу, а тут дія відбудеться у майбутньому, тому потрібне «will»!`;
+      }
+
+      if (ans === "will" && qObj.q && qObj.q.startsWith("___")) {
+        if (sel === "do" || sel === "does") {
+          return `❌ «${selectedOpt}» починає питання про теперішній час, а ми питаємо про майбутнє! У Future Simple питання починається з «Will».`;
+        }
+        return `❌ «${selectedOpt}» не підходить для питання про майбутню дію. Щоб запитати про майбутнє, ставимо на початок «Will»!`;
+      }
+
+      if (ans === "won't") {
+        if (sel === "don't" || sel === "doesn't") {
+          return `❌ «${selectedOpt}» означає заперечення у теперішньому часі, а нам потрібне майбутнє! Для майбутнього заперечення завжди беремо «won't».`;
+        }
+        return `❌ «${selectedOpt}» не ставиться перед звичайним дієсловом у майбутньому часі. Щоб сказати «не буде», використовуємо «won't»!`;
+      }
+
+      if (ans === "be") {
+        return `❌ Після «will» або «won't» дієслово ніколи не змінюється на «${selectedOpt}»! Початкова форма завжди «be».`;
+      }
+      if (ans === "have" && sel === "has") {
+        return `❌ Після «will» або «won't» ми ніколи не ставимо «has»! Завжди використовуємо початкову форму «have».`;
+      }
+      if (sel.endsWith("ing")) {
+        return `❌ Після «will» або «won't» закінчення -ing не додається! Дієслово має бути у звичайній початковій формі (без -ing).`;
+      }
+      if (sel.endsWith("s")) {
+        return `❌ Після «will» або «won't» ми НІКОЛИ не додаємо закінчення -s до дієслова, навіть для He / She / It! Обери звичайну форму без -s.`;
+      }
+
+      return `❌ Варіант «${selectedOpt}» не підходить за правилами Future Simple. Пам'ятай: will / won't + звичайна форма дієслова!`;
+    }
+
+    function explainScrambleMistakeUA(qObj) {
+      if (qObj.ans.includes("?")) {
+        return `❌ Неправильний порядок слів! У питанні Future Simple спочатку ставимо «Will», потім ХТО (герой), потім звичайну дію, далі решту слів і знак «?».`;
+      }
+      if (qObj.ans.includes("won't")) {
+        return `❌ Неправильний порядок слів! У запереченні спочатку йде ХТО (герой), потім «won't», далі звичайна дія, решта слів і крапка.`;
+      }
+      return `❌ Неправильний порядок слів! У ствердженні Future Simple спочатку ставимо ХТО (герой), потім «will», далі звичайну дію, решту слів і крапку.`;
+    }
+
+    /* =========================================================================
+       7. MINI-GAMES ENGINE (GAMES 1, 2, 3, 4)
+       ========================================================================= */
+    let currentGameNum = 1;
+    let activeRoundQuestions = [];
+    let currentQIndex = 0;
+    let currentRoundScore = 0;
+    let questionMistakeMade = false;
+    let questionResolved = false;
+    let scramblePlacedWords = [];
+    let scrambleBankWords = [];
+
+    function selectMiniGame(gameNum) {
+      playClickSound();
+      currentGameNum = gameNum;
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`gbtn-${i}`);
+        if (i === gameNum) {
+          btn.classList.add("mc-btn-ocean");
+        } else {
+          btn.classList.remove("mc-btn-ocean");
+        }
+      }
+
+      if (gameNum === 5) {
+        document.getElementById("standard-game-wrapper").classList.add("hidden");
+        document.getElementById("game5-custom-wrapper").classList.remove("hidden");
+        startG5FortuneTeller();
+      } else {
+        document.getElementById("game5-custom-wrapper").classList.add("hidden");
+        document.getElementById("standard-game-wrapper").classList.remove("hidden");
+        startStandardGameRound(gameNum);
+      }
+    }
+
+    function startStandardGameRound(gameNum) {
+      currentQIndex = 0;
+      currentRoundScore = 0;
+
+      const titleEl = document.getElementById("active-game-title");
+      const subEl = document.getElementById("active-game-subtitle");
+      const iconEl = document.getElementById("active-game-icon");
+
+      if (gameNum === 1) {
+        titleEl.textContent = "Game 1: Affirmative Crafter (+)";
+        subEl.textContent = "10 random questions from a 50-question pool! Use WILL + base verb!";
+        iconEl.src = "https://i.postimg.cc/KjYQk0qw/oak-boat.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game1Pool).slice(0, 10);
+      } else if (gameNum === 2) {
+        titleEl.textContent = "Game 2: Negative Shield (-)";
+        subEl.textContent = "10 random questions from a 50-question pool! Use WON'T + base verb!";
+        iconEl.src = "Minecraft/Shield-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game2Pool).slice(0, 10);
+      } else if (gameNum === 3) {
+        titleEl.textContent = "Game 3: Question Explorer (?)";
+        subEl.textContent = "10 random questions from a 50-question pool! Start with WILL + subject + base verb!";
+        iconEl.src = "https://i.postimg.cc/gj04XgSS/torch.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game3Pool).slice(0, 10);
+      } else if (gameNum === 4) {
+        titleEl.textContent = "Game 4: Expedition Mixed Blitz (+ / - / ?)";
+        subEl.textContent = "15 random questions from a 50-question pool! All Future Simple rules mixed!";
+        iconEl.src = "Minecraft/Diamond_Sword-removebg-preview.png";
+        activeRoundQuestions = shuffleArray(GAME_DATA.game4Pool).slice(0, 15);
+      }
+
+      document.getElementById("round-complete-screen").classList.add("hidden");
+      document.getElementById("question-stage").classList.remove("hidden");
+      document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
+
+      renderCurrentStandardQuestion();
+    }
+
+    function renderCurrentStandardQuestion() {
+      questionMistakeMade = false;
+      questionResolved = false;
+
+      const qObj = activeRoundQuestions[currentQIndex];
+      document.getElementById("game-q-num").textContent = currentQIndex + 1;
+      document.getElementById("game-score-val").textContent = currentRoundScore;
+
+      document.getElementById("game-next-btn").classList.add("hidden");
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+
+      const mobImg = GAME_DATA.assets[qObj.mob] || GAME_DATA.assets.steve;
+      document.getElementById("question-mob-img").src = mobImg;
+
+      const tagEl = document.getElementById("question-mode-tag");
+      if (currentGameNum === 1) {
+        tagEl.textContent = "AFFIRMATIVE (+)";
+        tagEl.className = "inline-block bg-emerald-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 2) {
+        tagEl.textContent = "NEGATIVE (-)";
+        tagEl.className = "inline-block bg-rose-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else if (currentGameNum === 3) {
+        tagEl.textContent = "QUESTION (?)";
+        tagEl.className = "inline-block bg-sky-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      } else {
+        tagEl.textContent = "MIXED BLITZ";
+        tagEl.className = "inline-block bg-purple-700 text-white text-[10px] font-bold px-2 py-0.5 mb-1";
+      }
+
+      const mcContainer = document.getElementById("mc-options-container");
+      const scrambleContainer = document.getElementById("scramble-container");
+
+      if (qObj.type === "scramble") {
+        mcContainer.classList.add("hidden");
+        scrambleContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.prompt;
+        document.getElementById("scramble-submit-btn").disabled = false;
+        document.getElementById("scramble-submit-btn").classList.remove("opacity-50");
+
+        scramblePlacedWords = [];
+        scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+        renderScrambleUI();
+      } else {
+        scrambleContainer.classList.add("hidden");
+        mcContainer.classList.remove("hidden");
+        document.getElementById("question-prompt-text").textContent = qObj.q;
+
+        const shuffledOpts = shuffleArray(qObj.options);
+        mcContainer.innerHTML = "";
+        shuffledOpts.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "mc-btn py-3.5 px-4 text-sm sm:text-base font-bold transition-all";
+          btn.textContent = opt;
+          btn.onclick = () => handleMCChoice(opt, btn);
+          mcContainer.appendChild(btn);
+        });
+      }
+    }
+
+    function handleMCChoice(selectedOpt, btnEl) {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+
+      if (selectedOpt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        btnEl.classList.add("mc-btn-emerald");
+
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(2);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+
+        const fullSentence = qObj.q.replace("___", qObj.ans);
+        showFeedbackBar(true, `✅ Correct! "${fullSentence}"`);
+        speakText(fullSentence);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+      } else {
+        playErrorSound();
+        btnEl.classList.add("opacity-40", "pointer-events-none", "bg-rose-950", "text-rose-400");
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainWrongChoiceUA(qObj, selectedOpt));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function renderScrambleUI() {
+      const slotsEl = document.getElementById("scramble-target-slots");
+      const bankEl = document.getElementById("scramble-word-bank");
+
+      slotsEl.innerHTML = "";
+      if (scramblePlacedWords.length === 0) {
+        slotsEl.innerHTML = `<span class="text-xs text-slate-500 italic">Click word blocks below to place them here...</span>`;
+      } else {
+        scramblePlacedWords.forEach((wObj, idx) => {
+          const b = document.createElement("button");
+          b.className = "mc-btn mc-btn-gold px-3 py-2 text-xs sm:text-sm";
+          b.textContent = wObj.text;
+          b.onclick = () => {
+            if (questionResolved) return;
+            playClickSound();
+            scramblePlacedWords.splice(idx, 1);
+            scrambleBankWords.push(wObj);
+            renderScrambleUI();
+          };
+          slotsEl.appendChild(b);
+        });
+      }
+
+      bankEl.innerHTML = "";
+      scrambleBankWords.forEach((wObj, idx) => {
+        const b = document.createElement("button");
+        b.className = "mc-btn px-3 py-2 text-xs sm:text-sm";
+        b.textContent = wObj.text;
+        b.onclick = () => {
+          if (questionResolved) return;
+          playClickSound();
+          scrambleBankWords.splice(idx, 1);
+          scramblePlacedWords.push(wObj);
+          renderScrambleUI();
+        };
+        bankEl.appendChild(b);
+      });
+    }
+
+    function resetScrambleWords() {
+      if (questionResolved) return;
+      playClickSound();
+      const qObj = activeRoundQuestions[currentQIndex];
+      scramblePlacedWords = [];
+      scrambleBankWords = shuffleArray(qObj.words.map((w, idx) => ({ id: idx, text: w })));
+      renderScrambleUI();
+      document.getElementById("game-feedback-bar").classList.add("hidden");
+    }
+
+    function checkScrambleAnswer() {
+      if (questionResolved) return;
+      const qObj = activeRoundQuestions[currentQIndex];
+      const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+
+      if (userAttempt === qObj.ans) {
+        questionResolved = true;
+        playSuccessSound();
+        if (!questionMistakeMade) {
+          currentRoundScore++;
+          addDiamonds(3);
+        } else {
+          addDiamonds(1);
+        }
+        document.getElementById("game-score-val").textContent = currentRoundScore;
+        const cleanSentence = qObj.ans.replace(" .", ".").replace(" ?", "?");
+        showFeedbackBar(true, `✅ Perfect Word Order! "${cleanSentence}"`);
+        speakText(cleanSentence);
+        document.getElementById("game-next-btn").classList.remove("hidden");
+        document.getElementById("scramble-submit-btn").classList.add("opacity-50");
+      } else {
+        playErrorSound();
+        questionMistakeMade = true;
+        showFeedbackBar(false, explainScrambleMistakeUA(qObj));
+        document.getElementById("game-next-btn").classList.add("hidden");
+      }
+    }
+
+    function showFeedbackBar(isCorrect, message) {
+      const bar = document.getElementById("game-feedback-bar");
+      const msgEl = document.getElementById("game-feedback-msg");
+      bar.classList.remove("hidden");
+      bar.className = `p-4 border-2 flex flex-col sm:flex-row items-center justify-between gap-3 ${
+        isCorrect ? "bg-emerald-950 border-emerald-400 text-emerald-200" : "bg-rose-950 border-rose-400 text-rose-200"
+      }`;
+      msgEl.textContent = message;
+    }
+
+    function nextGameQuestion() {
+      playClickSound();
+      currentQIndex++;
+      if (currentQIndex >= activeRoundQuestions.length) {
+        finishStandardRound();
+      } else {
+        renderCurrentStandardQuestion();
+      }
+    }
+
+    function speakCurrentQuestion() {
+      const qObj = activeRoundQuestions[currentQIndex];
+      if (qObj.type === "scramble") {
+        speakText(qObj.prompt);
+      } else {
+        speakText(qObj.q.replace("___", "blank"));
+      }
+    }
+
+    function finishStandardRound() {
+      document.getElementById("question-stage").classList.add("hidden");
+      const endScreen = document.getElementById("round-complete-screen");
+      endScreen.classList.remove("hidden");
+
+      document.getElementById("round-result-summary").textContent = `You scored ${currentRoundScore} / ${activeRoundQuestions.length} in this round!`;
+
+      if (currentGameNum === 1) unlockBadge("b_game1");
+      if (currentGameNum === 2) unlockBadge("b_game2");
+      if (currentGameNum === 3) unlockBadge("b_game3");
+      if (currentGameNum === 4) unlockBadge("b_game4");
+
+      playFanfareSound();
+    }
+
+    function replayCurrentGame() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startStandardGameRound(currentGameNum);
+    }
+
+    /* =========================================================================
+       8. GAME 5: VILLAGER'S FORTUNE TELLER
+       ========================================================================= */
+    let g5Visions = [];
+    let g5Index = 0;
+    let g5SelectedAux = null;
+    let g5SelectedVerb = null;
+    let g5Resolved = false;
+    let g5MistakeMade = false;
+
+    function startG5FortuneTeller() {
+      g5Visions = shuffleArray(GAME_DATA.game5Pool).slice(0, 10);
+      g5Index = 0;
+      document.getElementById("g5-complete-screen").classList.add("hidden");
+      document.getElementById("g5-stage").classList.remove("hidden");
+      loadG5Vision();
+    }
+
+    function replayG5Fortune() {
+      playSuccessSound();
+      unlockBadge("b_totem");
+      startG5FortuneTeller();
+    }
+
+    function loadG5Vision() {
+      g5Resolved = false;
+      g5MistakeMade = false;
+      g5SelectedAux = null;
+      g5SelectedVerb = null;
+
+      const v = g5Visions[g5Index];
+      document.getElementById("g5-progress").textContent = `${g5Index + 1} / ${g5Visions.length}`;
+      document.getElementById("g5-vision-num").textContent = g5Index + 1;
+      document.getElementById("g5-clue-text").textContent = v.clue;
+      document.getElementById("g5-vision-img").src = GAME_DATA.assets[v.img] || GAME_DATA.assets.steve;
+
+      document.getElementById("g5-subj").textContent = v.subject;
+      document.getElementById("g5-preview-aux").textContent = "___";
+      document.getElementById("g5-preview-verb").textContent = "___";
+      document.getElementById("g5-rest").textContent = v.rest;
+
+      const ball = document.getElementById("g5-crystal-ball");
+      ball.classList.remove("crystal-lit");
+
+      document.getElementById("g5-feedback").classList.add("hidden");
+
+      const auxBtns = document.getElementById("g5-aux-buttons").children;
+      Array.from(auxBtns).forEach(b => b.classList.remove("mc-btn-ocean", "mc-btn-purple"));
+
+      const verbContainer = document.getElementById("g5-verb-buttons");
+      verbContainer.innerHTML = "";
+      shuffleArray(v.verbOpts).forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.className = "mc-btn py-2.5 px-3 text-xs sm:text-sm";
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (g5Resolved) return;
+          playClickSound();
+          g5SelectedVerb = opt;
+          document.getElementById("g5-preview-verb").textContent = opt;
+          Array.from(verbContainer.children).forEach(c => c.classList.remove("mc-btn-gold"));
+          btn.classList.add("mc-btn-gold");
+        };
+        verbContainer.appendChild(btn);
+      });
+    }
+
+    function selectG5Aux(auxVal, btnEl) {
+      if (g5Resolved) return;
+      playClickSound();
+      g5SelectedAux = auxVal;
+      document.getElementById("g5-preview-aux").textContent = auxVal;
+      const auxBtns = document.getElementById("g5-aux-buttons").children;
+      Array.from(auxBtns).forEach(b => b.classList.remove("mc-btn-ocean"));
+      btnEl.classList.add("mc-btn-ocean");
+    }
+
+    function checkG5Fortune() {
+      if (g5Resolved) return;
+      const v = g5Visions[g5Index];
+      const fbBox = document.getElementById("g5-feedback");
+      const fbText = document.getElementById("g5-feedback-text");
+
+      if (!g5SelectedAux || !g5SelectedVerb) {
+        playErrorSound();
+        fbBox.classList.remove("hidden");
+        fbBox.className = "p-3.5 border-2 bg-amber-950 border-amber-400 text-amber-200 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-between gap-3";
+        fbText.textContent = "⚠️ Спочатку обери обидва кроки: 1) WILL або WON'T та 2) правильне дієслово!";
+        document.getElementById("g5-next-btn").classList.add("hidden");
+        return;
+      }
+
+      const auxOK = g5SelectedAux === v.aux;
+      const verbOK = g5SelectedVerb === v.verb;
+
+      if (auxOK && verbOK) {
+        g5Resolved = true;
+        playSuccessSound();
+        addDiamonds(g5MistakeMade ? 2 : 4);
+
+        document.getElementById("g5-crystal-ball").classList.add("crystal-lit");
+
+        const fullPrediction = `${v.subject} ${v.aux} ${v.verb} ${v.rest}`;
+        fbBox.classList.remove("hidden");
+        fbBox.className = "p-3.5 border-2 bg-emerald-950 border-emerald-400 text-emerald-200 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-between gap-3";
+        fbText.textContent = `🔮 VISION COMPLETE! "${fullPrediction}"`;
+        document.getElementById("g5-next-btn").classList.remove("hidden");
+        speakText(fullPrediction);
+      } else {
+        playErrorSound();
+        g5MistakeMade = true;
+        const reasons = [];
+        if (!auxOK) {
+          reasons.push(v.reasonUA);
+        }
+        if (!verbOK) {
+          if (v.verb === "be") {
+            reasons.push(`Після will / won't дієслово не змінюється на «${g5SelectedVerb}»! Потрібна початкова форма «be».`);
+          } else if (g5SelectedVerb.endsWith("ing")) {
+            reasons.push(`Після will / won't закінчення -ing не вживається! Обери звичайну форму дієслова.`);
+          } else {
+            reasons.push(`Після will / won't ми ніколи не додаємо закінчення -s! Обери звичайну форму дієслова.`);
+          }
+        }
+        fbBox.classList.remove("hidden");
+        fbBox.className = "p-3.5 border-2 bg-rose-950 border-rose-400 text-rose-200 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-between gap-3";
+        fbText.textContent = `❌ ${reasons.join(" ")}`;
+        document.getElementById("g5-next-btn").classList.add("hidden");
+      }
+    }
+
+    function nextG5Vision() {
+      playClickSound();
+      g5Index++;
+      if (g5Index >= g5Visions.length) {
+        document.getElementById("g5-stage").classList.add("hidden");
+        document.getElementById("g5-complete-screen").classList.remove("hidden");
+        unlockBadge("b_game5");
+        playFanfareSound();
+      } else {
+        loadG5Vision();
+      }
+    }
+
+    function speakG5Clue() {
+      const v = g5Visions[g5Index];
+      speakText(v.clue);
+    }
+
+    /* =========================================================================
+       9. SECTION 4: TREASURE CHEST VAULT & SECTION 5: BADGES
+       ========================================================================= */
+    function renderVault() {
+      const grid = document.getElementById("vault-items-grid");
+      const canvas = document.getElementById("my-vault-canvas");
+      if (!grid || !canvas) return;
+
+      canvas.innerHTML = "";
+      if (appState.unlockedArtifacts.length === 0) {
+        canvas.innerHTML = `
+          <div class="text-center text-slate-400 py-6 space-y-2">
+            <img src="Minecraft/Ender_Chest-removebg-preview.png" class="w-12 h-12 mx-auto object-contain opacity-60" alt="Empty Chest">
+            <p class="text-xs sm:text-sm font-bold">Your Treasure Chest Vault is empty right now!</p>
+            <p class="text-xs text-slate-400">Earn Diamonds in the Mini-Games and unlock legendary artifacts below!</p>
+          </div>
+        `;
+      } else {
+        appState.unlockedArtifacts.forEach((artId) => {
+          const artObj = GAME_DATA.vaultItems.find(i => i.id === artId);
+          if (!artObj) return;
+          const el = document.createElement("div");
+          el.className = "flex flex-col items-center bg-slate-900/90 border-2 border-purple-400 p-3 rounded-lg cursor-pointer hover:scale-105 transition animate-float";
+          el.innerHTML = `
+            <img src="${artObj.img}" alt="${artObj.name}" class="w-16 h-16 object-contain">
+            <span class="pixel-font text-[9px] text-amber-300 mt-1.5 text-center">${artObj.name}</span>
+            <span class="text-[10px] text-sky-300 mt-0.5"><i class="fa-solid fa-volume-high"></i> Tap me!</span>
+          `;
+          el.onclick = () => {
+            playClickSound();
+            speakText(artObj.sentence);
+          };
+          canvas.appendChild(el);
+        });
+      }
+
+      grid.innerHTML = "";
+      GAME_DATA.vaultItems.forEach((item, idx) => {
+        const owned = appState.unlockedArtifacts.includes(item.id);
+        const canAfford = appState.diamonds >= item.cost;
+
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 ${
+          owned ? "border-purple-400 bg-slate-800" : "border-slate-600"
+        }`;
+
+        if (owned) {
+          card.innerHTML = `
+            <div class="w-20 h-20 mc-slot flex items-center justify-center p-2 mb-2 bg-purple-950/50">
+              <img src="${item.img}" alt="${item.name}" class="w-16 h-16 object-contain">
+            </div>
+            <div>
+              <h4 class="pixel-font text-xs text-amber-300">${item.name}</h4>
+              <p class="text-[11px] text-slate-300 mt-1 italic">"${item.sentence}"</p>
+            </div>
+            <div class="w-full mt-3 pt-2 border-t border-slate-700">
+              <button onclick="speakText('${item.sentence.replace(/'/g, "\\'")}')" class="mc-btn mc-btn-purple w-full py-1.5 text-[10px] gap-1.5">
+                <span>✓ IN VAULT</span>
+              </button>
+            </div>
+          `;
+        } else {
+          card.innerHTML = `
+            <div class="w-20 h-20 mc-slot flex items-center justify-center p-2 mb-2 relative bg-slate-900">
+              <img src="Minecraft/Ender_Chest-removebg-preview.png" alt="Mystery Chest" class="w-14 h-14 object-contain opacity-45">
+              <span class="absolute inset-0 flex items-center justify-center pixel-font text-2xl text-purple-300 animate-pulse drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">?</span>
+            </div>
+            <div>
+              <h4 class="pixel-font text-xs text-purple-300">Mystery Artifact #${idx + 1}</h4>
+              <p class="text-[11px] text-slate-400 mt-1">🔒 Unlock to reveal this secret expedition treasure and its prophecy!</p>
+            </div>
+            <div class="w-full mt-3 pt-2 border-t border-slate-700">
+              <button onclick="unlockArtifact('${item.id}')" class="mc-btn ${canAfford ? "mc-btn-gold" : "opacity-50"} w-full py-1.5 text-[10px] flex items-center justify-center gap-1.5">
+                <img src="Minecraft/Diamond-removebg-preview.png" class="w-4 h-4 object-contain" alt="D">
+                <span>UNLOCK (${item.cost})</span>
+              </button>
+            </div>
+          `;
+        }
+
+        grid.appendChild(card);
+      });
+    }
+
+    function unlockArtifact(artId) {
+      const item = GAME_DATA.vaultItems.find(i => i.id === artId);
+      if (!item || appState.unlockedArtifacts.includes(artId)) return;
+
+      if (appState.diamonds < item.cost) {
+        playErrorSound();
+        speakText("You need more diamonds! Play mini-games to earn diamonds.");
+        return;
+      }
+
+      appState.diamonds -= item.cost;
+      appState.unlockedArtifacts.push(artId);
+      playSuccessSound();
+      unlockBadge("b_captain");
+      saveState();
+      renderVault();
+      speakText(`${item.name} unlocked! ${item.sentence}`);
+    }
+
+    function renderBadgesGrid() {
+      const grid = document.getElementById("badges-grid");
+      grid.innerHTML = "";
+
+      GAME_DATA.badges.forEach((b) => {
+        const unlocked = appState.unlockedBadges.includes(b.id);
+        const card = document.createElement("div");
+        card.className = `mc-panel-dark p-4 flex flex-col items-center text-center justify-between border-4 ${
+          unlocked ? "border-amber-400 bg-slate-800" : "border-slate-700 opacity-60"
+        }`;
+        card.innerHTML = `
+          <div class="w-16 h-16 mc-slot flex items-center justify-center p-2 mb-2 ${unlocked ? "bg-amber-950" : ""}">
+            <img src="${b.img}" alt="${b.title}" class="w-12 h-12 object-contain ${unlocked ? "" : "grayscale"}">
+          </div>
+          <div>
+            <h4 class="pixel-font text-xs ${unlocked ? "text-amber-300" : "text-slate-400"}">${b.title}</h4>
+            <p class="text-xs text-slate-300 mt-1">${b.desc}</p>
+          </div>
+          <div class="mt-3 pixel-font text-[9px] px-2.5 py-1 ${unlocked ? "bg-emerald-700 text-white" : "bg-slate-900 text-slate-500"}">
+            ${unlocked ? "✓ UNLOCKED" : "🔒 LOCKED"}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       10. SECTION 6: CERTIFICATE & NAVIGATION
+       ========================================================================= */
+    function setCertificateTheme(themeKey) {
+      playClickSound();
+      const url = GAME_DATA.certWallpapers[themeKey] || GAME_DATA.certWallpapers.expedition;
+      appState.certTheme = themeKey;
+      const certEl = document.getElementById("printable-certificate");
+      if (certEl) {
+        certEl.style.backgroundImage = `url('${url}')`;
+      }
+
+      ["expedition", "aesthetic", "horizon"].forEach((k) => {
+        const btn = document.getElementById(`theme-btn-${k}`);
+        if (btn) {
+          if (k === themeKey) btn.classList.add("mc-btn-ocean");
+          else btn.classList.remove("mc-btn-ocean");
+        }
+      });
+      saveState();
+    }
+
+    function updateCertificateName(val) {
+      appState.heroName = val.trim() || "Future Explorer";
+      document.getElementById("cert-hero-name").textContent = appState.heroName;
+      saveState();
+    }
+
+    function launchVictoryConfetti() {
+      playFanfareSound();
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 95,
+          spread: 75,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function switchSection(secId) {
+      playClickSound();
+      const sections = ["hub", "grammar", "games", "vault", "badges", "finale"];
+      sections.forEach((s) => {
+        const el = document.getElementById(`sec-${s}`);
+        const navBtn = document.getElementById(`nav-${s}`);
+        if (s === secId) {
+          el.classList.remove("hidden");
+          if (navBtn) navBtn.classList.add("mc-btn-ocean");
+        } else {
+          el.classList.add("hidden");
+          if (navBtn) navBtn.classList.remove("mc-btn-ocean");
+        }
+      });
+
+      if (secId === "vault") {
+        renderVault();
+      }
+      if (secId === "finale" && appState.unlockedBadges.length >= GAME_DATA.badges.length) {
+        launchVictoryConfetti();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      renderVocabGrid();
+      renderVault();
+      renderBadgesGrid();
+      setCertificateTheme(appState.certTheme || "expedition");
+      startStandardGameRound(1);
+
+      const now = new Date();
+      document.getElementById("cert-date-display").textContent = now.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    });
+  </script>
+</body>
+</html>
