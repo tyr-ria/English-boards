@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loading...</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #0b0f17;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fallback {
+      display: none;
+      text-align: center;
+      padding: 24px;
+    }
+    .fallback a {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: 700;
+      text-decoration: none;
+    }
+  </style>
+  <script>
+    (function () {
+      var BASES = [
+        "minecraft_present_simple_vs_continuous_quest",
+        "minecraft_english_quest_future_expedition",
+        "minecraft_english_quest_past_continuous",
+        "minecraft_english_quest_past_simple",
+        "minecraft_present_continuous_quest",
+        "minecraft_present_simple_quest",
+        "present-continuous-fnaf",
+        "future-continuous-fnaf",
+        "petshop_consultant_hub",
+        "mr_marcels_art_studio",
+        "past-continuous-fnaf",
+        "present-simple-fnaf",
+        "zookeeper_adventure",
+        "future-simple-fnaf",
+        "past-simple-fnaf"
+      ];
+
+      function normalizeTag(raw) {
+        return String(raw || "")
+          .replace(/^[-_.\s]+|[-_.\s]+$/g, "")
+          .replace(/[^a-zA-Z0-9а-яА-ЯіїєґІЇЄҐ_-]/g, "")
+          .trim()
+          .toLowerCase();
+      }
+
+      function matchSegment(seg) {
+        if (!seg) return null;
+        var cleanSeg = seg.trim();
+        for (var i = 0; i < BASES.length; i++) {
+          var base = BASES[i];
+          if (cleanSeg.indexOf(base + ".html") === 0 && cleanSeg.length > (base + ".html").length) {
+            var afterHtml = normalizeTag(cleanSeg.slice((base + ".html").length));
+            if (afterHtml) return { base: base, tag: afterHtml };
+          }
+          var stem = cleanSeg.replace(/\.html$/i, "");
+          if (stem.indexOf(base) === 0 && stem.length > base.length) {
+            var suffix = normalizeTag(stem.slice(base.length));
+            if (suffix) return { base: base, tag: suffix };
+          }
+        }
+        return null;
+      }
+
+      try {
+        var pathname = decodeURIComponent(window.location.pathname || "/");
+        var trimmed = pathname.replace(/\/+$/, "");
+        var parts = trimmed.split("/");
+        var lastSeg = parts.length > 0 ? parts[parts.length - 1] : "";
+        var dir = parts.slice(0, -1).join("/") + "/";
+        if (dir === "" || dir[0] !== "/") dir = "/" + dir;
+
+        var matched = matchSegment(lastSeg);
+
+        // Also support .../minecraft_present_simple_quest/sf or .../minecraft_present_simple_quest.html/sf
+        if (!matched && parts.length >= 2) {
+          var prevSeg = parts[parts.length - 2].replace(/\.html$/i, "");
+          var tagSeg = normalizeTag(lastSeg.replace(/\.html$/i, ""));
+          if (tagSeg) {
+            for (var j = 0; j < BASES.length; j++) {
+              if (prevSeg === BASES[j]) {
+                matched = { base: BASES[j], tag: tagSeg };
+                dir = parts.slice(0, -2).join("/") + "/";
+                if (dir === "" || dir[0] !== "/") dir = "/" + dir;
+                break;
+              }
+            }
+          }
+        }
+
+        if (matched && matched.tag) {
+          var targetFile = matched.base + ".html";
+          var targetUrl = dir + targetFile;
+          var stored = false;
+          try {
+            window.sessionStorage.setItem("esl_url_student_v1", JSON.stringify({
+              tag: matched.tag,
+              file: targetFile,
+              ts: Date.now()
+            }));
+            stored = true;
+          } catch (_) {
+            stored = false;
+          }
+
+          if (stored) {
+            window.location.replace(targetUrl);
+          } else {
+            window.location.replace(targetUrl + "#" + encodeURIComponent(matched.tag));
+          }
+          return;
+        }
+      } catch (_) {}
+
+      window.addEventListener("DOMContentLoaded", function () {
+        var box = document.getElementById("not-found-box");
+        if (box) box.style.display = "block";
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div id="not-found-box" class="fallback">
+    <h2>Page not found</h2>
+    <p>The requested lesson page could not be found.</p>
+    <a href="index.html">Go to Hub</a>
+  </div>
+</body>
+</html>

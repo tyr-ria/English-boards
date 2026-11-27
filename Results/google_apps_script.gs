@@ -52,16 +52,20 @@ function getOrCreateStudentSheet(ss, rawTag) {
     .setFontColor("#FFFFFF")
     .setFontWeight("bold");
 
+  sh.getRange(2, 1).setValue(safeCellText(cleanTag));
+  const buildKpiRow = (d) => [[
+    `=COUNTIF(D4:D${d}"📊 ПІДСУМОК РАУНДУ")`,
+    `=IFERROR(ROUND(AVERAGE(H4:H)${d}1)${d}0)`,
+    `=COUNTIF(G4:G${d}"*1-ша спроба*")`,
+    `=COUNTIF(G4:G${d}"*Помилка*")`,
+    `=IFERROR(INDEX(A4:A${d}COUNTA(A4:A))${d}"—")`
+  ]];
+  sh.getRange(2, 2, 1, 5).setFormulas(buildKpiRow(sep));
+  SpreadsheetApp.flush();
+  if (sh.getRange(2, 2).getDisplayValue() === "#ERROR!") {
+    sh.getRange(2, 2, 1, 5).setFormulas(buildKpiRow(sep === ";" ? "," : ";"));
+  }
   sh.getRange(2, 1, 1, 10)
-    .setValues([[
-      safeCellText(cleanTag),
-      `=COUNTIF(D4:D${sep}"📊 ПІДСУМОК РАУНДУ")`,
-      `=IFERROR(ROUND(AVERAGE(H4:H)${sep}1)${sep}0)`,
-      `=COUNTIF(G4:G${sep}"*1-ша спроба*")`,
-      `=COUNTIF(G4:G${sep}"*Помилка*")`,
-      `=IFERROR(INDEX(A4:A${sep}COUNTA(A4:A))${sep}"—")`,
-      "", "", "", ""
-    ]])
     .setBackground("#F1F5F9")
     .setFontColor("#0F172A")
     .setFontWeight("bold");
