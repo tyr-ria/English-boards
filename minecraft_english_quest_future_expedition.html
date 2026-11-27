@@ -1802,6 +1802,12 @@
       document.getElementById("question-stage").classList.remove("hidden");
       document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
 
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game" + gameNum,
+        gameName: titleEl.textContent,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       renderCurrentStandardQuestion();
     }
 
@@ -1867,8 +1873,19 @@
     function handleMCChoice(selectedOpt, btnEl) {
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
+      const isCorrect = selectedOpt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainWrongChoiceUA(qObj, selectedOpt).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.q,
+        studentAnswer: selectedOpt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (selectedOpt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         btnEl.classList.add("mc-btn-emerald");
@@ -1947,8 +1964,19 @@
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
       const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+      const isCorrect = userAttempt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainScrambleMistakeUA(qObj).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.prompt,
+        studentAnswer: userAttempt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (userAttempt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         if (!questionMistakeMade) {
@@ -2007,6 +2035,12 @@
 
       document.getElementById("round-result-summary").textContent = `You scored ${currentRoundScore} / ${activeRoundQuestions.length} in this round!`;
 
+      window.__ESL_TRACKER__?.endRound({
+        gameId: "game" + currentGameNum,
+        scoreFirstTry: currentRoundScore,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       if (currentGameNum === 1) unlockBadge("b_game1");
       if (currentGameNum === 2) unlockBadge("b_game2");
       if (currentGameNum === 3) unlockBadge("b_game3");
@@ -2036,6 +2070,11 @@
       g5Index = 0;
       document.getElementById("g5-complete-screen").classList.add("hidden");
       document.getElementById("g5-stage").classList.remove("hidden");
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game5",
+        gameName: "Game 5: Villager's Fortune Teller",
+        totalQuestions: g5Visions.length
+      });
       loadG5Vision();
     }
 
@@ -2115,8 +2154,33 @@
 
       const auxOK = g5SelectedAux === v.aux;
       const verbOK = g5SelectedVerb === v.verb;
+      const allOK = auxOK && verbOK;
+      const reasons = [];
+      if (!allOK) {
+        if (!auxOK) {
+          reasons.push(v.reasonUA);
+        }
+        if (!verbOK) {
+          if (v.verb === "be") {
+            reasons.push(`Після will / won't дієслово не змінюється на «${g5SelectedVerb}»! Потрібна початкова форма «be».`);
+          } else if (g5SelectedVerb.endsWith("ing")) {
+            reasons.push(`Після will / won't закінчення -ing не вживається! Обери звичайну форму дієслова.`);
+          } else {
+            reasons.push(`Після will / won't ми ніколи не додаємо закінчення -s! Обери звичайну форму дієслова.`);
+          }
+        }
+      }
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game5",
+        questionKey: g5Index,
+        question: `${v.subject} ___ ___ ${v.rest} (${v.clue})`,
+        studentAnswer: `${g5SelectedAux} ${g5SelectedVerb}`,
+        correctAnswer: `${v.aux} ${v.verb}`,
+        isCorrect: allOK,
+        explanation: reasons.join(" ")
+      });
 
-      if (auxOK && verbOK) {
+      if (allOK) {
         g5Resolved = true;
         playSuccessSound();
         addDiamonds(g5MistakeMade ? 2 : 4);
@@ -2132,19 +2196,6 @@
       } else {
         playErrorSound();
         g5MistakeMade = true;
-        const reasons = [];
-        if (!auxOK) {
-          reasons.push(v.reasonUA);
-        }
-        if (!verbOK) {
-          if (v.verb === "be") {
-            reasons.push(`Після will / won't дієслово не змінюється на «${g5SelectedVerb}»! Потрібна початкова форма «be».`);
-          } else if (g5SelectedVerb.endsWith("ing")) {
-            reasons.push(`Після will / won't закінчення -ing не вживається! Обери звичайну форму дієслова.`);
-          } else {
-            reasons.push(`Після will / won't ми ніколи не додаємо закінчення -s! Обери звичайну форму дієслова.`);
-          }
-        }
         fbBox.classList.remove("hidden");
         fbBox.className = "p-3.5 border-2 bg-rose-950 border-rose-400 text-rose-200 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-between gap-3";
         fbText.textContent = `❌ ${reasons.join(" ")}`;
@@ -2158,6 +2209,10 @@
       if (g5Index >= g5Visions.length) {
         document.getElementById("g5-stage").classList.add("hidden");
         document.getElementById("g5-complete-screen").classList.remove("hidden");
+        window.__ESL_TRACKER__?.endRound({
+          gameId: "game5",
+          totalQuestions: g5Visions.length
+        });
         unlockBadge("b_game5");
         playFanfareSound();
       } else {
@@ -2377,5 +2432,6 @@
       });
     });
   </script>
+  <script src="session-sync.js"></script>
 </body>
 </html>

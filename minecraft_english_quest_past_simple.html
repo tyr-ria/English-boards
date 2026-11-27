@@ -1945,6 +1945,12 @@
       document.getElementById("question-stage").classList.remove("hidden");
       document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
 
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game" + gameNum,
+        gameName: titleEl.textContent,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       renderCurrentStandardQuestion();
     }
 
@@ -2077,8 +2083,19 @@
     function handleMCChoice(selectedOpt, btnEl) {
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
+      const isCorrect = selectedOpt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainWrongChoiceUA(qObj.q, selectedOpt, qObj.ans).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.q,
+        studentAnswer: selectedOpt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (selectedOpt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         btnEl.classList.add("mc-btn-teal");
@@ -2157,8 +2174,19 @@
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
       const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+      const isCorrect = userAttempt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainScrambleMistakeUA(qObj).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.prompt,
+        studentAnswer: userAttempt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (userAttempt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         if (!questionMistakeMade) {
@@ -2216,6 +2244,12 @@
       document.getElementById("round-result-summary").textContent =
         `You scored ${currentRoundScore} / ${activeRoundQuestions.length} on the first try and earned Diamonds!`;
 
+      window.__ESL_TRACKER__?.endRound({
+        gameId: "game" + currentGameNum,
+        scoreFirstTry: currentRoundScore,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       if (currentGameNum === 1) unlockBadge("b_game1");
       if (currentGameNum === 2) unlockBadge("b_game2");
       if (currentGameNum === 3) unlockBadge("b_game3");
@@ -2245,6 +2279,11 @@
       g5Score = 0;
       document.getElementById("g5-complete-screen").classList.add("hidden");
       document.getElementById("g5-stage").classList.remove("hidden");
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game5",
+        gameName: "Game 5: Cave Detective",
+        totalQuestions: g5Questions.length
+      });
       renderG5Question();
     }
 
@@ -2314,6 +2353,15 @@
         playErrorSound();
         g5MistakeMade = true;
         btnEl.classList.add("opacity-50");
+        window.__ESL_TRACKER__?.recordAttempt({
+          gameId: "game5",
+          questionKey: g5Index,
+          question: q.words.join(" "),
+          studentAnswer: "Помилкове слово: " + q.words[idx],
+          correctAnswer: q.words[q.badIdx] + " → " + q.ans,
+          isCorrect: false,
+          explanation: `Слово «${q.words[idx]}» написане правильно; помилка у «${q.words[q.badIdx]}».`
+        });
         showG5Feedback(false, `❌ Слово «${q.words[idx]}» написане правильно! Шукай помилку в дієслові або в помічнику (Did / didn't / Do / Does).`);
       }
     }
@@ -2321,8 +2369,19 @@
     function handleG5FixChoice(chosenOpt, btnEl) {
       if (g5Step !== 2) return;
       const q = g5Questions[g5Index];
+      const isCorrect = chosenOpt === q.ans;
+      const uaReason = isCorrect ? "" : explainWrongChoiceUA(q.words.join(" "), chosenOpt, q.ans).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game5",
+        questionKey: g5Index,
+        question: q.words.join(" "),
+        studentAnswer: chosenOpt,
+        correctAnswer: q.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (chosenOpt === q.ans) {
+      if (isCorrect) {
         g5Step = 3;
         playSuccessSound();
         btnEl.classList.remove("mc-btn-purple");
@@ -2387,6 +2446,11 @@
         document.getElementById("g5-complete-screen").classList.remove("hidden");
         document.getElementById("g5-final-summary").textContent =
           `You repaired all 10 journal pages (${g5Score} / 10 on the first try)!`;
+        window.__ESL_TRACKER__?.endRound({
+          gameId: "game5",
+          scoreFirstTry: g5Score,
+          totalQuestions: g5Questions.length
+        });
         unlockBadge("b_game5");
         playFanfareSound();
       } else {
@@ -2609,5 +2673,6 @@
       });
     });
   </script>
+  <script src="session-sync.js"></script>
 </body>
 </html>

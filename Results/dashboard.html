@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Центр результатів тестів (Real-Time) — WEB ENG</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-color: #0b0f17;
+      color: #f1f5f9;
+      min-height: 100vh;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .live-dot { animation: pulseDot 1.5s ease-in-out infinite; }
+  </style>
+</head>
+<body class="antialiased selection:bg-sky-500/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+    <!-- HEADER -->
+    <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+          <span>Прихований кабінет вчителя • Real-Time моніторинг</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+          Результати та аналітика тестів WEB ENG
+        </h1>
+        <p class="text-sm text-slate-400">
+          Сюди в реальному часі надходять кожна відповідь, помилки, підсумки раундів та імена із сертифікатів. На самому сайті це не відображається.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+        <a
+          href="https://docs.google.com/spreadsheets/d/12VVY0FAPj_K8z--sDY0PUn5cfERRt6wLHltVndOTx6U/edit"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-lg shadow-emerald-500/15"
+        >
+          <i class="fa-solid fa-table"></i>
+          <span>Відкрити Google Таблицю</span>
+        </a>
+        <a
+          href="https://drive.google.com/drive/folders/1b4b0hvLSekZuLgqNInn5bezotFrwOfSP"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 font-semibold text-xs sm:text-sm transition"
+        >
+          <i class="fa-brands fa-google-drive text-sky-400"></i>
+          <span>Папка Google Drive</span>
+        </a>
+        <button
+          type="button"
+          onclick="exportCsv()"
+          class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-xs sm:text-sm transition cursor-pointer"
+        >
+          <i class="fa-solid fa-download text-amber-400"></i>
+          <span>Експорт CSV</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONNECTION PANEL -->
+    <section class="rounded-2xl border border-slate-800 bg-slate-900/75 p-4 sm:p-5 space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-plug text-sky-400"></i>
+          <h2 class="font-bold text-sm sm:text-base text-white">Підключення до Google Таблиці (Apps Script Webhook)</h2>
+        </div>
+        <span id="conn-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 w-fit">
+          Локальний режим (очікує URL веб-додатку)
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5">
+        <div class="lg:col-span-6">
+          <label for="webhook-input" class="block text-[11px] font-semibold text-slate-400 mb-1">URL веб-додатку Google Apps Script (.../exec)</label>
+          <input
+            id="webhook-input"
+            type="url"
+            placeholder="https://script.google.com/macros/s/.../exec"
+            class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 mono"
+          />
+        </div>
+        <div class="lg:col-span-3">
+          <label for="token-input" class="block text-[11px] font-semibold text-slate-400 mb-1">Токен читання (з google_apps_script.gs)</label>
+          <input
+            id="token-input"
+            type="text"
+            value="35b96a07a6ce4ba4b93901a656e74ee5"
+            class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-sky-400 mono"
+          />
+        </div>
+        <div class="lg:col-span-3 flex items-end gap-2">
+          <button
+            type="button"
+            onclick="saveConnection()"
+            class="flex-1 px-3.5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm transition cursor-pointer"
+          >
+            Зберегти
+          </button>
+          <button
+            type="button"
+            onclick="sendTestRecord()"
+            class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-100 font-semibold text-xs sm:text-sm transition cursor-pointer"
+            title="Надіслати тестовий запис у Google Таблицю"
+          >
+            Тест
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs text-slate-400">
+        <div id="conn-message">
+          Поки URL не додано, усі результати з цього браузера накопичуються локально й синхронізуються в 1 клік після підключення.
+        </div>
+        <button
+          type="button"
+          id="sync-queue-btn"
+          onclick="syncPendingQueue()"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-400/40 text-indigo-200 font-semibold transition cursor-pointer"
+        >
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Синхронізувати локальний буфер (<span id="queue-count">0</span>)</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- QUICK LINK GENERATOR -->
+    <section class="rounded-2xl border border-slate-800 bg-slate-900/75 p-4 sm:p-5 space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-link text-amber-400"></i>
+          <h2 class="font-bold text-sm sm:text-base text-white">Швидкий генератор посилання для учня</h2>
+        </div>
+        <span class="text-xs text-slate-400">Або просто допишіть літери коду перед <code class="mono text-sky-300">.html</code> вручну</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-end">
+        <div class="lg:col-span-4">
+          <label for="gen-lesson" class="block text-[11px] font-semibold text-slate-400 mb-1">Оберіть урок</label>
+          <select
+            id="gen-lesson"
+            onchange="updateGeneratedLink()"
+            class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-sky-400"
+          >
+            <option value="minecraft_present_simple_quest">Minecraft: Present Simple</option>
+            <option value="minecraft_present_continuous_quest">Minecraft: Present Continuous</option>
+            <option value="minecraft_present_simple_vs_continuous_quest">Minecraft: Present Simple vs Continuous</option>
+            <option value="minecraft_english_quest_past_simple">Minecraft: Past Simple</option>
+            <option value="minecraft_english_quest_past_continuous">Minecraft: Past Continuous</option>
+            <option value="minecraft_english_quest_future_expedition">Minecraft: Future Expedition</option>
+            <option value="present-simple-fnaf">FNAF Night 1: Present Simple</option>
+            <option value="present-continuous-fnaf">FNAF Night 2: Present Continuous</option>
+            <option value="past-simple-fnaf">FNAF Night 3: Past Simple</option>
+            <option value="past-continuous-fnaf">FNAF Night 4: Past Continuous</option>
+            <option value="future-simple-fnaf">FNAF Night 5: Future Simple</option>
+            <option value="future-continuous-fnaf">FNAF Night 6: Future Continuous</option>
+            <option value="petshop_consultant_hub">Happy PetShop Consultant</option>
+            <option value="zookeeper_adventure">Zookeeper Adventure</option>
+            <option value="mr_marcels_art_studio">Mr. Marcel's Art Studio</option>
+          </select>
+        </div>
+        <div class="lg:col-span-2">
+          <label for="gen-tag" class="block text-[11px] font-semibold text-slate-400 mb-1">Код учня (вкладка)</label>
+          <input
+            id="gen-tag"
+            type="text"
+            value="sf"
+            placeholder="sf"
+            oninput="updateGeneratedLink()"
+            class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 mono"
+          />
+        </div>
+        <div class="lg:col-span-4">
+          <label for="gen-output" class="block text-[11px] font-semibold text-slate-400 mb-1">Готове посилання для відправки учню</label>
+          <input
+            id="gen-output"
+            type="text"
+            readonly
+            class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-sky-300 focus:outline-none mono select-all"
+          />
+        </div>
+        <div class="lg:col-span-2">
+          <button
+            type="button"
+            id="gen-copy-btn"
+            onclick="copyGeneratedLink()"
+            class="w-full px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition cursor-pointer"
+          >
+            <i class="fa-regular fa-copy mr-1"></i> Копіювати
+          </button>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-400">
+        Коли учень відкриє посилання з кодом (наприклад, <code class="mono text-slate-300">...questsf.html</code>), адресний рядок миттєво стане звичайним (<code class="mono text-slate-300">...quest.html</code>), а всі його відповіді потраплять і в загальні вкладки, і на окрему вкладку <strong class="text-white">sf</strong>.
+      </p>
+    </section>
+
+    <!-- KPI CARDS -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/75 p-4">
+        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Пройдено раундів</div>
+        <div id="kpi-rounds" class="text-3xl font-extrabold text-white mt-1 mono">0</div>
+      </div>
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/75 p-4">
+        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Середня точність</div>
+        <div id="kpi-accuracy" class="text-3xl font-extrabold text-emerald-400 mt-1 mono">0%</div>
+      </div>
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/75 p-4">
+        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Відповідей наживо</div>
+        <div id="kpi-attempts" class="text-3xl font-extrabold text-sky-400 mt-1 mono">0</div>
+      </div>
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/75 p-4">
+        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Зафіксовано помилок</div>
+        <div id="kpi-errors" class="text-3xl font-extrabold text-rose-400 mt-1 mono">0</div>
+      </div>
+    </section>
+
+    <!-- DIAGNOSTIC INSIGHTS -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/75 p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="font-bold text-base text-white flex items-center gap-2">
+            <i class="fa-solid fa-bullseye text-amber-400"></i>
+            <span>На що опертися: проблемні теми</span>
+          </h2>
+          <span class="text-xs text-slate-400">Сортування від найнижчої точності</span>
+        </div>
+        <div id="weak-topics-list" class="space-y-2.5 text-sm">
+          <div class="text-slate-500 italic py-4 text-center">Ще немає завершених раундів.</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/75 p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="font-bold text-base text-white flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+            <span>Останні помилки для розбору</span>
+          </h2>
+          <span class="text-xs text-slate-400">Що саме плутають учні</span>
+        </div>
+        <div id="recent-mistakes-list" class="space-y-2.5 text-sm max-h-72 overflow-y-auto pr-1">
+          <div class="text-slate-500 italic py-4 text-center">Помилок поки не зафіксовано.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTERS & TABS -->
+    <section class="rounded-2xl border border-slate-800 bg-slate-900/75 p-4 sm:p-5 space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            id="tab-btn-rounds"
+            onclick="switchViewTab('rounds')"
+            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-950 transition cursor-pointer"
+          >
+            Підсумки раундів (<span id="count-rounds-tab">0</span>)
+          </button>
+          <button
+            type="button"
+            id="tab-btn-attempts"
+            onclick="switchViewTab('attempts')"
+            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer"
+          >
+            Живий потік відповідей (<span id="count-attempts-tab">0</span>)
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <input
+            id="filter-search"
+            type="search"
+            placeholder="Пошук: ім'я, сесія, помилка..."
+            oninput="renderAll()"
+            class="px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 w-56"
+          />
+          <select
+            id="filter-lesson"
+            onchange="renderAll()"
+            class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-sky-400"
+          >
+            <option value="">Усі уроки</option>
+          </select>
+          <button
+            type="button"
+            onclick="refreshRemoteData(true)"
+            class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-200 font-semibold transition cursor-pointer"
+            title="Оновити з Google Таблиці"
+          >
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+          <button
+            type="button"
+            onclick="clearLocalCache()"
+            class="px-3 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 border border-rose-800/60 text-xs text-rose-200 font-semibold transition cursor-pointer"
+            title="Очистити локальний кеш цього браузера"
+          >
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ROUNDS TABLE -->
+      <div id="view-rounds" class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
+              <th class="py-2.5 px-3">Час</th>
+              <th class="py-2.5 px-3">Ім'я / Сесія</th>
+              <th class="py-2.5 px-3">Урок та граматика</th>
+              <th class="py-2.5 px-3">Міні-гра</th>
+              <th class="py-2.5 px-3 text-center">З 1-ї спроби</th>
+              <th class="py-2.5 px-3 text-center">Точність</th>
+              <th class="py-2.5 px-3 text-center">Помилок</th>
+              <th class="py-2.5 px-3">На що опертися (помилки)</th>
+            </tr>
+          </thead>
+          <tbody id="rounds-tbody" class="divide-y divide-slate-800/70"></tbody>
+        </table>
+      </div>
+
+      <!-- LIVE ATTEMPTS TABLE -->
+      <div id="view-attempts" class="hidden overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
+              <th class="py-2.5 px-3">Час</th>
+              <th class="py-2.5 px-3">Ім'я / Сесія</th>
+              <th class="py-2.5 px-3">Урок • Міні-гра</th>
+              <th class="py-2.5 px-3">Питання</th>
+              <th class="py-2.5 px-3">Відповідь учня</th>
+              <th class="py-2.5 px-3">Правильно</th>
+              <th class="py-2.5 px-3">Результат</th>
+              <th class="py-2.5 px-3">Правило / Підказка</th>
+            </tr>
+          </thead>
+          <tbody id="attempts-tbody" class="divide-y divide-slate-800/70"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "esl_hub_results_v1";
+    const QUEUE_KEY = "esl_hub_pending_queue_v1";
+    const WEBHOOK_KEY = "esl_gsheet_webhook_url";
+    const TOKEN_KEY = "esl_gsheet_read_token";
+    const CHANNEL_NAME = "esl_hub_live_results";
+
+    let activeTab = "rounds";
+    let remoteData = { rounds: [], attempts: [] };
+    let pollTimer = null;
+
+    function esc(str) {
+      return String(str === undefined || str === null ? "" : str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function readLocalStore() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { rounds: [], attempts: [] };
+        const parsed = JSON.parse(raw);
+        return {
+          rounds: Array.isArray(parsed.rounds) ? parsed.rounds : [],
+          attempts: Array.isArray(parsed.attempts) ? parsed.attempts : []
+        };
+      } catch (_) {
+        return { rounds: [], attempts: [] };
+      }
+    }
+
+    function readQueue() {
+      try {
+        const raw = localStorage.getItem(QUEUE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function getWebhookUrl() {
+      return (localStorage.getItem(WEBHOOK_KEY) || "").trim();
+    }
+
+    function getReadToken() {
+      return (localStorage.getItem(TOKEN_KEY) || document.getElementById("token-input").value || "").trim();
+    }
+
+    function mergeData() {
+      const local = readLocalStore();
+      const roundMap = new Map();
+      const attemptMap = new Map();
+
+      const addRound = (r) => {
+        if (!r) return;
+        const key = (r.sessionId || "") + "::" + (r.gameName || r.gameId || "") + "::" + (r.timestamp || "");
+        roundMap.set(key, r);
+      };
+      const addAttempt = (a) => {
+        if (!a) return;
+        const key = (a.sessionId || "") + "::" + (a.timestamp || "") + "::" + (a.question || "") + "::" + (a.studentAnswer || "") + "::" + (a.attemptNum || 1);
+        attemptMap.set(key, a);
+      };
+
+      remoteData.rounds.forEach(addRound);
+      local.rounds.forEach(addRound);
+      remoteData.attempts.forEach(addAttempt);
+      local.attempts.forEach(addAttempt);
+
+      const rounds = Array.from(roundMap.values()).sort((a, b) => String(b.timestamp || "").localeCompare(String(a.timestamp || "")));
+      const attempts = Array.from(attemptMap.values()).sort((a, b) => String(b.timestamp || "").localeCompare(String(a.timestamp || "")));
+      return { rounds, attempts };
+    }
+
+    function updateConnectionUI(msgText, isOk) {
+      const url = getWebhookUrl();
+      const badge = document.getElementById("conn-badge");
+      const msg = document.getElementById("conn-message");
+      document.getElementById("queue-count").textContent = readQueue().length;
+
+      if (url) {
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 w-fit";
+        badge.textContent = "Google Таблиця підключена";
+      } else {
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 w-fit";
+        badge.textContent = "Локальний режим (очікує URL веб-додатку)";
+      }
+      if (msgText) {
+        msg.textContent = msgText;
+        msg.className = isOk === false ? "text-rose-300" : isOk === true ? "text-emerald-300" : "text-slate-400";
+      }
+    }
+
+    function saveConnection() {
+      const url = document.getElementById("webhook-input").value.trim();
+      const token = document.getElementById("token-input").value.trim();
+      if (url) {
+        localStorage.setItem(WEBHOOK_KEY, url);
+      } else {
+        localStorage.removeItem(WEBHOOK_KEY);
+      }
+      if (token) {
+        localStorage.setItem(TOKEN_KEY, token);
+      }
+      updateConnectionUI(url ? "Посилання збережено. Завантажую дані з Google Таблиці..." : "Посилання очищено — працює локальний режим.", true);
+      if (url) {
+        refreshRemoteData(true);
+        startPolling();
+      }
+    }
+
+    async function refreshRemoteData(showFeedback = false) {
+      const url = getWebhookUrl();
+      const token = getReadToken();
+      if (!url || !token) return;
+      try {
+        const sep = url.includes("?") ? "&" : "?";
+        const res = await fetch(`${url}${sep}token=${encodeURIComponent(token)}`, { cache: "no-store" });
+        const json = await res.json();
+        if (json && json.ok) {
+          remoteData = {
+            rounds: Array.isArray(json.rounds) ? json.rounds : [],
+            attempts: Array.isArray(json.attempts) ? json.attempts : []
+          };
+          renderAll();
+          if (showFeedback) {
+            updateConnectionUI(`Синхронізовано з Google Таблицею (${remoteData.rounds.length} раундів, ${remoteData.attempts.length} відповідей).`, true);
+          }
+        } else if (showFeedback) {
+          updateConnectionUI("Не вдалося прочитати таблицю: " + (json && json.error ? json.error : "перевірте токен"), false);
+        }
+      } catch (err) {
+        if (showFeedback) {
+          updateConnectionUI("Помилка підключення до Apps Script. Перевірте, що веб-додаток розгорнуто з доступом «Усі».", false);
+        }
+      }
+    }
+
+    async function sendTestRecord() {
+      const url = getWebhookUrl() || document.getElementById("webhook-input").value.trim();
+      if (!url) {
+        updateConnectionUI("Спочатку вставте URL веб-додатку Google Apps Script (.../exec).", false);
+        return;
+      }
+      localStorage.setItem(WEBHOOK_KEY, url);
+      const now = new Date();
+      const pad = (n) => (n < 10 ? "0" + n : String(n));
+      const ts = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      const testPayload = {
+        event: "round_end",
+        eventId: "test_" + Date.now().toString(36),
+        sessionId: "test_session",
+        timestamp: ts,
+        studentName: "Тест підключення",
+        lessonTitle: "Перевірка зв'язку",
+        grammar: "System Test",
+        gameName: "Test Ping",
+        status: "Тестовий запис",
+        firstTryCorrect: 5,
+        totalQuestions: 5,
+        accuracy: 100,
+        wrongCount: 0,
+        durationSec: 1,
+        mistakesSummary: "Тест пройшов успішно ✨"
+      };
+      try {
+        await fetch(url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(testPayload)
+        });
+        updateConnectionUI("Тестовий запис надіслано! Перевірте рядок у Google Таблиці через 2–3 секунди.", true);
+        setTimeout(() => refreshRemoteData(false), 2500);
+      } catch (e) {
+        updateConnectionUI("Не вдалося надіслати тестовий запис.", false);
+      }
+    }
+
+    async function syncPendingQueue() {
+      const url = getWebhookUrl();
+      if (!url) {
+        updateConnectionUI("Спочатку вставте й збережіть URL веб-додатку (.../exec).", false);
+        return;
+      }
+      const queue = readQueue();
+      if (queue.length === 0) {
+        updateConnectionUI("Локальний буфер порожній — усе вже синхронізовано.", true);
+        return;
+      }
+      try {
+        const chunkSize = 50;
+        for (let i = 0; i < queue.length; i += chunkSize) {
+          const chunk = queue.slice(i, i + chunkSize);
+          await fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ event: "batch_sync", items: chunk })
+          });
+        }
+        localStorage.removeItem(QUEUE_KEY);
+        updateConnectionUI(`Синхронізовано ${queue.length} локальних подій у Google Таблицю!`, true);
+        setTimeout(() => refreshRemoteData(false), 2000);
+      } catch (e) {
+        updateConnectionUI("Не вдалося синхронізувати буфер. Спробуйте ще раз.", false);
+      }
+    }
+
+    function switchViewTab(tab) {
+      activeTab = tab;
+      document.getElementById("view-rounds").classList.toggle("hidden", tab !== "rounds");
+      document.getElementById("view-attempts").classList.toggle("hidden", tab !== "attempts");
+      document.getElementById("tab-btn-rounds").className = tab === "rounds"
+        ? "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-950 transition cursor-pointer"
+        : "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer";
+      document.getElementById("tab-btn-attempts").className = tab === "attempts"
+        ? "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-950 transition cursor-pointer"
+        : "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer";
+    }
+
+    function renderLessonFilter(rounds, attempts) {
+      const sel = document.getElementById("filter-lesson");
+      const current = sel.value;
+      const lessons = new Set();
+      rounds.forEach((r) => r.lessonTitle && lessons.add(r.lessonTitle));
+      attempts.forEach((a) => a.lessonTitle && lessons.add(a.lessonTitle));
+      const sorted = Array.from(lessons).sort();
+      sel.innerHTML = '<option value="">Усі уроки</option>' + sorted.map((l) => `<option value="${esc(l)}">${esc(l)}</option>`).join("");
+      sel.value = sorted.includes(current) ? current : "";
+    }
+
+    function renderAll() {
+      const { rounds, attempts } = mergeData();
+      renderLessonFilter(rounds, attempts);
+
+      const q = (document.getElementById("filter-search").value || "").trim().toLowerCase();
+      const lessonFilter = document.getElementById("filter-lesson").value;
+
+      const filteredRounds = rounds.filter((r) => {
+        if (lessonFilter && r.lessonTitle !== lessonFilter) return false;
+        if (!q) return true;
+        return [r.studentName, r.lessonTitle, r.grammar, r.gameName, r.mistakesSummary, r.sessionId].join(" ").toLowerCase().includes(q);
+      });
+
+      const filteredAttempts = attempts.filter((a) => {
+        if (lessonFilter && a.lessonTitle !== lessonFilter) return false;
+        if (!q) return true;
+        return [a.studentName, a.lessonTitle, a.gameName, a.question, a.studentAnswer, a.correctAnswer, a.explanation, a.sessionId].join(" ").toLowerCase().includes(q);
+      });
+
+      // KPIs
+      document.getElementById("kpi-rounds").textContent = filteredRounds.length;
+      const realRounds = filteredRounds.filter((r) => Number(r.totalQuestions) > 0);
+      const avgAcc = realRounds.length > 0
+        ? Math.round(realRounds.reduce((sum, r) => sum + (Number(r.accuracy) || 0), 0) / realRounds.length)
+        : 0;
+      document.getElementById("kpi-accuracy").textContent = avgAcc + "%";
+      document.getElementById("kpi-attempts").textContent = filteredAttempts.length;
+      const errCount = filteredAttempts.filter((a) => a.isCorrect === false || String(a.resultLabel || "").includes("Помилка")).length;
+      document.getElementById("kpi-errors").textContent = errCount;
+
+      document.getElementById("count-rounds-tab").textContent = filteredRounds.length;
+      document.getElementById("count-attempts-tab").textContent = filteredAttempts.length;
+
+      // Weak topics
+      const topicMap = new Map();
+      realRounds.forEach((r) => {
+        const key = r.lessonTitle || "Урок";
+        if (!topicMap.has(key)) {
+          topicMap.set(key, { title: key, grammar: r.grammar || "", rounds: 0, accSum: 0, errors: 0 });
+        }
+        const entry = topicMap.get(key);
+        entry.rounds += 1;
+        entry.accSum += Number(r.accuracy) || 0;
+        entry.errors += Number(r.wrongCount) || 0;
+      });
+      const weakTopics = Array.from(topicMap.values())
+        .map((t) => ({ ...t, avg: Math.round(t.accSum / t.rounds) }))
+        .sort((a, b) => a.avg - b.avg);
+
+      const weakEl = document.getElementById("weak-topics-list");
+      if (weakTopics.length === 0) {
+        weakEl.innerHTML = '<div class="text-slate-500 italic py-4 text-center">Ще немає завершених раундів.</div>';
+      } else {
+        weakEl.innerHTML = weakTopics.slice(0, 6).map((t) => {
+          const barColor = t.avg >= 80 ? "bg-emerald-500" : t.avg >= 50 ? "bg-amber-400" : "bg-rose-500";
+          const txtColor = t.avg >= 80 ? "text-emerald-300" : t.avg >= 50 ? "text-amber-300" : "text-rose-300";
+          return `
+            <div class="rounded-xl bg-slate-950/80 border border-slate-800 p-3 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="font-bold text-white text-xs sm:text-sm">${esc(t.title)}</div>
+                  <div class="text-[11px] text-slate-400">${esc(t.grammar)} • Раундів: ${t.rounds} • Помилок: ${t.errors}</div>
+                </div>
+                <span class="mono font-bold text-sm ${txtColor}">${t.avg}%</span>
+              </div>
+              <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                <div class="h-full ${barColor}" style="width: ${t.avg}%"></div>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // Recent mistakes
+      const mistakes = filteredAttempts.filter((a) => a.isCorrect === false || String(a.resultLabel || "").includes("Помилка"));
+      const misEl = document.getElementById("recent-mistakes-list");
+      if (mistakes.length === 0) {
+        misEl.innerHTML = '<div class="text-slate-500 italic py-4 text-center">Помилок поки не зафіксовано.</div>';
+      } else {
+        misEl.innerHTML = mistakes.slice(0, 15).map((m) => `
+          <div class="rounded-xl bg-slate-950/80 border border-rose-900/50 p-3 space-y-1">
+            <div class="flex items-center justify-between gap-2 text-[11px] text-slate-400">
+              <span class="font-semibold text-slate-200">${esc(m.studentName)} • ${esc(m.lessonTitle)}</span>
+              <span class="mono">${esc(m.timestamp)}</span>
+            </div>
+            <div class="text-xs text-slate-200 font-medium">${esc(m.question)}</div>
+            <div class="flex flex-wrap items-center gap-2 text-xs pt-0.5">
+              <span class="px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300">Обрано: ${esc(m.studentAnswer || "—")}</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">Треба: ${esc(m.correctAnswer || "—")}</span>
+            </div>
+            ${m.explanation ? `<div class="text-[11px] text-amber-200/80 pt-0.5">${esc(m.explanation)}</div>` : ""}
+          </div>
+        `).join("");
+      }
+
+      // Rounds table
+      const roundsBody = document.getElementById("rounds-tbody");
+      if (filteredRounds.length === 0) {
+        roundsBody.innerHTML = '<tr><td colspan="8" class="py-8 text-center text-slate-500 italic">Записів поки немає. Відкрийте будь-яку гру та пройдіть хоча б одне питання.</td></tr>';
+      } else {
+        roundsBody.innerHTML = filteredRounds.map((r) => {
+          const acc = Number(r.accuracy) || 0;
+          const accCls = acc >= 80
+            ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/35"
+            : acc >= 50
+              ? "bg-amber-500/15 text-amber-300 border-amber-500/35"
+              : "bg-rose-500/15 text-rose-300 border-rose-500/35";
+          return `
+            <tr class="hover:bg-slate-800/40 transition align-top">
+              <td class="py-3 px-3 mono text-[11px] text-slate-400 whitespace-nowrap">${esc(r.timestamp)}</td>
+              <td class="py-3 px-3 font-semibold text-white whitespace-nowrap">${esc(r.studentName)}</td>
+              <td class="py-3 px-3">
+                <div class="font-semibold text-slate-100">${esc(r.lessonTitle)}</div>
+                <div class="text-[11px] text-slate-400">${esc(r.grammar)}</div>
+              </td>
+              <td class="py-3 px-3 text-slate-300">${esc(r.gameName)} <div class="text-[10px] text-slate-500">${esc(r.status || "")}</div></td>
+              <td class="py-3 px-3 text-center mono font-bold text-slate-200">${esc(r.firstTryCorrect)} / ${esc(r.totalQuestions)}</td>
+              <td class="py-3 px-3 text-center"><span class="inline-block px-2 py-0.5 rounded-lg border mono text-xs font-bold ${accCls}">${acc}%</span></td>
+              <td class="py-3 px-3 text-center mono font-bold ${Number(r.wrongCount) > 0 ? "text-rose-400" : "text-slate-400"}">${esc(r.wrongCount)}</td>
+              <td class="py-3 px-3 text-xs text-slate-300 max-w-md">${esc(r.mistakesSummary || "—")}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      // Attempts table
+      const attBody = document.getElementById("attempts-tbody");
+      if (filteredAttempts.length === 0) {
+        attBody.innerHTML = '<tr><td colspan="8" class="py-8 text-center text-slate-500 italic">Відповідей поки не зафіксовано.</td></tr>';
+      } else {
+        attBody.innerHTML = filteredAttempts.slice(0, 300).map((a) => {
+          const isErr = a.isCorrect === false || String(a.resultLabel || "").includes("Помилка");
+          const isFirst = String(a.resultLabel || "").includes("1-ша");
+          const resCls = isErr
+            ? "bg-rose-500/15 text-rose-300 border-rose-500/35"
+            : isFirst
+              ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/35"
+              : "bg-amber-500/15 text-amber-300 border-amber-500/35";
+          return `
+            <tr class="hover:bg-slate-800/40 transition align-top">
+              <td class="py-2.5 px-3 mono text-[11px] text-slate-400 whitespace-nowrap">${esc(a.timestamp)}</td>
+              <td class="py-2.5 px-3 font-semibold text-white whitespace-nowrap">${esc(a.studentName)}</td>
+              <td class="py-2.5 px-3">
+                <div class="text-slate-200 font-medium">${esc(a.lessonTitle)}</div>
+                <div class="text-[11px] text-slate-400">${esc(a.gameName)}</div>
+              </td>
+              <td class="py-2.5 px-3 text-slate-200 max-w-xs">${esc(a.question)}</td>
+              <td class="py-2.5 px-3 font-semibold ${isErr ? "text-rose-300" : "text-emerald-300"}">${esc(a.studentAnswer)}</td>
+              <td class="py-2.5 px-3 text-slate-300">${esc(a.correctAnswer)}</td>
+              <td class="py-2.5 px-3 whitespace-nowrap"><span class="inline-block px-2 py-0.5 rounded-lg border text-[11px] font-semibold ${resCls}">${esc(a.resultLabel)}</span></td>
+              <td class="py-2.5 px-3 text-xs text-slate-400 max-w-xs">${esc(a.explanation || "—")}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      updateConnectionUI();
+    }
+
+    function exportCsv() {
+      const { rounds } = mergeData();
+      const headers = ["Дата і час", "Ім'я / Сесія", "Урок", "Граматика", "Міні-гра", "Статус", "З 1-ї спроби", "Всього", "Точність (%)", "Помилок", "Тривалість (с)", "Деталі помилок"];
+      const csvEscape = (v) => `"${String(v === undefined || v === null ? "" : v).replace(/"/g, '""')}"`;
+      const rows = [headers.map(csvEscape).join(",")];
+      rounds.forEach((r) => {
+        rows.push([
+          r.timestamp, r.studentName, r.lessonTitle, r.grammar, r.gameName, r.status,
+          r.firstTryCorrect, r.totalQuestions, r.accuracy, r.wrongCount, r.durationSec, r.mistakesSummary
+        ].map(csvEscape).join(","));
+      });
+      const blob = new Blob(["\uFEFF" + rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `web_eng_results_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    }
+
+    function clearLocalCache() {
+      if (!confirm("Очистити локальний кеш результатів у цьому браузері? Дані в Google Таблиці не видаляються.")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(QUEUE_KEY);
+      renderAll();
+    }
+
+    function startPolling() {
+      if (pollTimer) clearInterval(pollTimer);
+      if (getWebhookUrl()) {
+        pollTimer = setInterval(() => refreshRemoteData(false), 8000);
+      }
+    }
+
+    function updateGeneratedLink() {
+      const baseEl = document.getElementById("gen-lesson");
+      const tagEl = document.getElementById("gen-tag");
+      const outEl = document.getElementById("gen-output");
+      if (!baseEl || !tagEl || !outEl) return;
+      const base = baseEl.value;
+      const cleanTag = tagEl.value.trim().replace(/[^a-zA-Z0-9а-яА-ЯіїєґІЇЄҐ_-]/g, "").toLowerCase();
+      outEl.value = `https://tyr-ria.github.io/English-boards/${base}${cleanTag}.html`;
+    }
+
+    async function copyGeneratedLink() {
+      const outEl = document.getElementById("gen-output");
+      const btnEl = document.getElementById("gen-copy-btn");
+      if (!outEl || !outEl.value) return;
+      try {
+        await navigator.clipboard.writeText(outEl.value);
+      } catch (_) {
+        outEl.select();
+        document.execCommand("copy");
+      }
+      if (btnEl) {
+        const orig = btnEl.innerHTML;
+        btnEl.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Скопійовано';
+        setTimeout(() => { btnEl.innerHTML = orig; }, 1500);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedUrl = getWebhookUrl();
+      if (savedUrl) document.getElementById("webhook-input").value = savedUrl;
+      const savedTok = localStorage.getItem(TOKEN_KEY);
+      if (savedTok) document.getElementById("token-input").value = savedTok;
+
+      updateGeneratedLink();
+      renderAll();
+      if (savedUrl) {
+        refreshRemoteData(false);
+        startPolling();
+      }
+
+      try {
+        if (typeof BroadcastChannel === "function") {
+          const bc = new BroadcastChannel(CHANNEL_NAME);
+          bc.onmessage = () => renderAll();
+        }
+      } catch (_) {}
+
+      window.addEventListener("storage", (e) => {
+        if (e.key === STORAGE_KEY || e.key === QUEUE_KEY) renderAll();
+      });
+    });
+  </script>
+</body>
+</html>

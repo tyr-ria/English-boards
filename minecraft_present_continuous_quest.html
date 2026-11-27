@@ -1706,6 +1706,12 @@
       document.getElementById("question-stage").classList.remove("hidden");
       document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
 
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game" + gameNum,
+        gameName: titleEl.textContent,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       renderCurrentStandardQuestion();
     }
 
@@ -1831,8 +1837,19 @@
     function handleMCChoice(selectedOpt, btnEl) {
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
+      const isCorrect = selectedOpt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainWrongChoiceUA(qObj, selectedOpt).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.q,
+        studentAnswer: selectedOpt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (selectedOpt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         btnEl.classList.add("mc-btn-green");
@@ -1911,8 +1928,19 @@
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
       const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+      const isCorrect = userAttempt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainScrambleMistakeUA(qObj).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.prompt,
+        studentAnswer: userAttempt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (userAttempt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         if (!questionMistakeMade) {
@@ -1965,6 +1993,12 @@
       document.getElementById("round-complete-screen").classList.remove("hidden");
       document.getElementById("round-result-summary").textContent = `You scored ${currentRoundScore} / ${activeRoundQuestions.length} in this round!`;
 
+      window.__ESL_TRACKER__?.endRound({
+        gameId: "game" + currentGameNum,
+        scoreFirstTry: currentRoundScore,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       if (currentGameNum === 1) unlockBadge("b_game1");
       if (currentGameNum === 2) unlockBadge("b_game2");
       if (currentGameNum === 3) unlockBadge("b_game3");
@@ -1993,6 +2027,11 @@
       g5Index = 0;
       document.getElementById("g5-complete-screen").classList.add("hidden");
       document.getElementById("g5-stage").classList.remove("hidden");
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game5",
+        gameName: "Game 5: Enchanting Table (-ING Spelling Lab)",
+        totalQuestions: g5RoundWords.length
+      });
       loadG5Word();
     }
 
@@ -2096,8 +2135,19 @@
       const attempt = g5Placed.map(x => x.letter).join("").toLowerCase();
       const fb = document.getElementById("g5-feedback");
       const fbText = document.getElementById("g5-feedback-text");
+      const isCorrect = attempt === wordObj.target;
+      const uaReason = isCorrect ? "" : explainG5SpellingMistakeUA(wordObj, attempt).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game5",
+        questionKey: g5Index,
+        question: wordObj.base + " + -ing",
+        studentAnswer: attempt || "(порожньо)",
+        correctAnswer: wordObj.target,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (attempt === wordObj.target) {
+      if (isCorrect) {
         g5Resolved = true;
         playSuccessSound();
         addDiamonds(g5Mistake ? 2 : 4);
@@ -2129,6 +2179,10 @@
       if (g5Index >= g5RoundWords.length) {
         document.getElementById("g5-stage").classList.add("hidden");
         document.getElementById("g5-complete-screen").classList.remove("hidden");
+        window.__ESL_TRACKER__?.endRound({
+          gameId: "game5",
+          totalQuestions: g5RoundWords.length
+        });
         unlockBadge("b_game5");
         playFanfareSound();
       } else {
@@ -2482,5 +2536,6 @@
       });
     });
   </script>
+  <script src="session-sync.js"></script>
 </body>
 </html>

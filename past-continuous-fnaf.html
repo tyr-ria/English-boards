@@ -784,6 +784,7 @@
       state.g1.q = shuffle(GAME_DATA.pool_auxiliary).slice(0, 5);
       state.g1.round = 0;
       document.getElementById('g1-success').classList.add('hidden');
+      window.__ESL_TRACKER__?.startRound({ gameId: 'g1', gameName: 'System Power (+/-/?)', totalQuestions: 5 });
       renderG1();
     }
 
@@ -820,11 +821,21 @@
 
     function checkG1(ans) {
       const q = state.g1.q[state.g1.round];
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: 'g1',
+        questionKey: state.g1.round,
+        question: q.q,
+        studentAnswer: ans,
+        correctAnswer: q.a,
+        isCorrect: ans === q.a,
+        explanation: q.h
+      });
       if (ans === q.a) {
         playBeep(true);
         speakText(q.q.replace('___', q.a));
         state.g1.round++;
         if (state.g1.round >= 5) {
+          window.__ESL_TRACKER__?.endRound({ gameId: 'g1', totalQuestions: 5 });
           setTimeout(() => {
             document.getElementById('g1-success').classList.remove('hidden');
             document.getElementById('g1-success').classList.add('flex');
@@ -848,6 +859,7 @@
       state.g2.q = shuffle(GAME_DATA.pool_spelling).slice(0, 5);
       state.g2.round = 0;
       document.getElementById('g2-success').classList.add('hidden');
+      window.__ESL_TRACKER__?.startRound({ gameId: 'g2', gameName: 'Vent Fix (-ing)', totalQuestions: 5 });
       renderG2();
     }
 
@@ -870,11 +882,21 @@
 
     function checkG2(ans) {
       const q = state.g2.q[state.g2.round];
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: 'g2',
+        questionKey: state.g2.round,
+        question: q.q,
+        studentAnswer: ans,
+        correctAnswer: q.a,
+        isCorrect: ans === q.a,
+        explanation: q.h
+      });
       if (ans === q.a) {
         playBeep(true);
         speakText(q.q.replace(/\[.*?\]/, q.a));
         state.g2.round++;
         if (state.g2.round >= 5) {
+          window.__ESL_TRACKER__?.endRound({ gameId: 'g2', totalQuestions: 5 });
           setTimeout(() => {
             document.getElementById('g2-success').classList.remove('hidden');
             document.getElementById('g2-success').classList.add('flex');
@@ -898,6 +920,7 @@
       state.g3.q = shuffle(GAME_DATA.pool_sentences).slice(0, 5);
       state.g3.round = 0;
       document.getElementById('g3-success').classList.add('hidden');
+      window.__ESL_TRACKER__?.startRound({ gameId: 'g3', gameName: 'Audio Decoy (Word Order)', totalQuestions: 5 });
       renderG3();
     }
 
@@ -962,6 +985,15 @@
     function checkG3() {
       const current = state.g3.placed.map(w => w.w).join(' ');
       const correct = state.g3.curr.parts.join(' ');
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: 'g3',
+        questionKey: state.g3.round,
+        question: 'Order: ' + state.g3.curr.parts.join(' / '),
+        studentAnswer: current,
+        correctAnswer: correct,
+        isCorrect: current === correct,
+        explanation: state.g3.curr.h
+      });
       
       if (current === correct) {
         playBeep(true);
@@ -973,6 +1005,9 @@
         });
         
         state.g3.round++;
+        if (state.g3.round >= 5) {
+          window.__ESL_TRACKER__?.endRound({ gameId: 'g3', totalQuestions: 5 });
+        }
         setTimeout(() => {
           if (state.g3.round >= 5) {
             document.getElementById('g3-success').classList.remove('hidden');
@@ -1009,6 +1044,7 @@
       state.g4.q = shuffle(GAME_DATA.pool_correction).slice(0, 5);
       state.g4.round = 0;
       document.getElementById('g4-success').classList.add('hidden');
+      window.__ESL_TRACKER__?.startRound({ gameId: 'g4', gameName: 'Data Recovery (Error Fix)', totalQuestions: 5 });
       renderG4();
     }
 
@@ -1031,11 +1067,21 @@
 
     function checkG4(ans) {
       const q = state.g4.q[state.g4.round];
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: 'g4',
+        questionKey: state.g4.round,
+        question: q.q,
+        studentAnswer: ans,
+        correctAnswer: q.a,
+        isCorrect: ans === q.a,
+        explanation: q.h
+      });
       if (ans === q.a) {
         playBeep(true);
         speakText(q.a);
         state.g4.round++;
         if (state.g4.round >= 5) {
+          window.__ESL_TRACKER__?.endRound({ gameId: 'g4', totalQuestions: 5 });
           setTimeout(() => {
             document.getElementById('g4-success').classList.remove('hidden');
             document.getElementById('g4-success').classList.add('flex');
@@ -1109,5 +1155,6 @@
       renderBadges();
     };
   </script>
+  <script src="session-sync.js"></script>
 </body>
 </html>

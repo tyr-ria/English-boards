@@ -464,6 +464,11 @@
             STATE.currentGameQuestions = pool.slice(0, 5);
             
             document.getElementById('game-cam-title').innerText = `CAM 0${camId} Feed`;
+            window.__ESL_TRACKER__?.startRound({
+                gameId: 'cam' + camId,
+                gameName: `CAM 0${camId} Feed`,
+                totalQuestions: 5
+            });
             showScreen('game-screen');
             renderQuestion();
         }
@@ -566,6 +571,15 @@
         function checkAnswer(isCorrect, selectedOption, qData) {
             const hintBox = document.getElementById('hint-box');
             const hintText = document.getElementById('hint-text');
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'cam' + STATE.currentHour,
+                questionKey: STATE.currentQuestionIndex,
+                question: qData.text,
+                studentAnswer: selectedOption,
+                correctAnswer: qData.answer,
+                isCorrect: isCorrect,
+                explanation: 'will be + V-ing'
+            });
 
             if (isCorrect) {
                 AudioSys.success();
@@ -622,6 +636,10 @@
 
         function finishMiniGame() {
             AudioSys.success();
+            window.__ESL_TRACKER__?.endRound({
+                gameId: 'cam' + STATE.currentHour,
+                totalQuestions: 5
+            });
             STATE.currentHour++;
             updateTopBar();
             
@@ -965,5 +983,6 @@
         </div>
     </section>
 
+    <script src="session-sync.js"></script>
 </body>
 </html>

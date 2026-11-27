@@ -2199,6 +2199,12 @@
       document.getElementById("question-stage").classList.remove("hidden");
       document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
 
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game" + gameNum,
+        gameName: titleEl.textContent,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       renderCurrentStandardQuestion();
     }
 
@@ -2344,8 +2350,19 @@
     function handleMCChoice(selectedOpt, btnEl) {
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
+      const isCorrect = selectedOpt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainWrongChoiceUA(qObj, selectedOpt).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.q,
+        studentAnswer: selectedOpt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (selectedOpt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         btnEl.classList.add("mc-btn-green");
@@ -2424,8 +2441,19 @@
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
       const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+      const isCorrect = userAttempt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainScrambleMistakeUA(qObj).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.prompt,
+        studentAnswer: userAttempt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (userAttempt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         if (!questionMistakeMade) {
@@ -2483,6 +2511,12 @@
       document.getElementById("round-result-summary").textContent =
         `You scored ${currentRoundScore} / ${activeRoundQuestions.length} on the first try and earned +15 Bonus Diamonds!`;
 
+      window.__ESL_TRACKER__?.endRound({
+        gameId: "game" + currentGameNum,
+        scoreFirstTry: currentRoundScore,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       if (currentGameNum === 1) unlockBadge("b_game1");
       if (currentGameNum === 2) unlockBadge("b_game2");
       if (currentGameNum === 3) unlockBadge("b_game3");
@@ -2512,6 +2546,11 @@
       g5Score = 0;
       document.getElementById("g5-complete-screen").classList.add("hidden");
       document.getElementById("g5-stage").classList.remove("hidden");
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game5",
+        gameName: "Game 5: Farmer's Spyglass",
+        totalQuestions: g5Scenes.length
+      });
       renderG5Scene();
     }
 
@@ -2597,8 +2636,19 @@
     function handleG5Choice(chosen, btnEl) {
       if (g5Resolved) return;
       const s = g5Scenes[g5Index];
+      const isCorrect = chosen === s.ans;
+      const targetLine = s.targetPanel === "spyglass" ? s.spyglassSentence : s.diarySentence;
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game5",
+        questionKey: g5Index,
+        question: targetLine,
+        studentAnswer: chosen,
+        correctAnswer: s.ans,
+        isCorrect: isCorrect,
+        explanation: isCorrect ? "" : s.reasonUA
+      });
 
-      if (chosen === s.ans) {
+      if (isCorrect) {
         g5Resolved = true;
         playSuccessSound();
         btnEl.classList.remove("mc-btn-amber");
@@ -2653,6 +2703,11 @@
         document.getElementById("g5-complete-screen").classList.remove("hidden");
         document.getElementById("g5-final-summary").textContent =
           `You solved all 10 Farmer's Spyglass scenes (${g5Score} / 10 on the first try) and earned +15 Bonus Diamonds!`;
+        window.__ESL_TRACKER__?.endRound({
+          gameId: "game5",
+          scoreFirstTry: g5Score,
+          totalQuestions: g5Scenes.length
+        });
         unlockBadge("b_game5");
         playFanfareSound();
       } else {
@@ -2916,5 +2971,6 @@
       });
     });
   </script>
+  <script src="session-sync.js"></script>
 </body>
 </html>

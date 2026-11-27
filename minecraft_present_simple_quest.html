@@ -1860,6 +1860,12 @@
       document.getElementById("question-stage").classList.remove("hidden");
       document.getElementById("game-q-total").textContent = activeRoundQuestions.length;
 
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game" + gameNum,
+        gameName: titleEl.textContent,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       renderCurrentStandardQuestion();
     }
 
@@ -2038,8 +2044,19 @@
     function handleMCChoice(selectedOpt, btnEl) {
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
+      const isCorrect = selectedOpt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainWrongChoiceUA(qObj, selectedOpt).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.q,
+        studentAnswer: selectedOpt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (selectedOpt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         btnEl.classList.add("mc-btn-green");
@@ -2118,8 +2135,19 @@
       if (questionResolved) return;
       const qObj = activeRoundQuestions[currentQIndex];
       const userAttempt = scramblePlacedWords.map(w => w.text).join(" ");
+      const isCorrect = userAttempt === qObj.ans;
+      const uaReason = isCorrect ? "" : explainScrambleMistakeUA(qObj).replace(/^❌\s*/, "");
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game" + currentGameNum,
+        questionKey: currentQIndex,
+        question: qObj.prompt,
+        studentAnswer: userAttempt,
+        correctAnswer: qObj.ans,
+        isCorrect: isCorrect,
+        explanation: uaReason
+      });
 
-      if (userAttempt === qObj.ans) {
+      if (isCorrect) {
         questionResolved = true;
         playSuccessSound();
         if (!questionMistakeMade) {
@@ -2177,6 +2205,12 @@
 
       document.getElementById("round-result-summary").textContent = `You scored ${currentRoundScore} / ${activeRoundQuestions.length} in this round!`;
 
+      window.__ESL_TRACKER__?.endRound({
+        gameId: "game" + currentGameNum,
+        scoreFirstTry: currentRoundScore,
+        totalQuestions: activeRoundQuestions.length
+      });
+
       if (currentGameNum === 1) unlockBadge("b_game1");
       if (currentGameNum === 2) unlockBadge("b_game2");
       if (currentGameNum === 3) unlockBadge("b_game3");
@@ -2206,6 +2240,11 @@
       g5Index = 0;
       document.getElementById("g5-complete-screen").classList.add("hidden");
       document.getElementById("g5-stage").classList.remove("hidden");
+      window.__ESL_TRACKER__?.startRound({
+        gameId: "game5",
+        gameName: "Game 5: Furnace Lab",
+        totalQuestions: g5RoundOrders.length
+      });
       renderG5InventoryBar();
       loadG5Order();
     }
@@ -2314,8 +2353,26 @@
       const inputOK = g5SelectedInput.id === order.inputId;
       const fuelOK = order.validFuels.includes(g5SelectedFuel);
       const gramOK = g5SelectedGrammar === order.ans;
+      const allOK = inputOK && fuelOK && gramOK;
+      const reasons = [];
+      if (!allOK) {
+        if (!inputOK) reasons.push("Неправильний матеріал у Слоті 1 — подивися на замовлення жителя!");
+        if (!fuelOK) reasons.push("Земля (Dirt) не горить як паливо — обери вугілля, лаву або дерево!");
+        if (!gramOK) {
+          reasons.push(explainWrongChoiceUA({ q: order.sentence, ans: order.ans }, g5SelectedGrammar).replace(/^❌\s*/, ""));
+        }
+      }
+      window.__ESL_TRACKER__?.recordAttempt({
+        gameId: "game5",
+        questionKey: g5Index,
+        question: order.sentence,
+        studentAnswer: g5SelectedInput.id + " / " + g5SelectedFuel + " / " + g5SelectedGrammar,
+        correctAnswer: order.inputId + " / " + order.validFuels.join("|") + " / " + order.ans,
+        isCorrect: allOK,
+        explanation: reasons.join(" ")
+      });
 
-      if (inputOK && fuelOK && gramOK) {
+      if (allOK) {
         g5OrderResolved = true;
         playSuccessSound();
         addDiamonds(4);
@@ -2332,12 +2389,6 @@
         speakText(fullSentence);
       } else {
         playErrorSound();
-        const reasons = [];
-        if (!inputOK) reasons.push("Неправильний матеріал у Слоті 1 — подивися на замовлення жителя!");
-        if (!fuelOK) reasons.push("Земля (Dirt) не горить як паливо — обери вугілля, лаву або дерево!");
-        if (!gramOK) {
-          reasons.push(explainWrongChoiceUA({ q: order.sentence, ans: order.ans }, g5SelectedGrammar).replace(/^❌\s*/, ""));
-        }
 
         fbBox.classList.remove("hidden");
         fbBox.className = "p-3 border-2 bg-red-950 border-red-400 text-red-200 text-xs font-bold flex items-center justify-between";
@@ -2352,6 +2403,10 @@
       if (g5Index >= g5RoundOrders.length) {
         document.getElementById("g5-stage").classList.add("hidden");
         document.getElementById("g5-complete-screen").classList.remove("hidden");
+        window.__ESL_TRACKER__?.endRound({
+          gameId: "game5",
+          totalQuestions: g5RoundOrders.length
+        });
         unlockBadge("b_game5");
         playFanfareSound();
       } else {
@@ -2554,5 +2609,6 @@
       });
     });
   </script>
+  <script src="session-sync.js"></script>
 </body>
 </html>

@@ -874,13 +874,31 @@
 
         function handleFinderClick(animal, btnEl) {
             const feedback = document.getElementById('finder-feedback');
+            const isCorrect = animal.id === state.finderTarget.id;
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'finder',
+                gameName: 'Listen & Find',
+                totalQuestions: state.requiredAnswers,
+                questionKey: state.progress.finder + ':' + state.finderTarget.id,
+                question: 'Find the ' + state.finderTarget.name,
+                studentAnswer: animal.name,
+                correctAnswer: state.finderTarget.name,
+                isCorrect: isCorrect,
+                explanation: isCorrect ? '' : ('Target animal was ' + state.finderTarget.name)
+            });
             
-            if (animal.id === state.finderTarget.id) {
+            if (isCorrect) {
                 playSuccessSound();
                 addStar();
                 btnEl.classList.add('ring-4', 'ring-green-400', 'bg-green-50');
                 
                 state.progress.finder++;
+                if (state.progress.finder % state.requiredAnswers === 0) {
+                    window.__ESL_TRACKER__?.endRound({
+                        gameId: 'finder',
+                        totalQuestions: state.requiredAnswers
+                    });
+                }
                 if (state.progress.finder === state.requiredAnswers) {
                     feedback.innerText = `Yes! It is a ${animal.name}! 🌟`;
                     unlockBadge('finder');
@@ -969,11 +987,25 @@
 
         function checkFeederMatch() {
             if (state.feederSelectedAnimal && state.feederSelectedFood) {
-                const animalId = state.feederSelectedAnimal.item.id;
-                const foodId = state.feederSelectedFood.item.id;
+                const selAnimal = state.feederSelectedAnimal.item;
+                const selFood = state.feederSelectedFood.item;
+                const animalId = selAnimal.id;
+                const foodId = selFood.id;
                 const feedback = document.getElementById('feed-feedback');
+                const isCorrect = animalId === foodId;
+                window.__ESL_TRACKER__?.recordAttempt({
+                    gameId: 'feeder',
+                    gameName: 'Feed the Animals',
+                    totalQuestions: state.requiredAnswers,
+                    questionKey: state.progress.feeder + ':' + selAnimal.id,
+                    question: 'Feed the ' + selAnimal.name,
+                    studentAnswer: selFood.foodName,
+                    correctAnswer: selAnimal.foodName,
+                    isCorrect: isCorrect,
+                    explanation: isCorrect ? '' : (selAnimal.name + ' eats ' + selAnimal.foodName)
+                });
                 
-                if (animalId === foodId) {
+                if (isCorrect) {
                     playSuccessSound();
                     addStar();
                     
@@ -991,6 +1023,12 @@
                     state.feederSelectedFood = null;
                     state.feederMatches++;
                     state.progress.feeder++;
+                    if (state.progress.feeder % state.requiredAnswers === 0) {
+                        window.__ESL_TRACKER__?.endRound({
+                            gameId: 'feeder',
+                            totalQuestions: state.requiredAnswers
+                        });
+                    }
                     
                     if (state.progress.feeder === state.requiredAnswers) {
                         unlockBadge('feeder');
@@ -1058,14 +1096,32 @@
 
         function handleShadowClick(animal, btnEl) {
             const feedback = document.getElementById('shadow-feedback');
+            const isCorrect = animal.id === state.shadowTarget.id;
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'shadow',
+                gameName: 'Shadow Match',
+                totalQuestions: state.requiredAnswers,
+                questionKey: state.progress.shadow + ':' + state.shadowTarget.id,
+                question: 'Shadow: ' + state.shadowTarget.name,
+                studentAnswer: animal.name,
+                correctAnswer: state.shadowTarget.name,
+                isCorrect: isCorrect,
+                explanation: isCorrect ? '' : ('Shadow belongs to ' + state.shadowTarget.name)
+            });
             
-            if (animal.id === state.shadowTarget.id) {
+            if (isCorrect) {
                 playSuccessSound();
                 addStar();
                 document.getElementById('shadow-target').classList.remove('shadow-animal');
                 document.getElementById('shadow-target').classList.add('animate-pop');
                 
                 state.progress.shadow++;
+                if (state.progress.shadow % state.requiredAnswers === 0) {
+                    window.__ESL_TRACKER__?.endRound({
+                        gameId: 'shadow',
+                        totalQuestions: state.requiredAnswers
+                    });
+                }
                 if (state.progress.shadow === state.requiredAnswers) {
                     feedback.innerText = `Great! It is a ${animal.name}!`;
                     unlockBadge('shadow');
@@ -1154,13 +1210,33 @@
             const feedback = document.getElementById('counter-feedback');
             const label = count === 1 ? state.counterTargetAnimal.name : state.counterTargetAnimal.plural;
             const word = numberWords[count];
+            const targetLabel = state.counterTargetCount === 1 ? state.counterTargetAnimal.name : state.counterTargetAnimal.plural;
+            const targetWord = numberWords[state.counterTargetCount];
+            const isCorrect = count === state.counterTargetCount;
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'counter',
+                gameName: 'Zoo Counter',
+                totalQuestions: state.requiredAnswers,
+                questionKey: state.progress.action + ':' + targetWord + '_' + targetLabel,
+                question: document.getElementById('counter-instruction').innerText,
+                studentAnswer: word + ' ' + label,
+                correctAnswer: targetWord + ' ' + targetLabel,
+                isCorrect: isCorrect,
+                explanation: isCorrect ? '' : ('Count: ' + targetWord + ' ' + targetLabel)
+            });
             
-            if (count === state.counterTargetCount) {
+            if (isCorrect) {
                 playSuccessSound();
                 addStar();
                 btnEl.classList.add('ring-4', 'ring-green-400', 'bg-green-50');
                 
                 state.progress.action++;
+                if (state.progress.action % state.requiredAnswers === 0) {
+                    window.__ESL_TRACKER__?.endRound({
+                        gameId: 'counter',
+                        totalQuestions: state.requiredAnswers
+                    });
+                }
                 if (state.progress.action === state.requiredAnswers) {
                     feedback.innerText = `Yes! ${word} ${label}! 🌟`;
                     unlockBadge('action');
@@ -1228,5 +1304,6 @@
         }
 
     </script>
+    <script src="session-sync.js"></script>
 </body>
 </html>

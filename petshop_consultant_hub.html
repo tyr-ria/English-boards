@@ -1075,6 +1075,17 @@
                 speakText(petData.find(p => p.id === card1.petId).word);
 
                 if (matchedPairs === 5) {
+                    window.__ESL_TRACKER__?.startRound({
+                        gameId: 'memory',
+                        gameName: 'Inventory Match',
+                        totalQuestions: 5
+                    });
+                    window.__ESL_TRACKER__?.endRound({
+                        gameId: 'memory',
+                        gameName: 'Inventory Match',
+                        scoreFirstTry: 5,
+                        totalQuestions: 5
+                    });
                     setTimeout(() => {
                         showToast("Perfect Match!", true);
                         addStars(5);
@@ -1141,8 +1152,22 @@
 
         function checkListenAnswer(petId) {
             if (!listenTarget) return;
+            const target = listenTarget;
+            const clickedPet = petData.find(p => p.id === petId);
+            const isCorrect = petId === target.id;
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'listen',
+                gameName: 'Customer Service (Listen)',
+                totalQuestions: LISTEN_QUESTIONS_PER_ROUND,
+                questionKey: state.listenScore + ':' + target.id,
+                question: 'Listen & Find: ' + target.word,
+                studentAnswer: clickedPet ? clickedPet.word : petId,
+                correctAnswer: target.word,
+                isCorrect: isCorrect,
+                explanation: isCorrect ? '' : ('Customer asked for ' + target.word)
+            });
             
-            if (petId === listenTarget.id) {
+            if (isCorrect) {
                 listenTarget = null;
                 playSuccess();
                 showToast("Excellent service!", true);
@@ -1151,6 +1176,10 @@
                 addStars(2);
                 
                 if (state.listenScore >= LISTEN_QUESTIONS_PER_ROUND) {
+                    window.__ESL_TRACKER__?.endRound({
+                        gameId: 'listen',
+                        totalQuestions: LISTEN_QUESTIONS_PER_ROUND
+                    });
                     setTimeout(() => {
                         unlockBadge(2);
                         confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
@@ -1244,7 +1273,23 @@
                 return;
             }
 
-            if (petId === state.feedMission.pet.id && state.selectedFood === state.feedMission.food) {
+            const clickedPet = petData.find(p => p.id === petId);
+            const chosenFood = foodData[state.selectedFood];
+            const targetFood = foodData[state.feedMission.food];
+            const isCorrect = petId === state.feedMission.pet.id && state.selectedFood === state.feedMission.food;
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'feed',
+                gameName: 'Feeding Time',
+                totalQuestions: 3,
+                questionKey: state.feedScore + ':' + state.feedMission.pet.id,
+                question: 'Feed ' + state.feedMission.pet.word + ' with ' + (targetFood ? targetFood.name : state.feedMission.food),
+                studentAnswer: (clickedPet ? clickedPet.word : petId) + ' + ' + (chosenFood ? chosenFood.name : state.selectedFood),
+                correctAnswer: state.feedMission.pet.word + ' + ' + (targetFood ? targetFood.name : state.feedMission.food),
+                isCorrect: isCorrect,
+                explanation: isCorrect ? '' : ('Required: ' + state.feedMission.pet.word + ' + ' + (targetFood ? targetFood.name : state.feedMission.food))
+            });
+
+            if (isCorrect) {
                 playSuccess();
                 showToast("Yummy!", true);
                 state.feedScore++;
@@ -1252,6 +1297,10 @@
                 addStars(2);
                 
                 if (state.feedScore >= 3) {
+                    window.__ESL_TRACKER__?.endRound({
+                        gameId: 'feed',
+                        totalQuestions: 3
+                    });
                     setTimeout(() => {
                         unlockBadge(3);
                         confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
@@ -1306,9 +1355,22 @@
 
         function checkLetterAnswer(letter) {
             if (!letterTarget) return;
+            const target = letterTarget;
+            const isCorrect = letter === target.letter;
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'letter',
+                gameName: 'Label Making (First Letter)',
+                totalQuestions: LETTER_QUESTIONS_PER_ROUND,
+                questionKey: state.letterScore + ':' + target.id,
+                question: 'First letter of ' + target.word,
+                studentAnswer: letter,
+                correctAnswer: target.letter,
+                isCorrect: isCorrect,
+                explanation: isCorrect ? '' : (target.word + ' starts with ' + target.letter)
+            });
 
-            if (letter === letterTarget.letter) {
-                const matchedPet = letterTarget;
+            if (isCorrect) {
+                const matchedPet = target;
                 letterTarget = null;
                 playSuccess();
                 showToast("Perfect label!", true);
@@ -1321,6 +1383,13 @@
                 
                 addStars(1);
                 speakText(matchedPet.word);
+
+                if (state.letterScore >= LETTER_QUESTIONS_PER_ROUND) {
+                    window.__ESL_TRACKER__?.endRound({
+                        gameId: 'letter',
+                        totalQuestions: LETTER_QUESTIONS_PER_ROUND
+                    });
+                }
 
                 setTimeout(() => {
                     if (state.letterScore >= LETTER_QUESTIONS_PER_ROUND) {
@@ -1443,5 +1512,6 @@
         };
 
     </script>
+    <script src="session-sync.js"></script>
 </body>
 </html>

@@ -555,6 +555,7 @@
             if(gameId === 'game4') title = "Error Purge";
             document.getElementById('game-title').innerText = title;
             document.getElementById('q-total').innerText = limit;
+            window.__ESL_TRACKER__?.startRound({ gameId, gameName: title, totalQuestions: limit });
             
             showView('view-game');
             renderQuestion();
@@ -669,6 +670,15 @@
             const qData = roundData[currentQIndex];
             const answer = g2Target.join(' ');
             const correct = qData.words.join(' ');
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: activeGame,
+                questionKey: currentQIndex,
+                question: 'Order: ' + qData.words.join(' / '),
+                studentAnswer: answer,
+                correctAnswer: correct,
+                isCorrect: answer === correct,
+                explanation: qData.hint
+            });
             
             if(answer === correct) {
                 playCorrect();
@@ -688,6 +698,15 @@
         // Checking standard answers (Game 1 & 3)
         function checkAnswer(selected) {
             const qData = roundData[currentQIndex];
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: activeGame,
+                questionKey: currentQIndex,
+                question: qData.q,
+                studentAnswer: selected,
+                correctAnswer: qData.ans,
+                isCorrect: selected === qData.ans,
+                explanation: qData.hint
+            });
             if(selected === qData.ans) {
                 playCorrect();
                 const fullSentence = qData.q.replace('___', qData.ans);
@@ -754,6 +773,7 @@
         function endMiniGame() {
             state.badges[activeGame] = true;
             localStorage.setItem('fnaf1_edu_state', JSON.stringify(state));
+            window.__ESL_TRACKER__?.endRound({ gameId: activeGame, totalQuestions: roundData.length });
             
             // Subtle celebration appropriate for FNAF theme
             confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 }, colors: ['#4ade80', '#000000', '#ffffff'] });
@@ -765,5 +785,6 @@
             showView('view-certificate');
         }
     </script>
+    <script src="session-sync.js"></script>
 </body>
 </html>

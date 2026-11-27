@@ -777,6 +777,12 @@
             let shuffledPool = shuffle([...pool]);
             state.currentRoundQ = shuffledPool.slice(0, 5); // Pick 5 random questions
             state.currentQIndex = 0;
+            const gameNames = { 1: 'Cam Logs (+)', 2: 'Power Routing (-)', 3: 'Audio Decoy (?)', 4: 'Spelling Sorter', 5: 'Security Doors (T/F)' };
+            window.__ESL_TRACKER__?.startRound({
+                gameId: 'g' + state.currentGameId,
+                gameName: gameNames[state.currentGameId] || ('Game ' + state.currentGameId),
+                totalQuestions: state.currentRoundQ.length
+            });
             renderQuestion();
         }
 
@@ -835,6 +841,15 @@
 
         function checkMultipleChoice(selected, q, btn, questionTextDiv) {
             const feedbackArea = document.getElementById('feedback-area');
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'g' + state.currentGameId,
+                questionKey: state.currentQIndex,
+                question: q.text,
+                studentAnswer: selected,
+                correctAnswer: q.answer,
+                isCorrect: selected === q.answer,
+                explanation: q.hint
+            });
             
             if (selected === q.answer) {
                 playSound('success');
@@ -924,6 +939,15 @@
                 let currentSentence = selectedWords.join(' ');
                 
                 if (shuffledWords.length === 0) {
+                    window.__ESL_TRACKER__?.recordAttempt({
+                        gameId: 'g' + state.currentGameId,
+                        questionKey: state.currentQIndex,
+                        question: 'Order: ' + q.words.join(' / '),
+                        studentAnswer: currentSentence,
+                        correctAnswer: q.answer,
+                        isCorrect: currentSentence === q.answer,
+                        explanation: q.hint
+                    });
                     if (currentSentence === q.answer) {
                         playSound('success');
                         readText(currentSentence); // Read correct sentence aloud
@@ -972,6 +996,15 @@
                 
                 bin.onclick = () => {
                     const feedbackArea = document.getElementById('feedback-area');
+                    window.__ESL_TRACKER__?.recordAttempt({
+                        gameId: 'g' + state.currentGameId,
+                        questionKey: state.currentQIndex,
+                        question: 'He/She/It ending: ' + q.word,
+                        studentAnswer: cat,
+                        correctAnswer: q.category,
+                        isCorrect: cat === q.category,
+                        explanation: q.hint
+                    });
                     if (cat === q.category) {
                         playSound('success');
                         bin.classList.add('!bg-green-500', '!text-black', '!border-green-500');
@@ -1036,6 +1069,15 @@
 
         function checkTrueFalse(selectedTruth, q, clickedBtn, otherBtn, questionTextDiv) {
             const feedbackArea = document.getElementById('feedback-area');
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'g' + state.currentGameId,
+                questionKey: state.currentQIndex,
+                question: q.text,
+                studentAnswer: selectedTruth ? 'TRUE' : 'FALSE',
+                correctAnswer: q.isCorrect ? 'TRUE' : ('FALSE — ' + q.correction),
+                isCorrect: selectedTruth === q.isCorrect,
+                explanation: q.hint
+            });
             
             if (selectedTruth === q.isCorrect) {
                 playSound('success');
@@ -1094,6 +1136,10 @@
         function endRound() {
             const gameArea = document.getElementById('game-area');
             const feedbackArea = document.getElementById('feedback-area');
+            window.__ESL_TRACKER__?.endRound({
+                gameId: 'g' + state.currentGameId,
+                totalQuestions: state.currentRoundQ.length
+            });
             
             // Check badge logic
             const badgeId = `b${state.currentGameId}`;
@@ -1201,5 +1247,6 @@
         }
 
     </script>
+    <script src="session-sync.js"></script>
 </body>
 </html>

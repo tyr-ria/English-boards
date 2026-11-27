@@ -621,7 +621,7 @@
                         <h2 class="text-xl md:text-2xl text-white mb-12 font-mono tracking-widest">Fazbear Entertainment Security</h2>
                         
                         <p class="text-lg text-gray-300 mb-4 font-sans">This certifies that</p>
-                        <div class="text-3xl md:text-4xl font-bold text-white border-b-2 border-fnaf-accent inline-block px-10 pb-2 mb-10 font-mono">
+                        <div id="cert-student-name" contenteditable="true" class="text-3xl md:text-4xl font-bold text-white border-b-2 border-fnaf-accent inline-block px-10 pb-2 mb-10 font-mono">
                             Night Guard #1987
                         </div>
                         
@@ -744,6 +744,12 @@
             if(gameId === 'game4') pool = GAME_DATA.game4Pool;
 
             STATE.currentQuestions = getRandomQuestions(pool, 5);
+            const gameNames = { game1: 'Cam Logs', game2: 'Survival Quiz', game3: 'Wire Fix', game4: 'System Reboot' };
+            window.__ESL_TRACKER__?.startRound({
+                gameId,
+                gameName: gameNames[gameId] || gameId,
+                totalQuestions: STATE.currentQuestions.length
+            });
             loadQuestion();
         }
 
@@ -830,6 +836,7 @@
         }
 
         function endGame(gameId) {
+            window.__ESL_TRACKER__?.endRound({ gameId, totalQuestions: 5 });
             let badgeId = '';
             if(gameId === 'game1') badgeId = 'b_cam';
             if(gameId === 'game2') badgeId = 'b_guard';
@@ -858,6 +865,15 @@
             if(correctAns.includes("won't ") && input.includes("will not ")) {
                 if(input.replace("will not ", "") === correctAns.replace("won't ", "")) isCorrect = true;
             }
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'game1',
+                questionKey: STATE.qIndex,
+                question: qData.q,
+                studentAnswer: document.getElementById('g1-input').value.trim(),
+                correctAnswer: qData.ans,
+                isCorrect: isCorrect,
+                explanation: qData.hint
+            });
 
             if(isCorrect) {
                 let textToSpeak = qData.q.replace("___", qData.ans);
@@ -888,6 +904,15 @@
         // --- GAME 2 SPECIFIC ---
         function checkGame2(selectedIndex) {
             const qData = STATE.currentQuestions[STATE.qIndex];
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'game2',
+                questionKey: STATE.qIndex,
+                question: qData.q,
+                studentAnswer: qData.options[selectedIndex],
+                correctAnswer: qData.options[qData.ans],
+                isCorrect: selectedIndex === qData.ans,
+                explanation: qData.hint
+            });
             
             if(selectedIndex === qData.ans) {
                 speakText(qData.options[qData.ans]);
@@ -949,6 +974,15 @@
         function checkGame3() {
             const qData = STATE.currentQuestions[STATE.qIndex];
             const currentStr = STATE.currentG3Answer.map(i => i.word).join(" ");
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'game3',
+                questionKey: STATE.qIndex,
+                question: 'Order: ' + qData.words.join(' / '),
+                studentAnswer: currentStr,
+                correctAnswer: qData.ans,
+                isCorrect: currentStr === qData.ans,
+                explanation: qData.hint
+            });
             
             if(currentStr === qData.ans) {
                 speakText(qData.ans);
@@ -968,6 +1002,15 @@
         // --- GAME 4 SPECIFIC ---
         function checkGame4(playerChoice) {
             const qData = STATE.currentQuestions[STATE.qIndex];
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: 'game4',
+                questionKey: STATE.qIndex,
+                question: qData.q,
+                studentAnswer: playerChoice ? 'TRUE' : 'FALSE',
+                correctAnswer: qData.ans ? 'TRUE' : ('FALSE — ' + qData.correct),
+                isCorrect: playerChoice === qData.ans,
+                explanation: qData.hint
+            });
             
             if(playerChoice === qData.ans) {
                 speakText(qData.correct); // Now speaks the grammatically correct version
@@ -1048,5 +1091,6 @@
         }
 
     </script>
+    <script src="session-sync.js"></script>
 </body>
 </html>

@@ -646,6 +646,12 @@
             
             // Randomly select between 5 to 10 questions for this round
             state.questionsTotal = Math.floor(Math.random() * 6) + 5; 
+            const gameNames = { mc: 'CAM 01 Reboot', match: 'Irregular Wires', build: 'Audio Sync', fill: 'Incident Logs', mc2: 'System Core' };
+            window.__ESL_TRACKER__?.startRound({
+                gameId: gameType,
+                gameName: gameNames[gameType] || gameType,
+                totalQuestions: state.questionsTotal
+            }); 
             
             document.getElementById(`${gameType}-hint-box`).classList.add('hidden');
 
@@ -686,6 +692,10 @@
 
         function checkGameComplete(gameType) {
             if (state.currentQIndex >= state.questionsTotal || (gameType === 'match' && state.matchPairsFound >= state.questionsTotal)) {
+                window.__ESL_TRACKER__?.endRound({
+                    gameId: gameType,
+                    totalQuestions: state.questionsTotal
+                });
                 speakText("System restored.");
                 if (state.isFreePlay) {
                     setTimeout(() => {
@@ -725,6 +735,16 @@
 
         function handleMCAnswer(selected, correct, btn, gameType = 'mc') {
             if (state.isTransitioning) return;
+            const curQ = state.roundQuestions[state.currentQIndex];
+            window.__ESL_TRACKER__?.recordAttempt({
+                gameId: gameType,
+                questionKey: state.currentQIndex,
+                question: curQ ? curQ.q : '',
+                studentAnswer: selected,
+                correctAnswer: correct,
+                isCorrect: selected === correct,
+                explanation: curQ ? curQ.hint : ''
+            });
             if (selected === correct) {
                 state.isTransitioning = true;
                 btn.classList.add('bg-[#2e8b57]', 'text-black');
@@ -816,6 +836,15 @@
 
                 // Check match
                 const q = state.roundQuestions.find(x => x.v1 === state.matchSelected1.val);
+                window.__ESL_TRACKER__?.recordAttempt({
+                    gameId: 'match',
+                    questionKey: state.matchSelected1.val,
+                    question: 'V1 → V2: ' + state.matchSelected1.val,
+                    studentAnswer: state.matchSelected2.val,
+                    correctAnswer: q ? q.v2 : '',
+                    isCorrect: Boolean(q && q.v2 === state.matchSelected2.val),
+                    explanation: 'Irregular Past V2'
+                });
                 if (q && q.v2 === state.matchSelected2.val) {
                     // Correct
                     playSynthesizedSound('success');
@@ -890,6 +919,15 @@
             if (state.buildCurrentWords.length === q.words.length) {
                 state.isTransitioning = true;
                 const currentSentence = state.buildCurrentWords.map(w => w.word).join(" ");
+                window.__ESL_TRACKER__?.recordAttempt({
+                    gameId: 'build',
+                    questionKey: state.currentQIndex,
+                    question: 'Order: ' + q.words.join(' / '),
+                    studentAnswer: currentSentence,
+                    correctAnswer: q.words.join(" "),
+                    isCorrect: currentSentence === q.words.join(" "),
+                    explanation: q.hint
+                });
                 if (currentSentence === q.words.join(" ")) {
                     playSynthesizedSound('success');
                     speakText(q.words.join(" "));
@@ -930,6 +968,15 @@
                 btn.innerText = opt;
                 btn.onclick = () => {
                     if (state.isTransitioning) return;
+                    window.__ESL_TRACKER__?.recordAttempt({
+                        gameId: 'fill',
+                        questionKey: state.currentQIndex,
+                        question: q.q,
+                        studentAnswer: opt,
+                        correctAnswer: q.a,
+                        isCorrect: opt === q.a,
+                        explanation: q.hint
+                    });
                     if (opt === q.a) {
                         state.isTransitioning = true;
                         btn.classList.add('bg-[#2e8b57]', 'text-black');
@@ -957,5 +1004,6 @@
         }
 
     </script>
+    <script src="session-sync.js"></script>
 </body>
 </html>
